@@ -1,3 +1,5 @@
+#include "glm/glm.hpp"
+
 namespace LWGE
 {
 	namespace Utils
@@ -27,6 +29,6 @@ namespace LWGE
 				glm::vec3	GetSize(void) const;
 
 				//...
-		}
+		};
 	}
 }

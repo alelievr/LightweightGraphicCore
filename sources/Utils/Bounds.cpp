@@ -1,3 +1,6 @@
+#include "Bounds.hpp"
+
+using namespace LWGE::Utils;
 /*namespace LWGE
 {
 	namespace Utils

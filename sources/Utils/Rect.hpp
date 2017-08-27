@@ -1,4 +1,6 @@
-namespace LGWE
+#include "glm/glm.hpp"
+
+namespace LWGE
 {
 	namespace Utils
 	{
@@ -22,6 +24,6 @@ namespace LGWE
 				float GetMinY(void) const;
 
 				//...
-		}
+		};
 	}
 }

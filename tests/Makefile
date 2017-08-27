@@ -6,7 +6,7 @@
 #    By: alelievr <marvin@42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2014/07/15 15:13:38 by alelievr          #+#    #+#              #
-#    Updated: 2017/08/27 21:58:57 by alelievr         ###   ########.fr        #
+#    Updated: 2017/08/27 21:50:30 by alelievr         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -15,25 +15,9 @@
 #################
 
 #	Sources
-SRCDIR		=	sources
-SRC			=	Core/DeferredRenderPipeline.cpp		\
-				Core/ForwardRenderPipeline.cpp		\
-				Core/ImageChannel.cpp				\
-				Core/Material.cpp					\
-				Core/Mesh.cpp						\
-				Core/Model.cpp						\
-				Core/ProgramChannel.cpp				\
-				Core/RenderQueue.cpp				\
-				Core/RenderTags.cpp					\
-				Core/RenderTarget.cpp				\
-				Core/ShaderProgram.cpp				\
-				Core/ShaderSource.cpp				\
-				Core/Transform.cpp					\
-				GUI/Image.cpp						\
-				GUI/Mask.cpp						\
-				GUI/Text.cpp						\
-				Utils/Bounds.cpp					\
-				Utils/Rect.cpp						\
+SRCDIR		=	sources:w
+
+SRC			=	main.c			\
 
 #	Objects
 OBJDIR		=	obj
@@ -49,19 +33,14 @@ CPPVERSION	=	c++11
 #Example $> make DEBUG=2 will set debuglevel to 2
 
 #	Includes
-INCDIRS		=	sources/Core/ sources/GUI/ sources/Utils/ deps/glfw/include deps/SOIL2/incs deps/glm
+INCDIRS		=	.
 
 #	Libraries
-LIBDIRS		=	deps/glfw/src deps/SOIL2 deps/freetype2/objs/.libs deps/glm
-LDLIBS		=	-lglfw3 -lSOIL2 -lfreetype
-
-GLFWLIB     =   deps/glfw/src/libglfw3.a
-SOILLIB     =   deps/SOIL2/libSOIL2.a
-GLMLIB      =   deps/glm/glm
-FREETYPELIB	=	deps/freetype2/./objs/.libs/libfreetype.a
+LIBDIRS		=	
+LDLIBS		=	
 
 #	Output
-NAME		=	LWGE.a
+NAME		=	run_test
 
 #	Compiler
 CFLAGS		=	-Wall -Wextra -pedantic
@@ -71,6 +50,9 @@ DEBUGFLAGS1	=	-ggdb -fsanitize=address -fno-omit-frame-pointer -fno-optimize-sib
 DEBUGFLAGS2	=	-fsanitize-memory-track-origins=2
 OPTFLAGS1	=	-funroll-loops -O2
 OPTFLAGS2	=	-pipe -funroll-loops -Ofast
+
+#	Framework
+FRAMEWORK	=	
 
 #################
 ##  COLORS     ##
@@ -122,11 +104,11 @@ OBJS		=	$(patsubst %.c,%.o, $(filter %.c, $(SRC))) \
 OBJ			=	$(addprefix $(OBJDIR)/,$(notdir $(OBJS)))
 NORME		=	**/*.[ch]
 VPATH		+=	$(dir $(addprefix $(SRCDIR)/,$(SRC)))
+VFRAME		=	$(addprefix -framework ,$(FRAMEWORK))
 INCFILES	=	$(foreach inc, $(INCDIRS), $(wildcard $(inc)/*.h))
 CPPFLAGS	=	$(addprefix -I,$(INCDIRS))
 LDFLAGS		=	$(addprefix -L,$(LIBDIRS))
-LINKER		=	ar
-LINKFLAGS	=	rc
+LINKER		=	$(CC)
 
 disp_indent	=	for I in `seq 1 $(MAKELEVEL)`; do \
 					test "$(MAKELEVEL)" '!=' '0' && printf "\t"; \
@@ -162,6 +144,10 @@ ifndef $(CXX)
 	CXX = clang++
 endif
 
+ifneq ($(filter %.cpp,$(SRC)),)
+	LINKER = $(CXX)
+endif
+
 ifeq "$(strip $(LIBFT))" "2"
 ifneq ($(wildcard ./libft),)
 	LIBDIRS += " -Llibft"
@@ -175,34 +161,14 @@ endif
 #################
 
 #	First target
-all: $(GLFWLIB) $(OBJLIB) $(GLMLIB) $(FREETYPELIB) $(SOILLIB) $(NAME)
-
-$(GLMLIB):
-	@git submodule init
-	@git submodule update
-
-$(SOILLIB):
-	@git submodule init
-	@git submodule update
-	@cd deps/SOIL2 && make
-
-$(GLFWLIB):
-	@git submodule init
-	@git submodule update
-	@cd deps/glfw && cmake . && make
-
-$(FREETYPELIB):
-	@git submodule init
-	@git submodule update
-	@cd deps/freetype2 && ./autogen.sh && ./configure --without-bzip2 --without-zlib --enable-static --without-harfbuzz --without-png && make
-
+all: $(NAME)
 
 #	Linking
 $(NAME): $(OBJ)
 	@$(if $(findstring libft,$(LDLIBS)),$(call color_exec_t,$(CCLEAR),$(CCLEAR),\
 		make -j 4 -C libft))
 	@$(call color_exec,$(CLINK_T),$(CLINK),"Link of $(NAME):",\
-		$(LINKER) $(LINKFLAGS) $@ $^)
+		$(LINKER) $(CFLAGS) $(LDFLAGS) $(LDLIBS) $(OPTFLAGS) $(DEBUGFLAGS) $(LINKDEBUG) $(VFRAME) -o $@ $^)
 
 $(OBJDIR)/%.o: %.cpp $(INCFILES)
 	@mkdir -p $(OBJDIR)
