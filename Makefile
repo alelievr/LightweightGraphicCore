@@ -6,7 +6,7 @@
 #    By: alelievr <marvin@42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2014/07/15 15:13:38 by alelievr          #+#    #+#              #
-#    Updated: 2017/08/27 21:58:57 by alelievr         ###   ########.fr        #
+#    Updated: 2017/08/29 01:44:43 by alelievr         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -184,17 +184,17 @@ $(GLMLIB):
 $(SOILLIB):
 	@git submodule init
 	@git submodule update
-	@cd deps/SOIL2 && make
+	@cd deps/SOIL2 && $(MAKE)
 
 $(GLFWLIB):
 	@git submodule init
 	@git submodule update
-	@cd deps/glfw && cmake . && make
+	@cd deps/glfw && cmake . && $(MAKE)
 
 $(FREETYPELIB):
 	@git submodule init
 	@git submodule update
-	@cd deps/freetype2 && ./autogen.sh && ./configure --without-bzip2 --without-zlib --enable-static --without-harfbuzz --without-png && make
+	@cd deps/freetype2 && ./autogen.sh && env -i ./configure --without-bzip2 --without-zlib --enable-static --without-harfbuzz --without-png && $(MAKE)
 
 
 #	Linking
