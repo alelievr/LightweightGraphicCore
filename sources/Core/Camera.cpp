@@ -7,7 +7,7 @@ Camera::Camera(void)
 	this->_target = ;
 	this->_size = ;
 	this->_cameraType = ;
-	this->_orthographic = true;
+	this->_orthographic = false;
 	this->_fov = 0;
 	this->_nearPlane = 0;
 	this->_farPlane = 0;

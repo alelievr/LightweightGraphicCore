@@ -10,7 +10,7 @@ namespace LWGE
 				void			OnPostRender(void) = default;
 
 				SortingLayer	GetSortingLayer(void) = 0;
-				GetBounds		GetBounds(void) = 0;
+				Bounds			GetBounds(void) = 0;
 		}
 	}
 }
