@@ -2,16 +2,16 @@
 
 int			main(void)
 {
-	Application			app;
-	RenderPipeline *	p = app.GetRenderPipeline();
+	LWGE::Application			app;
+	LWGE::RenderPipeline *		p = app.GetRenderPipeline();
 
-	Model			m = ObjLoader.Load("test.obj");
+	LWGE::Model *				m = ObjLoader.Load("test.obj");
 
 	p->push_back(m);
 
 	while (app.ShouldNotQuit())
 	{
-		app.Render();
+		app.Update();
 	}
 	return (0);
 }
