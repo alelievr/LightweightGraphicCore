@@ -42,7 +42,6 @@ void		RenderTarget::Update(void)
 	
 }
 
-
 RenderTarget &	RenderTarget::operator=(RenderTarget const & src)
 {
 	std::cout << "Assignment operator called" << std::endl;
@@ -57,24 +56,24 @@ RenderTarget &	RenderTarget::operator=(RenderTarget const & src)
 	return (*this);
 }
 
-GLuint		RenderTarget::getFramebuffer(void) const { return (this->_framebuffer); }
-void		RenderTarget::setFramebuffer(GLuint tmp) { this->_framebuffer = tmp; }
+GLuint		RenderTarget::GetFramebuffer(void) const { return (this->_framebuffer); }
+void		RenderTarget::SetFramebuffer(GLuint tmp) { this->_framebuffer = tmp; }
 
-GLuint *		RenderTarget::getAttachmentIds(void) const { return (this->_attachmentIds); }
-void		RenderTarget::setAttachmentIds(GLuint * tmp) { this->_attachmentIds = tmp; }
+GLuint *		RenderTarget::GetAttachmentIds(void) const { return (this->_attachmentIds); }
+void		RenderTarget::SetAttachmentIds(GLuint * tmp) { this->_attachmentIds = tmp; }
 
-std::string		RenderTarget::getName(void) const { return (this->_name); }
-void		RenderTarget::setName(std::string tmp) { this->_name = tmp; }
+std::string		RenderTarget::GetName(void) const { return (this->_name); }
+void		RenderTarget::SetName(std::string tmp) { this->_name = tmp; }
 
-glm::vec2		RenderTarget::getSize(void) const { return (this->_size); }
-void		RenderTarget::setSize(glm::vec2 tmp) { this->_size = tmp; }
+glm::vec2		RenderTarget::GetSize(void) const { return (this->_size); }
+void		RenderTarget::SetSize(glm::vec2 tmp) { this->_size = tmp; }
 
-int		RenderTarget::getEnabledAttachments(void) const { return (this->_enabledAttachments); }
-void		RenderTarget::setEnabledAttachments(int tmp) { this->_enabledAttachments = tmp; }
+int		RenderTarget::GetEnabledAttachments(void) const { return (this->_enabledAttachments); }
+void		RenderTarget::SetEnabledAttachments(int tmp) { this->_enabledAttachments = tmp; }
 
 std::ostream &	operator<<(std::ostream & o, RenderTarget const & r)
 {
-	o << "tostring of the class" << std::endl;
+	o << r.GetName() << std::endl;
 	(void)r;
 	return (o);
 }

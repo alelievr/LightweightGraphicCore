@@ -2,8 +2,9 @@
 # define MODEL_HPP
 # include <iostream>
 # include <string>
+# include <Object.hpp>
 
-class		Model
+class		Model : public Object
 {
 	private:
 		Mesh	_mesh;

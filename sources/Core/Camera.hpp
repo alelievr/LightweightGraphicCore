@@ -2,8 +2,9 @@
 # define CAMERA_HPP
 # include <iostream>
 # include <string>
+# include <Object.hpp>
 
-class		Camera
+class		Camera : public Object
 {
 	private:
 		RenderTarget	_target;
