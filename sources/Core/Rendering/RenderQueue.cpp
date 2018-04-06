@@ -23,7 +23,7 @@ void		RenderQueue::RenderPass(void)
 	
 }
 
-void		RenderQueue::SetRenderTraget(const RenderTarget & t)
+void		RenderQueue::SetRenderTraGet(const RenderTarget & t)
 {
 	
 }
@@ -34,13 +34,13 @@ RenderQueue &	RenderQueue::operator=(RenderQueue const & src)
 	std::cout << "Assignment operator called" << std::endl;
 
 	if (this != &src) {
-		this->_renderList = src.getRenderList();
+		this->_renderList = src.GetRenderList();
 	}
 	return (*this);
 }
 
-std::vector< IRenderable * >		RenderQueue::getRenderList(void) const { return (this->_renderList); }
-void		RenderQueue::setRenderList(std::vector< IRenderable * > tmp) { this->_renderList = tmp; }
+std::vector< IRenderable * >		RenderQueue::GetRenderList(void) const { return (this->_renderList); }
+void		RenderQueue::SetRenderList(std::vector< IRenderable * > tmp) { this->_renderList = tmp; }
 
 std::ostream &	operator<<(std::ostream & o, RenderQueue const & r)
 {

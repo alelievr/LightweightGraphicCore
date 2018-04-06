@@ -3,8 +3,8 @@
 Image::Image(void)
 {
 	std::cout << "Default constructor of Image called" << std::endl;
-	this->_file = "";
-	this->_id = ;
+	this->_file = nullptr;
+	this->_id = -1;
 }
 
 Image::Image(Image const & src)
@@ -24,17 +24,17 @@ Image &	Image::operator=(Image const & src)
 	std::cout << "Assignment operator called" << std::endl;
 
 	if (this != &src) {
-		this->_file = src.getFile();
-		this->_id = src.getId();
+		this->_file = src.GetFile();
+		this->_id = src.GetId();
 	}
 	return (*this);
 }
 
-std::string		Image::getFile(void) const { return (this->_file); }
-void		Image::setFile(std::string tmp) { this->_file = tmp; }
+std::string		Image::GetFile(void) const { return (this->_file); }
+void		Image::SetFile(std::string tmp) { this->_file = tmp; }
 
-GLuint		Image::getId(void) const { return (this->_id); }
-void		Image::setId(GLuint tmp) { this->_id = tmp; }
+GLuint		Image::GetId(void) const { return (this->_id); }
+void		Image::SetId(GLuint tmp) { this->_id = tmp; }
 
 std::ostream &	operator<<(std::ostream & o, Image const & r)
 {

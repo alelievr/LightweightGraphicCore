@@ -43,29 +43,29 @@ Mesh &	Mesh::operator=(Mesh const & src)
 	std::cout << "Assignment operator called" << std::endl;
 
 	if (this != &src) {
-		this->_vertices = src.getVertices();
-		this->_normals = src.getNormals();
-		this->_uvs = src.getUvs();
-		this->_colors = src.getColors();
-		this->_tangents = src.getTangents();
+		this->_vertices = src.GetVertices();
+		this->_normals = src.GetNormals();
+		this->_uvs = src.GetUvs();
+		this->_colors = src.GetColors();
+		this->_tangents = src.GetTangents();
 	}
 	return (*this);
 }
 
-std::vector< glm::vec3 >		Mesh::getVertices(void) const { return (this->_vertices); }
-void		Mesh::setVertices(std::vector< glm::vec3 > tmp) { this->_vertices = tmp; }
+std::vector< glm::vec3 >		Mesh::GetVertices(void) const { return (this->_vertices); }
+void		Mesh::SetVertices(std::vector< glm::vec3 > tmp) { this->_vertices = tmp; }
 
-std::vector< glm::vec3 >		Mesh::getNormals(void) const { return (this->_normals); }
-void		Mesh::setNormals(std::vector< glm::vec3 > tmp) { this->_normals = tmp; }
+std::vector< glm::vec3 >		Mesh::GetNormals(void) const { return (this->_normals); }
+void		Mesh::SetNormals(std::vector< glm::vec3 > tmp) { this->_normals = tmp; }
 
-std::vector< glm::vec2 >		Mesh::getUvs(void) const { return (this->_uvs); }
-void		Mesh::setUvs(std::vector< glm::vec2 > tmp) { this->_uvs = tmp; }
+std::vector< glm::vec2 >		Mesh::GetUvs(void) const { return (this->_uvs); }
+void		Mesh::SetUvs(std::vector< glm::vec2 > tmp) { this->_uvs = tmp; }
 
-std::vector< Color >		Mesh::getColors(void) const { return (this->_colors); }
-void		Mesh::setColors(std::vector< Color > tmp) { this->_colors = tmp; }
+std::vector< Color >		Mesh::GetColors(void) const { return (this->_colors); }
+void		Mesh::SetColors(std::vector< Color > tmp) { this->_colors = tmp; }
 
-std::vector< glm::vec3 >		Mesh::getTangents(void) const { return (this->_tangents); }
-void		Mesh::setTangents(std::vector< glm::vec3 > tmp) { this->_tangents = tmp; }
+std::vector< glm::vec3 >		Mesh::GetTangents(void) const { return (this->_tangents); }
+void		Mesh::SetTangents(std::vector< glm::vec3 > tmp) { this->_tangents = tmp; }
 
 std::ostream &	operator<<(std::ostream & o, Mesh const & r)
 {

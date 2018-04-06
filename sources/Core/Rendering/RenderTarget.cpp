@@ -47,11 +47,11 @@ RenderTarget &	RenderTarget::operator=(RenderTarget const & src)
 	std::cout << "Assignment operator called" << std::endl;
 
 	if (this != &src) {
-		this->_framebuffer = src.getFramebuffer();
-		this->_attachmentIds = src.getAttachmentIds();
-		this->_name = src.getName();
-		this->_size = src.getSize();
-		this->_enabledAttachments = src.getEnabledAttachments();
+		this->_framebuffer = src.GetFramebuffer();
+		this->_attachmentIds = src.GetAttachmentIds();
+		this->_name = src.GetName();
+		this->_size = src.GetSize();
+		this->_enabledAttachments = src.GetEnabledAttachments();
 	}
 	return (*this);
 }

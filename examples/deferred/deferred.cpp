@@ -10,7 +10,7 @@ void		ProcessEvent(EventSystem *es)
 
 int			main(void)
 {
-	LWGE::Application			app;
+	LWGE::Application			app(LWGE::DeferredPipeline);
 	LWGE::RenderPipeline *		rp = app.GetRenderPipeline();
 	LWGE::EventSystem *			es = app.GetEventSystem();
 
@@ -18,7 +18,9 @@ int			main(void)
 
 	rp->Add(testModel);
 
-	app.Start(); //Initalize OpenGL context, open window, ...
+	app.Init(); //Initalize OpenGL context
+	
+	app.Open("window", 2300, 1500, LWGE::FullScreen); //open window, ...
 
 	es->EnableInputEvents();
 

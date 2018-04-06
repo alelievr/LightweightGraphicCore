@@ -54,7 +54,7 @@ ShaderSource &	ShaderSource::operator=(ShaderSource const & src)
 	std::cout << "Assignment operator called" << std::endl;
 
 	if (this != &src) {
-		this->_sourceFiles = src.getSourceFiles();
+		this->_sourceFiles = src.GetSourceFiles();
 	}
 	return (*this);
 }

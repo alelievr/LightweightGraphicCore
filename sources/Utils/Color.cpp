@@ -42,25 +42,25 @@ Color &	Color::operator=(Color const & src)
 	std::cout << "Assignment operator called" << std::endl;
 
 	if (this != &src) {
-		this->_r = src.getR();
-		this->_g = src.getG();
-		this->_b = src.getB();
-		this->_a = src.getA();
+		this->_r = src.GetR();
+		this->_g = src.GetG();
+		this->_b = src.GetB();
+		this->_a = src.GetA();
 	}
 	return (*this);
 }
 
-float		Color::getR(void) const { return (this->_r); }
-void		Color::setR(float tmp) { this->_r = tmp; }
+float		Color::GetR(void) const { return (this->_r); }
+void		Color::SetR(float tmp) { this->_r = tmp; }
 
-float		Color::getG(void) const { return (this->_g); }
-void		Color::setG(float tmp) { this->_g = tmp; }
+float		Color::GetG(void) const { return (this->_g); }
+void		Color::SetG(float tmp) { this->_g = tmp; }
 
-float		Color::getB(void) const { return (this->_b); }
-void		Color::setB(float tmp) { this->_b = tmp; }
+float		Color::GetB(void) const { return (this->_b); }
+void		Color::SetB(float tmp) { this->_b = tmp; }
 
-float		Color::getA(void) const { return (this->_a); }
-void		Color::setA(float tmp) { this->_a = tmp; }
+float		Color::GetA(void) const { return (this->_a); }
+void		Color::SetA(float tmp) { this->_a = tmp; }
 
 std::ostream &	operator<<(std::ostream & o, Color const & r)
 {

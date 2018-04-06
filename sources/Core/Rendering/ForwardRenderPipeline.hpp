@@ -1,19 +1,25 @@
-#ifndef FORWARDRENDERPIPELINE_HPP
-# define FORWARDRENDERPIPELINE_HPP
-# include <iostream>
-# include <string>
+#pragma once
 
-class		ForwardRenderPipeline : public IRenderPipeline
+#include <iostream>
+#include <string>
+
+#include "IRenderPipeline.hpp"
+#include "RenderQueueType.hpp"
+#include "RenderQueue.hpp"
+
+namespace LWGE
 {
-	private:
-		RenderQueue		_renderQueues[static_cast< int >(RenderQueueType::Count)];
-		RenderTarget	_target;
+	class		ForwardRenderPipeline : public IRenderPipeline
+	{
+		private:
+			RenderQueue		_renderQueues[static_cast< int >(RenderQueueType::Count)];
+			RenderTarget	_target;
 
-	public:
-		ForwardRenderPipeline(void);
-		virtual ~ForwardRenderPipeline(void);
+		public:
+			ForwardRenderPipeline(void);
+			virtual ~ForwardRenderPipeline(void);
 
-		override void Render(void);
-};
-
-#endif
+			void Render(void) override;
+			void SetRenderTarGet(RenderTarget & target) override;
+	};
+}

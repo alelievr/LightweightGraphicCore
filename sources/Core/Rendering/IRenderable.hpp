@@ -1,16 +1,18 @@
+#pragma once
+
+#include "SortingLayer.hpp"
+#include "Bounds.hpp"
+
 namespace LWGE
 {
-	namespace Core
+	class IRenderable
 	{
-		class IRenderable
-		{
-			public:
-				void			OnPreRender(void) = default;
-				void			Render(void) = 0;
-				void			OnPostRender(void) = default;
+		public:
+			virtual void			OnPreRender(void);
+			virtual void			Render(void) = 0;
+			virtual void			OnPostRender(void);
 
-				SortingLayer	GetSortingLayer(void) = 0;
-				Bounds			GetBounds(void) = 0;
-		}
-	}
+			virtual SortingLayer	GetSortingLayer(void) = 0;
+			virtual Bounds			GetBounds(void) = 0;
+	};
 }

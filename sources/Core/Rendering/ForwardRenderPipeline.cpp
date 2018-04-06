@@ -15,7 +15,7 @@ void	ForwardRenderPipeline::Render(void)
 		this->_renderQueues[i].RenderPass();
 }
 
-void	ForwardRenderPipeline::SetRenderTarget(RenderTarget & traget)
+void	ForwardRenderPipeline::SetRenderTarGet(RenderTarget & traget)
 {
-	this->_target = _target;
+	this->_tarGet = _target;
 }

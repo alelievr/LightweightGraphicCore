@@ -6,7 +6,7 @@
 #    By: alelievr <marvin@42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2014/07/15 15:13:38 by alelievr          #+#    #+#              #
-#    Updated: 2018/04/06 21:35:52 by alelievr         ###   ########.fr        #
+#    Updated: 2018/04/06 17:47:19 by alelievr         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -15,37 +15,8 @@
 #################
 
 #	Sources
-SRCDIR		=	sources
-SRC			=	Core/Application.cpp \
-				Core/Camera.cpp \
-				Core/Events/Event.cpp \
-				Core/Events/EventSystem.cpp \
-				Core/Events/Input.cpp \
-				Core/Material.cpp \
-				Core/Mesh.cpp \
-				Core/Model.cpp \
-				Core/Object.cpp \
-				Core/Rendering/DeferredRenderPipeline.cpp \
-				Core/Rendering/ForwardRenderPipeline.cpp \
-				Core/Rendering/FramebufferAttachment.cpp \
-				Core/Rendering/RenderFlags.cpp \
-				Core/Rendering/RenderQueue.cpp \
-				Core/Rendering/RenderQueueType.cpp \
-				Core/Rendering/RenderTarget.cpp \
-				Core/Rendering/SortingLayer.cpp \
-				Core/Shaders/ChannelType.cpp \
-				Core/Shaders/ImageChannel.cpp \
-				Core/Shaders/ProgramChannel.cpp \
-				Core/Shaders/ShaderProgram.cpp \
-				Core/Shaders/ShaderSource.cpp \
-				Core/Transform.cpp \
-				GUI/Image.cpp \
-				GUI/Mask.cpp \
-				GUI/Text.cpp \
-				Utils/Bounds.cpp \
-				Utils/Color.cpp \
-				Utils/Random.cpp \
-				Utils/Rect.cpp \
+SRCDIR		=	src
+SRC			=	simple.cpp			\
 
 #	Objects
 OBJDIR		=	obj
@@ -61,22 +32,16 @@ CPPVERSION	=	c++11
 #Example $> make DEBUG=2 will set debuglevel to 2
 
 #	Includes
-INCDIRS		=	sources/Core/ sources/Core/Rendering/ sources/Core/Shaders/ sources/Core/Events/ sources/GUI/ sources/Utils/ deps/glfw/include deps/SOIL2/incs deps/glm
+INCDIRS		=	../../sources
 
 #	Libraries
-LIBDIRS		=	deps/glfw/src deps/SOIL2 deps/freetype2/objs/.libs deps/glm
-LDLIBS		=	-lglfw3 -lSOIL2 -lfreetype
-
-GLFWLIB     =   deps/glfw/src/libglfw3.a
-SOILLIB     =   deps/SOIL2/libSOIL2.a
-GLMLIB      =   deps/glm/glm
-FREETYPELIB	=	deps/freetype2/./objs/.libs/libfreetype.a
-
-#	Output
-NAME		=	libLWGE.a
+LIBDIRS		=	../../
+LDLIBS		=	-lLWGE
 
 #	Compiler
-CFLAGS		=	-Wall -Wextra -pedantic
+WERROR		=	-Werror
+CFLAGS		=	-Weverything -pedantic -ffast-math -ffunction-sections -fdata-sections
+CPPFLAGS	=	-Wno-c++98-compat
 CPROTECTION	=	-z execstack -fno-stack-protector
 
 DEBUGFLAGS1	=	-ggdb -fsanitize=address -fno-omit-frame-pointer -fno-optimize-sibling-calls -O0
@@ -98,6 +63,8 @@ CCLEAN_T	=	$(CPREFIX)"9m"
 CCLEAN		=	$(CPREFIX)"166m"
 CRUN_T		=	$(CPREFIX)"198m"
 CRUN		=	$(CPREFIX)"163m"
+CDEPEND		=	$(CPREFIX)"231m"
+CDEPEND_T	=	$(CPREFIX)"231m"
 CNORM_T		=	"226m"
 CNORM_ERR	=	"196m"
 CNORM_WARN	=	"202m"
@@ -109,19 +76,34 @@ CNORM_OK	=	"231m"
 
 OS			:=	$(shell uname -s)
 PROC		:=	$(shell uname -p)
-DEBUGFLAGS	=	""
-LINKDEBUG	=	""
-OPTFLAGS	=	""
-#COMPILATION	=	""
+DEBUGFLAGS	=	
+LINKDEBUG	=	
+OPTFLAGS	=	
+#COMPILATION	=	
 
 ifeq "$(OS)" "Windows_NT"
 endif
 ifeq "$(OS)" "Linux"
-	LDLIBS		+= ""
-	DEBUGFLAGS	+= " -fsanitize=memory -fsanitize-memory-use-after-dtor -fsanitize=thread"
+	LDLIBS		+= 
+	DEBUGFLAGS	+= -fsanitize=memory -fsanitize-memory-use-after-dtor -fsanitize=thread
 endif
 ifeq "$(OS)" "Darwin"
-	CFLAGS		+= "-ferror-limit=999"
+	FRAMEWORK	=	
+endif
+
+COMPILER	=	$(shell readlink $(which cc))
+ifneq (,$(findstring clang++,$(COMPILER)))
+	#Clang++ compiler
+	CFLAGS	+= -dead_strip
+else ifneq (,$(findstring clang,$(COMPILER)))
+	#Clang compiler
+	CFLAGS	+= -dead_strip
+else ifneq (,$(findstring gcc,$(COMPILER)))
+	#GCC compiler
+	CFLAGS	+=	--gc-sections
+else ifneq (,$(findstring gcc++,$(COMPILER)))
+	#G++ compiler
+	CFLAGS	+=	--gc-sections
 endif
 
 #################
@@ -135,19 +117,24 @@ OBJS		=	$(patsubst %.c,%.o, $(filter %.c, $(SRC))) \
 OBJ			=	$(addprefix $(OBJDIR)/,$(notdir $(OBJS)))
 NORME		=	**/*.[ch]
 VPATH		+=	$(dir $(addprefix $(SRCDIR)/,$(SRC)))
+VFRAME		=	$(addprefix -framework ,$(FRAMEWORK))
 INCFILES	=	$(foreach inc, $(INCDIRS), $(wildcard $(inc)/*.h))
-CPPFLAGS	=	$(addprefix -I,$(INCDIRS))
+INCFLAGS	=	$(addprefix -I,$(INCDIRS))
 LDFLAGS		=	$(addprefix -L,$(LIBDIRS))
-LINKER		=	ar
-LINKFLAGS	=	rc
+LINKER		=	$(CC)
 
-disp_indent	=	for I in `seq 1 $(MAKELEVEL)`; do \
-					test "$(MAKELEVEL)" '!=' '0' && printf "\t"; \
+disp_indent	=	tabs=""; \
+				for I in `seq 1 $(MAKELEVEL)`; do \
+					test "$(MAKELEVEL)" '!=' '0' && tabs=$$tabs"\t"; \
 				done
+
 color_exec	=	$(call disp_indent); \
-				echo $(1)➤ $(3)$(2)"\n"$(strip $(4))$(CCLEAR);$(4)
+				echo $$tabs$(1)➤ $(3)$(2); \
+				echo $$tabs '$(strip $(4))' $(CCLEAR); \
+				$(4)
+
 color_exec_t=	$(call disp_indent); \
-				echo $(1)➤ $(strip $(3))$(2)$(CCLEAR);$(3)
+				echo $(1)➤ '$(strip $(3))'$(2);$(3);printf $(CCLEAR)
 
 ifneq ($(filter 1,$(strip $(DEBUGLEVEL)) ${DEBUG}),)
 	OPTLEVEL = 0
@@ -163,11 +150,11 @@ ifneq ($(filter 2,$(strip $(DEBUGLEVEL)) ${DEBUG}),)
 endif
 
 ifneq ($(filter 1,$(strip $(OPTLEVEL)) ${OPTI}),)
-	DEBUGFLAGS = ""
+	DEBUGFLAGS = 
 	OPTFLAGS = $(OPTFLAGS1)
 endif
 ifneq ($(filter 2,$(strip $(OPTLEVEL)) ${OPTI}),)
-	DEBUGFLAGS = ""
+	DEBUGFLAGS = 
 	OPTFLAGS = $(OPTFLAGS1) $(OPTFLAGS2)
 endif
 
@@ -175,11 +162,19 @@ ifndef $(CXX)
 	CXX = clang++
 endif
 
+ifneq ($(filter %.cpp,$(SRC)),)
+	LINKER = $(CXX)
+endif
+
+ifdef ${NOWERROR}
+	WERROR = 
+endif
+
 ifeq "$(strip $(LIBFT))" "2"
 ifneq ($(wildcard ./libft),)
-	LIBDIRS += " -Llibft"
-	LDLIBS += " -lft"
-	INCDIRS += " -Ilibft"
+	LIBDIRS += "libft"
+	LDLIBS += "-lft"
+	INCDIRS += "libft/include"
 endif
 endif
 
@@ -188,48 +183,28 @@ endif
 #################
 
 #	First target
-all: $(GLFWLIB) $(OBJLIB) $(GLMLIB) $(FREETYPELIB) $(SOILLIB) $(NAME)
-
-$(GLMLIB):
-	@git submodule init
-	@git submodule update
-
-$(SOILLIB):
-	@git submodule init
-	@git submodule update
-	@cd deps/SOIL2 && $(MAKE)
-
-$(GLFWLIB):
-	@git submodule init
-	@git submodule update
-	@cd deps/glfw && cmake . && $(MAKE)
-
-$(FREETYPELIB):
-	@git submodule init
-	@git submodule update
-	@cd deps/freetype2 && ./autogen.sh && env -i ./configure --without-bzip2 --without-zlib --enable-static --without-harfbuzz --without-png && $(MAKE)
-
+all: $(NAME)
 
 #	Linking
 $(NAME): $(OBJ)
-	@$(if $(findstring libft,$(LDLIBS)),$(call color_exec_t,$(CCLEAR),$(CCLEAR),\
+	@$(if $(findstring lft,$(LDLIBS)),$(call color_exec_t,$(CCLEAR),$(CCLEAR),\
 		make -j 4 -C libft))
 	@$(call color_exec,$(CLINK_T),$(CLINK),"Link of $(NAME):",\
-		$(LINKER) $(LINKFLAGS) $@ $^)
+		$(LINKER) $(WERROR) $(CFLAGS) $(LDFLAGS) $(LDLIBS) $(OPTFLAGS) $(DEBUGFLAGS) $(LINKDEBUG) $(VFRAME) -o $@ $^)
 
 $(OBJDIR)/%.o: %.cpp $(INCFILES)
-	@mkdir -p $(OBJDIR)
+	@mkdir -p $(OBJDIR)/$(dir $<)
 	@$(call color_exec,$(COBJ_T),$(COBJ),"Object: $@",\
-		$(CXX) -std=$(CPPVERSION) $(CFLAGS) $(OPTFLAGS) $(DEBUGFLAGS) $(CPPFLAGS) -o $@ -c $<)
+		$(CXX) -std=$(CPPVERSION) $(WERROR) $(CFLAGS) $(OPTFLAGS) $(DEBUGFLAGS) $(CPPFLAGS) $(INCFLAGS) -o $@ -c $<)
 
 #	Objects compilation
 $(OBJDIR)/%.o: %.c $(INCFILES)
-	@mkdir -p $(OBJDIR)
+	@mkdir -p $(OBJDIR)/$(dir $<)
 	@$(call color_exec,$(COBJ_T),$(COBJ),"Object: $@",\
-		$(CC) $(CFLAGS) $(OPTFLAGS) $(DEBUGFLAGS) $(CPPFLAGS) -o $@ -c $<)
+		$(CC) $(WERROR) $(CFLAGS) $(OPTFLAGS) $(DEBUGFLAGS) $(INCFLAGS) -o $@ -c $<)
 
 $(OBJDIR)/%.o: %.s
-	@mkdir -p $(OBJDIR)
+	@mkdir -p $(OBJDIR)/$(dir $<)
 	@$(call color_exec,$(COBJ_T),$(COBJ),"Object: $@",\
 		$(NASM) -f macho64 -o $@ $<)
 
@@ -243,9 +218,6 @@ clean:
 fclean: clean
 	@$(call color_exec,$(CCLEAN_T),$(CCLEAN),"Fclean:",\
 		$(RM) $(NAME))
-
-examples:
-	@$(MAKE) -C examples/
 
 #	All removing then compiling
 re: fclean all
@@ -367,4 +339,4 @@ coffee:
 	@echo '         ""--..,,_____            _____,,..--"""'''
 	@echo '                      """------"""'
 
-.PHONY: all clean fclean re norme codesize examples
+.PHONY: all clean fclean re norme codesize

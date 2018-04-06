@@ -1,61 +1,66 @@
-#ifndef EVENT_HPP
-# define EVENT_HPP
-# include <iostream>
-# include <string>
+#pragma once
 
-class		Event
+#include <iostream>
+#include <string>
+
+#include "glm/glm.hpp"
+
+#include "EventType.hpp"
+
+namespace LWGE
 {
-	private:
-		EventType	_type;
-		bool	_alt;
-		bool	_control;
-		bool	_shift;
-		bool	_function;
-		bool	_capsLock;
-		int	_keyCode;
-		int	_mouseButton;
-		int	_joystickNumber;
-		glm::vec2	_delta;
+	class		Event
+	{
+		private:
+			EventType	_type;
+			bool		_alt;
+			bool		_control;
+			bool		_shift;
+			bool		_function;
+			bool		_capsLock;
+			int			_keyCode;
+			int			_mouseButton;
+			int			_joystickNumber;
+			glm::vec2	_delta;
 
 
-	public:
-		Event();
-		Event(const Event&);
-		virtual ~Event(void);
+		public:
+			Event(void);
+			Event(const Event&);
+			virtual ~Event(void);
 
-		Event &	operator=(Event const & src);
+			Event &	operator=(Event const & src);
 
-		EventType	getType(void) const;
-		void	setType(EventType tmp);
-		
-		bool	getAlt(void) const;
-		void	setAlt(bool tmp);
-		
-		bool	getControl(void) const;
-		void	setControl(bool tmp);
-		
-		bool	getShift(void) const;
-		void	setShift(bool tmp);
-		
-		bool	getFunction(void) const;
-		void	setFunction(bool tmp);
-		
-		bool	getCapsLock(void) const;
-		void	setCapsLock(bool tmp);
-		
-		int	getKeyCode(void) const;
-		void	setKeyCode(int tmp);
-		
-		int	getMouseButton(void) const;
-		void	setMouseButton(int tmp);
-		
-		int	getJoystickNumber(void) const;
-		void	setJoystickNumber(int tmp);
-		
-		glm::vec2	getDelta(void) const;
-		void	setDelta(glm::vec2 tmp);
-};
+			EventType	GetType(void) const;
+			void	SetType(EventType tmp);
+			
+			bool	GetAlt(void) const;
+			void	SetAlt(bool tmp);
+			
+			bool	GetControl(void) const;
+			void	SetControl(bool tmp);
+			
+			bool	GetShift(void) const;
+			void	SetShift(bool tmp);
+			
+			bool	GetFunction(void) const;
+			void	SetFunction(bool tmp);
+			
+			bool	GetCapsLock(void) const;
+			void	SetCapsLock(bool tmp);
+			
+			int	GetKeyCode(void) const;
+			void	SetKeyCode(int tmp);
+			
+			int	GetMouseButton(void) const;
+			void	SetMouseButton(int tmp);
+			
+			int	GetJoystickNumber(void) const;
+			void	SetJoystickNumber(int tmp);
+			
+			glm::vec2	GetDelta(void) const;
+			void	SetDelta(glm::vec2 tmp);
+	};
 
-std::ostream &	operator<<(std::ostream & o, Event const & r);
-
-#endif
+	std::ostream &	operator<<(std::ostream & o, Event const & r);
+}

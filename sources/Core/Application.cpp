@@ -1,17 +1,13 @@
 #include "Application.hpp"
 
+#include "ForwardRenderPipeline.hpp"
 
-Application::Application(void)
+using namespace LWGE;
+
+Application::Application(void) : _shouldNotQuit(true)
 {
 	std::cout << "Default constructor of Application called" << std::endl;
-	this->_renderPipeline = NULL;
-	this->_eventSystem = ;
-}
-
-Application::Application(Application const & src)
-{
-	*this = src;
-	std::cout << "Copy constructor called" << std::endl;
+	this->_renderPipeline = new ForwardRenderPipeline();
 }
 
 Application::~Application(void)
@@ -20,22 +16,36 @@ Application::~Application(void)
 }
 
 
-Application &	Application::operator=(Application const & src)
+bool			Application::ShouldNotQuit(void) const noexcept
 {
-	std::cout << "Assignment operator called" << std::endl;
-
-	if (this != &src) {
-		this->_renderPipeline = src.getRenderPipeline();
-		this->_eventSystem = src.getEventSystem();
-	}
-	return (*this);
+	return this->_shouldNotQuit;
 }
 
-IRenderPipeline *		Application::getRenderPipeline(void) const { return (this->_renderPipeline); }
-void		Application::setRenderPipeline(IRenderPipeline * tmp) { this->_renderPipeline = tmp; }
+void			Application::Quit(void) noexcept
+{
+	_shouldNotQuit = false;
+}
 
-EventSystem		Application::getEventSystem(void) const { return (this->_eventSystem); }
-void		Application::setEventSystem(EventSystem tmp) { this->_eventSystem = tmp; }
+void			Application::Open(const std::string & name, const int width, const int height, const WindowFlag flags) noexcept
+{
+	glfwWindowHint (GLFW_CONTEXT_VERSION_MAJOR, 3);
+	glfwWindowHint (GLFW_CONTEXT_VERSION_MINOR, 2);
+	glfwWindowHint (GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+	glfwWindowHint (GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+
+	glfwWindowHint(GLFW_RESIZABLE, (flags | WindowFlag::Resizable) != 0);
+	glfwWindowHint(GLFW_DECORATED, (flags & WindowFlag::Decorated) != 0);
+	glfwWindowHint(GLFW_FOCUSED, (flags & WindowFlag::Focused) != 0);
+	glfwWindowHint(GLFW_FLOATING, (flags & WindowFlag::Floating) != 0);
+	glfwWindowHint(GLFW_MAXIMIZED, (flags & WindowFlag::Maximized) != 0);
+
+	_window = glfwCreateWindow(width, height, name.c_str(), NULL, NULL);
+}
+
+IRenderPipeline *	Application::GetRenderPipeline(void) const noexcept { return (this->_renderPipeline); }
+void				Application::SetRenderPipeline(IRenderPipeline * tmp) noexcept { this->_renderPipeline = tmp; }
+
+const EventSystem *	Application::GetEventSystem(void) const noexcept { return &(this->_eventSystem); }
 
 std::ostream &	operator<<(std::ostream & o, Application const & r)
 {

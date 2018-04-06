@@ -40,17 +40,17 @@ Model &	Model::operator=(Model const & src)
 	std::cout << "Assignment operator called" << std::endl;
 
 	if (this != &src) {
-		this->_mesh = src.getMesh();
-		this->_materials = src.getMaterials();
+		this->_mesh = src.GetMesh();
+		this->_materials = src.GetMaterials();
 	}
 	return (*this);
 }
 
-Mesh		Model::getMesh(void) const { return (this->_mesh); }
-void		Model::setMesh(Mesh tmp) { this->_mesh = tmp; }
+Mesh		Model::GetMesh(void) const { return (this->_mesh); }
+void		Model::SetMesh(Mesh tmp) { this->_mesh = tmp; }
 
-std::vector< Material >		Model::getMaterials(void) const { return (this->_materials); }
-void		Model::setMaterials(std::vector< Material > tmp) { this->_materials = tmp; }
+std::vector< Material >		Model::GetMaterials(void) const { return (this->_materials); }
+void		Model::SetMaterials(std::vector< Material > tmp) { this->_materials = tmp; }
 
 std::ostream &	operator<<(std::ostream & o, Model const & r)
 {

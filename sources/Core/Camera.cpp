@@ -1,13 +1,12 @@
 #include "Camera.hpp"
 
+using namespace LWGE;
 
 Camera::Camera(void)
 {
 	std::cout << "Default constructor of Camera called" << std::endl;
-	this->_target = ;
-	this->_size = ;
-	this->_cameraType = ;
-	this->_orthographic = false;
+	this->_target = new RenderTarget();
+	this->_cameraType = CameraType::Perspective;
 	this->_fov = 0;
 	this->_nearPlane = 0;
 	this->_farPlane = 0;
@@ -45,37 +44,33 @@ Camera &	Camera::operator=(Camera const & src)
 	std::cout << "Assignment operator called" << std::endl;
 
 	if (this != &src) {
-		this->_target = src.getTarget();
-		this->_size = src.getSize();
-		this->_cameraType = src.getCameraType();
-		this->_orthographic = src.getOrthographic();
-		this->_fov = src.getFov();
-		this->_nearPlane = src.getNearPlane();
-		this->_farPlane = src.getFarPlane();
+		this->_target = src.GetTarget();
+		this->_size = src.GetSize();
+		this->_cameraType = src.GetCameraType();
+		this->_fov = src.GetFov();
+		this->_nearPlane = src.GetNearPlane();
+		this->_farPlane = src.GetFarPlane();
 	}
 	return (*this);
 }
 
-RenderTarget		Camera::getTarget(void) const { return (this->_target); }
-void		Camera::setTarget(RenderTarget tmp) { this->_target = tmp; }
+RenderTarget *		Camera::GetTarget(void) const { return (this->_target); }
+void		Camera::SetTarget(RenderTarget * tmp) { this->_target = tmp; }
 
-glm::vec2		Camera::getSize(void) const { return (this->_size); }
-void		Camera::setSize(glm::vec2 tmp) { this->_size = tmp; }
+glm::vec2		Camera::GetSize(void) const { return (this->_size); }
+void		Camera::SetSize(glm::vec2 tmp) { this->_size = tmp; }
 
-CameraType		Camera::getCameraType(void) const { return (this->_cameraType); }
-void		Camera::setCameraType(CameraType tmp) { this->_cameraType = tmp; }
+CameraType		Camera::GetCameraType(void) const { return (this->_cameraType); }
+void		Camera::SetCameraType(CameraType tmp) { this->_cameraType = tmp; }
 
-bool		Camera::getOrthographic(void) const { return (this->_orthographic); }
-void		Camera::setOrthographic(bool tmp) { this->_orthographic = tmp; }
+float		Camera::GetFov(void) const { return (this->_fov); }
+void		Camera::SetFov(float tmp) { this->_fov = tmp; }
 
-float		Camera::getFov(void) const { return (this->_fov); }
-void		Camera::setFov(float tmp) { this->_fov = tmp; }
+float		Camera::GetNearPlane(void) const { return (this->_nearPlane); }
+void		Camera::SetNearPlane(float tmp) { this->_nearPlane = tmp; }
 
-float		Camera::getNearPlane(void) const { return (this->_nearPlane); }
-void		Camera::setNearPlane(float tmp) { this->_nearPlane = tmp; }
-
-float		Camera::getFarPlane(void) const { return (this->_farPlane); }
-void		Camera::setFarPlane(float tmp) { this->_farPlane = tmp; }
+float		Camera::GetFarPlane(void) const { return (this->_farPlane); }
+void		Camera::SetFarPlane(float tmp) { this->_farPlane = tmp; }
 
 std::ostream &	operator<<(std::ostream & o, Camera const & r)
 {

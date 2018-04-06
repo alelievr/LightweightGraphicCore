@@ -70,8 +70,8 @@ ShaderProgram &	ShaderProgram::operator=(ShaderProgram const & src)
 	std::cout << "Assignment operator called" << std::endl;
 
 	if (this != &src) {
-		this->_id = src.getId();
-		this->_sources = src.getSources();
+		this->_id = src.GetId();
+		this->_sources = src.GetSources();
 	}
 	return (*this);
 }

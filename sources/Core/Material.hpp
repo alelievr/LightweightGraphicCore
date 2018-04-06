@@ -1,45 +1,50 @@
-#ifndef MATERIAL_HPP
-# define MATERIAL_HPP
-# include <iostream>
-# include <string>
+#pragma once
 
-class		Material
+#include <iostream>
+#include <string>
+
+#include "ShaderProgram.hpp"
+#include "Texture.hpp"
+#include "RenderQueueType.hpp"
+
+namespace LWGE
 {
-	private:
-		RenderQueueType	_renderQueueType;
-		int	_renderFlags;
-		ShaderProgram	_shaderProgram;
+	class		Material
+	{
+		private:
+			RenderQueueType	_renderQueueType;
+			int	_renderFlags;
+			ShaderProgram	_shaderProgram;
 
 
-	public:
-		Material();
-		Material(const Material&);
-		virtual ~Material(void);
+		public:
+			Material();
+			Material(const Material&);
+			virtual ~Material(void);
 
-		Material &	operator=(Material const & src);
+			Material &	operator=(Material const & src);
 
-		void	Bind(void);
+			void	Bind(void);
 
-		void	SetColor(const std::string & name, const Color & c);
+			void	SetColor(const std::string & name, const Color & c);
 
-		void	SetFloat(const std::string & name, const float f);
+			void	SetFloat(const std::string & name, const float f);
 
-		void	SetInt(const std::string & name, const int i);
+			void	SetInt(const std::string & name, const int i);
 
-		void	SetTexture(const Texture & t);
+			void	SetTexture(const Texture & t);
 
-		void	SetMatrix(const std::string & name, const glm::mat4 & m);
+			void	SetMatrix(const std::string & name, const glm::mat4 & m);
 
-		RenderQueueType	getRenderQueueType(void) const;
-		void	setRenderQueueType(RenderQueueType tmp);
-		
-		int	getRenderFlags(void) const;
-		void	setRenderFlags(int tmp);
-		
-		ShaderProgram	getShaderProgram(void) const;
-		void	setShaderProgram(ShaderProgram tmp);
-};
+			RenderQueueType	GetRenderQueueType(void) const;
+			void	SetRenderQueueType(RenderQueueType tmp);
+			
+			int	GetRenderFlags(void) const;
+			void	SetRenderFlags(int tmp);
+			
+			ShaderProgram	GetShaderProgram(void) const;
+			void	SetShaderProgram(ShaderProgram tmp);
+	};
 
-std::ostream &	operator<<(std::ostream & o, Material const & r);
-
-#endif
+	std::ostream &	operator<<(std::ostream & o, Material const & r);
+}

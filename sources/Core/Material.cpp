@@ -1,12 +1,13 @@
 #include "Material.hpp"
 
+using namespace LWGE;
 
 Material::Material(void)
 {
 	std::cout << "Default constructor of Material called" << std::endl;
-	this->_renderQueueType = ;
+	this->_renderQueueType = RenderQueueType::Geometry;
 	this->_renderFlags = 0;
-	this->_shaderProgram = ;
+	this->_shaderProgram = nullptr;
 }
 
 Material::Material(Material const & src)
@@ -56,21 +57,21 @@ Material &	Material::operator=(Material const & src)
 	std::cout << "Assignment operator called" << std::endl;
 
 	if (this != &src) {
-		this->_renderQueueType = src.getRenderQueueType();
-		this->_renderFlags = src.getRenderFlags();
-		this->_shaderProgram = src.getShaderProgram();
+		this->_renderQueueType = src.GetRenderQueueType();
+		this->_renderFlags = src.GetRenderFlags();
+		this->_shaderProgram = src.GetShaderProgram();
 	}
 	return (*this);
 }
 
-RenderQueueType		Material::getRenderQueueType(void) const { return (this->_renderQueueType); }
-void		Material::setRenderQueueType(RenderQueueType tmp) { this->_renderQueueType = tmp; }
+RenderQueueType		Material::GetRenderQueueType(void) const { return (this->_renderQueueType); }
+void		Material::SetRenderQueueType(RenderQueueType tmp) { this->_renderQueueType = tmp; }
 
-int		Material::getRenderFlags(void) const { return (this->_renderFlags); }
-void		Material::setRenderFlags(int tmp) { this->_renderFlags = tmp; }
+int		Material::GetRenderFlags(void) const { return (this->_renderFlags); }
+void		Material::SetRenderFlags(int tmp) { this->_renderFlags = tmp; }
 
-ShaderProgram		Material::getShaderProgram(void) const { return (this->_shaderProgram); }
-void		Material::setShaderProgram(ShaderProgram tmp) { this->_shaderProgram = tmp; }
+ShaderProgram		Material::GetShaderProgram(void) const { return (this->_shaderProgram); }
+void		Material::SetShaderProgram(ShaderProgram tmp) { this->_shaderProgram = tmp; }
 
 std::ostream &	operator<<(std::ostream & o, Material const & r)
 {

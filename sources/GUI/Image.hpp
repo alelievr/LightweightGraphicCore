@@ -1,7 +1,8 @@
-#ifndef IMAGE_HPP
-# define IMAGE_HPP
-# include <iostream>
-# include <string>
+#pragma once
+
+#include <iostream>
+#include <string>
+#include "GLFW/glfw3.h"
 
 class		Image
 {
@@ -17,13 +18,11 @@ class		Image
 
 		Image &	operator=(Image const & src);
 
-		std::string	getFile(void) const;
-		void	setFile(std::string tmp);
+		std::string	GetFile(void) const;
+		void	SetFile(std::string tmp);
 		
-		GLuint	getId(void) const;
-		void	setId(GLuint tmp);
+		GLuint	GetId(void) const;
+		void	SetId(GLuint tmp);
 };
 
 std::ostream &	operator<<(std::ostream & o, Image const & r);
-
-#endif

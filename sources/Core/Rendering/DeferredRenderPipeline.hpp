@@ -17,7 +17,7 @@ class		DeferredRenderPipeline : public IRenderPipeline
 
 		void	Render(void);
 
-		void	SetRenderTarget(RenderTarget & target);
+		void	SetRenderTarGet(RenderTarget & target);
 };
 
 std::ostream &	operator<<(std::ostream & o, DeferredRenderPipeline const & r);

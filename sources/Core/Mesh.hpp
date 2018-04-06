@@ -26,20 +26,20 @@ class		Mesh
 
 		void	Clear();
 
-		std::vector< glm::vec3 >	getVertices(void) const;
-		void	setVertices(std::vector< glm::vec3 > tmp);
+		std::vector< glm::vec3 >	GetVertices(void) const;
+		void	SetVertices(std::vector< glm::vec3 > tmp);
 		
-		std::vector< glm::vec3 >	getNormals(void) const;
-		void	setNormals(std::vector< glm::vec3 > tmp);
+		std::vector< glm::vec3 >	GetNormals(void) const;
+		void	SetNormals(std::vector< glm::vec3 > tmp);
 		
-		std::vector< glm::vec2 >	getUvs(void) const;
-		void	setUvs(std::vector< glm::vec2 > tmp);
+		std::vector< glm::vec2 >	GetUvs(void) const;
+		void	SetUvs(std::vector< glm::vec2 > tmp);
 		
-		std::vector< Color >	getColors(void) const;
-		void	setColors(std::vector< Color > tmp);
+		std::vector< Color >	GetColors(void) const;
+		void	SetColors(std::vector< Color > tmp);
 		
-		std::vector< glm::vec3 >	getTangents(void) const;
-		void	setTangents(std::vector< glm::vec3 > tmp);
+		std::vector< glm::vec3 >	GetTangents(void) const;
+		void	SetTangents(std::vector< glm::vec3 > tmp);
 };
 
 std::ostream &	operator<<(std::ostream & o, Mesh const & r);

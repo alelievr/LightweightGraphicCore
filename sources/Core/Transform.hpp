@@ -6,15 +6,18 @@
 /*   By: alelievr <alelievr@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/08/31 11:42:19 by alelievr          #+#    #+#             */
-/*   Updated: 2017/08/31 11:43:42 by alelievr         ###   ########.fr       */
+/*   Updated: 2018/04/06 21:24:50 by alelievr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef TRANSFORM_HPP
-# define TRANSFORM_HPP
-# include <iostream>
-# include <string>
-# include <list>
+#pragma once
+
+#include <glm/glm.hpp>
+#include <glm/gtc/quaternion.hpp>
+
+#include <iostream>
+#include <string>
+#include <list>
 
 class		Transform
 {
@@ -62,49 +65,45 @@ class		Transform
 
 		glm::vec3	TransformPoint(const float x, const float y, const float z);
 
-		glm::vec3	TransformDirection(const glm::vec3 & direction);
-
 		void	Translate(const glm::vec3 & translation);
 
 		Transform &	GetRoot(void);
 
-		Transform *	getParent(void) const;
-		void	setParent(Transform * tmp);
+		Transform *	GetParent(void) const;
+		void	SetParent(Transform * tmp);
 		
-		std::list< Transform >	getChilds(void) const;
-		void	setChilds(std::list< Transform > tmp);
+		std::list< Transform >	GetChilds(void) const;
+		void	SetChilds(std::list< Transform > tmp);
 		
-		glm::vec3	getPosition(void) const;
-		void	setPosition(glm::vec3 tmp);
+		glm::vec3	GetPosition(void) const;
+		void	SetPosition(glm::vec3 tmp);
 		
-		glm::quat	getRotation(void) const;
-		void	setRotation(glm::quat tmp);
+		glm::quat	GetRotation(void) const;
+		void	SetRotation(glm::quat tmp);
 		
-		glm::vec3	getScale(void) const;
-		void	setScale(glm::vec3 tmp);
+		glm::vec3	GetScale(void) const;
+		void	SetScale(glm::vec3 tmp);
 		
-		glm::vec3	getUp(void) const;
-		void	setUp(glm::vec3 tmp);
+		glm::vec3	GetUp(void) const;
+		void	SetUp(glm::vec3 tmp);
 		
-		glm::vec3	getDown(void) const;
-		void	setDown(glm::vec3 tmp);
+		glm::vec3	GetDown(void) const;
+		void	SetDown(glm::vec3 tmp);
 		
-		glm::vec3	getRight(void) const;
-		void	setRight(glm:vec3 tmp);
+		glm::vec3	GetRight(void) const;
+		void	SetRight(glm::vec3 tmp);
 		
-		glm::vec3	getLeft(void) const;
-		void	setLeft(glm::vec3 tmp);
+		glm::vec3	GetLeft(void) const;
+		void	SetLeft(glm::vec3 tmp);
 		
-		glm::vec3	getForward(void) const;
-		void	setForward(glm::vec3 tmp);
+		glm::vec3	GetForward(void) const;
+		void	SetForward(glm::vec3 tmp);
 		
-		glm::vec3	getBack(void) const;
-		void	setBack(glm::vec3 tmp);
+		glm::vec3	GetBack(void) const;
+		void	SetBack(glm::vec3 tmp);
 		
-		glm::vec3	getEulerAngles(void) const;
-		void	setEulerAngles(glm::vec3 tmp);
+		glm::vec3	GetEulerAngles(void) const;
+		void	SetEulerAngles(glm::vec3 tmp);
 };
 
 std::ostream &	operator<<(std::ostream & o, Transform const & r);
-
-#endif

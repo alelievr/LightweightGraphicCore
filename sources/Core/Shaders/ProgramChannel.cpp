@@ -36,9 +36,9 @@ ProgramChannel &	ProgramChannel::operator=(ProgramChannel const & src)
 	std::cout << "Assignment operator called" << std::endl;
 
 	if (this != &src) {
-		this->_programId = src.getProgramId();
-		this->_type = src.getType();
-		this->_program = src.getProgram();
+		this->_programId = src.GetProgramId();
+		this->_type = src.GetType();
+		this->_program = src.GetProgram();
 	}
 	return (*this);
 }

@@ -24,11 +24,11 @@ class		Model : public Object
 
 		void	Render(void);
 
-		Mesh	getMesh(void) const;
-		void	setMesh(Mesh tmp);
+		Mesh	GetMesh(void) const;
+		void	SetMesh(Mesh tmp);
 		
-		std::vector< Material >	getMaterials(void) const;
-		void	setMaterials(std::vector< Material > tmp);
+		std::vector< Material >	GetMaterials(void) const;
+		void	SetMaterials(std::vector< Material > tmp);
 };
 
 std::ostream &	operator<<(std::ostream & o, Model const & r);

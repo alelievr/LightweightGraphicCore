@@ -1,57 +1,65 @@
-#ifndef EVENTSYSTEM_HPP
-# define EVENTSYSTEM_HPP
-# include <iostream>
-# include <string>
+#pragma once
 
-class		EventSystem
+#include <iostream>
+#include <string>
+#include <functional>
+
+#include "Event.hpp"
+
+namespace LWGE
 {
-	private:
-		static onQuitCallback	_onQuit;
-		static onFocusCallback	_onFocus;
-		static onMoveCallback	_onMove;
-		static onMouseDownCallback	_onMouseDown;
-		static onMouseDragCallback	_onMouseDrag;
-		static onMouseEnterCallback	_onMouseEnter;
-		static onMouseExitCallback	_onMouseExit;
-		static onMouseOverCallback	_onMouseOver;
-		static onMouseUpCallback	_onMouseUp;
+	typedef std::function< void (void) > onQuitCallback;
+	typedef std::function< void (bool focused) > onFocusCallback;
+	typedef std::function< void (float x, float y) > onMouseMoveCallback;
+	typedef std::function< void (float x, float y, int button) > onMouseDownCallback;
+	typedef std::function< void (float x, float y, int button) > onMouseUpCallback;
+	typedef std::function< void (void) > onMouseEnterCallback;
+	typedef std::function< void (void) > onMouseExitCallback;
+
+	class		EventSystem
+	{
+		private:
+			static onQuitCallback	_onQuit;
+			static onFocusCallback	_onFocus;
+			static onMouseMoveCallback	_onMouseMove;
+			static onMouseDownCallback	_onMouseDown;
+			static onMouseEnterCallback	_onMouseEnter;
+			static onMouseExitCallback	_onMouseExit;
+			static onMouseUpCallback	_onMouseUp;
+
+			Event						_current;
 
 
-	public:
-		EventSystem();
-		EventSystem(const EventSystem&);
-		virtual ~EventSystem(void);
+		public:
+			EventSystem(void);
+			EventSystem(const EventSystem&) = delete;
+			virtual ~EventSystem(void);
 
-		EventSystem &	operator=(EventSystem const & src);
+			EventSystem &	operator=(EventSystem const & src) = delete;
 
-		onQuitCallback	getOnQuit(void) const;
-		void	setOnQuit(onQuitCallback tmp);
-		
-		onFocusCallback	getOnFocus(void) const;
-		void	setOnFocus(onFocusCallback tmp);
-		
-		onMoveCallback	getOnMove(void) const;
-		void	setOnMove(onMoveCallback tmp);
-		
-		onMouseDownCallback	getOnMouseDown(void) const;
-		void	setOnMouseDown(onMouseDownCallback tmp);
-		
-		onMouseDragCallback	getOnMouseDrag(void) const;
-		void	setOnMouseDrag(onMouseDragCallback tmp);
-		
-		onMouseEnterCallback	getOnMouseEnter(void) const;
-		void	setOnMouseEnter(onMouseEnterCallback tmp);
-		
-		onMouseExitCallback	getOnMouseExit(void) const;
-		void	setOnMouseExit(onMouseExitCallback tmp);
-		
-		onMouseOverCallback	getOnMouseOver(void) const;
-		void	setOnMouseOver(onMouseOverCallback tmp);
-		
-		onMouseUpCallback	getOnMouseUp(void) const;
-		void	setOnMouseUp(onMouseUpCallback tmp);
-};
+			onQuitCallback	GetOnQuit(void) const;
+			void	SetOnQuit(onQuitCallback tmp);
+			
+			onFocusCallback	GetOnFocus(void) const;
+			void	SetOnFocus(onFocusCallback tmp);
+			
+			onMouseMoveCallback	GetOnMouseMove(void) const;
+			void	SetOnMouseMove(onMouseMoveCallback tmp);
+			
+			onMouseDownCallback	GetOnMouseDown(void) const;
+			void	SetOnMouseDown(onMouseDownCallback tmp);
+			
+			onMouseEnterCallback	GetOnMouseEnter(void) const;
+			void	SetOnMouseEnter(onMouseEnterCallback tmp);
+			
+			onMouseExitCallback	GetOnMouseExit(void) const;
+			void	SetOnMouseExit(onMouseExitCallback tmp);
+			
+			onMouseUpCallback	GetOnMouseUp(void) const;
+			void	SetOnMouseUp(onMouseUpCallback tmp);
 
-std::ostream &	operator<<(std::ostream & o, EventSystem const & r);
+			Event	GetCurrentEvent(void) const;
+	};
 
-#endif
+	std::ostream &	operator<<(std::ostream & o, EventSystem const & r);
+}

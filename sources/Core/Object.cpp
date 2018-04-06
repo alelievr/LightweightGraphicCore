@@ -26,21 +26,21 @@ Object &	Object::operator=(Object const & src)
 	std::cout << "Assignment operator called" << std::endl;
 
 	if (this != &src) {
-		this->_trasform = src.getTrasform();
-		this->_name = src.getName();
-		this->_flags = src.getFlags();
+		this->_trasform = src.GetTransform();
+		this->_name = src.GetName();
+		this->_flags = src.GetFlags();
 	}
 	return (*this);
 }
 
-Trasform		Object::getTrasform(void) const { return (this->_trasform); }
-void		Object::setTrasform(Trasform tmp) { this->_trasform = tmp; }
+Transform		Object::GetTransform(void) const { return (this->_trasform); }
+void		Object::SetTransform(Transform tmp) { this->_trasform = tmp; }
 
-std::string		Object::getName(void) const { return (this->_name); }
-void		Object::setName(std::string tmp) { this->_name = tmp; }
+std::string		Object::GetName(void) const { return (this->_name); }
+void		Object::SetName(std::string tmp) { this->_name = tmp; }
 
-int		Object::getFlags(void) const { return (this->_flags); }
-void		Object::setFlags(int tmp) { this->_flags = tmp; }
+int		Object::GetFlags(void) const { return (this->_flags); }
+void		Object::SetFlags(int tmp) { this->_flags = tmp; }
 
 std::ostream &	operator<<(std::ostream & o, Object const & r)
 {

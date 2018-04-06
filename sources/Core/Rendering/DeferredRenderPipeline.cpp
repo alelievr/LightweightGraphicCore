@@ -22,7 +22,7 @@ void		DeferredRenderPipeline::Render(void)
 	
 }
 
-void		DeferredRenderPipeline::SetRenderTarget(RenderTarget & target)
+void		DeferredRenderPipeline::SetRenderTarGet(RenderTarget & target)
 {
 	
 }

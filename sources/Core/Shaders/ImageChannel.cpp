@@ -36,9 +36,9 @@ ImageChannel &	ImageChannel::operator=(ImageChannel const & src)
 	std::cout << "Assignment operator called" << std::endl;
 
 	if (this != &src) {
-		this->_imageId = src.getImageId();
-		this->_type = src.getType();
-		this->_imagePath = src.getImagePath();
+		this->_imageId = src.GetImageId();
+		this->_type = src.GetType();
+		this->_imagePath = src.GetImagePath();
 	}
 	return (*this);
 }

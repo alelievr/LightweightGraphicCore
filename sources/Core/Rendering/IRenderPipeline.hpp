@@ -1,6 +1,13 @@
-class IRenderPipeline
+#pragma once
+
+#include "RenderTarget.hpp"
+
+namespace LWGE
 {
-	public:
-		void	Render(void) = 0;
-		void	SetRenderTarget(RenderTarget & target) = 0;
+	class IRenderPipeline
+	{
+		public:
+			virtual void	Render(void) = 0;
+			virtual void	SetRenderTarGet(RenderTarget & target) = 0;
+	};
 }

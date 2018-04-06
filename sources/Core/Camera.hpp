@@ -1,56 +1,57 @@
-#ifndef CAMERA_HPP
-# define CAMERA_HPP
-# include <iostream>
-# include <string>
-# include <Object.hpp>
+#pragma once
 
-class		Camera : public Object
+#include <iostream>
+#include <string>
+#include <Object.hpp>
+
+#include "Object.hpp"
+#include "RenderTarget.hpp"
+#include "CameraType.hpp"
+
+namespace LWGE
 {
-	private:
-		RenderTarget	_target;
-		glm::vec2	_size;
-		CameraType	_cameraType;
-		bool	_orthographic;
-		float	_fov;
-		float	_nearPlane;
-		float	_farPlane;
+	class		Camera : public Object
+	{
+		private:
+			RenderTarget *	_target;
+			glm::vec2		_size;
+			CameraType		_cameraType;
+			float			_fov;
+			float			_nearPlane;
+			float			_farPlane;
 
 
-	public:
-		Camera();
-		Camera(const Camera&);
-		virtual ~Camera(void);
+		public:
+			Camera();
+			Camera(const Camera&);
+			virtual ~Camera(void);
 
-		Camera &	operator=(Camera const & src);
+			Camera &	operator=(Camera const & src);
 
-		void	Render(void);
+			void	Render(void);
 
-		glm::vec3	WorldToScreenPoint(glm::vec3 worldPosition);
+			glm::vec3	WorldToScreenPoint(glm::vec3 worldPosition);
 
-		glm::vec3	ScreenToWorldPoint(glm::vec3 screenPosition);
+			glm::vec3	ScreenToWorldPoint(glm::vec3 screenPosition);
 
-		RenderTarget	getTarget(void) const;
-		void	setTarget(RenderTarget tmp);
-		
-		glm::vec2	getSize(void) const;
-		void	setSize(glm::vec2 tmp);
-		
-		CameraType	getCameraType(void) const;
-		void	setCameraType(CameraType tmp);
-		
-		bool	getOrthographic(void) const;
-		void	setOrthographic(bool tmp);
-		
-		float	getFov(void) const;
-		void	setFov(float tmp);
-		
-		float	getNearPlane(void) const;
-		void	setNearPlane(float tmp);
-		
-		float	getFarPlane(void) const;
-		void	setFarPlane(float tmp);
-};
+			RenderTarget *	GetTarget(void) const;
+			void	SetTarget(RenderTarget * tmp);
+			
+			glm::vec2	GetSize(void) const;
+			void	SetSize(glm::vec2 tmp);
+			
+			CameraType	GetCameraType(void) const;
+			void	SetCameraType(CameraType tmp);
+			
+			float	GetFov(void) const;
+			void	SetFov(float tmp);
+			
+			float	GetNearPlane(void) const;
+			void	SetNearPlane(float tmp);
+			
+			float	GetFarPlane(void) const;
+			void	SetFarPlane(float tmp);
+	};
 
-std::ostream &	operator<<(std::ostream & o, Camera const & r);
-
-#endif
+	std::ostream &	operator<<(std::ostream & o, Camera const & r);
+}
