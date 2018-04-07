@@ -21,6 +21,6 @@ namespace LWGE
 
 			void	Render(void) override;
 			void	SetRenderTarget(RenderTarget & target) override;
-			void	PushToQueue(const Model &, RenderQueueType queueType) override;
+			void	PushToQueue(std::shared_ptr< IRenderable > renderable, RenderQueueType queueType) override;
 	};
 }

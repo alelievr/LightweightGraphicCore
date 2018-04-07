@@ -37,7 +37,7 @@ Bounds		Model::GetBounds(void)
 
 void		Model::Render(void)
 {
-	
+	std::cout << "Render model !\n";
 }
 
 void		Model::SetModel(const Mesh & mesh, const Material & material)

@@ -12,7 +12,7 @@ namespace LWGE
 	class		RenderQueue
 	{
 		private:
-			std::vector< IRenderable * >	_renderList;
+			std::vector< std::shared_ptr< IRenderable > >	_renderList;
 
 		public:
 			RenderQueue(void);
@@ -23,10 +23,8 @@ namespace LWGE
 
 			void	RenderPass(void);
 
-			void	SetRenderTraGet(const RenderTarget & t);
-
-			std::vector< IRenderable * >	GetRenderList(void) const;
-			void	SetRenderList(std::vector< IRenderable * > tmp);
+			void	AddToRender(std::shared_ptr< IRenderable > renderable);
+			void	RemoveToRender(const IRenderable & renderable);
 	};
 
 	std::ostream &	operator<<(std::ostream & o, RenderQueue const & r);

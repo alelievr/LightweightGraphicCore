@@ -20,27 +20,34 @@ RenderQueue::~RenderQueue(void)
 
 void		RenderQueue::RenderPass(void)
 {
-	
+	for (const auto & r : _renderList)
+	{
+		//check if object have been destroyed
+		if (r)
+			r->Render();
+	}
+
+	std::remove_if(_renderList.begin(), _renderList.end(), [](const auto & r)
+		{
+			return !r;
+		}
+	);
 }
 
-void		RenderQueue::SetRenderTraGet(const RenderTarget & t)
+void		RenderQueue::AddToRender(std::shared_ptr< IRenderable > renderable)
 {
-	
+	_renderList.push_back(renderable);
 }
-
 
 RenderQueue &	RenderQueue::operator=(RenderQueue const & src)
 {
 	std::cout << "Assignment operator called" << std::endl;
 
 	if (this != &src) {
-		this->_renderList = src.GetRenderList();
+		this->_renderList = src._renderList;
 	}
 	return (*this);
 }
-
-std::vector< IRenderable * >		RenderQueue::GetRenderList(void) const { return (this->_renderList); }
-void		RenderQueue::SetRenderList(std::vector< IRenderable * > tmp) { this->_renderList = tmp; }
 
 std::ostream &	operator<<(std::ostream & o, RenderQueue const & r)
 {

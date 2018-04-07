@@ -16,13 +16,13 @@ void	ForwardRenderPipeline::Render(void)
 		this->_renderQueues[i].RenderPass();
 }
 
-void	ForwardRenderPipeline::SetRenderTarget(RenderTarget & traget)
+void	ForwardRenderPipeline::SetRenderTarget(RenderTarget & target)
 {
-	this->_target = _target;
+	this->_target = target;
 }
 
 
-void	ForwardRenderPipeline::PushToQueue(const Model &, RenderQueueType queueType)
+void	ForwardRenderPipeline::PushToQueue(std::shared_ptr< IRenderable > renderable, RenderQueueType queueType)
 {
-
+	_renderQueues[(int)queueType].AddToRender(renderable);
 }

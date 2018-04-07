@@ -33,7 +33,7 @@ int			main(void)
 	//Initalize OpenGL context
 	app.Init();
 
-	rp.PushToQueue(testModel, LWGE::RenderQueueType::Geometry);
+	rp.PushToQueue(std::make_shared< LWGE::Model >(testModel), LWGE::RenderQueueType::Geometry);
 	
 	//open window
 	app.Open("test window", 200, 200, LWGE::WindowFlag::Resizable | LWGE::WindowFlag::Decorated | LWGE::WindowFlag::Focused);

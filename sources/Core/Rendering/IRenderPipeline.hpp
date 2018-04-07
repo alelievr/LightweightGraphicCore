@@ -2,7 +2,7 @@
 
 #include "RenderTarget.hpp"
 #include "RenderQueueType.hpp"
-#include "../Model.hpp"
+#include "IRenderable.hpp"
 
 namespace LWGE
 {
@@ -12,6 +12,6 @@ namespace LWGE
 			virtual void	Render(void) = 0;
 			virtual void	SetRenderTarget(RenderTarget & target) = 0;
 
-			virtual void	PushToQueue(const Model &, RenderQueueType queueType) = 0;
+			virtual void	PushToQueue(std::shared_ptr< IRenderable > renderable, RenderQueueType queueType) = 0;
 	};
 }

@@ -7,10 +7,11 @@
 #include "Mesh.hpp"
 #include "Material.hpp"
 #include "Rendering/SortingLayer.hpp"
+#include "Rendering/IRenderable.hpp"
 
 namespace LWGE
 {
-	class		Model : public Object
+	class		Model : public Object, public IRenderable
 	{
 		private:
 			std::shared_ptr < Mesh >		_mesh;
