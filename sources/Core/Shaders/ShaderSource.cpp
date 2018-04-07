@@ -1,10 +1,10 @@
 #include "ShaderSource.hpp"
 
+using namespace LWGE;
 
 ShaderSource::ShaderSource(void)
 {
 	std::cout << "Default constructor of ShaderSource called" << std::endl;
-	this->_sourceFiles = ;
 }
 
 ShaderSource::ShaderSource(ShaderSource const & src)
@@ -54,13 +54,10 @@ ShaderSource &	ShaderSource::operator=(ShaderSource const & src)
 	std::cout << "Assignment operator called" << std::endl;
 
 	if (this != &src) {
-		this->_sourceFiles = src.GetSourceFiles();
+		this->_sourceFiles = _sourceFiles;
 	}
 	return (*this);
 }
-
-std::list< ShaderFileInfo >		ShaderSource::GetSourceFiles(void) const { return (this->_sourceFiles); }
-void		ShaderSource::SetSourceFiles(std::list< ShaderFileInfo > tmp) { this->_sourceFiles = tmp; }
 
 std::ostream &	operator<<(std::ostream & o, ShaderSource const & r)
 {

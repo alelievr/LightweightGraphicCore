@@ -6,7 +6,7 @@
 /*   By: alelievr <alelievr@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/08/31 11:42:19 by alelievr          #+#    #+#             */
-/*   Updated: 2018/04/06 21:24:50 by alelievr         ###   ########.fr       */
+/*   Updated: 2018/04/06 23:17:30 by alelievr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,13 +27,6 @@ class		Transform
 		glm::vec3	_position;
 		glm::quat	_rotation;
 		glm::vec3	_scale;
-		glm::vec3	_up;
-		glm::vec3	_down;
-		glm::vec3	_right;
-		glm::vec3	_left;
-		glm::vec3	_forward;
-		glm::vec3	_back;
-		glm::vec3	_eulerAngles;
 
 
 	public:
@@ -85,25 +78,12 @@ class		Transform
 		void	SetScale(glm::vec3 tmp);
 		
 		glm::vec3	GetUp(void) const;
-		void	SetUp(glm::vec3 tmp);
-		
 		glm::vec3	GetDown(void) const;
-		void	SetDown(glm::vec3 tmp);
-		
 		glm::vec3	GetRight(void) const;
-		void	SetRight(glm::vec3 tmp);
-		
 		glm::vec3	GetLeft(void) const;
-		void	SetLeft(glm::vec3 tmp);
-		
 		glm::vec3	GetForward(void) const;
-		void	SetForward(glm::vec3 tmp);
-		
 		glm::vec3	GetBack(void) const;
-		void	SetBack(glm::vec3 tmp);
-		
 		glm::vec3	GetEulerAngles(void) const;
-		void	SetEulerAngles(glm::vec3 tmp);
 };
 
 std::ostream &	operator<<(std::ostream & o, Transform const & r);

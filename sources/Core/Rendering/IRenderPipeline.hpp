@@ -1,6 +1,8 @@
 #pragma once
 
 #include "RenderTarget.hpp"
+#include "RenderQueueType.hpp"
+#include "../Model.hpp"
 
 namespace LWGE
 {
@@ -8,6 +10,8 @@ namespace LWGE
 	{
 		public:
 			virtual void	Render(void) = 0;
-			virtual void	SetRenderTarGet(RenderTarget & target) = 0;
+			virtual void	SetRenderTarget(RenderTarget & target) = 0;
+
+			virtual void	PushToQueue(const Model &, RenderQueueType queueType) = 0;
 	};
 }

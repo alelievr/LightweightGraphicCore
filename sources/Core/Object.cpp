@@ -1,11 +1,11 @@
 #include "Object.hpp"
 
+using namespace LWGE;
 
 Object::Object(void)
 {
 	std::cout << "Default constructor of Object called" << std::endl;
-	this->_trasform = ;
-	this->_name = "";
+	this->_name = "Object";
 	this->_flags = 0;
 }
 

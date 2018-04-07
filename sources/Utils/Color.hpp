@@ -1,44 +1,45 @@
-#ifndef COLOR_HPP
-# define COLOR_HPP
-# include <iostream>
-# include <string>
+#pragma once
 
-class		Color
+#include <iostream>
+#include <string>
+
+namespace LWGE
 {
-	private:
-		float	_r;
-		float	_g;
-		float	_b;
-		float	_a;
-		
+	class		Color
+	{
+		private:
+			float	_r;
+			float	_g;
+			float	_b;
+			float	_a;
+			
 
 
-	public:
-		Color(void);
-		Color(const Color&);
-		virtual ~Color(void);
+		public:
+			Color(void);
+			Color(const Color&);
+			virtual ~Color(void);
 
-		Color &	operator=(Color const & src);
-		//TODO: operators + - * / glm::vec4
+			Color &	operator=(Color const & src);
+			//TODO: operators + - * / glm::vec4
 
-		Color	Lerp(const Color & b, const float t);
+			Color	Lerp(const Color & b, const float t);
 
-		static Color	HSVToRGB(const float H, const float S, const float V) const;
-		static Color	Lerp(const Color & a, const Color & b, const float t);
+			static Color	HSVToRGB(const float H, const float S, const float V);
+			static Color	Lerp(const Color & a, const Color & b, const float t);
 
-		float	GetR(void) const;
-		void	SetR(float tmp);
-		
-		float	GetG(void) const;
-		void	SetG(float tmp);
-		
-		float	GetB(void) const;
-		void	SetB(float tmp);
-		
-		float	GetA(void) const;
-		void	SetA(float tmp);
-};
+			float	GetR(void) const;
+			void	SetR(float tmp);
+			
+			float	GetG(void) const;
+			void	SetG(float tmp);
+			
+			float	GetB(void) const;
+			void	SetB(float tmp);
+			
+			float	GetA(void) const;
+			void	SetA(float tmp);
+	};
 
-std::ostream &	operator<<(std::ostream & o, Color const & r);
-
-#endif
+	std::ostream &	operator<<(std::ostream & o, Color const & r);
+}

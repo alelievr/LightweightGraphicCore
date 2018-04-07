@@ -55,8 +55,8 @@ void		Event::SetFunction(bool tmp) { this->_function = tmp; }
 bool		Event::GetCapsLock(void) const { return (this->_capsLock); }
 void		Event::SetCapsLock(bool tmp) { this->_capsLock = tmp; }
 
-int		Event::GetKeyCode(void) const { return (this->_keyCode); }
-void		Event::SetKeyCode(int tmp) { this->_keyCode = tmp; }
+KeyCode		Event::GetKeyCode(void) const { return (this->_keyCode); }
+void		Event::SetKeyCode(KeyCode tmp) { this->_keyCode = tmp; }
 
 int		Event::GetMouseButton(void) const { return (this->_mouseButton); }
 void		Event::SetMouseButton(int tmp) { this->_mouseButton = tmp; }

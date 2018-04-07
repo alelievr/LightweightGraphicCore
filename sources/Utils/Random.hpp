@@ -1,43 +1,49 @@
-#ifndef RANDOM_HPP
-# define RANDOM_HPP
-# include <iostream>
-# include <string>
+#pragma once
 
-class		Random
+#include <iostream>
+#include <string>
+
+#include "glm/glm.hpp"
+#include "glm/gtc/quaternion.hpp"
+#include "Color.hpp"
+#include "Random.hpp"
+
+namespace LWGE
 {
-	private:
+	class		Random
+	{
+		private:
 
 
-	public:
-		Random();
-		Random(const Random&);
-		virtual ~Random(void);
+		public:
+			Random();
+			Random(const Random&);
+			virtual ~Random(void);
 
-		Random &	operator=(Random const & src);
+			Random &	operator=(Random const & src);
 
-		static float	GetFloat(void);
+			static float	GetFloat(void);
 
-		static int	GetInt(void);
+			static int	GetInt(void);
 
-		static glm::vec2	OnCircle(void);
+			static glm::vec2	OnCircle(void);
 
-		static glm::vec2	InsideCircle;
+			static glm::vec2	InsideCircle(void);
 
-		static glm::vec3	OnSphere(void);
+			static glm::vec3	OnSphere(void);
 
-		static glm::vec3	InsideSphere(void);
+			static glm::vec3	InsideSphere(void);
 
-		static glm::quat	GetRotation(void);
+			static glm::quat	GetRotation(void);
 
-		static Color	GetColor(void);
+			static Color	GetColor(void);
 
-		static float	Range(const float a, const float b);
+			static float	Range(const float a, const float b);
 
-		static int	Range(const int a, const int b);
+			static int	Range(const int a, const int b);
 
-		static void	SetSeed(const long seed);
-};
+			static void	SetSeed(const long seed);
+	};
 
-std::ostream &	operator<<(std::ostream & o, Random const & r);
-
-#endif
+	std::ostream &	operator<<(std::ostream & o, Random const & r);
+}

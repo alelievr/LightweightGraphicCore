@@ -19,13 +19,13 @@ namespace LWGE
 	class		EventSystem
 	{
 		private:
-			static onQuitCallback	_onQuit;
-			static onFocusCallback	_onFocus;
-			static onMouseMoveCallback	_onMouseMove;
-			static onMouseDownCallback	_onMouseDown;
-			static onMouseEnterCallback	_onMouseEnter;
-			static onMouseExitCallback	_onMouseExit;
-			static onMouseUpCallback	_onMouseUp;
+			onQuitCallback			_onQuit;
+			onFocusCallback			_onFocus;
+			onMouseMoveCallback		_onMouseMove;
+			onMouseDownCallback		_onMouseDown;
+			onMouseEnterCallback	_onMouseEnter;
+			onMouseExitCallback		_onMouseExit;
+			onMouseUpCallback		_onMouseUp;
 
 			Event						_current;
 

@@ -1,36 +1,45 @@
-#ifndef MODEL_HPP
-# define MODEL_HPP
-# include <iostream>
-# include <string>
-# include <Object.hpp>
+#pragma once
 
-class		Model : public Object
+#include <iostream>
+#include <string>
+
+#include "Object.hpp"
+#include "Mesh.hpp"
+#include "Material.hpp"
+#include "Rendering/SortingLayer.hpp"
+
+namespace LWGE
 {
-	private:
-		Mesh	_mesh;
-		std::vector< Material >	_materials;
+	class		Model : public Object
+	{
+		private:
+			std::shared_ptr < Mesh >		_mesh;
+			std::shared_ptr < Material >	_material;
 
 
-	public:
-		Model();
-		Model(const Model&);
-		virtual ~Model(void);
+		public:
+			Model(void);
+			Model(const Model &);
+			Model(const PrimitiveType);
+			virtual ~Model(void);
 
-		Model &	operator=(Model const & src);
+			Model &	operator=(Model const & src);
 
-		SortingLayer	GetSortingLayer(void);
+			SortingLayer	GetSortingLayer(void);
 
-		Bounds	GetBounds(void);
+			void	SetModel(const Mesh & mesh, const Material & material);
+			void	SetModel(std::shared_ptr< Mesh > mesh, std::shared_ptr< Material > material);
 
-		void	Render(void);
+			Bounds	GetBounds(void);
 
-		Mesh	GetMesh(void) const;
-		void	SetMesh(Mesh tmp);
-		
-		std::vector< Material >	GetMaterials(void) const;
-		void	SetMaterials(std::vector< Material > tmp);
-};
+			void	Render(void);
 
-std::ostream &	operator<<(std::ostream & o, Model const & r);
+			std::shared_ptr< Mesh >	GetMesh(void) const;
+			void	SetMesh(std::shared_ptr< Mesh > tmp);
+			
+			std::shared_ptr< Material >	GetMaterial(void) const;
+			void	SetMaterial(std::shared_ptr< Material > tmp);
+	};
 
-#endif
+	std::ostream &	operator<<(std::ostream & o, Model const & r);
+}

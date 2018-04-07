@@ -1,13 +1,15 @@
-#include "Application.hpp"
+#include <memory>
 
-#include "ForwardRenderPipeline.hpp"
+#include "Application.hpp"
+#include "Rendering/ForwardRenderPipeline.hpp"
 
 using namespace LWGE;
 
 Application::Application(void) : _shouldNotQuit(true)
 {
 	std::cout << "Default constructor of Application called" << std::endl;
-	this->_renderPipeline = new ForwardRenderPipeline();
+	this->_renderPipeline = std::make_shared< ForwardRenderPipeline >();
+	this->_eventSystem = std::make_unique< EventSystem >();
 }
 
 Application::~Application(void)
@@ -15,6 +17,16 @@ Application::~Application(void)
 	std::cout << "Destructor of Application called" << std::endl;
 }
 
+void			ErrorCallback(int err, const char * description)
+{
+	std::cout << "GLFW error[" << err << "]: " << description;
+}
+
+void			Application::Init(void) noexcept
+{
+	glfwSetErrorCallback(ErrorCallback);
+	glfwInit();
+}
 
 bool			Application::ShouldNotQuit(void) const noexcept
 {
@@ -42,10 +54,15 @@ void			Application::Open(const std::string & name, const int width, const int he
 	_window = glfwCreateWindow(width, height, name.c_str(), NULL, NULL);
 }
 
-IRenderPipeline *	Application::GetRenderPipeline(void) const noexcept { return (this->_renderPipeline); }
-void				Application::SetRenderPipeline(IRenderPipeline * tmp) noexcept { this->_renderPipeline = tmp; }
+void				Application::Update(void) noexcept
+{
+	_renderPipeline->Render();
+}
 
-const EventSystem *	Application::GetEventSystem(void) const noexcept { return &(this->_eventSystem); }
+std::shared_ptr< IRenderPipeline >	Application::GetRenderPipeline(void) const noexcept { return (this->_renderPipeline); }
+void				Application::SetRenderPipeline(std::shared_ptr< IRenderPipeline > tmp) noexcept { this->_renderPipeline = tmp; }
+
+const std::unique_ptr< EventSystem > &		Application::GetEventSystem(void) const noexcept { return this->_eventSystem; }
 
 std::ostream &	operator<<(std::ostream & o, Application const & r)
 {

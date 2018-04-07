@@ -5,6 +5,7 @@
 #include <vector>
 
 #include "IRenderable.hpp"
+#include "RenderTarget.hpp"
 
 namespace LWGE
 {

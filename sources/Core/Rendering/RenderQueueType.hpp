@@ -1,3 +1,5 @@
+#pragma once
+
 namespace LWGE
 {
 	enum class RenderQueueType
@@ -7,5 +9,6 @@ namespace LWGE
 		AlphaTest,
 		Transparent,
 		Overlay,
+		Count
 	};
 }

@@ -1,37 +1,44 @@
-#ifndef SHADERSOURCE_HPP
-# define SHADERSOURCE_HPP
-# include <iostream>
-# include <string>
+#pragma once
 
-class		ShaderSource
+#include <iostream>
+#include <list>
+#include <string>
+
+#include "GLFW/glfw3.h"
+
+namespace LWGE
 {
-	private:
-		std::list< ShaderFileInfo >	_sourceFiles;
+	class		ShaderSource
+	{
+		private:
+			struct ShaderFileInfo
+			{
+				std::string		path;
+				long			lastModificationTime;
+			};
+
+			std::list< ShaderFileInfo >	_sourceFiles;
 
 
-	public:
-		ShaderSource();
-		ShaderSource(const ShaderSource&);
-		virtual ~ShaderSource(void);
+		public:
+			ShaderSource(void);
+			ShaderSource(const ShaderSource&);
+			virtual ~ShaderSource(void);
 
-		ShaderSource &	operator=(ShaderSource const & src);
+			ShaderSource &	operator=(ShaderSource const & src);
 
-		void	AddSourceFile(const std::string source);
+			void	AddSourceFile(const std::string source);
 
-		void	AddSource(const std::string source);
+			void	AddSource(const std::string source);
 
-		bool	NeedReload(void);
+			bool	NeedReload(void);
 
-		const GLchar **	GetVertexSources(int *nSources);
+			const GLchar **	GetVertexSources(int *nSources);
 
-		const GLchar **	GetGeometrySources(int *nSources);
+			const GLchar **	GetGeometrySources(int *nSources);
 
-		const GLchar **	GetFragmentSources(int *nSources);
+			const GLchar **	GetFragmentSources(int *nSources);
+	};
 
-		std::list< ShaderFileInfo >	GetSourceFiles(void) const;
-		void	SetSourceFiles(std::list< ShaderFileInfo > tmp);
-};
-
-std::ostream &	operator<<(std::ostream & o, ShaderSource const & r);
-
-#endif
+	std::ostream &	operator<<(std::ostream & o, ShaderSource const & r);
+}

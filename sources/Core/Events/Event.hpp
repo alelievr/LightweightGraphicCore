@@ -6,6 +6,7 @@
 #include "glm/glm.hpp"
 
 #include "EventType.hpp"
+#include "../KeyCode.hpp"
 
 namespace LWGE
 {
@@ -18,7 +19,7 @@ namespace LWGE
 			bool		_shift;
 			bool		_function;
 			bool		_capsLock;
-			int			_keyCode;
+			KeyCode		_keyCode;
 			int			_mouseButton;
 			int			_joystickNumber;
 			glm::vec2	_delta;
@@ -49,8 +50,8 @@ namespace LWGE
 			bool	GetCapsLock(void) const;
 			void	SetCapsLock(bool tmp);
 			
-			int	GetKeyCode(void) const;
-			void	SetKeyCode(int tmp);
+			KeyCode	GetKeyCode(void) const;
+			void	SetKeyCode(KeyCode tmp);
 			
 			int	GetMouseButton(void) const;
 			void	SetMouseButton(int tmp);

@@ -6,13 +6,13 @@
 #    By: alelievr <marvin@42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2014/07/15 15:13:38 by alelievr          #+#    #+#              #
-#    Updated: 2018/04/06 17:45:54 by alelievr         ###   ########.fr        #
+#    Updated: 2018/04/06 23:35:03 by alelievr         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 all:
 	@$(MAKE) -C basic
-	#@$(MAKE) -C deferred
+	@$(MAKE) -C deferred
 
 coffee:
 	@clear

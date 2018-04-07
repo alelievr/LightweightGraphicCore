@@ -6,7 +6,7 @@
 #    By: alelievr <marvin@42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2014/07/15 15:13:38 by alelievr          #+#    #+#              #
-#    Updated: 2018/04/06 17:47:19 by alelievr         ###   ########.fr        #
+#    Updated: 2018/04/07 02:23:26 by alelievr         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -32,15 +32,15 @@ CPPVERSION	=	c++11
 #Example $> make DEBUG=2 will set debuglevel to 2
 
 #	Includes
-INCDIRS		=	../../sources
+INCDIRS		=	../../sources ../../deps/glfw/include/ ../../deps/glm/ ../../deps/SOIL2/incs/
 
 #	Libraries
-LIBDIRS		=	../../
-LDLIBS		=	-lLWGE
+LIBDIRS		=	../../ ../../deps/glfw/src/
+LDLIBS		=	-lLWGE -lglfw3
 
 #	Compiler
 WERROR		=	-Werror
-CFLAGS		=	-Weverything -pedantic -ffast-math -ffunction-sections -fdata-sections
+CFLAGS		=	-pedantic -ffast-math -ffunction-sections -fdata-sections
 CPPFLAGS	=	-Wno-c++98-compat
 CPROTECTION	=	-z execstack -fno-stack-protector
 
@@ -88,7 +88,7 @@ ifeq "$(OS)" "Linux"
 	DEBUGFLAGS	+= -fsanitize=memory -fsanitize-memory-use-after-dtor -fsanitize=thread
 endif
 ifeq "$(OS)" "Darwin"
-	FRAMEWORK	=	
+	FRAMEWORK	=	OpenGL AppKit IOKit CoreVideo
 endif
 
 COMPILER	=	$(shell readlink $(which cc))
@@ -111,10 +111,8 @@ endif
 #################
 
 NASM		=	nasm
-OBJS		=	$(patsubst %.c,%.o, $(filter %.c, $(SRC))) \
-				$(patsubst %.cpp,%.o, $(filter %.cpp, $(SRC))) \
-				$(patsubst %.s,%.o, $(filter %.s, $(SRC)))
-OBJ			=	$(addprefix $(OBJDIR)/,$(notdir $(OBJS)))
+OBJS		=	$(patsubst %.cpp,%.out, $(filter %.cpp, $(SRC)))
+TARGETS		=	$(notdir $(OBJS))
 NORME		=	**/*.[ch]
 VPATH		+=	$(dir $(addprefix $(SRCDIR)/,$(SRC)))
 VFRAME		=	$(addprefix -framework ,$(FRAMEWORK))
@@ -182,31 +180,15 @@ endif
 ##  TARGETS    ##
 #################
 
-#	First target
-all: $(NAME)
-
 #	Linking
-$(NAME): $(OBJ)
+all: $(TARGETS)
+
+%.out: %.cpp $(INCFILES)
+	@mkdir -p $(OBJDIR)/$(dir $<)
 	@$(if $(findstring lft,$(LDLIBS)),$(call color_exec_t,$(CCLEAR),$(CCLEAR),\
 		make -j 4 -C libft))
 	@$(call color_exec,$(CLINK_T),$(CLINK),"Link of $(NAME):",\
-		$(LINKER) $(WERROR) $(CFLAGS) $(LDFLAGS) $(LDLIBS) $(OPTFLAGS) $(DEBUGFLAGS) $(LINKDEBUG) $(VFRAME) -o $@ $^)
-
-$(OBJDIR)/%.o: %.cpp $(INCFILES)
-	@mkdir -p $(OBJDIR)/$(dir $<)
-	@$(call color_exec,$(COBJ_T),$(COBJ),"Object: $@",\
-		$(CXX) -std=$(CPPVERSION) $(WERROR) $(CFLAGS) $(OPTFLAGS) $(DEBUGFLAGS) $(CPPFLAGS) $(INCFLAGS) -o $@ -c $<)
-
-#	Objects compilation
-$(OBJDIR)/%.o: %.c $(INCFILES)
-	@mkdir -p $(OBJDIR)/$(dir $<)
-	@$(call color_exec,$(COBJ_T),$(COBJ),"Object: $@",\
-		$(CC) $(WERROR) $(CFLAGS) $(OPTFLAGS) $(DEBUGFLAGS) $(INCFLAGS) -o $@ -c $<)
-
-$(OBJDIR)/%.o: %.s
-	@mkdir -p $(OBJDIR)/$(dir $<)
-	@$(call color_exec,$(COBJ_T),$(COBJ),"Object: $@",\
-		$(NASM) -f macho64 -o $@ $<)
+		$(LINKER) $(WERROR) -std=$(CPPVERSION) $(CPPFLAGS) $(CFLAGS) $(LDFLAGS) $(INCFLAGS) $(LDLIBS) $(OPTFLAGS) $(DEBUGFLAGS) $(LINKDEBUG) $(VFRAME) -o $@ $<)
 
 #	Removing objects
 clean:
@@ -224,16 +206,8 @@ re: fclean all
 
 f:	all run
 
-#	Checking norme
-norme:
-	@norminette $(NORME) | sed "s/Norme/[38;5;$(CNORM_T)➤ [38;5;$(CNORM_OK)Norme/g;s/Warning/[0;$(CNORM_WARN)Warning/g;s/Error/[0;$(CNORM_ERR)Error/g"
-
-run: $(NAME)
-	@echo $(CRUN_T)"➤ "$(CRUN)"./$(NAME) ${ARGS}\033[0m"
-	@./$(NAME) ${ARGS}
-
 codesize:
-	@cat $(NORME) |grep -v '/\*' |wc -l
+	@cat $(NORME) | grep -v '/\*' |wc -l
 
 functions: $(NAME)
 	@nm $(NAME) | grep U

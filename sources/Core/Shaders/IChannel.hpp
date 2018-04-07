@@ -1,6 +1,13 @@
-class	IChannel
+#pragma once
+
+#include "ChannelType.hpp"
+
+namespace LWGE
 {
-	public:
-		ChannelType		GetType(void) = 0;
-		int				Bind(void) = 0;
+	class	IChannel
+	{
+		public:
+			virtual ChannelType		GetType(void) = 0;
+			virtual int				Bind(void) = 0;
+	};
 }

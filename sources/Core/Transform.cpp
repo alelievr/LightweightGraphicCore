@@ -1,21 +1,14 @@
 #include "Transform.hpp"
+#include "glm/gtc/quaternion.hpp"
 
 
 Transform::Transform(void)
 {
 	std::cout << "Default constructor of Transform called" << std::endl;
-	this->_parent = NULL;
-	this->_childs = ;
-	this->_position = ;
-	this->_rotation = ;
-	this->_scale = ;
-	this->_up = ;
-	this->_down = ;
-	this->_right = ;
-	this->_left = ;
-	this->_forward = ;
-	this->_back = ;
-	this->_eulerAngles = ;
+	this->_parent = nullptr;
+	this->_position = glm::vec3(0, 0, 0);
+	this->_rotation = glm::quat(0, 0, 0, 0);
+	this->_scale = glm::vec3(1, 1, 1);
 }
 
 Transform::Transform(Transform const & src)
@@ -83,11 +76,6 @@ glm::vec3		Transform::TransformPoint(const float x, const float y, const float z
 	
 }
 
-glm::vec3		Transform::TransformDirection(const glm::vec3 & direction)
-{
-	
-}
-
 void		Transform::Translate(const glm::vec3 & translation)
 {
 	
@@ -109,13 +97,6 @@ Transform &	Transform::operator=(Transform const & src)
 		this->_position = src.GetPosition();
 		this->_rotation = src.GetRotation();
 		this->_scale = src.GetScale();
-		this->_up = src.GetUp();
-		this->_down = src.GetDown();
-		this->_right = src.GetRight();
-		this->_left = src.GetLeft();
-		this->_forward = src.GetForward();
-		this->_back = src.GetBack();
-		this->_eulerAngles = src.GetEulerAngles();
 	}
 	return (*this);
 }
@@ -135,26 +116,19 @@ void			Transform::SetRotation(glm::quat tmp) { this->_rotation = tmp; }
 glm::vec3		Transform::GetScale(void) const { return (this->_scale); }
 void			Transform::SetScale(glm::vec3 tmp) { this->_scale = tmp; }
 
-glm::vec3		Transform::GetUp(void) const { return (this->_up); }
-void			Transform::SetUp(glm::vec3 tmp) { this->_up = tmp; }
+glm::vec3		Transform::GetUp(void) const { return (glm::vec3(0, 0, 0)); }
 
-glm::vec3		Transform::GetDown(void) const { return (this->_down); }
-void			Transform::SetDown(glm::vec3 tmp) { this->_down = tmp; }
+glm::vec3		Transform::GetDown(void) const { return (glm::vec3(0, 0, 0)); }
 
-glm::vec3		Transform::GetRight(void) const { return (this->_right); }
-void			Transform::SetRight(glm::vec3 tmp) { this->_right = tmp; }
+glm::vec3		Transform::GetRight(void) const { return (glm::vec3(0, 0, 0)); }
 
-glm::vec3		Transform::GetLeft(void) const { return (this->_left); }
-void			Transform::SetLeft(glm::vec3 tmp) { this->_left = tmp; }
+glm::vec3		Transform::GetLeft(void) const { return (glm::vec3(0, 0, 0)); }
 
-glm::vec3		Transform::GetForward(void) const { return (this->_forward); }
-void			Transform::SetForward(glm::vec3 tmp) { this->_forward = tmp; }
+glm::vec3		Transform::GetForward(void) const { return (glm::vec3(0, 0, 0)); }
 
-glm::vec3		Transform::GetBack(void) const { return (this->_back); }
-void			Transform::SetBack(glm::vec3 tmp) { this->_back = tmp; }
+glm::vec3		Transform::GetBack(void) const { return (glm::vec3(0, 0, 0)); }
 
-glm::vec3		Transform::GetEulerAngles(void) const { return (this->_eulerAngles); }
-void			Transform::SetEulerAngles(glm::vec3 tmp) { this->_eulerAngles = tmp; }
+glm::vec3		Transform::GetEulerAngles(void) const { return glm::eulerAngles(_rotation); }
 
 std::ostream &	operator<<(std::ostream & o, Transform const & r)
 {

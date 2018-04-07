@@ -1,8 +1,10 @@
+#pragma once
+
 namespace LWGE
 {
 	enum class KeyCode
 	{
-		GLFW_KEY_UNKNOWN =-1,
+		UNKNOWN = -1,
 
 		SPACE = 32,
 		APOSTROPHE = 39 /* ' */,
@@ -10,16 +12,16 @@ namespace LWGE
 		MINUS = 45 /* - */,
 		PERIOD = 46 /* . */,
 		SLASH = 47 /* / */,
-		0 = 48,
-		1 = 49,
-		2 = 50,
-		3 = 51,
-		4 = 52,
-		5 = 53,
-		6 = 54,
-		7 = 55,
-		8 = 56,
-		9 = 57,
+		ALPHA_0 = 48,
+		ALPHA_1 = 49,
+		ALPHA_2 = 50,
+		ALPHA_3 = 51,
+		ALPHA_4 = 52,
+		ALPHA_5 = 53,
+		ALPHA_6 = 54,
+		ALPHA_7 = 55,
+		ALPHA_8 = 56,
+		ALPHA_9 = 57,
 		SEMICOLON = 59 /* ; */,
 		EQUAL = 61 /* = */,
 		A = 65,
@@ -124,6 +126,5 @@ namespace LWGE
 		RIGHT_ALT = 346,
 		RIGHT_SUPER =347,
 		MENU = 348,
-		GLFW_KEY_LAST =GLFW_KEY_MENU,
-	}
+	};
 }

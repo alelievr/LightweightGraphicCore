@@ -1,5 +1,6 @@
 #include "Color.hpp"
 
+using namespace LWGE;
 
 Color::Color(void)
 {
@@ -21,7 +22,7 @@ Color::~Color(void)
 	std::cout << "Destructor of Color called" << std::endl;
 }
 
-static Color		Color::HSVToRGB(const float H, const float S, const float V) const
+Color		Color::HSVToRGB(const float H, const float S, const float V)
 {
 	
 }
@@ -31,7 +32,7 @@ Color		Color::Lerp(const Color & b, const float t)
 	
 }
 
-static Color		Color::Lerp(const Color & a, const Color & b, const float t)
+Color		Color::Lerp(const Color & a, const Color & b, const float t)
 {
 	
 }

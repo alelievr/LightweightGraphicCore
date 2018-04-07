@@ -1,14 +1,10 @@
 #include "Mesh.hpp"
 
+using namespace LWGE;
 
 Mesh::Mesh(void)
 {
 	std::cout << "Default constructor of Mesh called" << std::endl;
-	this->_vertices = ;
-	this->_normals = ;
-	this->_uvs = ;
-	this->_colors = ;
-	this->_tangents = ;
 }
 
 Mesh::Mesh(Mesh const & src)

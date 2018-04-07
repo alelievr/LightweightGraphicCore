@@ -1,25 +1,27 @@
-#ifndef DEFERREDRENDERPIPELINE_HPP
-# define DEFERREDRENDERPIPELINE_HPP
-# include <iostream>
-# include <string>
+#pragma once
 
-class		DeferredRenderPipeline : public IRenderPipeline
+#include <iostream>
+#include <string>
+
+#include "IRenderPipeline.hpp"
+
+namespace LWGE
 {
-	private:
+	class		DeferredRenderPipeline : public IRenderPipeline
+	{
+		private:
 
 
-	public:
-		DeferredRenderPipeline();
-		DeferredRenderPipeline(const DeferredRenderPipeline&);
-		virtual ~DeferredRenderPipeline(void);
+		public:
+			DeferredRenderPipeline();
+			DeferredRenderPipeline(const DeferredRenderPipeline&);
+			virtual ~DeferredRenderPipeline(void);
 
-		DeferredRenderPipeline &	operator=(DeferredRenderPipeline const & src);
+			DeferredRenderPipeline &	operator=(DeferredRenderPipeline const & src);
 
-		void	Render(void);
+			void	Render(void) override;
+			void	SetRenderTarget(RenderTarget & target) override;
+	};
 
-		void	SetRenderTarGet(RenderTarget & target);
-};
-
-std::ostream &	operator<<(std::ostream & o, DeferredRenderPipeline const & r);
-
-#endif
+	std::ostream &	operator<<(std::ostream & o, DeferredRenderPipeline const & r);
+}

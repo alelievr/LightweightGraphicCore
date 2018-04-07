@@ -3,6 +3,9 @@
 #include <iostream>
 #include <string>
 
+#include "GLFW/glfw3.h"
+#include "ShaderSource.hpp"
+
 namespace LWGE
 {
 	class		ShaderProgram
@@ -13,7 +16,7 @@ namespace LWGE
 
 
 		public:
-			ShaderProgram();
+			ShaderProgram(void);
 			ShaderProgram(const ShaderProgram&);
 			virtual ~ShaderProgram(void);
 

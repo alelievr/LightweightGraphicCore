@@ -1,7 +1,7 @@
 #pragma once
 
-#include "SortingLayer.hpp"
-#include "Bounds.hpp"
+#include "../Rendering/SortingLayer.hpp"
+#include "../../Utils/Bounds.hpp"
 
 namespace LWGE
 {

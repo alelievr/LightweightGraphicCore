@@ -1,5 +1,6 @@
 #include "DeferredRenderPipeline.hpp"
 
+using namespace LWGE;
 
 DeferredRenderPipeline::DeferredRenderPipeline(void)
 {
@@ -22,7 +23,7 @@ void		DeferredRenderPipeline::Render(void)
 	
 }
 
-void		DeferredRenderPipeline::SetRenderTarGet(RenderTarget & target)
+void		DeferredRenderPipeline::SetRenderTarget(RenderTarget & target)
 {
 	
 }

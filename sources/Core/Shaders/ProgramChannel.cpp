@@ -1,12 +1,12 @@
 #include "ProgramChannel.hpp"
 
+using namespace LWGE;
 
 ProgramChannel::ProgramChannel(void)
 {
 	std::cout << "Default constructor of ProgramChannel called" << std::endl;
 	this->_programId = 0;
-	this->_type = ;
-	this->_program = ;
+	this->_type = ChannelType::Image;
 }
 
 ProgramChannel::ProgramChannel(ProgramChannel const & src)

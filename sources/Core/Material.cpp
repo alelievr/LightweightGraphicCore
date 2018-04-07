@@ -6,8 +6,7 @@ Material::Material(void)
 {
 	std::cout << "Default constructor of Material called" << std::endl;
 	this->_renderQueueType = RenderQueueType::Geometry;
-	this->_renderFlags = 0;
-	this->_shaderProgram = nullptr;
+	this->_renderMode = RenderMode::Normal;
 }
 
 Material::Material(Material const & src)
@@ -41,7 +40,7 @@ void		Material::SetInt(const std::string & name, const int i)
 	
 }
 
-void		Material::SetTexture(const Texture & t)
+void		Material::SetTexture(const std::string & name, const Texture & t)
 {
 	
 }
@@ -58,7 +57,7 @@ Material &	Material::operator=(Material const & src)
 
 	if (this != &src) {
 		this->_renderQueueType = src.GetRenderQueueType();
-		this->_renderFlags = src.GetRenderFlags();
+		this->_renderMode= src.GetRenderMode();
 		this->_shaderProgram = src.GetShaderProgram();
 	}
 	return (*this);
@@ -67,8 +66,8 @@ Material &	Material::operator=(Material const & src)
 RenderQueueType		Material::GetRenderQueueType(void) const { return (this->_renderQueueType); }
 void		Material::SetRenderQueueType(RenderQueueType tmp) { this->_renderQueueType = tmp; }
 
-int		Material::GetRenderFlags(void) const { return (this->_renderFlags); }
-void		Material::SetRenderFlags(int tmp) { this->_renderFlags = tmp; }
+RenderMode		Material::GetRenderMode(void) const { return (this->_renderMode); }
+void		Material::SetRenderMode(RenderMode tmp) { this->_renderMode = tmp; }
 
 ShaderProgram		Material::GetShaderProgram(void) const { return (this->_shaderProgram); }
 void		Material::SetShaderProgram(ShaderProgram tmp) { this->_shaderProgram = tmp; }

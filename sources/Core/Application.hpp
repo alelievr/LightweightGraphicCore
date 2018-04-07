@@ -4,8 +4,8 @@
 #include <string>
 
 #include "WindowFlag.hpp"
-#include "IRenderPipeline.hpp"
-#include "EventSystem.hpp"
+#include "Rendering/IRenderPipeline.hpp"
+#include "Events/EventSystem.hpp"
 
 #define GLFW_INCLUDE_GLCOREARB
 #include "GLFW/glfw3.h"
@@ -15,11 +15,11 @@ namespace LWGE
 	class		Application
 	{
 		private:
-			IRenderPipeline *	_renderPipeline;
-			EventSystem			_eventSystem;
-			bool				_shouldNotQuit;
-			GLFWwindow *		_window;
-			
+			std::shared_ptr< IRenderPipeline >	_renderPipeline;
+			std::unique_ptr< EventSystem >		_eventSystem;
+			GLFWwindow *						_window;
+
+			bool	_shouldNotQuit;
 
 		public:
 			Application(void);
@@ -28,15 +28,16 @@ namespace LWGE
 
 			Application &	operator=(Application const & src) = delete;
 
-			bool	ShouldNotQuit() const noexcept;
-			void	Quit() noexcept;
+			void	Init(void) noexcept;
+			bool	ShouldNotQuit(void) const noexcept;
+			void	Quit(void) noexcept;
 			void	Open(const std::string & name, const int width, const int height, const WindowFlag flags) noexcept;
+			void	Update(void) noexcept;
 
-			IRenderPipeline *	GetRenderPipeline(void) const noexcept;
-			void				SetRenderPipeline(IRenderPipeline * tmp) noexcept;
+			std::shared_ptr< IRenderPipeline >	GetRenderPipeline(void) const noexcept;
+			void				SetRenderPipeline(std::shared_ptr< IRenderPipeline > tmp) noexcept;
 			
-			const EventSystem *	GetEventSystem(void) const noexcept;
-			void				SetEventSystem(EventSystem tmp) noexcept;
+			const std::unique_ptr< EventSystem > &		GetEventSystem(void) const noexcept;
 	};
 
 	std::ostream &	operator<<(std::ostream & o, Application const & r);

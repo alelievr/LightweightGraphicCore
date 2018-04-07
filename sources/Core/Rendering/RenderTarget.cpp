@@ -1,13 +1,12 @@
 #include "RenderTarget.hpp"
 
+using namespace LWGE;
 
 RenderTarget::RenderTarget(void)
 {
 	std::cout << "Default constructor of RenderTarget called" << std::endl;
-	this->_framebuffer = ;
 	this->_attachmentIds = NULL;
-	this->_name = "";
-	this->_size = ;
+	this->_name = "Default target";
 	this->_enabledAttachments = 0;
 }
 

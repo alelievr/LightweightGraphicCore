@@ -1,11 +1,10 @@
 #include "ShaderProgram.hpp"
 
+using namespace LWGE;
 
 ShaderProgram::ShaderProgram(void)
 {
 	std::cout << "Default constructor of ShaderProgram called" << std::endl;
-	this->_id = ;
-	this->_sources = ;
 }
 
 ShaderProgram::ShaderProgram(ShaderProgram const & src)

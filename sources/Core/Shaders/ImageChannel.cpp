@@ -1,12 +1,13 @@
 #include "ImageChannel.hpp"
 
+using namespace LWGE;
 
 ImageChannel::ImageChannel(void)
 {
 	std::cout << "Default constructor of ImageChannel called" << std::endl;
 	this->_imageId = 0;
-	this->_type = ;
-	this->_imagePath = "";
+	this->_type = ChannelType::Image;
+	this->_imagePath = nullptr;
 }
 
 ImageChannel::ImageChannel(ImageChannel const & src)

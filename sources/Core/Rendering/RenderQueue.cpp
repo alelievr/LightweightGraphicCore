@@ -1,10 +1,10 @@
 #include "RenderQueue.hpp"
 
+using namespace LWGE;
 
 RenderQueue::RenderQueue(void)
 {
 	std::cout << "Default constructor of RenderQueue called" << std::endl;
-	this->_renderList = NULL;
 }
 
 RenderQueue::RenderQueue(RenderQueue const & src)

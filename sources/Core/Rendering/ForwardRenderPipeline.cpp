@@ -1,5 +1,6 @@
 #include "ForwardRenderPipeline.hpp"
 
+using namespace LWGE;
 
 ForwardRenderPipeline::ForwardRenderPipeline(void)
 {
@@ -15,7 +16,13 @@ void	ForwardRenderPipeline::Render(void)
 		this->_renderQueues[i].RenderPass();
 }
 
-void	ForwardRenderPipeline::SetRenderTarGet(RenderTarget & traget)
+void	ForwardRenderPipeline::SetRenderTarget(RenderTarget & traget)
 {
-	this->_tarGet = _target;
+	this->_target = _target;
+}
+
+
+void	ForwardRenderPipeline::PushToQueue(const Model &, RenderQueueType queueType)
+{
+
 }

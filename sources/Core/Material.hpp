@@ -3,9 +3,12 @@
 #include <iostream>
 #include <string>
 
-#include "ShaderProgram.hpp"
+#include "Shaders/ShaderProgram.hpp"
 #include "Texture.hpp"
-#include "RenderQueueType.hpp"
+#include "Rendering/RenderQueueType.hpp"
+#include "../Utils/Color.hpp"
+#include <glm/glm.hpp>
+#include "Rendering/RenderMode.hpp"
 
 namespace LWGE
 {
@@ -13,12 +16,12 @@ namespace LWGE
 	{
 		private:
 			RenderQueueType	_renderQueueType;
-			int	_renderFlags;
+			RenderMode		_renderMode;
 			ShaderProgram	_shaderProgram;
 
 
 		public:
-			Material();
+			Material(void);
 			Material(const Material&);
 			virtual ~Material(void);
 
@@ -32,15 +35,15 @@ namespace LWGE
 
 			void	SetInt(const std::string & name, const int i);
 
-			void	SetTexture(const Texture & t);
+			void	SetTexture(const std::string & name, const Texture & t);
 
 			void	SetMatrix(const std::string & name, const glm::mat4 & m);
 
 			RenderQueueType	GetRenderQueueType(void) const;
 			void	SetRenderQueueType(RenderQueueType tmp);
 			
-			int	GetRenderFlags(void) const;
-			void	SetRenderFlags(int tmp);
+			RenderMode	GetRenderMode(void) const;
+			void	SetRenderMode(RenderMode tmp);
 			
 			ShaderProgram	GetShaderProgram(void) const;
 			void	SetShaderProgram(ShaderProgram tmp);

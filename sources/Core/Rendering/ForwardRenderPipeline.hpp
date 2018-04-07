@@ -19,7 +19,8 @@ namespace LWGE
 			ForwardRenderPipeline(void);
 			virtual ~ForwardRenderPipeline(void);
 
-			void Render(void) override;
-			void SetRenderTarGet(RenderTarget & target) override;
+			void	Render(void) override;
+			void	SetRenderTarget(RenderTarget & target) override;
+			void	PushToQueue(const Model &, RenderQueueType queueType) override;
 	};
 }

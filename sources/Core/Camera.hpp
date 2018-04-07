@@ -5,7 +5,7 @@
 #include <Object.hpp>
 
 #include "Object.hpp"
-#include "RenderTarget.hpp"
+#include "Rendering/RenderTarget.hpp"
 #include "CameraType.hpp"
 
 namespace LWGE

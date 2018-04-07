@@ -6,7 +6,7 @@
 #    By: alelievr <marvin@42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2014/07/15 15:13:38 by alelievr          #+#    #+#              #
-#    Updated: 2018/04/06 21:35:52 by alelievr         ###   ########.fr        #
+#    Updated: 2018/04/07 02:17:54 by alelievr         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -25,27 +25,22 @@ SRC			=	Core/Application.cpp \
 				Core/Mesh.cpp \
 				Core/Model.cpp \
 				Core/Object.cpp \
+				Core/PrimitiveMeshFactory.cpp \
 				Core/Rendering/DeferredRenderPipeline.cpp \
 				Core/Rendering/ForwardRenderPipeline.cpp \
-				Core/Rendering/FramebufferAttachment.cpp \
-				Core/Rendering/RenderFlags.cpp \
 				Core/Rendering/RenderQueue.cpp \
-				Core/Rendering/RenderQueueType.cpp \
 				Core/Rendering/RenderTarget.cpp \
-				Core/Rendering/SortingLayer.cpp \
-				Core/Shaders/ChannelType.cpp \
 				Core/Shaders/ImageChannel.cpp \
 				Core/Shaders/ProgramChannel.cpp \
 				Core/Shaders/ShaderProgram.cpp \
 				Core/Shaders/ShaderSource.cpp \
 				Core/Transform.cpp \
 				GUI/Image.cpp \
-				GUI/Mask.cpp \
-				GUI/Text.cpp \
 				Utils/Bounds.cpp \
 				Utils/Color.cpp \
 				Utils/Random.cpp \
 				Utils/Rect.cpp \
+				#GUI/Text.cpp \
 
 #	Objects
 OBJDIR		=	obj
@@ -56,12 +51,12 @@ DEBUGLEVEL	=	0	#can be 0 for no debug 1 for or 2 for harder debug
 					#Warrning: non null debuglevel will disable optlevel
 OPTLEVEL	=	1	#same than debuglevel
 					#Warrning: non null optlevel will disable debuglevel
-CPPVERSION	=	c++11
+CPPVERSION	=	c++14
 #For simpler and faster use, use commnd line variables DEBUG and OPTI:
 #Example $> make DEBUG=2 will set debuglevel to 2
 
 #	Includes
-INCDIRS		=	sources/Core/ sources/Core/Rendering/ sources/Core/Shaders/ sources/Core/Events/ sources/GUI/ sources/Utils/ deps/glfw/include deps/SOIL2/incs deps/glm
+INCDIRS		=	sources/Core/ deps/glfw/include deps/SOIL2/incs deps/glm
 
 #	Libraries
 LIBDIRS		=	deps/glfw/src deps/SOIL2 deps/freetype2/objs/.libs deps/glm
@@ -245,7 +240,7 @@ fclean: clean
 		$(RM) $(NAME))
 
 examples:
-	@$(MAKE) -C examples/
+	@$(MAKE) -C examples
 
 #	All removing then compiling
 re: fclean all

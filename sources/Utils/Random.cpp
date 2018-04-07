@@ -1,5 +1,6 @@
 #include "Random.hpp"
 
+using namespace LWGE;
 
 Random::Random(void)
 {
@@ -17,57 +18,57 @@ Random::~Random(void)
 	std::cout << "Destructor of Random called" << std::endl;
 }
 
-static float		Random::GetFloat(void)
+float		Random::GetFloat(void)
 {
 	
 }
 
-static int		Random::GetInt(void)
+int		Random::GetInt(void)
 {
 	
 }
 
-static glm::vec2		Random::OnCircle(void)
+glm::vec2		Random::OnCircle(void)
 {
 	
 }
 
-static glm::vec2		Random::InsideCircle
+glm::vec2		Random::InsideCircle(void)
 {
 	
 }
 
-static glm::vec3		Random::OnSphere(void)
+glm::vec3		Random::OnSphere(void)
 {
 	
 }
 
-static glm::vec3		Random::InsideSphere(void)
+glm::vec3		Random::InsideSphere(void)
 {
 	
 }
 
-static glm::quat		Random::GetRotation(void)
+glm::quat		Random::GetRotation(void)
 {
 	
 }
 
-static Color		Random::GetColor(void)
+Color		Random::GetColor(void)
 {
 	
 }
 
-static float		Random::Range(const float a, const float b)
+float		Random::Range(const float a, const float b)
 {
 	
 }
 
-static int		Random::Range(const int a, const int b)
+int		Random::Range(const int a, const int b)
 {
 	
 }
 
-static void		Random::SetSeed(const long seed)
+void		Random::SetSeed(const long seed)
 {
 	
 }
