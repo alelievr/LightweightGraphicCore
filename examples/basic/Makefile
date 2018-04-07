@@ -6,7 +6,7 @@
 #    By: alelievr <marvin@42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2014/07/15 15:13:38 by alelievr          #+#    #+#              #
-#    Updated: 2018/04/07 02:23:26 by alelievr         ###   ########.fr        #
+#    Updated: 2018/04/07 14:09:47 by alelievr         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -184,7 +184,6 @@ endif
 all: $(TARGETS)
 
 %.out: %.cpp $(INCFILES)
-	@mkdir -p $(OBJDIR)/$(dir $<)
 	@$(if $(findstring lft,$(LDLIBS)),$(call color_exec_t,$(CCLEAR),$(CCLEAR),\
 		make -j 4 -C libft))
 	@$(call color_exec,$(CLINK_T),$(CLINK),"Link of $(NAME):",\
@@ -193,8 +192,7 @@ all: $(TARGETS)
 #	Removing objects
 clean:
 	@$(call color_exec,$(CCLEAN_T),$(CCLEAN),"Clean:",\
-		$(RM) $(OBJ))
-	@rm -rf $(OBJDIR)
+		$(RM) -f $(TARGETS))
 
 #	Removing objects and exe
 fclean: clean

@@ -16,10 +16,11 @@ namespace LWGE
 		private:
 			std::vector< glm::vec3 >	_vertices;
 			std::vector< glm::vec3 >	_normals;
+			std::vector< int >			_triangles;
 			std::vector< glm::vec2 >	_uvs;
 			std::vector< Color >		_colors;
 			std::vector< glm::vec3 >	_tangents;
-
+			Bounds						_bounds;
 
 		public:
 			Mesh(void);
@@ -30,24 +31,43 @@ namespace LWGE
 
 			Bounds	GetBounds(void) const;
 
-			void	Update(void);
+			void	AddVertex(float x, float y, float z);
+			void	AddVertex(const glm::vec3 & p);
 
+			void	AddColor(const Color & c);
+
+			void	AddTriangle(int p1, int p2, int p3);
+
+			void	AddTangent(float x, float y, float z);
+			void	AddTriangle(const glm::vec3 & t);
+
+			void	AddUv(float u, float v);
+			void	AddUv(const glm::vec2 & uv);
+
+			void	AddNormal(float x, float y, float z);
+			void	AddNormal(const glm::vec3 & n);
+
+			void	RecalculateBounds(void);
+			void	UploadDatas(void);
 			void	Clear(void);
 
 			std::vector< glm::vec3 >	GetVertices(void) const;
-			void	SetVertices(std::vector< glm::vec3 > tmp);
+			void	SetVertices(const std::vector< glm::vec3 > & tmp);
 			
 			std::vector< glm::vec3 >	GetNormals(void) const;
-			void	SetNormals(std::vector< glm::vec3 > tmp);
+			void	SetNormals(const std::vector< glm::vec3 > & tmp);
 			
 			std::vector< glm::vec2 >	GetUvs(void) const;
-			void	SetUvs(std::vector< glm::vec2 > tmp);
+			void	SetUvs(const std::vector< glm::vec2 > & tmp);
 			
 			std::vector< Color >	GetColors(void) const;
-			void	SetColors(std::vector< Color > tmp);
+			void	SetColors(const std::vector< Color > & tmp);
 			
 			std::vector< glm::vec3 >	GetTangents(void) const;
-			void	SetTangents(std::vector< glm::vec3 > tmp);
+			void	SetTangents(const std::vector< glm::vec3 > & tmp);
+
+			std::vector< int >	GetTriangles(void) const;
+			void	SetTriangles(const std::vector< int > & tmp);
 	};
 
 	std::ostream &	operator<<(std::ostream & o, Mesh const & r);

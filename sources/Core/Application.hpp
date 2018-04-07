@@ -34,10 +34,10 @@ namespace LWGE
 			void	Open(const std::string & name, const int width, const int height, const WindowFlag flags) noexcept;
 			void	Update(void) noexcept;
 
-			std::shared_ptr< IRenderPipeline >	GetRenderPipeline(void) const noexcept;
-			void				SetRenderPipeline(std::shared_ptr< IRenderPipeline > tmp) noexcept;
+			IRenderPipeline &	GetRenderPipeline(void) const noexcept;
+			void	SetRenderPipeline(std::shared_ptr< IRenderPipeline > tmp) noexcept;
 			
-			const std::unique_ptr< EventSystem > &		GetEventSystem(void) const noexcept;
+			EventSystem &		GetEventSystem(void) const noexcept;
 	};
 
 	std::ostream &	operator<<(std::ostream & o, Application const & r);

@@ -10,22 +10,22 @@
 
 namespace LWGE
 {
-	class		Event
+	struct		Event
 	{
-		private:
-			EventType	_type;
-			bool		_alt;
-			bool		_control;
-			bool		_shift;
-			bool		_function;
-			bool		_capsLock;
-			KeyCode		_keyCode;
-			int			_mouseButton;
-			int			_joystickNumber;
-			glm::vec2	_delta;
-
-
 		public:
+			EventType	type;
+			bool		alt;
+			bool		control;
+			bool		shift;
+			bool		function;
+			bool		capsLock;
+			KeyCode		keyCode;
+			int			mouseButton;
+			int			joystickNumber;
+			glm::vec2	delta;
+			glm::vec2	mousePosition;
+
+
 			Event(void);
 			Event(const Event&);
 			virtual ~Event(void);
@@ -61,6 +61,10 @@ namespace LWGE
 			
 			glm::vec2	GetDelta(void) const;
 			void	SetDelta(glm::vec2 tmp);
+
+			glm::vec2	GetMousePosition(void) const;
+			void	SetMousePosition(glm::vec2 tmp);
+			void	SetMousePosition(float x, float y);
 	};
 
 	std::ostream &	operator<<(std::ostream & o, Event const & r);

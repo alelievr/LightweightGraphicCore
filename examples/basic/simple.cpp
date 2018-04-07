@@ -1,10 +1,12 @@
 #include "LWGE.hpp"
 
-void		ProcessEvent(const std::unique_ptr< LWGE::EventSystem > & es, LWGE::Application & app)
+void		ProcessEvent(LWGE::EventSystem & es, LWGE::Application & app)
 {
-	LWGE::Event		current = es->GetCurrentEvent();
+	const LWGE::Event &	current = es.GetCurrentEvent();
 
 	auto keyCode = current.GetKeyCode();
+
+	std::cout << "Current: " << (int)current.GetKeyCode() << std::endl;
 
 	switch (current.GetType())
 	{
@@ -22,25 +24,24 @@ void		ProcessEvent(const std::unique_ptr< LWGE::EventSystem > & es, LWGE::Applic
 
 int			main(void)
 {
-	LWGE::Application	app;
-	auto				rp = app.GetRenderPipeline();
-	const auto &		es = app.GetEventSystem();
+	LWGE::Application		app;
+	LWGE::IRenderPipeline &	rp = app.GetRenderPipeline();
+	LWGE::EventSystem &		es = app.GetEventSystem();
 
-	//LWGE::Model *				testModel = ObjLoader.Load("test.obj");
 	LWGE::Model			testModel(LWGE::PrimitiveType::Cube);
 
 	//Initalize OpenGL context
 	app.Init();
 
-	rp->PushToQueue(testModel, LWGE::RenderQueueType::Geometry);
+	rp.PushToQueue(testModel, LWGE::RenderQueueType::Geometry);
 	
 	//open window
-	app.Open("test window", 200, 200, LWGE::WindowFlag::Resizable | LWGE::WindowFlag::Decorated);
+	app.Open("test window", 200, 200, LWGE::WindowFlag::Resizable | LWGE::WindowFlag::Decorated | LWGE::WindowFlag::Focused);
 
 	while (app.ShouldNotQuit())
 	{
-		ProcessEvent(es, app);
 		app.Update();
+		ProcessEvent(es, app);
 	}
 	return (0);
 }

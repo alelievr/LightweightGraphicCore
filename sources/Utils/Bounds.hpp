@@ -7,8 +7,8 @@ namespace LWGE
 	class Bounds
 	{
 		private:
-			glm::vec3	min;
-			glm::vec3	max;
+			glm::vec3	_min;
+			glm::vec3	_max;
 
 		public:
 			Bounds(void);
@@ -27,6 +27,11 @@ namespace LWGE
 			float		GetMinZ(void) const;
 
 			glm::vec3	GetSize(void) const;
+
+			glm::vec3	GetMin(void) const;
+			glm::vec3	GetMax(void) const;
+
+			void		Encapsulate(const glm::vec3 & p);
 
 			//...
 	};

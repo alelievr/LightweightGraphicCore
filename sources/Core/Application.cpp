@@ -5,7 +5,7 @@
 
 using namespace LWGE;
 
-Application::Application(void) : _shouldNotQuit(true)
+Application::Application(void) : _window(NULL), _shouldNotQuit(true)
 {
 	std::cout << "Default constructor of Application called" << std::endl;
 	this->_renderPipeline = std::make_shared< ForwardRenderPipeline >();
@@ -14,6 +14,9 @@ Application::Application(void) : _shouldNotQuit(true)
 
 Application::~Application(void)
 {
+	if (_window != NULL)
+		glfwTerminate();
+
 	std::cout << "Destructor of Application called" << std::endl;
 }
 
@@ -52,17 +55,27 @@ void			Application::Open(const std::string & name, const int width, const int he
 	glfwWindowHint(GLFW_MAXIMIZED, (flags & WindowFlag::Maximized) != 0);
 
 	_window = glfwCreateWindow(width, height, name.c_str(), NULL, NULL);
+
+	_eventSystem->BindWindow(_window);
+
+	glfwMakeContextCurrent(_window);
+	glfwSwapInterval(1);
 }
 
 void				Application::Update(void) noexcept
 {
 	_renderPipeline->Render();
+
+	glfwSwapBuffers(_window);
+	glfwPollEvents();
+
+	_shouldNotQuit = !glfwWindowShouldClose(_window);
 }
 
-std::shared_ptr< IRenderPipeline >	Application::GetRenderPipeline(void) const noexcept { return (this->_renderPipeline); }
+IRenderPipeline &	Application::GetRenderPipeline(void) const noexcept { return *(this->_renderPipeline); }
 void				Application::SetRenderPipeline(std::shared_ptr< IRenderPipeline > tmp) noexcept { this->_renderPipeline = tmp; }
 
-const std::unique_ptr< EventSystem > &		Application::GetEventSystem(void) const noexcept { return this->_eventSystem; }
+EventSystem &		Application::GetEventSystem(void) const noexcept { return *(this->_eventSystem); }
 
 std::ostream &	operator<<(std::ostream & o, Application const & r)
 {

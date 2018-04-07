@@ -23,49 +23,53 @@ Event &	Event::operator=(Event const & src)
 	std::cout << "Assignment operator called" << std::endl;
 
 	if (this != &src) {
-		this->_type = src.GetType();
-		this->_alt = src.GetAlt();
-		this->_control = src.GetControl();
-		this->_shift = src.GetShift();
-		this->_function = src.GetFunction();
-		this->_capsLock = src.GetCapsLock();
-		this->_keyCode = src.GetKeyCode();
-		this->_mouseButton = src.GetMouseButton();
-		this->_joystickNumber = src.GetJoystickNumber();
-		this->_delta = src.GetDelta();
+		this->type = src.GetType();
+		this->alt = src.GetAlt();
+		this->control = src.GetControl();
+		this->shift = src.GetShift();
+		this->function = src.GetFunction();
+		this->capsLock = src.GetCapsLock();
+		this->keyCode = src.GetKeyCode();
+		this->mouseButton = src.GetMouseButton();
+		this->joystickNumber = src.GetJoystickNumber();
+		this->delta = src.GetDelta();
 	}
 	return (*this);
 }
 
-EventType		Event::GetType(void) const { return (this->_type); }
-void		Event::SetType(EventType tmp) { this->_type = tmp; }
+EventType		Event::GetType(void) const { return (this->type); }
+void		Event::SetType(EventType tmp) { this->type = tmp; }
 
-bool		Event::GetAlt(void) const { return (this->_alt); }
-void		Event::SetAlt(bool tmp) { this->_alt = tmp; }
+bool		Event::GetAlt(void) const { return (this->alt); }
+void		Event::SetAlt(bool tmp) { this->alt = tmp; }
 
-bool		Event::GetControl(void) const { return (this->_control); }
-void		Event::SetControl(bool tmp) { this->_control = tmp; }
+bool		Event::GetControl(void) const { return (this->control); }
+void		Event::SetControl(bool tmp) { this->control = tmp; }
 
-bool		Event::GetShift(void) const { return (this->_shift); }
-void		Event::SetShift(bool tmp) { this->_shift = tmp; }
+bool		Event::GetShift(void) const { return (this->shift); }
+void		Event::SetShift(bool tmp) { this->shift = tmp; }
 
-bool		Event::GetFunction(void) const { return (this->_function); }
-void		Event::SetFunction(bool tmp) { this->_function = tmp; }
+bool		Event::GetFunction(void) const { return (this->function); }
+void		Event::SetFunction(bool tmp) { this->function = tmp; }
 
-bool		Event::GetCapsLock(void) const { return (this->_capsLock); }
-void		Event::SetCapsLock(bool tmp) { this->_capsLock = tmp; }
+bool		Event::GetCapsLock(void) const { return (this->capsLock); }
+void		Event::SetCapsLock(bool tmp) { this->capsLock = tmp; }
 
-KeyCode		Event::GetKeyCode(void) const { return (this->_keyCode); }
-void		Event::SetKeyCode(KeyCode tmp) { this->_keyCode = tmp; }
+KeyCode		Event::GetKeyCode(void) const { return (this->keyCode); }
+void		Event::SetKeyCode(KeyCode tmp) { this->keyCode = tmp; }
 
-int		Event::GetMouseButton(void) const { return (this->_mouseButton); }
-void		Event::SetMouseButton(int tmp) { this->_mouseButton = tmp; }
+int		Event::GetMouseButton(void) const { return (this->mouseButton); }
+void		Event::SetMouseButton(int tmp) { this->mouseButton = tmp; }
 
-int		Event::GetJoystickNumber(void) const { return (this->_joystickNumber); }
-void		Event::SetJoystickNumber(int tmp) { this->_joystickNumber = tmp; }
+int		Event::GetJoystickNumber(void) const { return (this->joystickNumber); }
+void		Event::SetJoystickNumber(int tmp) { this->joystickNumber = tmp; }
 
-glm::vec2		Event::GetDelta(void) const { return (this->_delta); }
-void		Event::SetDelta(glm::vec2 tmp) { this->_delta = tmp; }
+glm::vec2		Event::GetDelta(void) const { return (this->delta); }
+void		Event::SetDelta(glm::vec2 tmp) { this->delta = tmp; }
+
+glm::vec2	Event::GetMousePosition(void) const { return (this->mousePosition); }
+void	Event::SetMousePosition(glm::vec2 tmp) { this->mousePosition = tmp; }
+void	Event::SetMousePosition(float x, float y) { this->mousePosition.x = x; this->mousePosition.y = y; }
 
 std::ostream &	operator<<(std::ostream & o, Event const & r)
 {

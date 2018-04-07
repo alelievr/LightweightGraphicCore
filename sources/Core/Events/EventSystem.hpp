@@ -3,31 +3,50 @@
 #include <iostream>
 #include <string>
 #include <functional>
+#include <map>
 
 #include "Event.hpp"
+#include "GLFW/glfw3.h"
 
 namespace LWGE
 {
-	typedef std::function< void (void) > onQuitCallback;
-	typedef std::function< void (bool focused) > onFocusCallback;
-	typedef std::function< void (float x, float y) > onMouseMoveCallback;
-	typedef std::function< void (float x, float y, int button) > onMouseDownCallback;
-	typedef std::function< void (float x, float y, int button) > onMouseUpCallback;
-	typedef std::function< void (void) > onMouseEnterCallback;
-	typedef std::function< void (void) > onMouseExitCallback;
+	typedef std::function< void (void) > OnQuitCallback;
+	typedef std::function< void (bool focused) > OnFocusCallback;
+	typedef std::function< void (float x, float y) > OnMouseMoveCallback;
+	typedef std::function< void (float x, float y, int button) > OnMouseDownCallback;
+	typedef std::function< void (float x, float y, int button) > OnMouseUpCallback;
+	typedef std::function< void (void) > OnMouseEnterCallback;
+	typedef std::function< void (void) > OnMouseExitCallback;
+	typedef std::function< void (KeyCode k) > OnKeyDownCallback;
+	typedef std::function< void (KeyCode k) > OnKeyUpCallback;
+	typedef std::function< void (KeyCode k) > OnKeyStayCallback;
 
-	class		EventSystem
+	class		EventSystem : std::enable_shared_from_this< EventSystem >
 	{
 		private:
-			onQuitCallback			_onQuit;
-			onFocusCallback			_onFocus;
-			onMouseMoveCallback		_onMouseMove;
-			onMouseDownCallback		_onMouseDown;
-			onMouseEnterCallback	_onMouseEnter;
-			onMouseExitCallback		_onMouseExit;
-			onMouseUpCallback		_onMouseUp;
+			OnQuitCallback			_onQuit;
+			OnFocusCallback			_onFocus;
+			
+			OnMouseMoveCallback		_onMouseMove;
+			OnMouseDownCallback		_onMouseDown;
+			OnMouseUpCallback		_onMouseUp;
 
-			Event						_current;
+			OnMouseEnterCallback	_onMouseEnter;
+			OnMouseExitCallback		_onMouseExit;
+
+			OnKeyDownCallback		_onKeyDown;
+			OnKeyUpCallback			_onKeyUp;
+			OnKeyStayCallback		_onKeyStay;
+
+			Event					_current;
+
+			static std::map< GLFWwindow *, EventSystem * > eventSystems;
+			
+			void DefaultMouseMoveAction(float x, float y);
+			void DefaultMouseDownAction(float x, float y, int button);
+			void DefaultMouseUpAction(float x, float y, int button);
+			void DefaultKeyDownAction(KeyCode k);
+			void DefaultKeyUpAction(KeyCode k);
 
 
 		public:
@@ -37,28 +56,30 @@ namespace LWGE
 
 			EventSystem &	operator=(EventSystem const & src) = delete;
 
-			onQuitCallback	GetOnQuit(void) const;
-			void	SetOnQuit(onQuitCallback tmp);
-			
-			onFocusCallback	GetOnFocus(void) const;
-			void	SetOnFocus(onFocusCallback tmp);
-			
-			onMouseMoveCallback	GetOnMouseMove(void) const;
-			void	SetOnMouseMove(onMouseMoveCallback tmp);
-			
-			onMouseDownCallback	GetOnMouseDown(void) const;
-			void	SetOnMouseDown(onMouseDownCallback tmp);
-			
-			onMouseEnterCallback	GetOnMouseEnter(void) const;
-			void	SetOnMouseEnter(onMouseEnterCallback tmp);
-			
-			onMouseExitCallback	GetOnMouseExit(void) const;
-			void	SetOnMouseExit(onMouseExitCallback tmp);
-			
-			onMouseUpCallback	GetOnMouseUp(void) const;
-			void	SetOnMouseUp(onMouseUpCallback tmp);
+			void			BindWindow(GLFWwindow *window);
 
-			Event	GetCurrentEvent(void) const;
+			OnQuitCallback	GetOnQuit(void) const;
+			void	SetOnQuit(OnQuitCallback tmp);
+			
+			OnFocusCallback	GetOnFocus(void) const;
+			void	SetOnFocus(OnFocusCallback tmp);
+			
+			OnMouseMoveCallback	GetOnMouseMove(void) const;
+			void	SetOnMouseMove(OnMouseMoveCallback tmp);
+			
+			OnMouseDownCallback	GetOnMouseDown(void) const;
+			void	SetOnMouseDown(OnMouseDownCallback tmp);
+			
+			OnMouseEnterCallback	GetOnMouseEnter(void) const;
+			void	SetOnMouseEnter(OnMouseEnterCallback tmp);
+			
+			OnMouseExitCallback	GetOnMouseExit(void) const;
+			void	SetOnMouseExit(OnMouseExitCallback tmp);
+			
+			OnMouseUpCallback	GetOnMouseUp(void) const;
+			void	SetOnMouseUp(OnMouseUpCallback tmp);
+
+			const Event &	GetCurrentEvent(void) const;
 	};
 
 	std::ostream &	operator<<(std::ostream & o, EventSystem const & r);
