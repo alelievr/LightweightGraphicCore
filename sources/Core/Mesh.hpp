@@ -4,6 +4,9 @@
 #include <string>
 #include <vector>
 
+#define GLFW_INCLUDE_GLCOREARB
+#include "GLFW/glfw3.h"
+
 #include "glm/glm.hpp"
 #include "../Utils/Color.hpp"
 #include "../Utils/Bounds.hpp"
@@ -16,11 +19,14 @@ namespace LWGE
 		private:
 			std::vector< glm::vec3 >	_vertices;
 			std::vector< glm::vec3 >	_normals;
-			std::vector< int >			_triangles;
 			std::vector< glm::vec2 >	_uvs;
 			std::vector< Color >		_colors;
 			std::vector< glm::vec3 >	_tangents;
+			std::vector< int >			_triangles;
 			Bounds						_bounds;
+
+			GLuint						_vao;
+			GLuint						_vbo[6];
 
 		public:
 			Mesh(void);

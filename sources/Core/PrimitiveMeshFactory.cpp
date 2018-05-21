@@ -42,16 +42,16 @@ std::shared_ptr< Mesh >		PrimitiveMeshFactory::_CreateCubeMesh(void)
 	m->AddTriangle(0, 1, 2);
 	m->AddTriangle(0, 2, 3);
 
+	m->UploadDatas();
+
 	return m;
 }
 
 std::shared_ptr< Mesh >		PrimitiveMeshFactory::CreateMesh(PrimitiveType type)
 {
-	std::cout << "prim type: " << (int)type << ", cube: " << (int)PrimitiveType::Cube << "\n";
 	switch (type)
 	{
 		case PrimitiveType::Cube:
-			std::cout << "Here !\n";
 			return _CreateCubeMesh();
 	}
 	throw std::runtime_error("Can't find mesh generator for primitive type: " + std::to_string(static_cast< int >(type)));
