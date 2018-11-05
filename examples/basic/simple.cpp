@@ -1,8 +1,8 @@
-#include "LWGE.hpp"
+#include "LWGC.hpp"
 
-void		ProcessEvent(LWGE::EventSystem & es, LWGE::Application & app)
+void		ProcessEvent(LWGC::EventSystem * es, LWGC::Application & app)
 {
-	const LWGE::Event &	current = es.GetCurrentEvent();
+	const LWGC::Event &	current = es->GetCurrentEvent();
 
 	auto keyCode = current.GetKeyCode();
 
@@ -10,10 +10,10 @@ void		ProcessEvent(LWGE::EventSystem & es, LWGE::Application & app)
 
 	switch (current.GetType())
 	{
-		case LWGE::EventType::KeyDown:
-			if (keyCode == LWGE::KeyCode::A)
+		case LWGC::EventType::KeyDown:
+			if (keyCode == LWGC::KeyCode::A)
 				std::cout << "key A pressed" << std::endl;
-			if (keyCode == LWGE::KeyCode::ESCAPE)
+			if (keyCode == LWGC::KeyCode::ESCAPE)
 				app.Quit();
 			break ;
 
@@ -24,19 +24,20 @@ void		ProcessEvent(LWGE::EventSystem & es, LWGE::Application & app)
 
 int			main(void)
 {
-	LWGE::Application		app;
-	LWGE::IRenderPipeline &	rp = app.GetRenderPipeline();
-	LWGE::EventSystem &		es = app.GetEventSystem();
+	LWGC::Application		app;
+	LWGC::EventSystem *		es = app.GetEventSystem();
+	LWGC::Hierarchy *		hierarchy = app.GetHierarchy();
 
-	LWGE::Model			testModel(LWGE::PrimitiveType::Cube);
-
-	//Initalize OpenGL context
+	//Initalize application
 	app.Init();
 
-	rp.PushToQueue(std::make_shared< LWGE::Model >(testModel), LWGE::RenderQueueType::Geometry);
-	
+	LWGC::IComponent * comp = new LWGC::MeshRenderer(LWGC::PrimitiveType::Cube);
+	hierarchy->AddGameObject(new LWGC::GameObject(comp));
+
 	//open window
-	app.Open("test window", 200, 200, LWGE::WindowFlag::Resizable | LWGE::WindowFlag::Decorated | LWGE::WindowFlag::Focused);
+	printf("here !\n");
+	app.Open("test window", 200, 200, LWGC::WindowFlag::Resizable | LWGC::WindowFlag::Decorated | LWGC::WindowFlag::Focused);
+	printf("here !\n");
 
 	while (app.ShouldNotQuit())
 	{

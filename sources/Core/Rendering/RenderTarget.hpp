@@ -3,10 +3,12 @@
 #include <iostream>
 #include <string>
 
+#include "IncludeDeps.hpp"
+
 #include "FramebufferAttachment.hpp"
 
-#include "GLFW/glfw3.h"
-#include "glm/glm.hpp"
+#include GLFW_INCLUDE
+#include GLM_INCLUDE
 
 namespace LWGC
 {

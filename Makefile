@@ -6,7 +6,7 @@
 #    By: alelievr <marvin@42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2014/07/15 15:13:38 by alelievr          #+#    #+#              #
-#    Updated: 2018/11/05 19:59:00 by alelievr         ###   ########.fr        #
+#    Updated: 2018/11/05 23:55:45 by alelievr         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -23,7 +23,7 @@ SRC			=	Core/Application.cpp \
 				Core/Events/Input.cpp \
 				Core/Material.cpp \
 				Core/Mesh.cpp \
-				Core/Model.cpp \
+				Core/MeshRenderer.cpp \
 				Core/Object.cpp \
 				Core/PrimitiveMeshFactory.cpp \
 				Core/Rendering/DeferredRenderPipeline.cpp \
@@ -35,6 +35,8 @@ SRC			=	Core/Application.cpp \
 				Core/Shaders/ShaderProgram.cpp \
 				Core/Shaders/ShaderSource.cpp \
 				Core/Transform.cpp \
+				Core/GameObject.cpp \
+				Core/Hierarchy.cpp \
 				Utils/Bounds.cpp \
 				Utils/Color.cpp \
 				Utils/Random.cpp \
@@ -50,7 +52,7 @@ DEBUGLEVEL	=	0	#can be 0 for no debug 1 for or 2 for harder debug
 					#Warrning: non null debuglevel will disable optlevel
 OPTLEVEL	=	1	#same than debuglevel
 					#Warrning: non null optlevel will disable debuglevel
-CPPVERSION	=	c++14
+CPPVERSION	=	c++17
 #For simpler and faster use, use commnd line variables DEBUG and OPTI:
 #Example $> make DEBUG=2 will set debuglevel to 2
 
@@ -246,7 +248,8 @@ examples:
 	@$(MAKE) -C examples
 
 #	All removing then compiling
-re: fclean all
+re: fclean
+	@$(MAKE) all
 
 f:	all run
 

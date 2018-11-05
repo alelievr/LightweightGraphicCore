@@ -9,7 +9,6 @@ Application::Application(void) : _window(NULL), _shouldNotQuit(true)
 {
 	std::cout << "Default constructor of Application called" << std::endl;
 	this->_renderPipeline = std::make_shared< ForwardRenderPipeline >();
-	this->_eventSystem = std::make_unique< EventSystem >();
 }
 
 Application::~Application(void)
@@ -56,7 +55,7 @@ void			Application::Open(const std::string & name, const int width, const int he
 
 	_window = glfwCreateWindow(width, height, name.c_str(), NULL, NULL);
 
-	_eventSystem->BindWindow(_window);
+	_eventSystem.BindWindow(_window);
 
 	glfwMakeContextCurrent(_window);
 	glfwSwapInterval(1);
@@ -72,10 +71,12 @@ void				Application::Update(void) noexcept
 	_shouldNotQuit = !glfwWindowShouldClose(_window);
 }
 
+#include <memory>
 IRenderPipeline &	Application::GetRenderPipeline(void) const noexcept { return *(this->_renderPipeline); }
 void				Application::SetRenderPipeline(std::shared_ptr< IRenderPipeline > tmp) noexcept { this->_renderPipeline = tmp; }
 
-EventSystem &		Application::GetEventSystem(void) const noexcept { return *(this->_eventSystem); }
+EventSystem *		Application::GetEventSystem(void) noexcept { return &this->_eventSystem; }
+Hierarchy *			Application::GetHierarchy(void) noexcept { return &this->_hierarchy; }
 
 std::ostream &	operator<<(std::ostream & o, Application const & r)
 {

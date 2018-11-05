@@ -6,7 +6,7 @@
 #    By: alelievr <marvin@42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2014/07/15 15:13:38 by alelievr          #+#    #+#              #
-#    Updated: 2018/04/07 14:09:47 by alelievr         ###   ########.fr        #
+#    Updated: 2018/11/05 23:36:45 by alelievr         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -32,11 +32,11 @@ CPPVERSION	=	c++11
 #Example $> make DEBUG=2 will set debuglevel to 2
 
 #	Includes
-INCDIRS		=	../../sources ../../deps/glfw/include/ ../../deps/glm/ ../../deps/SOIL2/incs/
+INCDIRS		=	../../sources
 
 #	Libraries
 LIBDIRS		=	../../ ../../deps/glfw/src/
-LDLIBS		=	-lLWGE -lglfw3
+LDLIBS		=	-lLWGC -lglfw3
 
 #	Compiler
 WERROR		=	-Werror

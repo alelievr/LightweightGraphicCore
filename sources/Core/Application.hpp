@@ -6,6 +6,7 @@
 #include "WindowFlag.hpp"
 #include "Rendering/IRenderPipeline.hpp"
 #include "Events/EventSystem.hpp"
+#include "Hierarchy.hpp"
 
 #define GLFW_INCLUDE_GLCOREARB
 #include GLFW_INCLUDE
@@ -16,7 +17,8 @@ namespace LWGC
 	{
 		private:
 			std::shared_ptr< IRenderPipeline >	_renderPipeline;
-			std::unique_ptr< EventSystem >		_eventSystem;
+			EventSystem							_eventSystem;
+			Hierarchy							_hierarchy;
 			GLFWwindow *						_window;
 
 			bool	_shouldNotQuit;
@@ -37,7 +39,9 @@ namespace LWGC
 			IRenderPipeline &	GetRenderPipeline(void) const noexcept;
 			void	SetRenderPipeline(std::shared_ptr< IRenderPipeline > tmp) noexcept;
 			
-			EventSystem &		GetEventSystem(void) const noexcept;
+			EventSystem *		GetEventSystem(void) noexcept;
+
+			Hierarchy *			GetHierarchy(void) noexcept;
 	};
 
 	std::ostream &	operator<<(std::ostream & o, Application const & r);

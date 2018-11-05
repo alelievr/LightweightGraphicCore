@@ -2,11 +2,15 @@
 
 namespace LWGC
 {
+	class GameObject;
+
 	class IComponent
 	{
 		public:
 			
-			void OnComponentAdded(void) noexcept;
-			void OnCompoenntRemoved(void) noexcept;
-	}
+			virtual void OnAdded(const GameObject & go) noexcept = 0;
+			virtual void OnRemoved(const GameObject & go) noexcept = 0;
+	};
 }
+
+#include "GameObject.hpp"

@@ -9,7 +9,7 @@ namespace LWGC
 {
 	class		Object
 	{
-		private:
+		protected:
 			Transform	_trasform;
 			std::string	_name;
 			int			_flags;

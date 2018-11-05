@@ -1,4 +1,6 @@
-#include "glm/glm.hpp"
+#include "IncludeDeps.hpp"
+
+#include GLM_INCLUDE
 
 namespace LWGC
 {

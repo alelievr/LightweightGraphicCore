@@ -3,7 +3,9 @@
 #include <iostream>
 #include <string>
 
-#include "glm/glm.hpp"
+#include "IncludeDeps.hpp"
+
+#include GLM_INCLUDE
 #include "Event.hpp"
 
 namespace LWGC

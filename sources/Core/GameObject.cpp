@@ -9,6 +9,11 @@ GameObject::GameObject(void)
 	this->_flags = 0;
 }
 
+GameObject::GameObject(IComponent * component)
+{
+	AddComponent(component);
+}
+
 GameObject::GameObject(GameObject const & src)
 {
 	*this = src;
@@ -26,26 +31,30 @@ GameObject &	GameObject::operator=(GameObject const & src)
 	std::cout << "Assignment operator called" << std::endl;
 
 	if (this != &src) {
-		this->_trasform = src.GetTransform();
+		this->_transform = src.GetTransform();
 		this->_name = src.GetName();
 		this->_flags = src.GetFlags();
 	}
 	return (*this);
 }
 
-Transform		GameObject::GetTransform(void) const { return (this->_trasform); }
-void			GameObject::SetTransform(Transform tmp) { this->_trasform = tmp; }
-
-IComponent *	AddComponent(IComponent * component) noexcept
+IComponent *	GameObject::AddComponent(IComponent * component) noexcept
 {
 	_components.insert(component);
-	// TODO: update internal rendering lists if the components has graphic capabilities
+	component->OnAdded(*this);
 }
 
-void			RemoveComponent(IComponent * component) noexcept
+void			GameObject::RemoveComponent(IComponent * component) noexcept
 {
+	component->OnRemoved(*this);
 	_components.erase(component);
 }
+
+Transform		GameObject::GetTransform(void) const { return (this->_transform); }
+void			GameObject::SetTransform(Transform tmp) { this->_transform = tmp; }
+
+void			GameObject::SetActive(bool active) { _active = active; }
+bool			GameObject::IsActive(void) const { return _active; }
 
 std::ostream &	operator<<(std::ostream & o, GameObject const & r)
 {
