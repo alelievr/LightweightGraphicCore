@@ -1,6 +1,6 @@
 #include "DeferredRenderPipeline.hpp"
 
-using namespace LWGE;
+using namespace LWGC;
 
 DeferredRenderPipeline::DeferredRenderPipeline(void)
 {

@@ -5,7 +5,7 @@
 
 #include "IRenderPipeline.hpp"
 
-namespace LWGE
+namespace LWGC
 {
 	class		DeferredRenderPipeline : public IRenderPipeline
 	{

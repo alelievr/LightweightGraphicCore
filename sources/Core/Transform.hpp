@@ -6,14 +6,15 @@
 /*   By: alelievr <alelievr@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/08/31 11:42:19 by alelievr          #+#    #+#             */
-/*   Updated: 2018/04/06 23:17:30 by alelievr         ###   ########.fr       */
+/*   Updated: 2018/11/05 19:17:29 by alelievr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
 
-#include <glm/glm.hpp>
-#include <glm/gtc/quaternion.hpp>
+#include "IncludeDeps.hpp"
+
+#include GLM_INCLUDE_QUATERNION
 
 #include <iostream>
 #include <string>

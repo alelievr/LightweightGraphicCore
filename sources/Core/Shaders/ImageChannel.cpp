@@ -1,6 +1,6 @@
 #include "ImageChannel.hpp"
 
-using namespace LWGE;
+using namespace LWGC;
 
 ImageChannel::ImageChannel(void)
 {

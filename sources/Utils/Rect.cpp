@@ -1,6 +1,6 @@
 #include "Rect.hpp"
 
-using namespace LWGE;
+using namespace LWGC;
 
 Rect::Rect(void)
 {

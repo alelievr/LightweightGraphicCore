@@ -1,17 +1,18 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   LWGE.hpp                                           :+:      :+:    :+:   */
+/*   LWGC.hpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: alelievr <alelievr@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/08/27 21:37:58 by alelievr          #+#    #+#             */
-/*   Updated: 2018/04/07 01:03:10 by alelievr         ###   ########.fr       */
+/*   Updated: 2018/11/05 19:10:23 by alelievr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
 
+#include "IncludeDeps.hpp"
 #include "Core/Rendering/DeferredRenderPipeline.hpp"
 #include "Core/Rendering/ForwardRenderPipeline.hpp"
 #include "Core/Shaders/IChannel.hpp"

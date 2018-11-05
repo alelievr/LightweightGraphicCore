@@ -1,6 +1,6 @@
 #include "ShaderSource.hpp"
 
-using namespace LWGE;
+using namespace LWGC;
 
 ShaderSource::ShaderSource(void)
 {

@@ -7,7 +7,7 @@
 #include "ShaderProgram.hpp"
 #include "ProgramChannel.hpp"
 
-namespace LWGE
+namespace LWGC
 {
 	class		ProgramChannel : public IChannel
 	{

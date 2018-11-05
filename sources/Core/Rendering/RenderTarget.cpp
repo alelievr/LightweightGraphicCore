@@ -1,6 +1,6 @@
 #include "RenderTarget.hpp"
 
-using namespace LWGE;
+using namespace LWGC;
 
 RenderTarget::RenderTarget(void)
 {

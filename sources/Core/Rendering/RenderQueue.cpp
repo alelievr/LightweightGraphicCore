@@ -1,6 +1,6 @@
 #include "RenderQueue.hpp"
 
-using namespace LWGE;
+using namespace LWGC;
 
 RenderQueue::RenderQueue(void)
 {

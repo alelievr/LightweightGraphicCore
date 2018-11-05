@@ -4,15 +4,17 @@
 #include <string>
 #include <vector>
 
-#define GLFW_INCLUDE_GLCOREARB
-#include "GLFW/glfw3.h"
+#include "IncludeDeps.hpp"
 
-#include "glm/glm.hpp"
+#define GLFW_INCLUDE_GLCOREARB
+#include GLFW_INCLUDE
+
+#include GLM_INCLUDE
 #include "../Utils/Color.hpp"
 #include "../Utils/Bounds.hpp"
 #include "PrimitiveType.hpp"
 
-namespace LWGE
+namespace LWGC
 {
 	class		Mesh
 	{

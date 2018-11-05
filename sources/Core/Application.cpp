@@ -3,7 +3,7 @@
 #include "Application.hpp"
 #include "Rendering/ForwardRenderPipeline.hpp"
 
-using namespace LWGE;
+using namespace LWGC;
 
 Application::Application(void) : _window(NULL), _shouldNotQuit(true)
 {

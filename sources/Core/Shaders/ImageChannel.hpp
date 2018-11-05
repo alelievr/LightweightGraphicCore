@@ -5,7 +5,7 @@
 
 #include "IChannel.hpp"
 
-namespace LWGE
+namespace LWGC
 {
 	class		ImageChannel : public IChannel
 	{

@@ -1,6 +1,6 @@
 #include "Event.hpp"
 
-using namespace LWGE;
+using namespace LWGC;
 
 Event::Event(void)
 {

@@ -1,6 +1,6 @@
 #include "ShaderProgram.hpp"
 
-using namespace LWGE;
+using namespace LWGC;
 
 ShaderProgram::ShaderProgram(void)
 {

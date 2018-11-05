@@ -7,7 +7,7 @@
 #include "IRenderable.hpp"
 #include "RenderTarget.hpp"
 
-namespace LWGE
+namespace LWGC
 {
 	class		RenderQueue
 	{

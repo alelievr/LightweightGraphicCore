@@ -1,4 +1,4 @@
-namespace LWGE
+namespace LWGC
 {
 	enum class RenderMode
 	{

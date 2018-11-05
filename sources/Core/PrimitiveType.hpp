@@ -1,6 +1,6 @@
 #pragma once
 
-namespace LWGE
+namespace LWGC
 {
 	enum class PrimitiveType
 	{

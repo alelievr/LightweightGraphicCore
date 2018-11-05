@@ -2,13 +2,12 @@
 
 #include <iostream>
 #include <string>
-#include <Object.hpp>
 
-#include "Object.hpp"
-#include "Rendering/RenderTarget.hpp"
-#include "CameraType.hpp"
+#include "Core/Object.hpp"
+#include "Core/Rendering/RenderTarget.hpp"
+#include "Core/CameraType.hpp"
 
-namespace LWGE
+namespace LWGC
 {
 	class		Camera : public Object
 	{
@@ -22,35 +21,35 @@ namespace LWGE
 
 
 		public:
-			Camera();
+			Camera(void);
 			Camera(const Camera&);
 			virtual ~Camera(void);
 
 			Camera &	operator=(Camera const & src);
 
-			void	Render(void);
+			void		Render(void);
 
 			glm::vec3	WorldToScreenPoint(glm::vec3 worldPosition);
 
 			glm::vec3	ScreenToWorldPoint(glm::vec3 screenPosition);
 
 			RenderTarget *	GetTarget(void) const;
-			void	SetTarget(RenderTarget * tmp);
+			void			SetTarget(RenderTarget * tmp);
 			
 			glm::vec2	GetSize(void) const;
-			void	SetSize(glm::vec2 tmp);
+			void		SetSize(glm::vec2 tmp);
 			
 			CameraType	GetCameraType(void) const;
-			void	SetCameraType(CameraType tmp);
+			void		SetCameraType(CameraType tmp);
 			
-			float	GetFov(void) const;
-			void	SetFov(float tmp);
+			float		GetFov(void) const;
+			void		SetFov(float tmp);
 			
-			float	GetNearPlane(void) const;
-			void	SetNearPlane(float tmp);
+			float		GetNearPlane(void) const;
+			void		SetNearPlane(float tmp);
 			
-			float	GetFarPlane(void) const;
-			void	SetFarPlane(float tmp);
+			float		GetFarPlane(void) const;
+			void		SetFarPlane(float tmp);
 	};
 
 	std::ostream &	operator<<(std::ostream & o, Camera const & r);

@@ -1,7 +1,7 @@
 #include "Input.hpp"
 #include <vector>
 
-using namespace LWGE;
+using namespace LWGC;
 
 Input::Input(void)
 {

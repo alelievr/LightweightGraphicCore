@@ -6,7 +6,7 @@
 #    By: alelievr <marvin@42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2014/07/15 15:13:38 by alelievr          #+#    #+#              #
-#    Updated: 2018/04/07 02:17:54 by alelievr         ###   ########.fr        #
+#    Updated: 2018/11/05 19:59:00 by alelievr         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -35,7 +35,6 @@ SRC			=	Core/Application.cpp \
 				Core/Shaders/ShaderProgram.cpp \
 				Core/Shaders/ShaderSource.cpp \
 				Core/Transform.cpp \
-				GUI/Image.cpp \
 				Utils/Bounds.cpp \
 				Utils/Color.cpp \
 				Utils/Random.cpp \
@@ -56,19 +55,20 @@ CPPVERSION	=	c++14
 #Example $> make DEBUG=2 will set debuglevel to 2
 
 #	Includes
-INCDIRS		=	sources/Core/ deps/glfw/include deps/SOIL2/incs deps/glm
+INCDIRS		=	sources/ deps/glfw/include deps/stb deps/glm deps/glslang/install/include
 
 #	Libraries
-LIBDIRS		=	deps/glfw/src deps/SOIL2 deps/freetype2/objs/.libs deps/glm
-LDLIBS		=	-lglfw3 -lSOIL2 -lfreetype
+LIBDIRS		=	deps/glfw/src deps/glslang/install/lib deps/glm
+LDLIBS		=	-lglfw3 -lglslang -lglm
 
 GLFWLIB     =   deps/glfw/src/libglfw3.a
-SOILLIB     =   deps/SOIL2/libSOIL2.a
+STBLIB      =   deps/stb/stb.h
 GLMLIB      =   deps/glm/glm
-FREETYPELIB	=	deps/freetype2/./objs/.libs/libfreetype.a
+GLSLANGLIB	=	deps/glslang/install/bin/glslangValidator
+IMGUILIB    =   deps/imgui/imgui.h
 
 #	Output
-NAME		=	libLWGE.a
+NAME		=	libLWGC.a
 
 #	Compiler
 CFLAGS		=	-Wall -Wextra -pedantic
@@ -78,8 +78,9 @@ DEBUGFLAGS1	=	-ggdb -fsanitize=address -fno-omit-frame-pointer -fno-optimize-sib
 DEBUGFLAGS2	=	-fsanitize-memory-track-origins=2
 OPTFLAGS1	=	-funroll-loops -O2
 OPTFLAGS2	=	-pipe -funroll-loops -Ofast
+CC			=	clang++
 
-#################
+################
 ##  COLORS     ##
 #################
 CPREFIX		=	"\033[38;5;"
@@ -183,27 +184,29 @@ endif
 #################
 
 #	First target
-all: $(GLFWLIB) $(OBJLIB) $(GLMLIB) $(FREETYPELIB) $(SOILLIB) $(NAME)
+all: $(GLFWLIB) $(OBJLIB) $(GLMLIB) $(IMGUILIB) $(GLSLANGLIB) $(STBLIB) $(NAME)
 
 $(GLMLIB):
 	@git submodule init
 	@git submodule update
 
-$(SOILLIB):
+$(STBLIB):
 	@git submodule init
 	@git submodule update
-	@cd deps/SOIL2 && $(MAKE)
 
 $(GLFWLIB):
 	@git submodule init
 	@git submodule update
 	@cd deps/glfw && cmake . && $(MAKE)
 
-$(FREETYPELIB):
+$(GLSLANGLIB):
 	@git submodule init
 	@git submodule update
-	@cd deps/freetype2 && ./autogen.sh && env -i ./configure --without-bzip2 --without-zlib --enable-static --without-harfbuzz --without-png && $(MAKE)
+	@cd deps/glslang && mkdir build && cd build && cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX="$(pwd)/../install" .. && $(MAKE)
 
+$(IMGUILIB):
+	@git submodule init
+	@git submodule update
 
 #	Linking
 $(NAME): $(OBJ)

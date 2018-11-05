@@ -7,7 +7,7 @@
 #include "RenderQueueType.hpp"
 #include "RenderQueue.hpp"
 
-namespace LWGE
+namespace LWGC
 {
 	class		ForwardRenderPipeline : public IRenderPipeline
 	{

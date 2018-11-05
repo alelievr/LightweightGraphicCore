@@ -2,7 +2,7 @@
 #include "PrimitiveMeshFactory.hpp"
 #include <memory>
 
-using namespace LWGE;
+using namespace LWGC;
 
 Model::Model(void)
 {

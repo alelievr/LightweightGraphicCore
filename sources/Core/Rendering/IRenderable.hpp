@@ -3,7 +3,7 @@
 #include "../Rendering/SortingLayer.hpp"
 #include "../../Utils/Bounds.hpp"
 
-namespace LWGE
+namespace LWGC
 {
 	class IRenderable
 	{

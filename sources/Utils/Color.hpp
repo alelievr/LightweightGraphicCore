@@ -3,7 +3,7 @@
 #include <iostream>
 #include <string>
 
-namespace LWGE
+namespace LWGC
 {
 	class		Color
 	{

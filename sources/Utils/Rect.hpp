@@ -1,6 +1,6 @@
 #include "glm/glm.hpp"
 
-namespace LWGE
+namespace LWGC
 {
 	class Rect
 	{

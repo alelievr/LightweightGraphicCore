@@ -4,7 +4,7 @@
 #include "RenderQueueType.hpp"
 #include "IRenderable.hpp"
 
-namespace LWGE
+namespace LWGC
 {
 	class IRenderPipeline
 	{

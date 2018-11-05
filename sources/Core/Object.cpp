@@ -1,6 +1,6 @@
 #include "Object.hpp"
 
-using namespace LWGE;
+using namespace LWGC;
 
 Object::Object(void)
 {

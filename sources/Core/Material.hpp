@@ -3,14 +3,15 @@
 #include <iostream>
 #include <string>
 
+#include "IncludeDeps.hpp"
 #include "Shaders/ShaderProgram.hpp"
 #include "Texture.hpp"
 #include "Rendering/RenderQueueType.hpp"
 #include "../Utils/Color.hpp"
-#include <glm/glm.hpp>
+#include GLM_INCLUDE
 #include "Rendering/RenderMode.hpp"
 
-namespace LWGE
+namespace LWGC
 {
 	class		Material
 	{

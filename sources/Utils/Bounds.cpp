@@ -1,6 +1,6 @@
 #include "Bounds.hpp"
 
-using namespace LWGE;
+using namespace LWGC;
 
 Bounds::Bounds(void)
 {

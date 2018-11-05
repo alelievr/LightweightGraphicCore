@@ -8,7 +8,7 @@
 #include "Event.hpp"
 #include "GLFW/glfw3.h"
 
-namespace LWGE
+namespace LWGC
 {
 	typedef std::function< void (void) > OnQuitCallback;
 	typedef std::function< void (bool focused) > OnFocusCallback;

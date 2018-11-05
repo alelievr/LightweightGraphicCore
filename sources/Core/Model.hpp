@@ -9,7 +9,7 @@
 #include "Rendering/SortingLayer.hpp"
 #include "Rendering/IRenderable.hpp"
 
-namespace LWGE
+namespace LWGC
 {
 	class		Model : public Object, public IRenderable
 	{

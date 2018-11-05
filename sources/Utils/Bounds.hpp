@@ -1,8 +1,10 @@
 #pragma once
 
-#include "glm/glm.hpp"
+#include "IncludeDeps.hpp"
 
-namespace LWGE
+#include GLM_INCLUDE
+
+namespace LWGC
 {
 	class Bounds
 	{

@@ -1,14 +1,15 @@
 #pragma once
+#include "IncludeDeps.hpp"
 
 #include <iostream>
 #include <string>
 
-#include "glm/glm.hpp"
+#include GLM_INCLUDE
 
 #include "EventType.hpp"
 #include "../KeyCode.hpp"
 
-namespace LWGE
+namespace LWGC
 {
 	struct		Event
 	{

@@ -1,6 +1,6 @@
 #include "Camera.hpp"
 
-using namespace LWGE;
+using namespace LWGC;
 
 Camera::Camera(void)
 {

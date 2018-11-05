@@ -2,12 +2,10 @@
 
 #include "GLFW/glfw3.h"
 
-using namespace LWGE;
+using namespace LWGC;
 
 Mesh::Mesh(void)
 {
-	std::cout << "Default constructor of Mesh called" << std::endl;
-
 	glGenBuffers(6, _vbo);
 	glGenVertexArrays(1, &_vao);
 }
@@ -15,14 +13,12 @@ Mesh::Mesh(void)
 Mesh::Mesh(Mesh const & src)
 {
 	*this = src;
-	std::cout << "Copy constructor called" << std::endl;
 }
 
 Mesh::~Mesh(void)
 {
 	glDeleteBuffers(6, _vbo);
 	glDeleteVertexArrays(1, &_vao);
-	std::cout << "Destructor of Mesh called" << std::endl;
 }
 
 void	Mesh::AddVertex(float x, float y, float z)

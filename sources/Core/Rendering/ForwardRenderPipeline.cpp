@@ -1,6 +1,6 @@
 #include "ForwardRenderPipeline.hpp"
 
-using namespace LWGE;
+using namespace LWGC;
 
 ForwardRenderPipeline::ForwardRenderPipeline(void)
 {

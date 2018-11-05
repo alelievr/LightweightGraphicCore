@@ -2,7 +2,7 @@
 
 #include <memory>
 
-using namespace LWGE;
+using namespace LWGC;
 
 std::map< GLFWwindow *, EventSystem * > EventSystem::eventSystems;
 

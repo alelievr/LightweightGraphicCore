@@ -2,7 +2,7 @@
 
 #include "PrimitiveMeshFactory.hpp"
 
-using namespace LWGE;
+using namespace LWGC;
 
 PrimitiveMeshFactory::PrimitiveMeshFactory(void)
 {

@@ -4,9 +4,15 @@
 [submodule "glm"]
 	path = deps/glm
 	url = https://github.com/g-truc/glm
-[submodule "freetype2"]
-	path = deps/freetype2
-	url = git://git.sv.nongnu.org/freetype/freetype2.git
-[submodule "SOIL2"]
-	path = deps/SOIL2
-	url = https://github.com/alelievr/SOIL2
+[submodule "deps/glslang"]
+	path = deps/glslang
+	url = https://github.com/KhronosGroup/glslang
+[submodule "imgui"]
+	path = imgui
+	url = https://github.com/ocornut/imgui
+[submodule "deps/imgui"]
+	path = deps/imgui
+	url = https://github.com/ocornut/imgui
+[submodule "deps/stb"]
+	path = deps/stb
+	url = https://github.com/nothings/stb

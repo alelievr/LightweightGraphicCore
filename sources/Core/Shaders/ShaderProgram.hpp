@@ -6,7 +6,7 @@
 #include "GLFW/glfw3.h"
 #include "ShaderSource.hpp"
 
-namespace LWGE
+namespace LWGC
 {
 	class		ShaderProgram
 	{

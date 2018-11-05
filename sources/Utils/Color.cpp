@@ -1,6 +1,6 @@
 #include "Color.hpp"
 
-using namespace LWGE;
+using namespace LWGC;
 
 Color::Color(void)
 {

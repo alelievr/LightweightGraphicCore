@@ -3,12 +3,14 @@
 #include <iostream>
 #include <string>
 
-#include "glm/glm.hpp"
-#include "glm/gtc/quaternion.hpp"
+#include "IncludeDeps.hpp"
+
+#include GLM_INCLUDE
+#include GLM_INCLUDE_QUATERNION
 #include "Color.hpp"
 #include "Random.hpp"
 
-namespace LWGE
+namespace LWGC
 {
 	class		Random
 	{

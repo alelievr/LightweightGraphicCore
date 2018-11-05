@@ -1,6 +1,6 @@
 #include "Random.hpp"
 
-using namespace LWGE;
+using namespace LWGC;
 
 Random::Random(void)
 {

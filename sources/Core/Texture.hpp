@@ -5,7 +5,7 @@
 #include "TextureFilterMode.hpp"
 #include "TextureWrapMode.hpp"
 
-namespace LWGE
+namespace LWGC
 {
 	class		Texture
 	{

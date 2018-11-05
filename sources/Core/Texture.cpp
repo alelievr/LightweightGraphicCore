@@ -3,7 +3,7 @@
 #include "TextureFilterMode.hpp"
 #include "TextureWrapMode.hpp"
 
-using namespace LWGE;
+using namespace LWGC;
 
 Texture::Texture(void)
 {

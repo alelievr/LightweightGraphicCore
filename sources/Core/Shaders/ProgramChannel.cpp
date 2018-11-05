@@ -1,6 +1,6 @@
 #include "ProgramChannel.hpp"
 
-using namespace LWGE;
+using namespace LWGC;
 
 ProgramChannel::ProgramChannel(void)
 {

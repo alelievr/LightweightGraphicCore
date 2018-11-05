@@ -6,7 +6,7 @@
 #include "glm/glm.hpp"
 #include "Event.hpp"
 
-namespace LWGE
+namespace LWGC
 {
 	class		Input
 	{

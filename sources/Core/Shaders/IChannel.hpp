@@ -2,7 +2,7 @@
 
 #include "ChannelType.hpp"
 
-namespace LWGE
+namespace LWGC
 {
 	class	IChannel
 	{

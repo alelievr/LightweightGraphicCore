@@ -5,7 +5,7 @@
 
 #include "Mesh.hpp"
 
-namespace LWGE
+namespace LWGC
 {
 	class		PrimitiveMeshFactory
 	{
