@@ -6,8 +6,6 @@ void		ProcessEvent(LWGC::EventSystem * es, LWGC::Application & app)
 
 	auto keyCode = current.GetKeyCode();
 
-	std::cout << "Current: " << (int)current.GetKeyCode() << std::endl;
-
 	switch (current.GetType())
 	{
 		case LWGC::EventType::KeyDown:
@@ -35,9 +33,7 @@ int			main(void)
 	hierarchy->AddGameObject(new LWGC::GameObject(comp));
 
 	//open window
-	printf("here !\n");
 	app.Open("test window", 200, 200, LWGC::WindowFlag::Resizable | LWGC::WindowFlag::Decorated | LWGC::WindowFlag::Focused);
-	printf("here !\n");
 
 	while (app.ShouldNotQuit())
 	{

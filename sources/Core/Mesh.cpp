@@ -6,8 +6,7 @@ using namespace LWGC;
 
 Mesh::Mesh(void)
 {
-	glGenBuffers(6, _vbo);
-	glGenVertexArrays(1, &_vao);
+	// TODO: generate buffers
 }
 
 Mesh::Mesh(Mesh const & src)
@@ -17,8 +16,7 @@ Mesh::Mesh(Mesh const & src)
 
 Mesh::~Mesh(void)
 {
-	glDeleteBuffers(6, _vbo);
-	glDeleteVertexArrays(1, &_vao);
+	// TODO: delete buffers
 }
 
 void	Mesh::AddVertex(float x, float y, float z)
@@ -80,30 +78,7 @@ Bounds		Mesh::GetBounds(void) const
 
 void		Mesh::UploadDatas(void)
 {
-	std::cout << "12 == " << sizeof(glm::vec3) << std::endl;
-
-	//Fill vertex buffers
-	glBindBuffer(GL_ARRAY_BUFFER, _vbo[0]);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec3) * _vertices.size(), _vertices.data(), GL_STATIC_DRAW);
-
-	glBindBuffer(GL_ARRAY_BUFFER, _vbo[1]);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec3) * _normals.size(), _normals.data(), GL_STATIC_DRAW);
-
-	glBindBuffer(GL_ARRAY_BUFFER, _vbo[2]);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec3) * _uvs.size(), _uvs.data(), GL_STATIC_DRAW);
-
-	glBindBuffer(GL_ARRAY_BUFFER, _vbo[3]);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec3) * _colors.size(), _colors.data(), GL_STATIC_DRAW);
-
-	glBindBuffer(GL_ARRAY_BUFFER, _vbo[4]);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec3) * _tangents.size(), _tangents.data(), GL_STATIC_DRAW);
-
-	glBindBuffer(GL_ARRAY_BUFFER, _vbo[5]);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec3) * _triangles.size(), _triangles.data(), GL_STATIC_DRAW);
-
-	//Bind vertex array
-	glBindVertexArray(_vao);
-	glEnableVertexAttribArray(0);
+	// TODO: Bind all enabled buffers
 }
 
 void		Mesh::RecalculateBounds(void)
