@@ -33,7 +33,7 @@ int			main(void)
 	hierarchy->AddGameObject(new LWGC::GameObject(comp));
 
 	//open window
-	app.Open("test window", 200, 200, LWGC::WindowFlag::Resizable | LWGC::WindowFlag::Decorated | LWGC::WindowFlag::Focused);
+	app.Open("Test window", 200, 200, LWGC::WindowFlag::Resizable | LWGC::WindowFlag::Decorated | LWGC::WindowFlag::Focused);
 
 	while (app.ShouldNotQuit())
 	{

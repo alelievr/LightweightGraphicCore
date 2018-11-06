@@ -4,7 +4,9 @@
 #include <list>
 #include <string>
 
-#include "GLFW/glfw3.h"
+#include "IncludeDeps.hpp"
+
+#include GLFW_INCLUDE
 
 namespace LWGC
 {

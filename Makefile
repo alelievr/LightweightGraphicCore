@@ -6,7 +6,7 @@
 #    By: alelievr <marvin@42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2014/07/15 15:13:38 by alelievr          #+#    #+#              #
-#    Updated: 2018/11/05 23:55:45 by alelievr         ###   ########.fr        #
+#    Updated: 2018/11/06 21:01:13 by alelievr         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -52,7 +52,7 @@ DEBUGLEVEL	=	0	#can be 0 for no debug 1 for or 2 for harder debug
 					#Warrning: non null debuglevel will disable optlevel
 OPTLEVEL	=	1	#same than debuglevel
 					#Warrning: non null optlevel will disable debuglevel
-CPPVERSION	=	c++17
+CPPVERSION	=	c++1z
 #For simpler and faster use, use commnd line variables DEBUG and OPTI:
 #Example $> make DEBUG=2 will set debuglevel to 2
 
@@ -66,7 +66,7 @@ LDLIBS		=	-lglfw3 -lglslang -lglm
 GLFWLIB     =   deps/glfw/src/libglfw3.a
 STBLIB      =   deps/stb/stb.h
 GLMLIB      =   deps/glm/glm
-GLSLANGLIB	=	deps/glslang/install/bin/glslangValidator
+GLSLANGLIB	=	deps/glslang/build/StandAlone/glslangValidator
 IMGUILIB    =   deps/imgui/imgui.h
 
 #	Output
@@ -80,7 +80,7 @@ DEBUGFLAGS1	=	-ggdb -fsanitize=address -fno-omit-frame-pointer -fno-optimize-sib
 DEBUGFLAGS2	=	-fsanitize-memory-track-origins=2
 OPTFLAGS1	=	-funroll-loops -O2
 OPTFLAGS2	=	-pipe -funroll-loops -Ofast
-CC			=	clang++
+MYCC		=	clang++
 
 ################
 ##  COLORS     ##
@@ -204,7 +204,7 @@ $(GLFWLIB):
 $(GLSLANGLIB):
 	@git submodule init
 	@git submodule update
-	@cd deps/glslang && mkdir build && cd build && cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX="$(pwd)/../install" .. && $(MAKE)
+	@cd deps/glslang && mkdir -p build && cd build && cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX="$(pwd)/../install" .. && $(MAKE)
 
 $(IMGUILIB):
 	@git submodule init
@@ -226,7 +226,7 @@ $(OBJDIR)/%.o: %.cpp $(INCFILES)
 $(OBJDIR)/%.o: %.c $(INCFILES)
 	@mkdir -p $(OBJDIR)
 	@$(call color_exec,$(COBJ_T),$(COBJ),"Object: $@",\
-		$(CC) $(CFLAGS) $(OPTFLAGS) $(DEBUGFLAGS) $(CPPFLAGS) -o $@ -c $<)
+		$(MYCC) $(CFLAGS) $(OPTFLAGS) $(DEBUGFLAGS) $(CPPFLAGS) -o $@ -c $<)
 
 $(OBJDIR)/%.o: %.s
 	@mkdir -p $(OBJDIR)

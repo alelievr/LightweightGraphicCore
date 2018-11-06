@@ -5,8 +5,10 @@
 #include <functional>
 #include <map>
 
+#include "IncludeDeps.hpp"
+
 #include "Event.hpp"
-#include "GLFW/glfw3.h"
+#include GLFW_INCLUDE
 
 namespace LWGC
 {

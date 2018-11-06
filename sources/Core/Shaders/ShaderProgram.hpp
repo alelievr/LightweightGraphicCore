@@ -3,7 +3,9 @@
 #include <iostream>
 #include <string>
 
-#include "GLFW/glfw3.h"
+#include "IncludeDeps.hpp"
+
+#include GLFW_INCLUDE
 #include "ShaderSource.hpp"
 
 namespace LWGC
