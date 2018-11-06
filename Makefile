@@ -6,7 +6,7 @@
 #    By: alelievr <marvin@42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2014/07/15 15:13:38 by alelievr          #+#    #+#              #
-#    Updated: 2018/11/05 23:55:45 by alelievr         ###   ########.fr        #
+#    Updated: 2018/11/06 17:41:11 by alelievr         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -57,7 +57,7 @@ CPPVERSION	=	c++17
 #Example $> make DEBUG=2 will set debuglevel to 2
 
 #	Includes
-INCDIRS		=	sources/ deps/glfw/include deps/stb deps/glm deps/glslang/install/include
+INCDIRS		=	sources/ deps/glfw/include deps/stb deps/glm deps/glslang/install/include deps/imgui/ deps/imgui/examples/
 
 #	Libraries
 LIBDIRS		=	deps/glfw/src deps/glslang/install/lib deps/glm

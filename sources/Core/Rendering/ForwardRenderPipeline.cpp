@@ -1,5 +1,10 @@
 #include "ForwardRenderPipeline.hpp"
 
+#include "imgui.h"
+#include "imgui_impl_glfw.h"
+// TODO: move to vulkan
+#include "imgui_impl_opengl3.h"
+
 using namespace LWGC;
 
 ForwardRenderPipeline::ForwardRenderPipeline(void)
@@ -14,6 +19,15 @@ void	ForwardRenderPipeline::Render(void)
 {
 	for (int i = 0; i < static_cast< int >(RenderQueueType::Count); i++)
 		this->_renderQueues[i].RenderPass();
+}
+
+void	ForwardRenderPipeline::RenderImGUI(void)
+{
+	bool test;
+
+	ImGui::Begin("Hello, world!");
+	ImGui::Checkbox("Test", &test);
+	ImGui::End();
 }
 
 void	ForwardRenderPipeline::SetRenderTarget(RenderTarget & target)

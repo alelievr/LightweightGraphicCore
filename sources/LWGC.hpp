@@ -6,7 +6,7 @@
 /*   By: alelievr <alelievr@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/08/27 21:37:58 by alelievr          #+#    #+#             */
-/*   Updated: 2018/11/05 23:32:18 by alelievr         ###   ########.fr       */
+/*   Updated: 2018/11/06 17:45:57 by alelievr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,6 @@
 
 // Pipelines
 #include "Core/Rendering/IRenderPipeline.hpp"
-#include "Core/Rendering/DeferredRenderPipeline.hpp"
 #include "Core/Rendering/ForwardRenderPipeline.hpp"
 
 // Shaders & materials
