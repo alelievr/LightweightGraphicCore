@@ -26,7 +26,6 @@ SRC			=	Core/Application.cpp \
 				Core/MeshRenderer.cpp \
 				Core/Object.cpp \
 				Core/PrimitiveMeshFactory.cpp \
-				Core/Rendering/DeferredRenderPipeline.cpp \
 				Core/Rendering/ForwardRenderPipeline.cpp \
 				Core/Rendering/RenderQueue.cpp \
 				Core/Rendering/RenderTarget.cpp \
@@ -67,7 +66,7 @@ GLFWLIB     =   deps/glfw/src/libglfw3.a
 STBLIB      =   deps/stb/stb.h
 GLMLIB      =   deps/glm/glm
 GLSLANGLIB	=	deps/glslang/build/StandAlone/glslangValidator
-IMGUILIB    =   deps/imgui/imgui.h
+IMGUILIB    =   deps/imgui/libImGUI.a
 
 #	Output
 NAME		=	libLWGC.a
@@ -209,6 +208,7 @@ $(GLSLANGLIB):
 $(IMGUILIB):
 	@git submodule init
 	@git submodule update
+	@$(MAKE) -f ImGUI.Makefile
 
 #	Linking
 $(NAME): $(OBJ)

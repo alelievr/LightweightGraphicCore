@@ -6,7 +6,7 @@
 #    By: alelievr <marvin@42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2014/07/15 15:13:38 by alelievr          #+#    #+#              #
-#    Updated: 2018/11/06 21:44:59 by alelievr         ###   ########.fr        #
+#    Updated: 2018/11/06 21:45:44 by alelievr         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -15,11 +15,15 @@
 #################
 
 #	Sources
-SRCDIR		=	src
-SRC			=	simple.cpp	\
+SRCDIR		=	deps/imgui
+SRC			=	imgui.cpp						\
+				imgui_draw.cpp					\
+				imgui_widgets.cpp				\
+				examples/imgui_impl_glfw.cpp	\
+				examples/imgui_impl_vulkan.cpp	\
 
 #	Objects
-OBJDIR		=	obj
+OBJDIR		=	deps/imgui/obj
 
 #	Variables
 LIBFT		=	2	#1 or 0 to include the libft / 2 for autodetct
@@ -27,23 +31,23 @@ DEBUGLEVEL	=	0	#can be 0 for no debug 1 for or 2 for harder debug
 					#Warrning: non null debuglevel will disable optlevel
 OPTLEVEL	=	1	#same than debuglevel
 					#Warrning: non null optlevel will disable debuglevel
-CPPVERSION	=	c++11
+CPPVERSION	=	c++1z
 #For simpler and faster use, use commnd line variables DEBUG and OPTI:
 #Example $> make DEBUG=2 will set debuglevel to 2
 
 #	Includes
-INCDIRS		=	../../sources ../../gl3w/include
+INCDIRS		=	deps/imgui deps/glfw/include gl3w/include
 
 #	Libraries
-LIBDIRS		=	../../ ../../deps/glfw/src/ ../../deps/imgui/
-LDLIBS		=	-lLWGC -lglfw3 -limgui
+LIBDIRS		=	
+LDLIBS		=	
 
 #	Output
-NAME		=	simple
+NAME		=	deps/imgui/libImGUI.a
 
 #	Compiler
 WERROR		=	-Werror
-CFLAGS		=	-pedantic -ffast-math -ffunction-sections -fdata-sections
+CFLAGS		=	-Weverything -pedantic -ffast-math -ffunction-sections -fdata-sections
 CPPFLAGS	=	-Wno-c++98-compat
 CPROTECTION	=	-z execstack -fno-stack-protector
 
@@ -91,7 +95,7 @@ ifeq "$(OS)" "Linux"
 	DEBUGFLAGS	+= -fsanitize=memory -fsanitize-memory-use-after-dtor -fsanitize=thread
 endif
 ifeq "$(OS)" "Darwin"
-	FRAMEWORK	=	OpenGL AppKit IOKit CoreVideo
+	FRAMEWORK	=	
 endif
 
 COMPILER	=	$(shell readlink $(which cc))
@@ -124,7 +128,7 @@ VFRAME		=	$(addprefix -framework ,$(FRAMEWORK))
 INCFILES	=	$(foreach inc, $(INCDIRS), $(wildcard $(inc)/*.h))
 INCFLAGS	=	$(addprefix -I,$(INCDIRS))
 LDFLAGS		=	$(addprefix -L,$(LIBDIRS))
-LINKER		=	$(CC)
+LINKER		=	ar
 
 disp_indent	=	tabs=""; \
 				for I in `seq 1 $(MAKELEVEL)`; do \
@@ -165,10 +169,6 @@ ifndef $(CXX)
 	CXX = clang++
 endif
 
-ifneq ($(filter %.cpp,$(SRC)),)
-	LINKER = $(CXX)
-endif
-
 ifdef ${NOWERROR}
 	WERROR = 
 endif
@@ -193,18 +193,18 @@ $(NAME): $(OBJ)
 	@$(if $(findstring lft,$(LDLIBS)),$(call color_exec_t,$(CCLEAR),$(CCLEAR),\
 		make -j 4 -C libft))
 	@$(call color_exec,$(CLINK_T),$(CLINK),"Link of $(NAME):",\
-		$(LINKER) $(WERROR) $(CFLAGS) $(LDFLAGS) $(LDLIBS) $(OPTFLAGS) $(DEBUGFLAGS) $(LINKDEBUG) $(VFRAME) -o $@ $^)
+		$(LINKER) rc $@ $^)
 
 $(OBJDIR)/%.o: %.cpp $(INCFILES)
 	@mkdir -p $(OBJDIR)/$(dir $<)
 	@$(call color_exec,$(COBJ_T),$(COBJ),"Object: $@",\
-		$(CXX) -std=$(CPPVERSION) $(WERROR) $(CFLAGS) $(OPTFLAGS) $(DEBUGFLAGS) $(CPPFLAGS) $(INCFLAGS) -o $@ -c $<)
+		$(CXX) -std=$(CPPVERSION) $(OPTFLAGS) $(DEBUGFLAGS) $(CPPFLAGS) $(INCFLAGS) -o $@ -c $<)
 
 #	Objects compilation
 $(OBJDIR)/%.o: %.c $(INCFILES)
 	@mkdir -p $(OBJDIR)/$(dir $<)
 	@$(call color_exec,$(COBJ_T),$(COBJ),"Object: $@",\
-		$(CC) $(WERROR) $(CFLAGS) $(OPTFLAGS) $(DEBUGFLAGS) $(INCFLAGS) -o $@ -c $<)
+		$(CXX) $(OPTFLAGS) $(DEBUGFLAGS) $(INCFLAGS) -o $@ -c $<)
 
 $(OBJDIR)/%.o: %.s
 	@mkdir -p $(OBJDIR)/$(dir $<)
