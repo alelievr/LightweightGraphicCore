@@ -7,9 +7,6 @@
 [submodule "deps/glslang"]
 	path = deps/glslang
 	url = https://github.com/KhronosGroup/glslang
-[submodule "imgui"]
-	path = imgui
-	url = https://github.com/ocornut/imgui
 [submodule "deps/imgui"]
 	path = deps/imgui
 	url = https://github.com/ocornut/imgui
