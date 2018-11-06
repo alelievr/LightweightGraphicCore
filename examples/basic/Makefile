@@ -6,7 +6,7 @@
 #    By: alelievr <marvin@42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2014/07/15 15:13:38 by alelievr          #+#    #+#              #
-#    Updated: 2018/11/05 23:36:45 by alelievr         ###   ########.fr        #
+#    Updated: 2018/11/06 17:50:42 by alelievr         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -35,8 +35,8 @@ CPPVERSION	=	c++11
 INCDIRS		=	../../sources
 
 #	Libraries
-LIBDIRS		=	../../ ../../deps/glfw/src/
-LDLIBS		=	-lLWGC -lglfw3
+LIBDIRS		=	../../ ../../deps/glfw/src/ ../../deps/imgui/
+LDLIBS		=	-lLWGC -lglfw3 -limgui
 
 #	Compiler
 WERROR		=	-Werror

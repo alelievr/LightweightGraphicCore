@@ -20,6 +20,7 @@ namespace LWGC
 			virtual ~ForwardRenderPipeline(void);
 
 			void	Render(void) override;
+			void	RenderImGUI(void) override;
 			void	SetRenderTarget(RenderTarget & target) override;
 			void	PushToQueue(std::shared_ptr< IRenderable > renderable, RenderQueueType queueType) override;
 	};

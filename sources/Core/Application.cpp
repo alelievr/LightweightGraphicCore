@@ -3,6 +3,11 @@
 #include "Application.hpp"
 #include "Rendering/ForwardRenderPipeline.hpp"
 
+#include "imgui.h"
+#include "imgui_impl_glfw.h"
+// TODO: move to vulkan
+#include "imgui_impl_opengl3.h"
+
 using namespace LWGC;
 
 Application::Application(void) : _window(NULL), _shouldNotQuit(true)
@@ -14,7 +19,13 @@ Application::Application(void) : _window(NULL), _shouldNotQuit(true)
 Application::~Application(void)
 {
 	if (_window != NULL)
+	{
+		ImGui_ImplOpenGL3_Shutdown();
+		ImGui_ImplGlfw_Shutdown();
+		ImGui::DestroyContext();
+		glfwDestroyWindow(_window);
 		glfwTerminate();
+	}
 
 	std::cout << "Destructor of Application called" << std::endl;
 }
@@ -59,14 +70,36 @@ void			Application::Open(const std::string & name, const int width, const int he
 
 	glfwMakeContextCurrent(_window);
 	glfwSwapInterval(1);
+
+	// Init IMGUI
+	IMGUI_CHECKVERSION();
+	ImGui::CreateContext();
+
+	// TODO: move to vulkan here
+	ImGui_ImplGlfw_InitForOpenGL(_window, true);
+	ImGui_ImplOpenGL3_Init("#version 150");
+	ImGui::StyleColorsDark();
 }
 
 void				Application::Update(void) noexcept
 {
+	glfwPollEvents();
+
 	_renderPipeline->Render();
 
+	// Draw GUI on top of everything (after pipeline rendering)
+	// TODO: move to vulkan
+	ImGui_ImplOpenGL3_NewFrame();
+	ImGui_ImplGlfw_NewFrame();
+	ImGui::NewFrame();
+
+	// User IMGUI calls
+	_renderPipeline->RenderImGUI();
+
+	ImGui::Render();
+	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
 	glfwSwapBuffers(_window);
-	glfwPollEvents();
 
 	_shouldNotQuit = !glfwWindowShouldClose(_window);
 }
