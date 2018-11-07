@@ -11,7 +11,7 @@ namespace LWGC
 
 
 		public:
-			Texture2D();
+			Texture2D(void);
 			Texture2D(const Texture2D&);
 			virtual ~Texture2D(void);
 

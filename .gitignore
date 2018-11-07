@@ -30,3 +30,9 @@
 *.exe
 *.out
 *.app
+
+# Archives
+*.tar.gz
+
+# deps
+deps/vulkansdk-macos-1.1.85.0/

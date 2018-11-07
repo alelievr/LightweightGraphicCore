@@ -8,7 +8,7 @@
 #include "Events/EventSystem.hpp"
 #include "Hierarchy.hpp"
 
-#define GLFW_INCLUDE_GLCOREARB
+#include VULKAN_INCLUDE
 #include GLFW_INCLUDE
 
 namespace LWGC

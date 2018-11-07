@@ -20,9 +20,10 @@ Application::~Application(void)
 {
 	if (_window != NULL)
 	{
-		ImGui_ImplOpenGL3_Shutdown();
-		ImGui_ImplGlfw_Shutdown();
-		ImGui::DestroyContext();
+		//TODO: change this to vulkan
+		//ImGui_ImplOpenGL3_Shutdown();
+		//ImGui_ImplGlfw_Shutdown();
+		//ImGui::DestroyContext();
 		glfwDestroyWindow(_window);
 		glfwTerminate();
 	}
@@ -32,7 +33,7 @@ Application::~Application(void)
 
 void			ErrorCallback(int err, const char * description)
 {
-	std::cout << "GLFW error[" << err << "]: " << description;
+	std::cout << "GLFW error[" << err << "]: " << description << std::endl;
 }
 
 void			Application::Init(void) noexcept
@@ -53,12 +54,15 @@ void			Application::Quit(void) noexcept
 
 void			Application::Open(const std::string & name, const int width, const int height, const WindowFlag flags) noexcept
 {
-	glfwWindowHint (GLFW_CONTEXT_VERSION_MAJOR, 3);
-	glfwWindowHint (GLFW_CONTEXT_VERSION_MINOR, 2);
-	glfwWindowHint (GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-	glfwWindowHint (GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+	if (glfwVulkanSupported())
+	{
+		std::cout << "Vulkan is not supported :(" << std::endl << "exiting..." << std::endl;
+		exit(-1);
+	}
 
-	glfwWindowHint(GLFW_RESIZABLE, (flags | WindowFlag::Resizable) != 0);
+	glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
+
+	glfwWindowHint(GLFW_RESIZABLE, (flags & WindowFlag::Resizable) != 0);
 	glfwWindowHint(GLFW_DECORATED, (flags & WindowFlag::Decorated) != 0);
 	glfwWindowHint(GLFW_FOCUSED, (flags & WindowFlag::Focused) != 0);
 	glfwWindowHint(GLFW_FLOATING, (flags & WindowFlag::Floating) != 0);
@@ -66,19 +70,19 @@ void			Application::Open(const std::string & name, const int width, const int he
 
 	_window = glfwCreateWindow(width, height, name.c_str(), NULL, NULL);
 
+//	VkSurfaceKHR surface;
+//	VkResult err = glfwCreateWindowSurface(instance, _window, NULL, &surface);
+
 	_eventSystem.BindWindow(_window);
 
-	glfwMakeContextCurrent(_window);
-	glfwSwapInterval(1);
-
 	// Init IMGUI
-	IMGUI_CHECKVERSION();
+/*	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
 
 	// TODO: move to vulkan here
 	ImGui_ImplGlfw_InitForOpenGL(_window, true);
 	ImGui_ImplOpenGL3_Init("#version 150");
-	ImGui::StyleColorsDark();
+	ImGui::StyleColorsDark();*/
 }
 
 void				Application::Update(void) noexcept
@@ -87,7 +91,7 @@ void				Application::Update(void) noexcept
 
 	_renderPipeline->Render();
 
-	// Draw GUI on top of everything (after pipeline rendering)
+/*	// Draw GUI on top of everything (after pipeline rendering)
 	// TODO: move to vulkan
 	ImGui_ImplOpenGL3_NewFrame();
 	ImGui_ImplGlfw_NewFrame();
@@ -97,9 +101,9 @@ void				Application::Update(void) noexcept
 	_renderPipeline->RenderImGUI();
 
 	ImGui::Render();
-	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());*/
 
-	glfwSwapBuffers(_window);
+	//glfwSwapBuffers(_window);
 
 	_shouldNotQuit = !glfwWindowShouldClose(_window);
 }

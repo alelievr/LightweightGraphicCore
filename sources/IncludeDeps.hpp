@@ -9,4 +9,10 @@
 # define IMGUI_INCLUDE "../deps/imgui/imgui.h"
 # define STB_INCLUDE "../deps/stb/stb.h"
 
+# ifdef __APPLE__
+#  define VULKAN_INCLUDE "../deps/vulkansdk-macos-1.1.85.0/macOS/include/vulkan/vulkan.h"
+# else
+#  define VULKAN_INCLUDE <vulkan/vulkan.h>
+# endif
+
 #endif

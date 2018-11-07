@@ -1,0 +1,9 @@
+#!/bin/bash
+
+export VULKAN_SDK=`pwd`/deps/vulkansdk-macos-1.1.85.0/macOS
+export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${VULKAN_SDK}/lib
+export VK_ICD_FILENAMES=${VULKAN_SDK}/etc/vulkan/icd.d/MoltenVK_icd.json
+
+if [ ! -f ${VK_ICD_FILENAMES} ]; then
+	echo "Setup failed, is MoltenVK downloaded ?"
+fi

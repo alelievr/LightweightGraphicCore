@@ -81,7 +81,7 @@ OPTFLAGS1	=	-funroll-loops -O2
 OPTFLAGS2	=	-pipe -funroll-loops -Ofast
 MYCC		=	clang++
 
-################
+#################
 ##  COLORS     ##
 #################
 CPREFIX		=	"\033[38;5;"
@@ -115,10 +115,19 @@ ifeq "$(OS)" "Windows_NT"
 endif
 ifeq "$(OS)" "Linux"
 	LDLIBS		+= ""
-	DEBUGFLAGS	+= " -fsanitize=memory -fsanitize-memory-use-after-dtor -fsanitize=thread"
+	DEBUGFLAGS	+= " -fsanitize-memory-use-after-dtor"
+	VULKAN		=
 endif
 ifeq "$(OS)" "Darwin"
-	CFLAGS		+= "-ferror-limit=999"
+	CFLAGS			+= "-ferror-limit=999"
+	MoltenTar		= moltenVK.tar.gz
+	MoltentUrl		= https://sdk.lunarg.com/sdk/download/1.1.85.0/mac/vulkansdk-macos-1.1.85.0.tar.gz?u=
+	DOWNLAOD_VULKAN = curl -o $(MoltenTar) $(MoltentUrl) && tar -xf $(MoltenTar) -C deps/
+	VULKAN_SDK		= $(shell pwd)/deps/vulkansdk-macos-1.1.85.0/macOS
+	LD_LIBRARY_PATH	= $(VULKAN_SDK)/lib
+	VK_ICD_FILENAMES= $(VULKAN_SDK)/etc/vulkan/icd.d/MoltenVK_icd.json
+	INCDIRS			+= $(VULKAN_SDK)/include
+	VULKAN			= $(VULKAN_SDK)/lib/libvulkan.dylib
 endif
 
 #################
@@ -185,7 +194,7 @@ endif
 #################
 
 #	First target
-all: $(GLFWLIB) $(OBJLIB) $(GLMLIB) $(IMGUILIB) $(GLSLANGLIB) $(STBLIB) $(NAME)
+all: $(VULKAN) $(GLFWLIB) $(OBJLIB) $(GLMLIB) $(IMGUILIB) $(GLSLANGLIB) $(STBLIB) $(NAME)
 
 $(GLMLIB):
 	@git submodule init
@@ -196,9 +205,10 @@ $(STBLIB):
 	@git submodule update
 
 $(GLFWLIB):
+	env
 	@git submodule init
 	@git submodule update
-	@cd deps/glfw && cmake . && $(MAKE)
+	@cd deps/glfw && VULKAN_SDK=$(VULKAN_SDK) cmake -DGLFW_VULKAN_STATIC=0 . && $(MAKE) -j
 
 $(GLSLANGLIB):
 	@git submodule init
@@ -209,6 +219,9 @@ $(IMGUILIB):
 	@git submodule init
 	@git submodule update
 	@$(MAKE) -f ImGUI.Makefile
+
+$(VULKAN):
+	$(DOWNLAOD_VULKAN)
 
 #	Linking
 $(NAME): $(OBJ)
