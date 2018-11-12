@@ -1,5 +1,6 @@
 #include "Texture2D.hpp"
 
+using namespace LWGC;
 
 Texture2D::Texture2D(void)
 {
@@ -41,7 +42,6 @@ void		Texture2D::SetRawData(unsigned char * data)
 {
 	
 }
-
 
 Texture2D &	Texture2D::operator=(Texture2D const & src)
 {

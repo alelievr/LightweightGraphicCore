@@ -7,6 +7,11 @@
 #include "Rendering/IRenderPipeline.hpp"
 #include "Events/EventSystem.hpp"
 #include "Hierarchy.hpp"
+#include "Vulkan/VulkanInstance.hpp"
+#include "Vulkan/VulkanSurface.hpp"
+#include "Vulkan/SwapChain.hpp"
+#include "Vulkan/RenderPass.hpp"
+#include "Vulkan/Material.hpp"
 
 #include VULKAN_INCLUDE
 #include GLFW_INCLUDE
@@ -20,8 +25,19 @@ namespace LWGC
 			EventSystem							_eventSystem;
 			Hierarchy							_hierarchy;
 			GLFWwindow *						_window;
+			VulkanInstance						_instance;
+			VulkanSurface						_surface;
+			SwapChain							_swapChain;
+			RenderPass							_renderPass;
+			// TODO: move material into the MeshRenderer
+			Material							_material;
 
 			bool	_shouldNotQuit;
+			bool	_framebufferResized;
+
+			void				CreateRenderPass();
+
+			static void			Application::FramebufferResizeCallback(GLFWwindow *window, int width, int height);
 
 		public:
 			Application(void);

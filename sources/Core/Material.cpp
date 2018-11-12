@@ -32,7 +32,7 @@ void		Material::SetColor(const std::string & name, const Color & c)
 
 void		Material::SetFloat(const std::string & name, const float f)
 {
-	
+
 }
 
 void		Material::SetInt(const std::string & name, const int i)

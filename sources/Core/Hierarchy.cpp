@@ -17,7 +17,7 @@ void Hierarchy::AddGameObject(GameObject * gameObject)
 
 void Hierarchy::RemoveGameObject(GameObject * gameObject)
 {
-	_gameObjects.erase(std::remove(_gameObjects.begin(), _gameObjects.end(), gameObject), _gameObjects.end());
+	_gameObjects.erase(std::remove(_gameObjects.begin(), _gameObjects.end(), gameObject) _gameObjects.end());
 }
 
 std::ostream &	operator<<(std::ostream & o, Hierarchy const & r)
