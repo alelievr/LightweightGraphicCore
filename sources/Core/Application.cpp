@@ -10,7 +10,7 @@
 
 using namespace LWGC;
 
-Application::Application(void) : _window(NULL), _shouldNotQuit(true), _framebufferResized(false)
+Application::Application(void) : _window(NULL), _shouldNotQuit(true)
 {
 	std::cout << "Default constructor of Application called" << std::endl;
 	this->_renderPipeline = std::make_shared< ForwardRenderPipeline >();
@@ -20,9 +20,9 @@ Application::~Application(void)
 {
 	if (_window != NULL)
 	{
-		ImGui_ImplVulkan_Shutdown();
-		ImGui_ImplGlfw_Shutdown();
-		ImGui::DestroyContext();
+	// 	ImGui_ImplVulkan_Shutdown();
+	// 	ImGui_ImplGlfw_Shutdown();
+	// 	ImGui::DestroyContext();
 		glfwDestroyWindow(_window);
 		glfwTerminate();
 	}
@@ -59,13 +59,20 @@ void			Application::Quit(void) noexcept
 
 void		Application::FramebufferResizeCallback(GLFWwindow *window, int width, int height)
 {
-	auto app = reinterpret_cast<Application *>(glfwGetWindowUserPointer(window));
-	app->_framebufferResized = true;
+	// Avoid getting stuck with 0-sized windows
+	while (width == 0 || height == 0)
+	{
+		glfwGetFramebufferSize(window, &width, &height);
+		glfwWaitEvents();
+	}
+
+	auto app = reinterpret_cast<VulkanRenderPipeline *>(glfwGetWindowUserPointer(window));
+	app->framebufferResized = true;
 }
 
 void			Application::Open(const std::string & name, const int width, const int height, const WindowFlag flags) noexcept
 {
-	if (glfwVulkanSupported())
+	if (!glfwVulkanSupported())
 	{
 		std::cout << "Vulkan is not supported :(" << std::endl << "exiting..." << std::endl;
 		exit(-1);
@@ -80,49 +87,51 @@ void			Application::Open(const std::string & name, const int width, const int he
 	glfwWindowHint(GLFW_MAXIMIZED, (flags & WindowFlag::Maximized) != 0);
 
 	_window = glfwCreateWindow(width, height, name.c_str(), NULL, NULL);
-	glfwSetWindowUserPointer(_window, this);
-	glfwSetFramebufferSizeCallback(_window, FramebufferResizeCallback);
 
 	_eventSystem.BindWindow(_window);
 
 	_surface.Initialize(_window);
 	_swapChain.Initialize(_surface);
 
-	_renderPipeline->CreateRenderPass();
-	_renderPipeline->CreateMaterials();
+	_renderPipeline->Initialize(&_swapChain);
 	_renderPipeline->CreateMeshes();
 	_renderPipeline->PrepareCommandBuffers();
 	_renderPipeline->CreateSyncObjects();
+	
+	glfwSetWindowUserPointer(_window, &_renderPipeline);
+	glfwSetFramebufferSizeCallback(_window, FramebufferResizeCallback);
 
-	// Init IMGUI
-	IMGUI_CHECKVERSION();
-	ImGui::CreateContext();
+	// // Init IMGUI
+	// IMGUI_CHECKVERSION();
+	// ImGui::CreateContext();
 
-	// Is this important ?
-    ImGuiIO& io = ImGui::GetIO(); (void)io;
+	// // Is this important ?
+    // ImGuiIO& io = ImGui::GetIO(); (void)io;
 
-	ImGui_ImplVulkan_InitInfo initInfo = {};
-	initInfo.Instance = _instance.GetInstance();
-	initInfo.PhysicalDevice = _instance.GetPhysicalDevice();
-	initInfo.Device = _instance.GetDevice();
-	initInfo.QueueFamily = _instance.GetGraphicQueueIndex();
-	initInfo.Queue = _instance.GetGraphicQueue();
-	initInfo.PipelineCache = VK_NULL_HANDLE;
-	initInfo.DescriptorPool = _material.GetDescriptorPool();
-	initInfo.Allocator = VK_NULL_HANDLE;
-	initInfo.CheckVkResultFn = Vk::CheckResult;
+	// ImGui_ImplVulkan_InitInfo initInfo = {};
+	// initInfo.Instance = _instance.GetInstance();
+	// initInfo.PhysicalDevice = _instance.GetPhysicalDevice();
+	// initInfo.Device = _instance.GetDevice();
+	// initInfo.QueueFamily = _instance.GetGraphicQueueIndex();
+	// initInfo.Queue = _instance.GetGraphicQueue();
+	// initInfo.PipelineCache = VK_NULL_HANDLE;
+	// initInfo.DescriptorPool = _material.GetDescriptorPool();
+	// initInfo.Allocator = VK_NULL_HANDLE;
+	// initInfo.CheckVkResultFn = Vk::CheckResult;
 
-	ImGui_ImplGlfw_InitForVulkan(_window, true);
-	ImGui_ImplVulkan_Init(&initInfo, _renderPass.GetRenderPass());
-	ImGui::StyleColorsDark();
+	// ImGui_ImplGlfw_InitForVulkan(_window, true);
+	// ImGui_ImplVulkan_Init(&initInfo, _renderPass.GetRenderPass());
+	// ImGui::StyleColorsDark();
 }
 
 void				Application::Update(void) noexcept
 {
 	glfwPollEvents();
 
+	RenderContext context;
+
 	//TODO: hierarchy get cameras, and extract the RenderContext
-	_renderPipeline->Render();
+	_renderPipeline->Render({}, context);
 
 /*	// Draw GUI on top of everything (after pipeline rendering)
 	// TODO: move to vulkan
@@ -133,12 +142,9 @@ void				Application::Update(void) noexcept
 	ImGui::Render();
 	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());*/
 
-	//glfwSwapBuffers(_window);
-
 	_shouldNotQuit = !glfwWindowShouldClose(_window);
 }
 
-#include <memory>
 VulkanRenderPipeline &	Application::GetRenderPipeline(void) const noexcept { return *(this->_renderPipeline); }
 void				Application::SetRenderPipeline(std::shared_ptr< VulkanRenderPipeline > tmp) noexcept { this->_renderPipeline = tmp; }
 

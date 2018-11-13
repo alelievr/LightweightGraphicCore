@@ -385,7 +385,7 @@ class Olol {
 				throw std::runtime_error("failed to acquire swap chain image!");
 			}
 
-			material.UpdateUniformBuffer(imageIndex);
+			material.UpdateUniformBuffer();
 
 			VkSubmitInfo submitInfo = {};
 			submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;

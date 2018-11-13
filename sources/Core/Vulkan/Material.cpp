@@ -1,6 +1,7 @@
 #include "Material.hpp"
 
 #include <fstream>
+#include <array>
 
 #define GLM_FORCE_RADIANS
 // Force depth range to 0..1 like it would be if OpenGHell wouldn't have made poor design decisions
@@ -53,7 +54,6 @@ Material::~Material(void)
 	}
 }
 
-
 Material &	Material::operator=(Material const & src)
 {
 	if (this != &src)
@@ -77,6 +77,8 @@ void					Material::Initialize(SwapChain * swapChain, RenderPass * renderPass)
 	_device = _instance->GetDevice();
 	_swapChain = swapChain;
 	_renderPass = renderPass;
+
+	std::cout << "Material initialize !\n";
 
 	CreateDescriptorSetLayout();
 	CreateGraphicPipeline();
@@ -109,7 +111,7 @@ void					Material::CreateDescriptorSetLayout(void)
 	samplerLayoutBinding.pImmutableSamplers = nullptr;
 	samplerLayoutBinding.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
 
-	std::array<VkDescriptorSetLayoutBinding, 2> bindings = {uboLayoutBinding, samplerLayoutBinding};
+	std::array<VkDescriptorSetLayoutBinding, 2> bindings = {{uboLayoutBinding, samplerLayoutBinding}};
 	VkDescriptorSetLayoutCreateInfo layoutInfo = {};
 	layoutInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
 	layoutInfo.bindingCount = static_cast<uint32_t>(bindings.size());
@@ -190,8 +192,8 @@ VkShaderModule	Material::createShaderModule(const std::vector<char>& code) {
 
 void					Material::CreateGraphicPipeline(void)
 {
-	auto vertShaderCode = readFile("vert.spv");
-	auto fragShaderCode = readFile("frag.spv");
+	auto vertShaderCode = readFile("shaders/vert.spv");
+	auto fragShaderCode = readFile("shaders/frag.spv");
 
 	VkShaderModule vertShaderModule = createShaderModule(vertShaderCode);
 	VkShaderModule fragShaderModule = createShaderModule(fragShaderCode);
@@ -408,7 +410,7 @@ void					Material::CreateDescriptorPool(void)
 	    throw std::runtime_error("failed to create descriptor pool!");
 }
 
-void					Material::UpdateUniformBuffer(uint32_t currentImage)
+void					Material::UpdateUniformBuffer()
 {
 	static auto startTime = std::chrono::high_resolution_clock::now();
 

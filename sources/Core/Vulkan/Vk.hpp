@@ -1,6 +1,7 @@
 #pragma once
 
-#include "vulkan/vulkan.h"
+#include "IncludeDeps.hpp"
+#include VULKAN_INCLUDE
 #include "VulkanInstance.hpp"
 
 // Helper class for small functions

@@ -2,11 +2,7 @@
 
 #include <set>
 
-#include "IncludeDeps.hpp"
-
-#include VULKAN_INCLUDE
-
-#include "GLFW/glfw3.h"
+#include GLFW_INCLUDE
 #include "Vk.hpp"
 
 VulkanInstance *	VulkanInstance::_instanceSingleton;

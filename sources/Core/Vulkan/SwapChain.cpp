@@ -1,6 +1,5 @@
 #include "SwapChain.hpp"
 #include "Vk.hpp"
-#include "GLFW/glfw3.h"
 
 #include <array>
 

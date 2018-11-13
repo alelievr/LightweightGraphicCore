@@ -24,10 +24,9 @@
 #include "Core/Shaders/ProgramChannel.hpp"
 #include "Core/Shaders/ShaderProgram.hpp"
 #include "Core/Shaders/ShaderSource.hpp"
-#include "Core/Material.hpp"
+#include "Core/Vulkan/Material.hpp"
 
 // Rendering
-#include "Core/Rendering/RenderQueue.hpp"
 #include "Core/Rendering/RenderTarget.hpp"
 #include "Core/Mesh.hpp"
 #include "Core/PrimitiveMeshFactory.hpp"
@@ -46,8 +45,9 @@
 #include "Core/KeyCode.hpp"
 
 // Components
-#include "Core/IComponent.hpp"
-#include "Core/MeshRenderer.hpp"
+#include "Core/Components/IComponent.hpp"
+#include "Core/Components/MeshRenderer.hpp"
+#include "Core/Components/Camera.hpp"
 
 // Utils
 #include "Utils/Bounds.hpp"

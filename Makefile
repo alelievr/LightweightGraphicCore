@@ -17,22 +17,31 @@
 #	Sources
 SRCDIR		=	sources
 SRC			=	Core/Application.cpp \
-				Core/Camera.cpp \
+				Core/Components/Camera.cpp \
+				Core/Components/MeshRenderer.cpp \
+				Core/Components/Light.cpp \
 				Core/Events/Event.cpp \
 				Core/Events/EventSystem.cpp \
 				Core/Events/Input.cpp \
 				Core/Material.cpp \
 				Core/Mesh.cpp \
-				Core/MeshRenderer.cpp \
 				Core/Object.cpp \
 				Core/PrimitiveMeshFactory.cpp \
 				Core/Rendering/ForwardRenderPipeline.cpp \
-				Core/Rendering/RenderQueue.cpp \
 				Core/Rendering/RenderTarget.cpp \
+				Core/Rendering/VulkanRenderPipeline.cpp \
+				Core/Rendering/RenderContext.cpp \
 				Core/Shaders/ImageChannel.cpp \
 				Core/Shaders/ProgramChannel.cpp \
 				Core/Shaders/ShaderProgram.cpp \
 				Core/Shaders/ShaderSource.cpp \
+				Core/Vulkan/CommandBufferPool.cpp \
+				Core/Vulkan/Material.cpp \
+				Core/Vulkan/RenderPass.cpp \
+				Core/Vulkan/SwapChain.cpp \
+				Core/Vulkan/Vk.cpp \
+				Core/Vulkan/VulkanInstance.cpp \
+				Core/Vulkan/VulkanSurface.cpp \
 				Core/Transform.cpp \
 				Core/GameObject.cpp \
 				Core/Hierarchy.cpp \
@@ -40,7 +49,6 @@ SRC			=	Core/Application.cpp \
 				Utils/Color.cpp \
 				Utils/Random.cpp \
 				Utils/Rect.cpp \
-				#GUI/Text.cpp \
 
 #	Objects
 OBJDIR		=	obj

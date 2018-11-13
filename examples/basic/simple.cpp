@@ -26,14 +26,14 @@ int			main(void)
 	LWGC::EventSystem *		es = app.GetEventSystem();
 	LWGC::Hierarchy *		hierarchy = app.GetHierarchy();
 
-	//Initalize application
+	//Initialize application
 	app.Init();
 
 	LWGC::IComponent * comp = new LWGC::MeshRenderer(LWGC::PrimitiveType::Cube);
 	hierarchy->AddGameObject(new LWGC::GameObject(comp));
 
 	//open window
-	app.Open("Test window", 200, 200, LWGC::WindowFlag::Resizable | LWGC::WindowFlag::Decorated | LWGC::WindowFlag::Focused);
+	app.Open("Test Window", 1920, 1080, LWGC::WindowFlag::Resizable | LWGC::WindowFlag::Decorated | LWGC::WindowFlag::Focused);
 
 	while (app.ShouldNotQuit())
 	{

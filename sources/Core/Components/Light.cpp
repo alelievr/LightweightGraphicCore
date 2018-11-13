@@ -1,5 +1,6 @@
 #include "Light.hpp"
 
+using namespace LWGC;
 
 Light::Light(void)
 {
@@ -17,14 +18,14 @@ Light::~Light(void)
 	std::cout << "Destructor of Light called" << std::endl;
 }
 
-virtual void		Light::OnAdded(const GameObject & go) noexcept
+void		Light::OnAdded(const GameObject & go) noexcept
 {
-	
+	(void)go;	
 }
 
-virtual void		Light::OnRemoved(const GameObject & go) noexcept
+void		Light::OnRemoved(const GameObject & go) noexcept
 {
-	
+	(void)go;	
 }
 
 

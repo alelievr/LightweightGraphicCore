@@ -3,9 +3,9 @@
 #include <unordered_map>
 #include <vector>
 
-#include "Components/IComponent.hpp"
-#include "Components/Light.hpp"
-#include "Components/MeshRenderer.hpp"
+#include "Core/Components/IComponent.hpp"
+#include "Core/Components/Light.hpp"
+#include "Core/Components/MeshRenderer.hpp"
 
 namespace LWGC
 {
@@ -13,7 +13,7 @@ namespace LWGC
     {
         MeshRenderer,
         Light,
-    }
+    };
 
     class RenderContext
     {
@@ -27,7 +27,7 @@ namespace LWGC
             std::unordered_map< uint32_t, std::vector< IComponent * > > renderComponents;
 
             template< class T >
-            void    GetComponentVector(uint32_t componentType, std::vector< T * > & components)
+            void    GetComponentVector(uint32_t componentType, std::vector< T * > & components);
             void    GetLights(std::vector< Light * > & lights);
             void    GetMeshRenderers(std::vector< MeshRenderer * > & meshRenderers);
     };

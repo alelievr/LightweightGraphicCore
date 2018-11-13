@@ -3,9 +3,10 @@
 #include <iostream>
 #include <string>
 
+#include "IncludeDeps.hpp"
+#include GLFW_INCLUDE
 #include "VulkanInstance.hpp"
 #include "RenderPass.hpp"
-#include "GLFW/glfw3.h"
 #include "VulkanSurface.hpp"
 
 class		SwapChain

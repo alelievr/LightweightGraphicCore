@@ -66,6 +66,7 @@ void		RenderPass::Create(void)
 	if (vkCreateRenderPass(device, &renderPassInfo, nullptr, &_renderPass) != VK_SUCCESS)
 		throw std::runtime_error("failed to create render pass!");
 
+	std::cout << "Created subpass !\n";
 	_swapChain->CreateFrameBuffers(*this);
 }
 

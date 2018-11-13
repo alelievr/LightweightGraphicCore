@@ -2,12 +2,21 @@
 
 using namespace LWGC;
 
+RenderContext::RenderContext()
+{
+}
+
+RenderContext::~RenderContext()
+{
+}
+
 template< class T >
 void    RenderContext::GetComponentVector(uint32_t componentType, std::vector< T * > & components)
 {
-    const auto & r = renderComponents[componentType];
     components.clear();
-    components.insert(r.begin(), r.end());
+
+    for (IComponent * comp : renderComponents[componentType])
+        components.push_back(dynamic_cast< T * >(comp));
 }
 
 void    RenderContext::GetLights(std::vector< Light * > & lights)

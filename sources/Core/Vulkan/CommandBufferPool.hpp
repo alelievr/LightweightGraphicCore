@@ -2,8 +2,9 @@
 
 #include <iostream>
 #include <string>
+#include "IncludeDeps.hpp"
 
-#include "vulkan/vulkan.h"
+#include VULKAN_INCLUDE
 
 class	VulkanInstance;
 

@@ -3,7 +3,9 @@
 #include <iostream>
 #include <string>
 
-#include "vulkan/vulkan.hpp"
+#include "IncludeDeps.hpp"
+
+#include VULKAN_INCLUDE
 #include "VulkanInstance.hpp"
 #include "SwapChain.hpp"
 #include "Vk.hpp"
@@ -57,7 +59,7 @@ class		Material
 		void	CleanupGraphicPipeline(void) noexcept;
 		void	CreateGraphicPipeline(void);
 		void	BindDescriptorSets(VkCommandBuffer cmd, VkPipelineBindPoint bindPoint);
-		void	UpdateUniformBuffer(uint32_t currentImage);
+		void	UpdateUniformBuffer(void);
 
 		VkDescriptorPool	GetDescriptorPool(void) const;
 		void	SetDescriptorPool(VkDescriptorPool tmp);

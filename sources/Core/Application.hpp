@@ -12,6 +12,7 @@
 #include "Vulkan/SwapChain.hpp"
 #include "Vulkan/RenderPass.hpp"
 #include "Vulkan/Material.hpp"
+#include "Core/Rendering/RenderContext.hpp"
 
 #include VULKAN_INCLUDE
 #include GLFW_INCLUDE
@@ -29,10 +30,9 @@ namespace LWGC
 			VulkanSurface						_surface;
 			SwapChain							_swapChain;
 
-			bool	_shouldNotQuit;
-			bool	_framebufferResized;
+			bool		_shouldNotQuit;
 
-			static void			Application::FramebufferResizeCallback(GLFWwindow *window, int width, int height);
+			static void	FramebufferResizeCallback(GLFWwindow *window, int width, int height);
 
 		public:
 			Application(void);
@@ -51,7 +51,6 @@ namespace LWGC
 			void	SetRenderPipeline(std::shared_ptr< VulkanRenderPipeline > tmp) noexcept;
 			
 			EventSystem *		GetEventSystem(void) noexcept;
-
 			Hierarchy *			GetHierarchy(void) noexcept;
 	};
 

@@ -6,7 +6,7 @@
 #    By: alelievr <marvin@42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2014/07/15 15:13:38 by alelievr          #+#    #+#              #
-#    Updated: 2018/11/06 21:44:59 by alelievr         ###   ########.fr        #
+#    Updated: 2018/11/13 15:31:51 by alelievr         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -35,8 +35,8 @@ CPPVERSION	=	c++11
 INCDIRS		=	../../sources ../../gl3w/include
 
 #	Libraries
-LIBDIRS		=	../../ ../../deps/glfw/src/ ../../deps/imgui/
-LDLIBS		=	-lLWGC -lglfw3 -limgui
+LIBDIRS		=	../../ ../../deps/glfw/src/ ../../deps/imgui/ ../../deps/vulkansdk-macos-1.1.85.0/macOS/lib
+LDLIBS		=	-lLWGC -lglfw3 -limgui -lvulkan
 
 #	Output
 NAME		=	simple

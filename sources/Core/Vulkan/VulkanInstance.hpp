@@ -4,8 +4,10 @@
 #include <string>
 #include <vector>
 
+#include "IncludeDeps.hpp"
+
+#include VULKAN_INCLUDE
 #include "CommandBufferPool.hpp"
-#include "vulkan/vulkan.h"
 
 class VulkanSurface;
 

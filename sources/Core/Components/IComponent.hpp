@@ -13,4 +13,4 @@ namespace LWGC
 	};
 }
 
-#include "GameObject.hpp"
+#include "Core/GameObject.hpp"

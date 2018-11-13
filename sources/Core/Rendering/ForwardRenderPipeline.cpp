@@ -15,28 +15,7 @@ ForwardRenderPipeline::~ForwardRenderPipeline(void)
 {
 }
 
-void	ForwardRenderPipeline::Render(void)
+void	ForwardRenderPipeline::Render(const std::vector< Camera * > & cameras, const RenderContext & context)
 {
-	for (int i = 0; i < static_cast< int >(RenderQueueType::Count); i++)
-		this->_renderQueues[i].RenderPass();
-}
-
-void	ForwardRenderPipeline::RenderImGUI(void)
-{
-	bool test;
-
-	ImGui::Begin("Hello, world!");
-	ImGui::Checkbox("Test", &test);
-	ImGui::End();
-}
-
-void	ForwardRenderPipeline::SetRenderTarget(RenderTarget & target)
-{
-	this->_target = target;
-}
-
-
-void	ForwardRenderPipeline::PushToQueue(std::shared_ptr< IRenderable > renderable, RenderQueueType queueType)
-{
-	_renderQueues[(int)queueType].AddToRender(renderable);
+	VulkanRenderPipeline::Render(cameras, context);
 }
