@@ -12,22 +12,19 @@ using namespace LWGC;
 
 Application::Application(void) : _window(NULL), _shouldNotQuit(true)
 {
-	std::cout << "Default constructor of Application called" << std::endl;
-	this->_renderPipeline = std::make_shared< ForwardRenderPipeline >();
+	this->_renderPipeline = new ForwardRenderPipeline();
 }
 
 Application::~Application(void)
 {
 	if (_window != NULL)
 	{
-	// 	ImGui_ImplVulkan_Shutdown();
-	// 	ImGui_ImplGlfw_Shutdown();
-	// 	ImGui::DestroyContext();
+		// 	ImGui_ImplVulkan_Shutdown();
+		// 	ImGui_ImplGlfw_Shutdown();
+		// 	ImGui::DestroyContext();
 		glfwDestroyWindow(_window);
 		glfwTerminate();
 	}
-
-	std::cout << "Destructor of Application called" << std::endl;
 }
 
 void			ErrorCallback(int err, const char * description)
@@ -144,9 +141,6 @@ void				Application::Update(void) noexcept
 
 	_shouldNotQuit = !glfwWindowShouldClose(_window);
 }
-
-VulkanRenderPipeline &	Application::GetRenderPipeline(void) const noexcept { return *(this->_renderPipeline); }
-void				Application::SetRenderPipeline(std::shared_ptr< VulkanRenderPipeline > tmp) noexcept { this->_renderPipeline = tmp; }
 
 EventSystem *		Application::GetEventSystem(void) noexcept { return &this->_eventSystem; }
 Hierarchy *			Application::GetHierarchy(void) noexcept { return &this->_hierarchy; }

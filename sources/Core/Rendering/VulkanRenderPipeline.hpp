@@ -61,8 +61,6 @@ namespace LWGC
 		// The private part is only used as internal render-pipeline setup and should be overwritten by a custom render pipeline
 		private:
 			// TODO: move material into the MeshRenderer
-			Material			material;
-			
 			std::vector<VkSemaphore> imageAvailableSemaphores;
 			std::vector<VkSemaphore> renderFinishedSemaphores;
 			std::vector<VkFence> inFlightFences;
@@ -74,6 +72,8 @@ namespace LWGC
 			VkDeviceMemory indexBufferMemory;
 
 			std::vector<VkCommandBuffer> commandBuffers;
+			
+			Material			material;
 
 			const std::vector<Vertex> vertices = {
 				{{-0.5f, -0.5f, 0.0f}, {1.0f, 0.0f, 0.0f}, {0.0f, 0.0f}},

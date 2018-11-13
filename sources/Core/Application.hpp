@@ -22,7 +22,7 @@ namespace LWGC
 	class		Application
 	{
 		private:
-			std::shared_ptr< VulkanRenderPipeline >	_renderPipeline;
+			VulkanRenderPipeline *				_renderPipeline;
 			EventSystem							_eventSystem;
 			Hierarchy							_hierarchy;
 			GLFWwindow *						_window;
@@ -47,9 +47,6 @@ namespace LWGC
 			void	Open(const std::string & name, const int width, const int height, const WindowFlag flags) noexcept;
 			void	Update(void) noexcept;
 
-			VulkanRenderPipeline &	GetRenderPipeline(void) const noexcept;
-			void	SetRenderPipeline(std::shared_ptr< VulkanRenderPipeline > tmp) noexcept;
-			
 			EventSystem *		GetEventSystem(void) noexcept;
 			Hierarchy *			GetHierarchy(void) noexcept;
 	};

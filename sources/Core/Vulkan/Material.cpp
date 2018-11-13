@@ -38,6 +38,8 @@ Material::Material(Material const & src)
 
 Material::~Material(void)
 {
+	vkDeviceWaitIdle(_instance->GetDevice());
+
 	CleanupGraphicPipeline();
 
 	vkDestroySampler(_device, _uniformImages[0].sampler, nullptr);
@@ -77,8 +79,6 @@ void					Material::Initialize(SwapChain * swapChain, RenderPass * renderPass)
 	_device = _instance->GetDevice();
 	_swapChain = swapChain;
 	_renderPass = renderPass;
-
-	std::cout << "Material initialize !\n";
 
 	CreateDescriptorSetLayout();
 	CreateGraphicPipeline();

@@ -10,6 +10,9 @@ VulkanRenderPipeline::VulkanRenderPipeline(void) : framebufferResized(false)
 
 VulkanRenderPipeline::~VulkanRenderPipeline(void)
 {
+	vkDeviceWaitIdle(instance->GetDevice());
+	std::cout << "Free Vulkan rendering pipeline\n";
+
 	auto device = instance->GetDevice();
 
 	vkDestroyBuffer(device, indexBuffer, nullptr);

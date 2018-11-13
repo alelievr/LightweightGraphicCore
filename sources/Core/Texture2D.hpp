@@ -18,13 +18,9 @@ namespace LWGC
 			Texture2D &	operator=(Texture2D const & src);
 
 			void	Apply(void);
-
 			void	SetPixel(int x, int y);
-
 			void	GetPixel(int x, int y);
-
 			unsigned char *	GetRawData(void);
-
 			void	SetRawData(unsigned char * data);
 	};
 

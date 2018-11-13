@@ -8,6 +8,7 @@ RenderPass::RenderPass(void)
 
 RenderPass::~RenderPass(void)
 {
+	std::cout << "Destroying renderpass\n";
 	Cleanup();
 }
 
