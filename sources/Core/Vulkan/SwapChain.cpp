@@ -3,6 +3,8 @@
 
 #include <array>
 
+using namespace LWGC;
+
 SwapChain::SwapChain(void)
 {
 	this->_swapChain = VK_NULL_HANDLE;

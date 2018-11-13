@@ -6,11 +6,13 @@
 /*   By: alelievr <alelievr@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/08/27 21:37:58 by alelievr          #+#    #+#             */
-/*   Updated: 2018/11/06 17:45:57 by alelievr         ###   ########.fr       */
+/*   Updated: 2018/11/13 22:54:06 by alelievr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
+
+#define LWGC_GLOBAL_INCLUDE
 
 #include "IncludeDeps.hpp"
 

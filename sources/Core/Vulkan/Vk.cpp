@@ -1,5 +1,7 @@
 #include "Vk.hpp"
 
+using namespace LWGC;
+
 VkImageView		Vk::CreateImageView(VkImage image, VkFormat format, VkImageAspectFlags aspectFlags)
 {
 	VulkanInstance * instance = VulkanInstance::Get();
@@ -24,7 +26,7 @@ VkImageView		Vk::CreateImageView(VkImage image, VkFormat format, VkImageAspectFl
 	return imageView;
 }
 
-void			Vk::CreateImage(uint32_t width, uint32_t height, VkFormat format, VkImageTiling tiling, VkImageUsageFlags usage, VkMemoryPropertyFlags properties, VkImage& image, VkDeviceMemory& imageMemory)
+void			Vk::CreateImage(uint32_t width, uint32_t height, uint32_t depth, int arrayCount, VkFormat format, VkImageTiling tiling, VkImageUsageFlags usage, VkMemoryPropertyFlags properties, VkImage& image, VkDeviceMemory& imageMemory)
 {
 	VulkanInstance * instance = VulkanInstance::Get();
 
@@ -33,9 +35,9 @@ void			Vk::CreateImage(uint32_t width, uint32_t height, VkFormat format, VkImage
 	imageInfo.imageType = VK_IMAGE_TYPE_2D;
 	imageInfo.extent.width = width;
 	imageInfo.extent.height = height;
-	imageInfo.extent.depth = 1;
+	imageInfo.extent.depth = depth;
 	imageInfo.mipLevels = 1;
-	imageInfo.arrayLayers = 1;
+	imageInfo.arrayLayers = arrayCount;
 	imageInfo.format = format;
 	imageInfo.tiling = tiling;
 	imageInfo.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;

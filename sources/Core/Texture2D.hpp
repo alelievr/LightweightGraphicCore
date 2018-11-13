@@ -1,30 +1,36 @@
-#ifndef TEXTURE2D_HPP
-# define TEXTURE2D_HPP
-# include <iostream>
-# include <string>
+#pragma once
+
+#include <iostream>
+#include <string>
+
+#include "IncludeDeps.hpp"
+#include "Core/Texture.hpp"
+#include "Core/Vulkan/Vk.hpp"
+
+#include VULKAN_INCLUDE
 
 namespace LWGC
 {
-	class		Texture2D
+	class		Texture2D : Texture
 	{
 		private:
-
+			std::string		_name;
+		
+			void	TransitionImageLayout(VkImage image, VkFormat format, VkImageLayout oldLayout, VkImageLayout newLayout);
 
 		public:
-			Texture2D(void);
-			Texture2D(const Texture2D&);
+			Texture2D(void) = delete;
+			Texture2D(const std::string fileName, VkFormat format, int usage, int arrayCount = 1);
+			Texture2D(std::size_t width, std::size_t height, VkFormat format, int usage, int arrayCount = 1);
+			Texture2D(const Texture2D &);
 			virtual ~Texture2D(void);
 
-			Texture2D &	operator=(Texture2D const & src);
+			virtual Texture2D &	operator=(Texture2D const & src);
 
 			void	Apply(void);
 			void	SetPixel(int x, int y);
 			void	GetPixel(int x, int y);
-			unsigned char *	GetRawData(void);
-			void	SetRawData(unsigned char * data);
 	};
 
 	std::ostream &	operator<<(std::ostream & o, Texture2D const & r);
 }
-
-#endif

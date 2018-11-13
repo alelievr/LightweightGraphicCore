@@ -9,9 +9,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
-#define STB_IMAGE_IMPLEMENTATION
-#include <stb_image.h>
-
+using namespace LWGC;
 
 // TODO: hardcoded
 struct UniformBufferObject {
@@ -42,10 +40,12 @@ Material::~Material(void)
 
 	CleanupGraphicPipeline();
 
-	vkDestroySampler(_device, _uniformImages[0].sampler, nullptr);
-	vkDestroyImageView(_device, _uniformImages[0].view, nullptr);
-	vkDestroyImage(_device, _uniformImages[0].image, nullptr);
-	vkFreeMemory(_device, _uniformImages[0].memory, nullptr);
+	delete _textures[0];
+
+	vkDestroySampler(_device, _samplers[0], nullptr);
+	// vkDestroyImageView(_device, _uniformImages[0].view, nullptr);
+	// vkDestroyImage(_device, _uniformImages[0].image, nullptr);
+	// vkFreeMemory(_device, _uniformImages[0].memory, nullptr);
 	vkDestroyDescriptorPool(_device, _descriptorPool, nullptr);
 	vkDestroyDescriptorSetLayout(_device, _descriptorSetLayout, nullptr);
 
@@ -65,7 +65,8 @@ Material &	Material::operator=(Material const & src)
 		this->_graphicPipelineLayout = src._graphicPipelineLayout;
 		this->_graphicPipeline = src._graphicPipeline;
 		this->_uniformBuffers = src._uniformBuffers;
-		this->_uniformImages = src._uniformImages;
+		this->_samplers = src._samplers;
+		this->_textures = src._textures;
 		this->_instance = src._instance;
 		this->_device = src._device;
 		this->_swapChain = src._swapChain;
@@ -325,38 +326,16 @@ void					Material::CreateGraphicPipeline(void)
 
 void					Material::CreateTextureImage(void)
 {
-	int texWidth, texHeight, texChannels;
-	stbi_uc* pixels = stbi_load("images/656218.jpg", &texWidth, &texHeight, &texChannels, STBI_rgb_alpha);
-	VkDeviceSize imageSize = texWidth * texHeight * 4;
+	_textures.reserve(1);
 
-	// TODO: everything is hardcoded
-	_uniformImages.resize(1);
-
-	if (!pixels)
-		throw std::runtime_error("failed to load texture image!");
-
-	VkBuffer stagingBuffer;
-	VkDeviceMemory stagingBufferMemory;
-	Vk::CreateBuffer(imageSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, stagingBuffer, stagingBufferMemory);
-
-	void* data;
-	vkMapMemory(_device, stagingBufferMemory, 0, imageSize, 0, &data);
-	memcpy(data, pixels, static_cast<size_t>(imageSize));
-	vkUnmapMemory(_device, stagingBufferMemory);
-
-	stbi_image_free(pixels);
-
-	Vk::CreateImage(texWidth, texHeight, VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, _uniformImages[0].image, _uniformImages[0].memory);
-
-	TransitionImageLayout(_uniformImages[0].image, VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
-	Vk::CopyBufferToImage(stagingBuffer, _uniformImages[0].image, static_cast<uint32_t>(texWidth), static_cast<uint32_t>(texHeight));
-	TransitionImageLayout(_uniformImages[0].image, VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
-
-	_uniformImages[0].view = Vk::CreateImageView(_uniformImages[0].image, VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_ASPECT_COLOR_BIT);
+	// _textures.push_back((Texture *)(new Texture2D("images/656218.jpg", VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_USAGE_SAMPLED_BIT)));
+	_textures.push_back((Texture *)(new Texture2D(2, 2, VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_USAGE_SAMPLED_BIT, 2)));
 }
 
 void					Material::CreateTextureSampler(void)
 {
+	_samplers.resize(1);
+	
 	VkSamplerCreateInfo samplerInfo = {};
 	samplerInfo.sType = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO;
 	samplerInfo.magFilter = VK_FILTER_LINEAR;
@@ -376,7 +355,7 @@ void					Material::CreateTextureSampler(void)
 	samplerInfo.maxLod = 0.0f;
 
 	// TODO: hardcoded
-	if (vkCreateSampler(_device, &samplerInfo, nullptr, &_uniformImages[0].sampler) != VK_SUCCESS)
+	if (vkCreateSampler(_device, &samplerInfo, nullptr, &_samplers[0]) != VK_SUCCESS)
 		throw std::runtime_error("failed to create texture sampler!");
 }
 
@@ -449,8 +428,8 @@ void					Material::CreateDescriptorSets(void)
 
 	VkDescriptorImageInfo imageInfo = {};
 	imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-	imageInfo.imageView = _uniformImages[0].view;
-	imageInfo.sampler = _uniformImages[0].sampler;
+	imageInfo.imageView = _textures[0]->GetView();
+	imageInfo.sampler = _samplers[0];
 
 	std::array<VkWriteDescriptorSet, 2> descriptorWrites = {};
 
@@ -479,70 +458,6 @@ void					Material::BindDescriptorSets(VkCommandBuffer cmd, VkPipelineBindPoint b
 }
 
 // TODO: move this elsewhere
-void					Material::TransitionImageLayout(VkImage image, VkFormat format, VkImageLayout oldLayout, VkImageLayout newLayout)
-{
-	const auto graphicCommandBufferPool = _instance->GetGraphicCommandBufferPool();
-	VkCommandBuffer commandBuffer = graphicCommandBufferPool->BeginSingle();
-
-    VkImageMemoryBarrier barrier = {};
-    barrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
-    barrier.oldLayout = oldLayout;
-    barrier.newLayout = newLayout;
-    barrier.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
-    barrier.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
-    barrier.image = image;
-
-    if (newLayout == VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL) {
-        barrier.subresourceRange.aspectMask = VK_IMAGE_ASPECT_DEPTH_BIT;
-
-        if (Vk::HasStencilComponent(format)) {
-            barrier.subresourceRange.aspectMask |= VK_IMAGE_ASPECT_STENCIL_BIT;
-        }
-    } else {
-        barrier.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
-    }
-
-    barrier.subresourceRange.baseMipLevel = 0;
-    barrier.subresourceRange.levelCount = 1;
-    barrier.subresourceRange.baseArrayLayer = 0;
-    barrier.subresourceRange.layerCount = 1;
-
-    VkPipelineStageFlags sourceStage;
-    VkPipelineStageFlags destinationStage;
-
-    if (oldLayout == VK_IMAGE_LAYOUT_UNDEFINED && newLayout == VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL) {
-        barrier.srcAccessMask = 0;
-        barrier.dstAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
-
-        sourceStage = VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT;
-        destinationStage = VK_PIPELINE_STAGE_TRANSFER_BIT;
-    } else if (oldLayout == VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL && newLayout == VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL) {
-        barrier.srcAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
-        barrier.dstAccessMask = VK_ACCESS_SHADER_READ_BIT;
-
-        sourceStage = VK_PIPELINE_STAGE_TRANSFER_BIT;
-        destinationStage = VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT;
-    } else if (oldLayout == VK_IMAGE_LAYOUT_UNDEFINED && newLayout == VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL) {
-        barrier.srcAccessMask = 0;
-        barrier.dstAccessMask = VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_READ_BIT | VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT;
-
-        sourceStage = VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT;
-        destinationStage = VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT;
-    } else {
-        throw std::invalid_argument("unsupported layout transition!");
-    }
-
-    vkCmdPipelineBarrier(
-            commandBuffer,
-            sourceStage, destinationStage,
-            0,
-            0, nullptr,
-            0, nullptr,
-            1, &barrier
-        	);
-
-	graphicCommandBufferPool->EndSingle(commandBuffer);
-}
 
 VkDescriptorPool		Material::GetDescriptorPool(void) const { return (this->_descriptorPool); }
 void					Material::SetDescriptorPool(VkDescriptorPool tmp) { this->_descriptorPool = tmp; }

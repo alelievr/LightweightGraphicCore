@@ -1,39 +1,38 @@
 #pragma once
+
 #include <iostream>
 #include <string>
 
-#include "TextureFilterMode.hpp"
-#include "TextureWrapMode.hpp"
+#include "IncludeDeps.hpp"
+#include VULKAN_INCLUDE
 
 namespace LWGC
 {
 	class		Texture
 	{
-		private:
-			std::size_t			_width;
-			std::size_t			_height;
-			TextureFilterMode	_filterMode;
-			TextureWrapMode		_wrapMode;
-
+		protected:
+			int					width;
+			int					height;
+			int					depth;
+			VkFormat			format;
+			bool				autoGenerateMips;
+			VkImage				image;
+			VkDeviceMemory		memory;
+			VkImageView			view;
 
 		public:
 			Texture(void);
 			Texture(const Texture&);
 			virtual ~Texture(void);
 
-			Texture &	operator=(Texture const & src);
+			virtual Texture &	operator=(Texture const & src);
 
-			std::size_t	GetWidth(void) const;
-			void	SetWidth(std::size_t tmp);
-			
-			std::size_t	GetHeight(void) const;
-			void	SetHeight(std::size_t tmp);
-			
-			TextureFilterMode	GetFilterMode(void) const;
-			void	SetFilterMode(TextureFilterMode tmp);
-			
-			TextureWrapMode	GetWrapMode(void) const;
-			void	SetWrapMode(TextureWrapMode tmp);
+			int				GetWidth(void) const noexcept;
+			int				GetHeight(void) const noexcept;
+			int				GetDepth(void) const noexcept;
+			VkImageView		GetView(void) const noexcept;
+			VkImage			GetImage(void) const noexcept;
+			bool			GetAutoGenerateMips(void) const noexcept;
 	};
 
 	std::ostream &	operator<<(std::ostream & o, Texture const & r);

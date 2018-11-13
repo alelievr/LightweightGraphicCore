@@ -5,6 +5,8 @@
 #include GLFW_INCLUDE
 #include "Vk.hpp"
 
+using namespace LWGC;
+
 VulkanInstance *	VulkanInstance::_instanceSingleton;
 
 VulkanInstance *	VulkanInstance::Get(void)
