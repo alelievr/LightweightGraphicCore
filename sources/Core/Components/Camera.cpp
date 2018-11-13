@@ -23,19 +23,24 @@ Camera::~Camera(void)
 	std::cout << "Destructor of Camera called" << std::endl;
 }
 
-void		Camera::Render(void)
+void OnAdded(const GameObject & go) noexcept
 {
-	
+	(void)go;
+}
+
+void OnRemoved(const GameObject & go) noexcept
+{
+	(void)go;
 }
 
 glm::vec3		Camera::WorldToScreenPoint(glm::vec3 worldPosition)
 {
-	
+	return worldPosition;
 }
 
 glm::vec3		Camera::ScreenToWorldPoint(glm::vec3 screenPosition)
 {
-	
+	return screenPosition;
 }
 
 

@@ -6,10 +6,11 @@
 #include "Core/Object.hpp"
 #include "Core/Rendering/RenderTarget.hpp"
 #include "Core/CameraType.hpp"
+#include "Core/GameObject.hpp"
 
 namespace LWGC
 {
-	class		Camera : public Object
+	class		Camera : public Object, public IComponent
 	{
 		private:
 			RenderTarget *	_target;
@@ -27,7 +28,8 @@ namespace LWGC
 
 			Camera &	operator=(Camera const & src);
 
-			void		Render(void);
+			virtual void OnAdded(const GameObject &go) noexcept;
+			virtual void OnRemoved(const GameObject & go) noexcept;
 
 			glm::vec3	WorldToScreenPoint(glm::vec3 worldPosition);
 

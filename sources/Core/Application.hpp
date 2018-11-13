@@ -4,9 +4,15 @@
 #include <string>
 
 #include "WindowFlag.hpp"
-#include "Rendering/IRenderPipeline.hpp"
+#include "Rendering/VulkanRenderPipeline.hpp"
 #include "Events/EventSystem.hpp"
 #include "Hierarchy.hpp"
+#include "Vulkan/VulkanInstance.hpp"
+#include "Vulkan/VulkanSurface.hpp"
+#include "Vulkan/SwapChain.hpp"
+#include "Vulkan/RenderPass.hpp"
+#include "Vulkan/Material.hpp"
+#include "Core/Rendering/RenderContext.hpp"
 
 #include VULKAN_INCLUDE
 #include GLFW_INCLUDE
@@ -16,12 +22,17 @@ namespace LWGC
 	class		Application
 	{
 		private:
-			std::shared_ptr< IRenderPipeline >	_renderPipeline;
+			VulkanRenderPipeline *				_renderPipeline;
 			EventSystem							_eventSystem;
 			Hierarchy							_hierarchy;
 			GLFWwindow *						_window;
+			VulkanInstance						_instance;
+			VulkanSurface						_surface;
+			SwapChain							_swapChain;
 
-			bool	_shouldNotQuit;
+			bool		_shouldNotQuit;
+
+			static void	FramebufferResizeCallback(GLFWwindow *window, int width, int height);
 
 		public:
 			Application(void);
@@ -36,11 +47,7 @@ namespace LWGC
 			void	Open(const std::string & name, const int width, const int height, const WindowFlag flags) noexcept;
 			void	Update(void) noexcept;
 
-			IRenderPipeline &	GetRenderPipeline(void) const noexcept;
-			void	SetRenderPipeline(std::shared_ptr< IRenderPipeline > tmp) noexcept;
-			
 			EventSystem *		GetEventSystem(void) noexcept;
-
 			Hierarchy *			GetHierarchy(void) noexcept;
 	};
 

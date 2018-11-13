@@ -1,5 +1,5 @@
 #include "MeshRenderer.hpp"
-#include "PrimitiveMeshFactory.hpp"
+#include "Core/PrimitiveMeshFactory.hpp"
 #include <memory>
 
 using namespace LWGC;
@@ -27,7 +27,6 @@ MeshRenderer::~MeshRenderer(void)
 
 SortingLayer		MeshRenderer::GetSortingLayer(void)
 {
-	
 }
 
 Bounds		MeshRenderer::GetBounds(void)
@@ -65,12 +64,14 @@ MeshRenderer &	MeshRenderer::operator=(MeshRenderer const & src)
 
 void MeshRenderer::OnRemoved(const GameObject & go) noexcept
 {
+	(void)go;
 	// TODO: register this component in the renderable list of the application
 }
 
 void MeshRenderer::OnAdded(const GameObject & go) noexcept
 {
-	// TODO: remove this compoennt from the renderable list
+	(void)go;
+	// TODO: remove this component from the renderable list
 }
 
 std::shared_ptr< Mesh >		MeshRenderer::GetMesh(void) const { return (this->_mesh); }

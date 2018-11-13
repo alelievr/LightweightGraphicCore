@@ -3,11 +3,11 @@
 #include <iostream>
 #include <string>
 
-#include "Object.hpp"
-#include "Mesh.hpp"
-#include "Material.hpp"
-#include "Rendering/SortingLayer.hpp"
-#include "Rendering/IRenderable.hpp"
+#include "Core/Object.hpp"
+#include "Core/Mesh.hpp"
+#include "Core/Vulkan/Material.hpp"
+#include "Core/Rendering/SortingLayer.hpp"
+#include "Core/Rendering/IRenderable.hpp"
 #include "IComponent.hpp"
 
 namespace LWGC

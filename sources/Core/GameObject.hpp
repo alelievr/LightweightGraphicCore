@@ -7,7 +7,7 @@
 
 #include "Transform.hpp"
 #include "Object.hpp"
-#include "IComponent.hpp"
+#include "Core/Components/IComponent.hpp"
 
 namespace LWGC
 {
