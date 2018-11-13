@@ -2,6 +2,9 @@
 
 Wrapper for vulkan graphic applications that handles window, gui, shader compilation and more
 
+### Code quality
+[![CodeFactor](https://www.codefactor.io/repository/github/alelievr/lightweightgraphiccore/badge)](https://www.codefactor.io/repository/github/alelievr/lightweightgraphiccore)
+
 ### Build
 
 `make`
