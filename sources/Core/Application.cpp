@@ -87,8 +87,12 @@ void			Application::Open(const std::string & name, const int width, const int he
 
 	_surface.Initialize(_window);
 	_swapChain.Initialize(_surface);
-	CreateRenderPass();
-	_material.Initialize(&_swapChain, &_renderPass);
+
+	_renderPipeline->CreateRenderPass();
+	_renderPipeline->CreateMaterials();
+	_renderPipeline->CreateMeshes();
+	_renderPipeline->PrepareCommandBuffers();
+	_renderPipeline->CreateSyncObjects();
 
 	// Init IMGUI
 	IMGUI_CHECKVERSION();
@@ -108,7 +112,6 @@ void			Application::Open(const std::string & name, const int width, const int he
 	initInfo.Allocator = VK_NULL_HANDLE;
 	initInfo.CheckVkResultFn = Vk::CheckResult;
 
-	// TODO: move to vulkan here
 	ImGui_ImplGlfw_InitForVulkan(_window, true);
 	ImGui_ImplVulkan_Init(&initInfo, _renderPass.GetRenderPass());
 	ImGui::StyleColorsDark();
@@ -118,6 +121,7 @@ void				Application::Update(void) noexcept
 {
 	glfwPollEvents();
 
+	//TODO: hierarchy get cameras, and extract the RenderContext
 	_renderPipeline->Render();
 
 /*	// Draw GUI on top of everything (after pipeline rendering)
@@ -125,9 +129,6 @@ void				Application::Update(void) noexcept
 	ImGui_ImplOpenGL3_NewFrame();
 	ImGui_ImplGlfw_NewFrame();
 	ImGui::NewFrame();
-
-	// User IMGUI calls
-	_renderPipeline->RenderImGUI();
 
 	ImGui::Render();
 	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());*/
@@ -137,35 +138,9 @@ void				Application::Update(void) noexcept
 	_shouldNotQuit = !glfwWindowShouldClose(_window);
 }
 
-void				Application::CreateRenderPass(void)
-{
-	_renderPass.Initialize(&_swapChain);
-
-	// Currently fixed renderpass, TODO: have the hability to change the layout of the renderPass
-	_renderPass.AddAttachment(
-		RenderPass::GetDefaultColorAttachment(_swapChain.GetImageFormat()),
-		VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
-	_renderPass.SetDepthAttachment(
-		RenderPass::GetDefaultDepthAttachment(_instance.FindDepthFormat()),
-		VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL);
-
-	VkSubpassDependency dependency = {};
-	dependency.srcSubpass = VK_SUBPASS_EXTERNAL;
-	dependency.dstSubpass = 0;
-	dependency.srcStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
-	dependency.srcAccessMask = 0;
-	dependency.dstStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
-	dependency.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_READ_BIT | VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
-
-	_renderPass.AddDependency(dependency);
-
-	// Will also generate framebuffers
-	_renderPass.Create();
-}
-
 #include <memory>
-IRenderPipeline &	Application::GetRenderPipeline(void) const noexcept { return *(this->_renderPipeline); }
-void				Application::SetRenderPipeline(std::shared_ptr< IRenderPipeline > tmp) noexcept { this->_renderPipeline = tmp; }
+VulkanRenderPipeline &	Application::GetRenderPipeline(void) const noexcept { return *(this->_renderPipeline); }
+void				Application::SetRenderPipeline(std::shared_ptr< VulkanRenderPipeline > tmp) noexcept { this->_renderPipeline = tmp; }
 
 EventSystem *		Application::GetEventSystem(void) noexcept { return &this->_eventSystem; }
 Hierarchy *			Application::GetHierarchy(void) noexcept { return &this->_hierarchy; }

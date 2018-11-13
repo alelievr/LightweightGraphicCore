@@ -179,7 +179,6 @@ class Olol {
 			{
 				glfwPollEvents();
 				drawFrame();
-				frames++;
 			}
 
 			vkDeviceWaitIdle(instance.GetDevice());

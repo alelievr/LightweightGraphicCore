@@ -15,7 +15,7 @@
 #include "IncludeDeps.hpp"
 
 // Pipelines
-#include "Core/Rendering/IRenderPipeline.hpp"
+#include "Core/Rendering/VulkanRenderPipeline.hpp"
 #include "Core/Rendering/ForwardRenderPipeline.hpp"
 
 // Shaders & materials

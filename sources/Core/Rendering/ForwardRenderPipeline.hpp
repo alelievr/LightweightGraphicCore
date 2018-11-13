@@ -3,13 +3,13 @@
 #include <iostream>
 #include <string>
 
-#include "IRenderPipeline.hpp"
+#include "VulkanRenderPipeline.hpp"
 #include "RenderQueueType.hpp"
 #include "RenderQueue.hpp"
 
 namespace LWGC
 {
-	class		ForwardRenderPipeline : public IRenderPipeline
+	class		ForwardRenderPipeline : public VulkanRenderPipeline
 	{
 		private:
 			RenderQueue		_renderQueues[static_cast< int >(RenderQueueType::Count)];
