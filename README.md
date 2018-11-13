@@ -4,6 +4,8 @@ Wrapper for vulkan graphic applications that handles window, gui, shader compila
 
 ### Code quality
 [![CodeFactor](https://www.codefactor.io/repository/github/alelievr/lightweightgraphiccore/badge)](https://www.codefactor.io/repository/github/alelievr/lightweightgraphiccore)
+[![Build status](https://ci.appveyor.com/api/projects/status/rxqy66lfqem7saem?svg=true)](https://ci.appveyor.com/project/alelievr/lightweightgraphiccore)
+
 
 ### Build
 
