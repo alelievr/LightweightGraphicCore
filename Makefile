@@ -17,6 +17,9 @@
 #	Sources
 SRCDIR		=	sources
 SRC			=	Core/Application.cpp \
+				Core/Transform.cpp \
+				Core/GameObject.cpp \
+				Core/Hierarchy.cpp \
 				Core/Components/Camera.cpp \
 				Core/Components/MeshRenderer.cpp \
 				Core/Components/Light.cpp \
@@ -42,9 +45,10 @@ SRC			=	Core/Application.cpp \
 				Core/Vulkan/Vk.cpp \
 				Core/Vulkan/VulkanInstance.cpp \
 				Core/Vulkan/VulkanSurface.cpp \
-				Core/Transform.cpp \
-				Core/GameObject.cpp \
-				Core/Hierarchy.cpp \
+				Core/Texture.cpp \
+				Core/Texture2D.cpp \
+				Core/TextureCube.cpp \
+				Core/Texture3D.cpp \
 				Utils/Bounds.cpp \
 				Utils/Color.cpp \
 				Utils/Random.cpp \

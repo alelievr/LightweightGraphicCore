@@ -195,7 +195,6 @@ void			VulkanRenderPipeline::RecreateSwapChain(void)
 
 	instance->UpdateSurface();
 	swapChain->Create();
-	renderPass.Create();
 	CreateRenderPass();
 	material.CreateGraphicPipeline();
 	PrepareCommandBuffers();

@@ -1,5 +1,7 @@
 #include "CommandBufferPool.hpp"
 
+using namespace LWGC;
+
 CommandBufferPool::CommandBufferPool(void)
 {
 	this->_instance = VK_NULL_HANDLE;

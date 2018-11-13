@@ -8,6 +8,7 @@
 # define GLSLANG_INCLUDE "../deps/glslang/install/include/glslang/Public/ShaderLang.h"
 # define IMGUI_INCLUDE "../deps/imgui/imgui.h"
 # define STB_INCLUDE "../deps/stb/stb.h"
+# define STB_INCLUDE_IMAGE "../deps/stb/stb_image.h"
 
 # ifdef __APPLE__
 #  define VULKAN_INCLUDE "../deps/vulkansdk-macos-1.1.85.0/macOS/include/vulkan/vulkan.h"

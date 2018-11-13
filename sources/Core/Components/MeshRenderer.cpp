@@ -1,6 +1,5 @@
 #include "MeshRenderer.hpp"
 #include "Core/PrimitiveMeshFactory.hpp"
-#include <memory>
 
 using namespace LWGC;
 

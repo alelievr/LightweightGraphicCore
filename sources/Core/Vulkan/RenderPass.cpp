@@ -1,5 +1,7 @@
 #include "RenderPass.hpp"
 
+using namespace LWGC;
+
 RenderPass::RenderPass(void)
 {
 	this->_renderPass = VK_NULL_HANDLE;

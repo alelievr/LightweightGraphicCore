@@ -1,5 +1,6 @@
 #include "VulkanSurface.hpp"
 
+using namespace LWGC;
 
 VulkanSurface::VulkanSurface(void)
 {
