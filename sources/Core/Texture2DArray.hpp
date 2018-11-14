@@ -13,7 +13,9 @@ namespace LWGC
 	class		Texture2DArray : public Texture
 	{
 		private:
-			int			_arraySize;
+			VkBuffer		_stagingBuffer;
+			VkDeviceMemory	_stagingBufferMemory;
+			void *			_stagingData;
 	
 		public:
 			Texture2DArray(void) = delete;
@@ -22,6 +24,7 @@ namespace LWGC
 			virtual ~Texture2DArray(void);
 
 			void	SetImage(const std::string & fileName, int targetIndex);
+			void	Upload(void);
 
 			int		GetArraySize();
 	

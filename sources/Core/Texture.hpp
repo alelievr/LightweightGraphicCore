@@ -27,7 +27,7 @@ namespace LWGC
 			bool				allocated;
 			
 			void			AllocateImage();
-			void			UploadImage(stbi_uc * pixels, int imageSize, int targetArrayIndex, int targetMipLevel);
+			void			UploadImage(stbi_uc * pixels, VkDeviceSize imageSize, int targetArrayIndex, int targetMipLevel);
 			void			TransitionImageLayout(VkImage image, VkFormat format, VkImageLayout oldLayout, VkImageLayout newLayout);
 
 			stbi_uc *		LoadFromFile(const std::string & fileName, int & width, int & height);

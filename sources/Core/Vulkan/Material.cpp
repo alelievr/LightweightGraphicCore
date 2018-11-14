@@ -45,9 +45,6 @@ Material::~Material(void)
 	delete _textures[0];
 
 	vkDestroySampler(_device, _samplers[0], nullptr);
-	// vkDestroyImageView(_device, _uniformImages[0].view, nullptr);
-	// vkDestroyImage(_device, _uniformImages[0].image, nullptr);
-	// vkFreeMemory(_device, _uniformImages[0].memory, nullptr);
 	vkDestroyDescriptorPool(_device, _descriptorPool, nullptr);
 	vkDestroyDescriptorSetLayout(_device, _descriptorSetLayout, nullptr);
 
