@@ -47,7 +47,9 @@ SRC			=	Core/Application.cpp \
 				Core/Vulkan/VulkanSurface.cpp \
 				Core/Texture.cpp \
 				Core/Texture2D.cpp \
+				Core/Texture2DArray.cpp \
 				Core/TextureCube.cpp \
+				Core/TextureCubeArray.cpp \
 				Core/Texture3D.cpp \
 				Utils/Bounds.cpp \
 				Utils/Color.cpp \

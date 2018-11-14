@@ -1,5 +1,7 @@
 #include "CommandBufferPool.hpp"
 
+#include "Core/Vulkan/Vk.hpp"
+
 using namespace LWGC;
 
 CommandBufferPool::CommandBufferPool(void)
@@ -81,29 +83,28 @@ VkCommandBuffer		CommandBufferPool::BeginSingle(VkCommandBufferLevel level) noex
 	allocInfo.commandBufferCount = 1;
 
 	VkCommandBuffer commandBuffer;
-	vkAllocateCommandBuffers(_instance->GetDevice(), &allocInfo, &commandBuffer);
+	Vk::CheckResult(vkAllocateCommandBuffers(_instance->GetDevice(), &allocInfo, &commandBuffer));
 
 	VkCommandBufferBeginInfo beginInfo = {};
 	beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
 	beginInfo.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
 
-	vkBeginCommandBuffer(commandBuffer, &beginInfo);
+	Vk::CheckResult(vkBeginCommandBuffer(commandBuffer, &beginInfo));
 
 	return commandBuffer;
-
 }
 
 void		CommandBufferPool::EndSingle(VkCommandBuffer commandBuffer) noexcept
 {
-	vkEndCommandBuffer(commandBuffer);
+	Vk::CheckResult(vkEndCommandBuffer(commandBuffer));
 
 	VkSubmitInfo submitInfo = {};
 	submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
 	submitInfo.commandBufferCount = 1;
 	submitInfo.pCommandBuffers = &commandBuffer;
 
-	vkQueueSubmit(_queue, 1, &submitInfo, VK_NULL_HANDLE);
-	vkQueueWaitIdle(_queue);
+	Vk::CheckResult(vkQueueSubmit(_queue, 1, &submitInfo, VK_NULL_HANDLE));
+	Vk::CheckResult(vkQueueWaitIdle(_queue));
 
 	vkFreeCommandBuffers(_instance->GetDevice(), _commandPool, 1, &commandBuffer);
 }

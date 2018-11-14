@@ -1,21 +1,32 @@
-#ifndef TEXTURE2DARRAY_HPP
-# define TEXTURE2DARRAY_HPP
-# include <iostream>
-# include <string>
+#pragma once
 
-class		Texture2DArray
+#include <iostream>
+#include <string>
+
+#include "IncludeDeps.hpp"
+#include "Core/Texture.hpp"
+
+#include VULKAN_INCLUDE
+
+namespace LWGC
 {
-	private:
+	class		Texture2DArray : public Texture
+	{
+		private:
+			int			_arraySize;
+	
+		public:
+			Texture2DArray(void) = delete;
+			Texture2DArray(int width, int height, int arraySize, VkFormat format, int usage);
+			Texture2DArray(const Texture2DArray &);
+			virtual ~Texture2DArray(void);
 
+			void	SetImage(const std::string & fileName, int targetIndex);
 
-	public:
-		Texture2DArray();
-		Texture2DArray(const Texture2DArray&);
-		virtual ~Texture2DArray(void);
-
-		Texture2DArray &	operator=(Texture2DArray const & src);
-};
-
-std::ostream &	operator<<(std::ostream & o, Texture2DArray const & r);
-
-#endif
+			int		GetArraySize();
+	
+			Texture2DArray &	operator=(Texture2DArray const & src);
+	};
+	
+	std::ostream &	operator<<(std::ostream & o, Texture2DArray const & r);
+}

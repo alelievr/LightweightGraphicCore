@@ -4,7 +4,6 @@
 #include <string>
 
 #include "Core/Texture.hpp"
-#include "Core/Texture2D.hpp"
 #include "IncludeDeps.hpp"
 
 #include VULKAN_INCLUDE
@@ -42,8 +41,9 @@ namespace LWGC
 			void		CreateUniformBuffer(void);
 			void		CreateDescriptorPool(void);
 			void		CreateDescriptorSets(void);
-			void		TransitionImageLayout(VkImage image, VkFormat format, VkImageLayout oldLayout, VkImageLayout newLayout);
 			VkShaderModule	createShaderModule(const std::vector<char>& code);
+
+			void		TransitionImageLayout(VkImage image, VkFormat format, VkImageLayout oldLayout, VkImageLayout newLayout);
 	
 		public:
 			Material(void);
