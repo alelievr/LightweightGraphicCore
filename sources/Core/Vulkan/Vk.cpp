@@ -2,14 +2,14 @@
 
 using namespace LWGC;
 
-VkImageView		Vk::CreateImageView(VkImage image, VkFormat format, VkImageAspectFlags aspectFlags)
+VkImageView		Vk::CreateImageView(VkImage image, VkFormat format, VkImageViewType viewType, VkImageAspectFlags aspectFlags)
 {
 	VulkanInstance * instance = VulkanInstance::Get();
 
 	VkImageViewCreateInfo viewInfo = {};
 	viewInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
 	viewInfo.image = image;
-	viewInfo.viewType = VK_IMAGE_VIEW_TYPE_2D;
+	viewInfo.viewType = viewType;
 	viewInfo.format = format;
 	viewInfo.subresourceRange.aspectMask = aspectFlags;
 	viewInfo.subresourceRange.baseMipLevel = 0;
@@ -60,7 +60,7 @@ void			Vk::CreateImage(uint32_t width, uint32_t height, uint32_t depth, int arra
 	if (vkAllocateMemory(device, &allocInfo, nullptr, &imageMemory) != VK_SUCCESS)
 	    throw std::runtime_error("failed to allocate image memory!");
 
-	vkBindImageMemory(device, image, imageMemory, 0);
+	CheckResult(vkBindImageMemory(device, image, imageMemory, 0));
 }
 
 bool			Vk::HasStencilComponent(VkFormat format)
@@ -93,7 +93,7 @@ void			Vk::CreateBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPro
 	if (vkAllocateMemory(device, &allocInfo, nullptr, &bufferMemory) != VK_SUCCESS)
 		throw std::runtime_error("failed to allocate buffer memory!");
 
-	vkBindBufferMemory(device, buffer, bufferMemory, 0);
+	CheckResult(vkBindBufferMemory(device, buffer, bufferMemory, 0));
 }
 
 void			Vk::CopyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size)

@@ -15,13 +15,11 @@ namespace LWGC
 	{
 		private:
 			std::string		_name;
-		
-			void	TransitionImageLayout(VkImage image, VkFormat format, VkImageLayout oldLayout, VkImageLayout newLayout);
 
 		public:
 			Texture2D(void) = delete;
-			Texture2D(const std::string fileName, VkFormat format, int usage, int arrayCount = 1);
-			Texture2D(std::size_t width, std::size_t height, VkFormat format, int usage, int arrayCount = 1);
+			Texture2D(const std::string fileName, VkFormat format, int usage);
+			Texture2D(std::size_t width, std::size_t height, VkFormat format, int usage);
 			Texture2D(const Texture2D &);
 			virtual ~Texture2D(void);
 
