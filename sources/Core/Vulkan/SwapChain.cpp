@@ -106,7 +106,7 @@ void				SwapChain::CreateImageViews(void) noexcept
 	_imageViews.resize(_images.size());
 
 	for (uint32_t i = 0; i < _images.size(); i++)
-	    _imageViews[i] = Vk::CreateImageView(_images[i], _imageFormat, VK_IMAGE_VIEW_TYPE_2D, VK_IMAGE_ASPECT_COLOR_BIT);
+	    _imageViews[i] = Vk::CreateImageView(_images[i], _imageFormat, 1, VK_IMAGE_VIEW_TYPE_2D, VK_IMAGE_ASPECT_COLOR_BIT);
 }
 
 // TODO: this may not be in this class
@@ -178,8 +178,8 @@ void				SwapChain::CreateDepthResources(void)
 {
 	VkFormat depthFormat = _instance->FindDepthFormat();
 
-	Vk::CreateImage(_extent.width, _extent.height, 1, 1, depthFormat, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, _depthImage, _depthImageMemory);
-	_depthImageView = Vk::CreateImageView(_depthImage, depthFormat, VK_IMAGE_VIEW_TYPE_2D, VK_IMAGE_ASPECT_DEPTH_BIT);
+	Vk::CreateImage(_extent.width, _extent.height, 1, 1, 1, depthFormat, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, _depthImage, _depthImageMemory);
+	_depthImageView = Vk::CreateImageView(_depthImage, depthFormat, 1, VK_IMAGE_VIEW_TYPE_2D, VK_IMAGE_ASPECT_DEPTH_BIT);
 	TransitionDepthImageLayout(_depthImage, depthFormat, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL);
 }
 

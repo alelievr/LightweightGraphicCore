@@ -13,7 +13,8 @@ namespace LWGC
 	
 	
 		public:
-			Texture3D();
+			Texture3D(void) = delete;
+			Texture3D(std::size_t width, std::size_t height, std::size_t depth, VkFormat format, int usage);
 			Texture3D(const Texture3D &);
 			virtual ~Texture3D(void);
 	

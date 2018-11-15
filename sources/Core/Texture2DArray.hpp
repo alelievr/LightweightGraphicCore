@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include <string>
+#include <vector>
 
 #include "IncludeDeps.hpp"
 #include "Core/Texture.hpp"
@@ -13,9 +14,10 @@ namespace LWGC
 	class		Texture2DArray : public Texture
 	{
 		private:
-			VkBuffer		_stagingBuffer;
-			VkDeviceMemory	_stagingBufferMemory;
-			void *			_stagingData;
+			VkBuffer							_stagingBuffer;
+			VkDeviceMemory						_stagingBufferMemory;
+			void *								_stagingData;
+			std::vector< VkBufferImageCopy >	_bufferCopyRegions;
 	
 		public:
 			Texture2DArray(void) = delete;

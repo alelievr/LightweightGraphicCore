@@ -1,8 +1,9 @@
 #include "Texture2D.hpp"
+#include <cmath>
 
 using namespace LWGC;
 
-Texture2D::Texture2D(const std::string fileName, VkFormat format, int usage)
+Texture2D::Texture2D(const std::string fileName, VkFormat format, int usage, bool generateMips)
 {
 	this->format = format;
 	// Force transfer flag (as the image comes from the RAM)
@@ -11,10 +12,18 @@ Texture2D::Texture2D(const std::string fileName, VkFormat format, int usage)
 
     stbi_uc * pixels = LoadFromFile(fileName, this->width, this->height);
 
-    this->depth = 1;
-    AllocateImage();
+	if (generateMips)
+	{
+		maxMipLevel = static_cast<uint32_t>(std::floor(std::log2(std::max(width, height)))) + 1;
+		usage |= VK_IMAGE_USAGE_TRANSFER_SRC_BIT;
+	}
 
-    UploadImage(pixels, this->width * this->height * 4, 0, 0);
+    this->depth = 1;
+    AllocateImage(VK_IMAGE_VIEW_TYPE_2D);
+
+    UploadImage(pixels, this->width * this->height * 4);
+
+	UploadImageWithMips(image, format, pixels, this->width * this->height * 4);
 	
 	stbi_image_free(pixels);
 }
@@ -26,8 +35,10 @@ Texture2D::Texture2D(std::size_t width, std::size_t height, VkFormat format, int
 	this->height = height;
     this->arraySize = 1;
     this->usage = usage;
+	
+	maxMipLevel = static_cast<uint32_t>(std::floor(std::log2(std::max(width, height)))) + 1;
 
-    AllocateImage();
+    AllocateImage(VK_IMAGE_VIEW_TYPE_2D);
 }
 
 Texture2D::Texture2D(Texture2D const & src)
@@ -37,8 +48,6 @@ Texture2D::Texture2D(Texture2D const & src)
 
 Texture2D::~Texture2D(void)
 {
-	const auto & device = VulkanInstance::Get()->GetDevice();
-	
 	vkDestroyImageView(device, view, nullptr);
 	vkDestroyImage(device, image, nullptr);
 	vkFreeMemory(device, memory, nullptr);
@@ -70,7 +79,7 @@ Texture2D &	Texture2D::operator=(Texture2D const & src)
 
 std::ostream &	operator<<(std::ostream & o, Texture2D const & r)
 {
-	o << "tostring of the class" << std::endl;
+	o << "Texture2D" << std::endl;
 	(void)r;
 	return (o);
 }
