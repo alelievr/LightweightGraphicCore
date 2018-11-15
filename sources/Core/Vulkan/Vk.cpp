@@ -2,7 +2,7 @@
 
 using namespace LWGC;
 
-VkImageView		Vk::CreateImageView(VkImage image, VkFormat format, VkImageViewType viewType, VkImageAspectFlags aspectFlags)
+VkImageView		Vk::CreateImageView(VkImage image, VkFormat format, int mipLevels, VkImageViewType viewType, VkImageAspectFlags aspectFlags)
 {
 	VulkanInstance * instance = VulkanInstance::Get();
 
@@ -13,7 +13,7 @@ VkImageView		Vk::CreateImageView(VkImage image, VkFormat format, VkImageViewType
 	viewInfo.format = format;
 	viewInfo.subresourceRange.aspectMask = aspectFlags;
 	viewInfo.subresourceRange.baseMipLevel = 0;
-	viewInfo.subresourceRange.levelCount = 1;
+	viewInfo.subresourceRange.levelCount = mipLevels;
 	viewInfo.subresourceRange.baseArrayLayer = 0;
 	viewInfo.subresourceRange.layerCount = 1;
 
@@ -26,7 +26,7 @@ VkImageView		Vk::CreateImageView(VkImage image, VkFormat format, VkImageViewType
 	return imageView;
 }
 
-void			Vk::CreateImage(uint32_t width, uint32_t height, uint32_t depth, int arrayCount, VkFormat format, VkImageTiling tiling, VkImageUsageFlags usage, VkMemoryPropertyFlags properties, VkImage& image, VkDeviceMemory& imageMemory)
+void			Vk::CreateImage(uint32_t width, uint32_t height, uint32_t depth, int arrayCount, int mipLevels, VkFormat format, VkImageTiling tiling, VkImageUsageFlags usage, VkMemoryPropertyFlags properties, VkImage& image, VkDeviceMemory& imageMemory)
 {
 	VulkanInstance * instance = VulkanInstance::Get();
 
@@ -36,7 +36,7 @@ void			Vk::CreateImage(uint32_t width, uint32_t height, uint32_t depth, int arra
 	imageInfo.extent.width = width;
 	imageInfo.extent.height = height;
 	imageInfo.extent.depth = depth;
-	imageInfo.mipLevels = 1;
+	imageInfo.mipLevels = mipLevels;
 	imageInfo.arrayLayers = arrayCount;
 	imageInfo.format = format;
 	imageInfo.tiling = tiling;
@@ -108,7 +108,7 @@ void			Vk::CopyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size)
 	graphicCommandBufferPool->EndSingle(commandBuffer);
 }
 
-void			Vk::CopyBufferToImage(VkBuffer buffer, VkImage image, uint32_t width, uint32_t height)
+void			Vk::CopyBufferToImage(VkBuffer buffer, VkImage image, uint32_t width, uint32_t height, uint32_t depth)
 {
 	const auto & graphicCommandBufferPool = VulkanInstance::Get()->GetGraphicCommandBufferPool();
 	VkCommandBuffer commandBuffer = graphicCommandBufferPool->BeginSingle();
@@ -117,7 +117,6 @@ void			Vk::CopyBufferToImage(VkBuffer buffer, VkImage image, uint32_t width, uin
 	region.bufferOffset = 0;
 	region.bufferRowLength = 0;
 	region.bufferImageHeight = 0;
-
 	region.imageSubresource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
 	region.imageSubresource.mipLevel = 0;
 	region.imageSubresource.baseArrayLayer = 0;
@@ -127,7 +126,7 @@ void			Vk::CopyBufferToImage(VkBuffer buffer, VkImage image, uint32_t width, uin
 	region.imageExtent = {
 		width,
 		height,
-		1
+		depth
 	};
 
 	vkCmdCopyBufferToImage(

@@ -90,10 +90,20 @@ void			Application::Open(const std::string & name, const int width, const int he
 	_surface.Initialize(_window);
 	_swapChain.Initialize(_surface);
 
-	_renderPipeline->Initialize(&_swapChain);
-	_renderPipeline->CreateMeshes();
-	_renderPipeline->PrepareCommandBuffers();
-	_renderPipeline->CreateSyncObjects();
+	try {
+		_renderPipeline->Initialize(&_swapChain);
+		_renderPipeline->CreateMeshes();
+		_renderPipeline->PrepareCommandBuffers();
+		_renderPipeline->CreateSyncObjects();
+	} catch (const std::runtime_error & e) {
+		std::cout << "Error while initializing the render pipeline:" << std::endl << e.what() << std::endl;
+		exit(-1);
+	} catch (const std::runtime_error * e) { // for C# syntax raising exceptions
+		std::cout << "Error while initializing the render pipeline:" << std::endl << e->what() << std::endl;
+		exit(-1);
+	} catch (...) {
+		std::cout << "Unknown error while initializing the render pipeline !" << std::endl;
+	}
 	
 	glfwSetWindowUserPointer(_window, &_renderPipeline);
 	glfwSetFramebufferSizeCallback(_window, FramebufferResizeCallback);

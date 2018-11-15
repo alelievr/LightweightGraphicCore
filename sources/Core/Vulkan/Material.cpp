@@ -329,16 +329,20 @@ void					Material::CreateTextureImage(void)
 {
 	_textures.reserve(1);
 
-	_textures.push_back((Texture *)(new Texture2D("images/656218.jpg", VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_USAGE_SAMPLED_BIT)));
+	_textures.push_back((Texture *)(new Texture2D("images/656218.jpg", VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_USAGE_SAMPLED_BIT, true)));
+
+	// Texture arrays are currently not supported and require MSL 2.0 :(
 	// _textures.push_back((Texture *)(new Texture2D(2, 2, VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_USAGE_SAMPLED_BIT)));
 	// auto textureArray = new Texture2DArray(512, 512, 2, VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_USAGE_SAMPLED_BIT);
 
 	// try {
-	// 	textureArray->SetImage("images/656218.jpg", 0);
-	// 	textureArray->SetImage("images/829356.png", 1);
+	// 	textureArray->SetImage("images/512_1.png", 0);
+	// 	textureArray->SetImage("images/512_2.png", 1);
 	// } catch (std::runtime_error r) {
 	// 	std::cout << r.what() << std::endl;
 	// }
+
+	// textureArray->Upload();
 
 	// _textures.push_back((Texture *)(textureArray));
 }
@@ -428,7 +432,7 @@ void					Material::CreateTextureSampler(void)
 	samplerInfo.mipmapMode = VK_SAMPLER_MIPMAP_MODE_LINEAR;
 	samplerInfo.mipLodBias = 0.0f;
 	samplerInfo.minLod = 0.0f;
-	samplerInfo.maxLod = 0.0f;
+	samplerInfo.maxLod = 16.0f;
 
 	// TODO: hardcoded
 	if (vkCreateSampler(_device, &samplerInfo, nullptr, &_samplers[0]) != VK_SUCCESS)

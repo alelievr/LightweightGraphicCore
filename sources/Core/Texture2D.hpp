@@ -18,7 +18,7 @@ namespace LWGC
 
 		public:
 			Texture2D(void) = delete;
-			Texture2D(const std::string fileName, VkFormat format, int usage);
+			Texture2D(const std::string fileName, VkFormat format, int usage, bool generateMips = false);
 			Texture2D(std::size_t width, std::size_t height, VkFormat format, int usage);
 			Texture2D(const Texture2D &);
 			virtual ~Texture2D(void);

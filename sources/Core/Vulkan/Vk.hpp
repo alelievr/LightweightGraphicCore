@@ -19,12 +19,12 @@ namespace LWGC
 			Vk &	operator=(Vk const & src) = delete;
 	
 			static void			SetVulkanInstance(VulkanInstance * instance);
-			static VkImageView	CreateImageView(VkImage image, VkFormat format, VkImageViewType viewType, VkImageAspectFlags aspectFlags);
-			static void			CreateImage(uint32_t width, uint32_t height, uint32_t depth, int arrayCount, VkFormat format, VkImageTiling tiling, VkImageUsageFlags usage, VkMemoryPropertyFlags properties, VkImage& image, VkDeviceMemory& imageMemory);
+			static VkImageView	CreateImageView(VkImage image, VkFormat format, int mipLevels, VkImageViewType viewType, VkImageAspectFlags aspectFlags);
+			static void			CreateImage(uint32_t width, uint32_t height, uint32_t depth, int arrayCount, int mipLevels, VkFormat format, VkImageTiling tiling, VkImageUsageFlags usage, VkMemoryPropertyFlags properties, VkImage& image, VkDeviceMemory& imageMemory);
 			static bool			HasStencilComponent(VkFormat format);
 			static void			CreateBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer & buffer, VkDeviceMemory & bufferMemory);
 			static void			CopyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size);
-			static void			CopyBufferToImage(VkBuffer buffer, VkImage image, uint32_t width, uint32_t height);
+			static void			CopyBufferToImage(VkBuffer buffer, VkImage image, uint32_t width, uint32_t height, uint32_t depth = 1);
 			static void			CheckResult(VkResult result);
 	};
 }

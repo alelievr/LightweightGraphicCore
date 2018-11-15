@@ -103,7 +103,7 @@ namespace LWGC
 			VkFormat	FindDepthFormat(void);
 	
 			// Instance singleton
-			static VulkanInstance *    Get(void);
+			static VulkanInstance *		Get(void);
 	};
 	
 	std::ostream &	operator<<(std::ostream & o, VulkanInstance const & r);
