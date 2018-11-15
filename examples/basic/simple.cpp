@@ -29,7 +29,7 @@ int			main(void)
 	//Initialize application
 	app.Init();
 
-	LWGC::IComponent * comp = new LWGC::MeshRenderer(LWGC::PrimitiveType::Cube);
+	LWGC::Component * comp = new LWGC::MeshRenderer(LWGC::PrimitiveType::Cube);
 	hierarchy->AddGameObject(new LWGC::GameObject(comp));
 
 	//open window

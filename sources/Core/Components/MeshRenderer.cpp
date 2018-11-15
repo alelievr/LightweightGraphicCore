@@ -1,17 +1,11 @@
 #include "MeshRenderer.hpp"
 #include "Core/PrimitiveMeshFactory.hpp"
+#include "Core/Hierarchy.hpp"
 
 using namespace LWGC;
 
 MeshRenderer::MeshRenderer(void)
 {
-	std::cout << "Default constructor of MeshRenderer called" << std::endl;
-}
-
-MeshRenderer::MeshRenderer(MeshRenderer const & src)
-{
-	*this = src;
-	std::cout << "Copy constructor called" << std::endl;
 }
 
 MeshRenderer::MeshRenderer(const PrimitiveType prim)
@@ -21,21 +15,12 @@ MeshRenderer::MeshRenderer(const PrimitiveType prim)
 
 MeshRenderer::~MeshRenderer(void)
 {
-	std::cout << "Destructor of MeshRenderer called" << std::endl;
-}
-
-SortingLayer		MeshRenderer::GetSortingLayer(void)
-{
 }
 
 Bounds		MeshRenderer::GetBounds(void)
 {
-	
-}
-
-void		MeshRenderer::Render(void)
-{
-	std::cout << "Render model !\n";
+	// TODO
+	return Bounds();
 }
 
 void		MeshRenderer::SetModel(const Mesh & mesh, const Material & material)
@@ -50,27 +35,14 @@ void		MeshRenderer::SetModel(std::shared_ptr< Mesh > mesh, std::shared_ptr< Mate
 	this->_material = material;
 }
 
-MeshRenderer &	MeshRenderer::operator=(MeshRenderer const & src)
+void MeshRenderer::OnEnable() noexcept
 {
-	std::cout << "Assignment operator called" << std::endl;
-
-	if (this != &src) {
-		this->_mesh = src.GetMesh();
-		this->_material = src.GetMaterial();
-	}
-	return (*this);
+	renderContextIndex = hierarchy->RegisterComponentInRenderContext(RenderComponentType::MeshRenderer, this);
 }
 
-void MeshRenderer::OnRemoved(const GameObject & go) noexcept
+void MeshRenderer::OnDisable() noexcept
 {
-	(void)go;
-	// TODO: register this component in the renderable list of the application
-}
-
-void MeshRenderer::OnAdded(const GameObject & go) noexcept
-{
-	(void)go;
-	// TODO: remove this component from the renderable list
+	hierarchy->UnregisterComponentInRenderContext(RenderComponentType::MeshRenderer, renderContextIndex);
 }
 
 std::shared_ptr< Mesh >		MeshRenderer::GetMesh(void) const { return (this->_mesh); }

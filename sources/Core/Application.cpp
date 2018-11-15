@@ -10,7 +10,7 @@
 
 using namespace LWGC;
 
-Application::Application(void) : _window(NULL), _shouldNotQuit(true)
+Application::Application(void) : _hierarchy(std::make_shared< Hierarchy >()), _window(NULL), _shouldNotQuit(true)
 {
 	this->_renderPipeline = new ForwardRenderPipeline();
 }
@@ -153,7 +153,7 @@ void				Application::Update(void) noexcept
 }
 
 EventSystem *		Application::GetEventSystem(void) noexcept { return &this->_eventSystem; }
-Hierarchy *			Application::GetHierarchy(void) noexcept { return &this->_hierarchy; }
+Hierarchy *			Application::GetHierarchy(void) noexcept { return this->_hierarchy.get(); }
 
 std::ostream &	operator<<(std::ostream & o, Application const & r)
 {

@@ -20,6 +20,7 @@ SRC			=	Core/Application.cpp \
 				Core/Transform.cpp \
 				Core/GameObject.cpp \
 				Core/Hierarchy.cpp \
+				Core/Components/Component.cpp \
 				Core/Components/Camera.cpp \
 				Core/Components/MeshRenderer.cpp \
 				Core/Components/Light.cpp \

@@ -27,6 +27,7 @@ namespace LWGC
 			std::vector< int >			_triangles;
 			Bounds						_bounds;
 
+			// TODO: replace this by vulank layout and buffers
 			GLuint						_vao;
 			GLuint						_vbo[6];
 

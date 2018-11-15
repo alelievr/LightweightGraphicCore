@@ -7,31 +7,39 @@
 
 #include "Transform.hpp"
 #include "Object.hpp"
-#include "Core/Components/IComponent.hpp"
+#include "Core/Components/Component.hpp"
+#include "Core/Hierarchy.hpp"
 
 namespace LWGC
 {
 	class		GameObject : public Object
 	{
+		friend class Hierarchy;
+
 		private:
-			Transform	_transform;
-			bool		_active;
-			std::unordered_set< IComponent * >	_components;
+			Transform		_transform;
+			bool			_active;
+			std::unordered_set< Component * >	_components;
+			Hierarchy *		_hierarchy;
+
+			void SetHierarchy(Hierarchy * hierarchy);
 
 		public:
 			GameObject(void);
 			GameObject(const GameObject&);
 			virtual		~GameObject(void);
 
-			GameObject(IComponent * components);
+			GameObject(Component * components);
 
 			GameObject &	operator=(GameObject const & src);
 
-			Transform	GetTransform(void) const;
-			void		SetTransform(Transform tmp);
+			Hierarchy *		GetHierarchy(void) const noexcept;
 
-			IComponent *	AddComponent(IComponent * component) noexcept;
-			void			RemoveComponent(IComponent * component) noexcept;
+			Transform		GetTransform(void) const;
+			void			SetTransform(Transform tmp);
+
+			Component *		AddComponent(Component * component) noexcept;
+			void			RemoveComponent(Component * component) noexcept;
 
 			void			SetActive(bool active);
 			bool			IsActive(void) const;

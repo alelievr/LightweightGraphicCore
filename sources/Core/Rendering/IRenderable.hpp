@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../Rendering/SortingLayer.hpp"
+#include "Core/Vulkan/Material.hpp"
 #include "../../Utils/Bounds.hpp"
 
 namespace LWGC
@@ -8,9 +8,8 @@ namespace LWGC
 	class IRenderable
 	{
 		public:
-			virtual void			Render(void) = 0;
-
-			virtual SortingLayer	GetSortingLayer(void) = 0;
+			// virtual void			UpdateUnoforms(void) = 0;
 			virtual Bounds			GetBounds(void) = 0;
+			// virtual Material *		GetMaterial(void) = 0;
 	};
 }

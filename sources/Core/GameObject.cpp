@@ -9,7 +9,7 @@ GameObject::GameObject(void)
 	this->_flags = 0;
 }
 
-GameObject::GameObject(IComponent * component)
+GameObject::GameObject(Component * component)
 {
 	AddComponent(component);
 }
@@ -38,23 +38,45 @@ GameObject &	GameObject::operator=(GameObject const & src)
 	return (*this);
 }
 
-IComponent *	GameObject::AddComponent(IComponent * component) noexcept
+Component *	GameObject::AddComponent(Component * component) noexcept
 {
 	_components.insert(component);
 	component->OnAdded(*this);
+
+	return component;
 }
 
-void			GameObject::RemoveComponent(IComponent * component) noexcept
+void			GameObject::RemoveComponent(Component * component) noexcept
 {
 	component->OnRemoved(*this);
 	_components.erase(component);
 }
 
+Hierarchy *		GameObject::GetHierarchy(void) const noexcept
+{
+	return _hierarchy;
+}
+
 Transform		GameObject::GetTransform(void) const { return (this->_transform); }
 void			GameObject::SetTransform(Transform tmp) { this->_transform = tmp; }
 
-void			GameObject::SetActive(bool active) { _active = active; }
+void			GameObject::SetActive(bool active)
+{
+	if (active == _active)
+		return ;
+	
+	_active = active;
+
+	for (const auto & comp : _components)
+		comp->UpdateGameObjectActive();
+}
+
 bool			GameObject::IsActive(void) const { return _active; }
+
+void			GameObject::SetHierarchy(Hierarchy * hierarchy)
+{
+	_hierarchy = hierarchy;
+}
 
 std::ostream &	operator<<(std::ostream & o, GameObject const & r)
 {

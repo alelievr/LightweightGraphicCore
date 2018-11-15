@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include <string>
+#include <memory>
 
 #include "WindowFlag.hpp"
 #include "Rendering/VulkanRenderPipeline.hpp"
@@ -24,7 +25,7 @@ namespace LWGC
 		private:
 			VulkanRenderPipeline *				_renderPipeline;
 			EventSystem							_eventSystem;
-			Hierarchy							_hierarchy;
+			std::shared_ptr< Hierarchy >		_hierarchy;
 			GLFWwindow *						_window;
 			VulkanInstance						_instance;
 			VulkanSurface						_surface;

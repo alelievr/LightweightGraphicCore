@@ -10,7 +10,7 @@
 
 namespace LWGC
 {
-	class		Camera : public Object, public IComponent
+	class		Camera : public Object, public Component
 	{
 		private:
 			RenderTarget *	_target;
@@ -23,10 +23,10 @@ namespace LWGC
 
 		public:
 			Camera(void);
-			Camera(const Camera&);
+			Camera(const Camera &) = delete;
 			virtual ~Camera(void);
 
-			Camera &	operator=(Camera const & src);
+			Camera &	operator=(Camera const & src) = delete;
 
 			virtual void OnAdded(const GameObject &go) noexcept;
 			virtual void OnRemoved(const GameObject & go) noexcept;
