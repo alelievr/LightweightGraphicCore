@@ -12,6 +12,7 @@ namespace LWGC
 		private:
 
 			static std::shared_ptr< Mesh >	_CreateCubeMesh(void);
+			static std::shared_ptr< Mesh >	_CreateQuadMesh(void);
 
 		public:
 			PrimitiveMeshFactory(void);

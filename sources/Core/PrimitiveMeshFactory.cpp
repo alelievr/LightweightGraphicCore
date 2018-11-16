@@ -24,15 +24,15 @@ std::shared_ptr< Mesh >		PrimitiveMeshFactory::_CreateCubeMesh(void)
 {
 	std::shared_ptr< Mesh >		m = std::make_shared< Mesh >();
 
-	m->AddVertex(-1, -1, -1);
-	m->AddVertex( 1, -1, -1);
-	m->AddVertex( 1, -1,  1);
-	m->AddVertex(-1, -1,  1);
+	m->AddVertex(-0.5f, -0.5f, -0.5f);
+	m->AddVertex( 0.5f, -0.5f, -0.5f);
+	m->AddVertex( 0.5f, -0.5f,  0.5f);
+	m->AddVertex(-0.5f, -0.5f,  0.5f);
 
-	m->AddVertex(-1,  1, -1);
-	m->AddVertex( 1,  1, -1);
-	m->AddVertex( 1,  1,  1);
-	m->AddVertex(-1,  1,  1);
+	m->AddVertex(-0.5f,  0.5f, -0.5f);
+	m->AddVertex( 0.5f,  0.5f, -0.5f);
+	m->AddVertex( 0.5f,  0.5f,  0.5f);
+	m->AddVertex(-0.5f,  0.5f,  0.5f);
 
 	//up
 	m->AddTriangle(2 + 4, 1 + 4, 0 + 4);
@@ -42,7 +42,30 @@ std::shared_ptr< Mesh >		PrimitiveMeshFactory::_CreateCubeMesh(void)
 	m->AddTriangle(0, 1, 2);
 	m->AddTriangle(0, 2, 3);
 
-	m->UploadDatas();
+	return m;
+}
+
+std::shared_ptr< Mesh >		PrimitiveMeshFactory::_CreateQuadMesh(void)
+{
+	std::shared_ptr< Mesh >		m = std::make_shared< Mesh >();
+
+	m->AddVertex( 0.5f, 0,  0.5f);	// 0	1---0
+	m->AddVertex(-0.5f, 0,  0.5f);	// 1	| \ |
+	m->AddVertex( 0.5f, 0, -0.5f);	// 2    3---2
+	m->AddVertex(-0.5f, 0, -0.5f);	// 3
+
+	m->AddNormal(0, 1, 0);
+	m->AddNormal(0, 1, 0);
+	m->AddNormal(0, 1, 0);
+	m->AddNormal(0, 1, 0);
+
+	m->AddTangent(1, 0, 0);
+	m->AddTangent(1, 0, 0);
+	m->AddTangent(1, 0, 0);
+	m->AddTangent(1, 0, 0);
+
+	m->AddTriangle(1, 0, 2);
+	m->AddTriangle(2, 3, 1);
 
 	return m;
 }

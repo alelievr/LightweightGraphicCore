@@ -3,6 +3,7 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <array>
 
 #include "IncludeDeps.hpp"
 
@@ -10,28 +11,65 @@
 #include GLFW_INCLUDE
 
 #include GLM_INCLUDE
+#include VULKAN_INCLUDE
 #include "../Utils/Color.hpp"
 #include "../Utils/Bounds.hpp"
 #include "PrimitiveType.hpp"
+#include "Core/Vulkan/VulkanInstance.hpp"
 
 namespace LWGC
 {
 	class		Mesh
 	{
 		private:
+			struct VertexAttributes
+			{
+				glm::vec3 position;
+				glm::vec3 normal;
+				glm::vec3 tangent;
+				glm::vec3 color;
+				glm::vec2 texCoord;
+			};
+
 			std::vector< glm::vec3 >	_vertices;
 			std::vector< glm::vec3 >	_normals;
 			std::vector< glm::vec2 >	_uvs;
 			std::vector< Color >		_colors;
 			std::vector< glm::vec3 >	_tangents;
 			std::vector< int >			_triangles;
+			VertexAttributes			_attributes;
 			Bounds						_bounds;
+			VulkanInstance *			_instance;
+			VkDevice					_device;
 
-			// TODO: replace this by vulank layout and buffers
-			GLuint						_vao;
-			GLuint						_vbo[6];
+			VkBuffer					_vertexBuffer;
+			VkDeviceMemory				_vertexBufferMemory;
+			VkBuffer					_indexBuffer;
+			VkDeviceMemory				_indexBufferMemory;
+
+			void		CreateVertexBuffer();
+			void		CreateIndexBuffer();
 
 		public:
+
+			// TODO: move this to PrimitiveFactory
+			const std::vector<VertexAttributes> vertices = {
+				{{-0.5f, -0.5f, 0.0f}, {0.0f, 1.0f, 0.0f}, {1.0f, 0.0f, 0.0f}, {1.0f, 0.0f, 0.0f}, {0.0f, 0.0f}},
+				{{0.5f, -0.5f, 0.0f}, {0.0f, 1.0f, 0.0f}, {1.0f, 0.0f, 0.0f}, {0.0f, 1.0f, 0.0f}, {1.0f, 0.0f}},
+				{{0.5f, 0.5f, 0.0f}, {0.0f, 1.0f, 0.0f}, {1.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 1.0f}, {1.0f, 1.0f}},
+				{{-0.5f, 0.5f, 0.0f}, {0.0f, 1.0f, 0.0f}, {1.0f, 0.0f, 0.0f}, {1.0f, 1.0f, 1.0f}, {0.0f, 1.0f}},
+
+				{{-0.5f, -0.5f, -0.5f}, {0.0f, 1.0f, 0.0f}, {1.0f, 0.0f, 0.0f}, {1.0f, 0.0f, 0.0f}, {0.0f, 0.0f}},
+				{{0.5f, -0.5f, -0.5f}, {0.0f, 1.0f, 0.0f}, {1.0f, 0.0f, 0.0f}, {0.0f, 1.0f, 0.0f}, {1.0f, 0.0f}},
+				{{0.5f, 0.5f, -0.5f}, {0.0f, 1.0f, 0.0f}, {1.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 1.0f}, {1.0f, 1.0f}},
+				{{-0.5f, 0.5f, -0.5f}, {0.0f, 1.0f, 0.0f}, {1.0f, 0.0f, 0.0f}, {1.0f, 1.0f, 1.0f}, {0.0f, 1.0f}}
+			};
+
+			const std::vector<uint32_t> indices = {
+				0, 1, 2, 2, 3, 0,
+				4, 5, 6, 6, 7, 4
+			};
+
 			Mesh(void);
 			Mesh(const Mesh &);
 			virtual ~Mesh(void);
@@ -58,25 +96,25 @@ namespace LWGC
 
 			void	RecalculateBounds(void);
 			void	UploadDatas(void);
+			void	BindBuffers(VkCommandBuffer cmd);
+			void	Draw(VkCommandBuffer cmd);
 			void	Clear(void);
 
 			std::vector< glm::vec3 >	GetVertices(void) const;
-			void	SetVertices(const std::vector< glm::vec3 > & tmp);
-			
+			void						SetVertices(const std::vector< glm::vec3 > & tmp);
 			std::vector< glm::vec3 >	GetNormals(void) const;
-			void	SetNormals(const std::vector< glm::vec3 > & tmp);
-			
+			void						SetNormals(const std::vector< glm::vec3 > & tmp);
 			std::vector< glm::vec2 >	GetUvs(void) const;
-			void	SetUvs(const std::vector< glm::vec2 > & tmp);
-			
-			std::vector< Color >	GetColors(void) const;
-			void	SetColors(const std::vector< Color > & tmp);
-			
+			void						SetUvs(const std::vector< glm::vec2 > & tmp);
+			std::vector< Color >		GetColors(void) const;
+			void						SetColors(const std::vector< Color > & tmp);
 			std::vector< glm::vec3 >	GetTangents(void) const;
-			void	SetTangents(const std::vector< glm::vec3 > & tmp);
-
-			std::vector< int >	GetTriangles(void) const;
-			void	SetTriangles(const std::vector< int > & tmp);
+			void						SetTangents(const std::vector< glm::vec3 > & tmp);
+			std::vector< int >			GetTriangles(void) const;
+			void						SetTriangles(const std::vector< int > & tmp);
+			
+			static std::array< VkVertexInputAttributeDescription, 5 >	GetAttributeDescriptions(void);
+			static VkVertexInputBindingDescription						GetBindingDescription(void);
 	};
 
 	std::ostream &	operator<<(std::ostream & o, Mesh const & r);

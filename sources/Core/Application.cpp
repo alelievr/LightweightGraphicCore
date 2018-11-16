@@ -89,6 +89,9 @@ void			Application::Open(const std::string & name, const int width, const int he
 
 	_surface.Initialize(_window);
 	_swapChain.Initialize(_surface);
+	
+	// Vk needs logical device (which require surface for creation (due to swapchain support checks))
+	Vk::Initialize();
 
 	try {
 		_renderPipeline->Initialize(&_swapChain);
