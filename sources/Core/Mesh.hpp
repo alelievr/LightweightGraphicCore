@@ -21,7 +21,8 @@ namespace LWGC
 {
 	class		Mesh
 	{
-		private:
+
+		public:
 			struct VertexAttributes
 			{
 				glm::vec3 position;
@@ -31,13 +32,34 @@ namespace LWGC
 				glm::vec2 texCoord;
 			};
 
-			std::vector< glm::vec3 >	_vertices;
-			std::vector< glm::vec3 >	_normals;
-			std::vector< glm::vec2 >	_uvs;
-			std::vector< Color >		_colors;
-			std::vector< glm::vec3 >	_tangents;
-			std::vector< int >			_triangles;
-			VertexAttributes			_attributes;
+			Mesh(void);
+			Mesh(const Mesh &);
+			virtual ~Mesh(void);
+
+			Mesh &	operator=(Mesh const & src);
+
+			Bounds	GetBounds(void) const;
+
+			void	AddVertexAttribute(const VertexAttributes & attrib);
+			void	AddTriangle(int p1, int p2, int p3);
+
+			void	RecalculateBounds(void);
+			void	UploadDatas(void);
+			void	BindBuffers(VkCommandBuffer cmd);
+			void	Draw(VkCommandBuffer cmd);
+			void	Clear(void);
+
+			std::vector< int >			GetIndices(void) const;
+			void						SetIndices(const std::vector< int > & tmp);
+			std::vector< VertexAttributes >	GetVertexAttributes(void) const;
+			void						SetVertexAttributes(const std::vector< VertexAttributes > & tmp);
+			
+			static std::array< VkVertexInputAttributeDescription, 5 >	GetAttributeDescriptions(void);
+			static VkVertexInputBindingDescription						GetBindingDescription(void);
+			
+		private:
+			std::vector< int >			_indices;
+			std::vector< VertexAttributes >	_attributes;
 			Bounds						_bounds;
 			VulkanInstance *			_instance;
 			VkDevice					_device;
@@ -50,71 +72,6 @@ namespace LWGC
 			void		CreateVertexBuffer();
 			void		CreateIndexBuffer();
 
-		public:
-
-			// TODO: move this to PrimitiveFactory
-			const std::vector<VertexAttributes> vertices = {
-				{{-0.5f, -0.5f, 0.0f}, {0.0f, 1.0f, 0.0f}, {1.0f, 0.0f, 0.0f}, {1.0f, 0.0f, 0.0f}, {0.0f, 0.0f}},
-				{{0.5f, -0.5f, 0.0f}, {0.0f, 1.0f, 0.0f}, {1.0f, 0.0f, 0.0f}, {0.0f, 1.0f, 0.0f}, {1.0f, 0.0f}},
-				{{0.5f, 0.5f, 0.0f}, {0.0f, 1.0f, 0.0f}, {1.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 1.0f}, {1.0f, 1.0f}},
-				{{-0.5f, 0.5f, 0.0f}, {0.0f, 1.0f, 0.0f}, {1.0f, 0.0f, 0.0f}, {1.0f, 1.0f, 1.0f}, {0.0f, 1.0f}},
-
-				{{-0.5f, -0.5f, -0.5f}, {0.0f, 1.0f, 0.0f}, {1.0f, 0.0f, 0.0f}, {1.0f, 0.0f, 0.0f}, {0.0f, 0.0f}},
-				{{0.5f, -0.5f, -0.5f}, {0.0f, 1.0f, 0.0f}, {1.0f, 0.0f, 0.0f}, {0.0f, 1.0f, 0.0f}, {1.0f, 0.0f}},
-				{{0.5f, 0.5f, -0.5f}, {0.0f, 1.0f, 0.0f}, {1.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 1.0f}, {1.0f, 1.0f}},
-				{{-0.5f, 0.5f, -0.5f}, {0.0f, 1.0f, 0.0f}, {1.0f, 0.0f, 0.0f}, {1.0f, 1.0f, 1.0f}, {0.0f, 1.0f}}
-			};
-
-			const std::vector<uint32_t> indices = {
-				0, 1, 2, 2, 3, 0,
-				4, 5, 6, 6, 7, 4
-			};
-
-			Mesh(void);
-			Mesh(const Mesh &);
-			virtual ~Mesh(void);
-
-			Mesh &	operator=(Mesh const & src);
-
-			Bounds	GetBounds(void) const;
-
-			void	AddVertex(float x, float y, float z);
-			void	AddVertex(const glm::vec3 & p);
-
-			void	AddColor(const Color & c);
-
-			void	AddTriangle(int p1, int p2, int p3);
-
-			void	AddTangent(float x, float y, float z);
-			void	AddTriangle(const glm::vec3 & t);
-
-			void	AddUv(float u, float v);
-			void	AddUv(const glm::vec2 & uv);
-
-			void	AddNormal(float x, float y, float z);
-			void	AddNormal(const glm::vec3 & n);
-
-			void	RecalculateBounds(void);
-			void	UploadDatas(void);
-			void	BindBuffers(VkCommandBuffer cmd);
-			void	Draw(VkCommandBuffer cmd);
-			void	Clear(void);
-
-			std::vector< glm::vec3 >	GetVertices(void) const;
-			void						SetVertices(const std::vector< glm::vec3 > & tmp);
-			std::vector< glm::vec3 >	GetNormals(void) const;
-			void						SetNormals(const std::vector< glm::vec3 > & tmp);
-			std::vector< glm::vec2 >	GetUvs(void) const;
-			void						SetUvs(const std::vector< glm::vec2 > & tmp);
-			std::vector< Color >		GetColors(void) const;
-			void						SetColors(const std::vector< Color > & tmp);
-			std::vector< glm::vec3 >	GetTangents(void) const;
-			void						SetTangents(const std::vector< glm::vec3 > & tmp);
-			std::vector< int >			GetTriangles(void) const;
-			void						SetTriangles(const std::vector< int > & tmp);
-			
-			static std::array< VkVertexInputAttributeDescription, 5 >	GetAttributeDescriptions(void);
-			static VkVertexInputBindingDescription						GetBindingDescription(void);
 	};
 
 	std::ostream &	operator<<(std::ostream & o, Mesh const & r);

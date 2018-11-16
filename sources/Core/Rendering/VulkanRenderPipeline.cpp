@@ -1,11 +1,15 @@
 #include "VulkanRenderPipeline.hpp"
 
+#include "Core/PrimitiveMeshFactory.hpp"
+
 using namespace LWGC;
 
 VulkanRenderPipeline::VulkanRenderPipeline(void) : framebufferResized(false)
 {
 	swapChain = VK_NULL_HANDLE;
 	instance = VK_NULL_HANDLE;
+
+	mesh = *PrimitiveMeshFactory::CreateMesh(PrimitiveType::Quad);
 }
 
 VulkanRenderPipeline::~VulkanRenderPipeline(void)

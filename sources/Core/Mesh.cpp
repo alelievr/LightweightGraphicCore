@@ -31,56 +31,16 @@ Mesh::~Mesh(void)
 	}
 }
 
-void	Mesh::AddVertex(float x, float y, float z)
+void	Mesh::AddVertexAttribute(const VertexAttributes & attrib)
 {
-	_vertices.push_back(glm::vec3(x, y, z));
-}
-
-void	Mesh::AddVertex(const glm::vec3 & p)
-{
-	_vertices.push_back(p);
-}
-
-void	Mesh::AddColor(const Color & c)
-{
-	_colors.push_back(c);
+	_attributes.push_back(attrib);
 }
 
 void	Mesh::AddTriangle(int p1, int p2, int p3)
 {
-	_triangles.push_back(p1);
-	_triangles.push_back(p2);
-	_triangles.push_back(p3);
-}
-
-void	Mesh::AddTangent(float x, float y, float z)
-{
-	_tangents.push_back(glm::vec3(x, y, z));
-}
-
-void	Mesh::AddTriangle(const glm::vec3 & t)
-{
-	_tangents.push_back(t);
-}
-
-void	Mesh::AddUv(float u, float v)
-{
-	_uvs.push_back(glm::vec2(u, v));
-}
-
-void	Mesh::AddUv(const glm::vec2 & uv)
-{
-	_uvs.push_back(uv);
-}
-
-void	Mesh::AddNormal(float x, float y, float z)
-{
-	_normals.push_back(glm::vec3(x, y, z));
-}
-
-void	Mesh::AddNormal(const glm::vec3 & n)
-{
-	_normals.push_back(n);
+	_indices.push_back(p1);
+	_indices.push_back(p2);
+	_indices.push_back(p3);
 }
 
 Bounds		Mesh::GetBounds(void) const
@@ -93,38 +53,34 @@ void		Mesh::UploadDatas(void)
 	_instance = VulkanInstance::Get();
 	_device = _instance->GetDevice();
 
+	if (_attributes.size() <= 0)
+		throw std::runtime_error("Can't create a mesh with zero vertices");
 	CreateVertexBuffer();
 
-	// TODO: check if mesh needs index buffer
-	CreateIndexBuffer();
+	if (_indices.size() > 0)
+		CreateIndexBuffer();
 }
 
 void		Mesh::RecalculateBounds(void)
 {
-	for (const auto & v : _vertices)
+	for (const auto & a : _attributes)
 	{
-		_bounds.Encapsulate(v);
+		_bounds.Encapsulate(a.position);
 	}
 }
 
 void		Mesh::Clear(void)
 {
-	_vertices.clear();
-	_normals.clear();
-	_uvs.clear();
-	_colors.clear();
-	_tangents.clear();
+	_attributes.clear();
+	_indices.clear();
 }
 
 
 Mesh &	Mesh::operator=(Mesh const & src)
 {
 	if (this != &src) {
-		this->_vertices = src._vertices;
-		this->_normals = src._normals;
-		this->_uvs = src._uvs;
-		this->_colors = src._colors;
-		this->_tangents = src._tangents;
+		this->_attributes = src._attributes;
+		this->_indices = src._indices;
 		this->_bounds = src._bounds;
 	}
 	return (*this);
@@ -175,7 +131,7 @@ VkVertexInputBindingDescription						Mesh::GetBindingDescription(void)
 
 void				Mesh::CreateVertexBuffer()
 {
-	VkDeviceSize bufferSize = sizeof(VertexAttributes) * vertices.size();
+	VkDeviceSize bufferSize = sizeof(VertexAttributes) * _attributes.size();
 
 	VkBuffer stagingBuffer;
 	VkDeviceMemory stagingBufferMemory;
@@ -183,7 +139,7 @@ void				Mesh::CreateVertexBuffer()
 
 	void *data;
 	vkMapMemory(_device, stagingBufferMemory, 0, bufferSize, 0, &data);
-	memcpy(data, vertices.data(), (size_t)bufferSize);
+	memcpy(data, _attributes.data(), (size_t)bufferSize);
 	vkUnmapMemory(_device, stagingBufferMemory);
 
 	Vk::CreateBuffer(bufferSize, VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, _vertexBuffer, _vertexBufferMemory);
@@ -195,7 +151,7 @@ void				Mesh::CreateVertexBuffer()
 
 void				Mesh::CreateIndexBuffer()
 {
-	VkDeviceSize bufferSize = sizeof(uint32_t) * indices.size();
+	VkDeviceSize bufferSize = sizeof(uint32_t) * _indices.size();
 
 	VkBuffer stagingBuffer;
 	VkDeviceMemory stagingBufferMemory;
@@ -203,7 +159,7 @@ void				Mesh::CreateIndexBuffer()
 
 	void *data;
 	vkMapMemory(_device, stagingBufferMemory, 0, bufferSize, 0, &data);
-	memcpy(data, indices.data(), (size_t)bufferSize);
+	memcpy(data, _indices.data(), (size_t)bufferSize);
 	vkUnmapMemory(_device, stagingBufferMemory);
 
 	Vk::CreateBuffer(bufferSize, VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_INDEX_BUFFER_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, _indexBuffer, _indexBufferMemory);
@@ -223,30 +179,17 @@ void				Mesh::BindBuffers(VkCommandBuffer cmd)
 
 void				Mesh::Draw(VkCommandBuffer cmd)
 {
-	vkCmdDrawIndexed(cmd, static_cast<uint32_t>(indices.size()), 1, 0, 0, 0);
+	vkCmdDrawIndexed(cmd, static_cast<uint32_t>(_indices.size()), 1, 0, 0, 0);
 }
 
-std::vector< glm::vec3 >	Mesh::GetVertices(void) const { return (this->_vertices); }
-void						Mesh::SetVertices(const std::vector< glm::vec3 > & tmp) { this->_vertices = tmp; }
-
-std::vector< glm::vec3 >	Mesh::GetNormals(void) const { return (this->_normals); }
-void						Mesh::SetNormals(const std::vector< glm::vec3 > & tmp) { this->_normals = tmp; }
-
-std::vector< glm::vec2 >	Mesh::GetUvs(void) const { return (this->_uvs); }
-void						Mesh::SetUvs(const std::vector< glm::vec2 > & tmp) { this->_uvs = tmp; }
-
-std::vector< Color >		Mesh::GetColors(void) const { return (this->_colors); }
-void						Mesh::SetColors(const std::vector< Color > & tmp) { this->_colors = tmp; }
-
-std::vector< glm::vec3 >	Mesh::GetTangents(void) const { return (this->_tangents); }
-void						Mesh::SetTangents(const std::vector< glm::vec3 > & tmp) { this->_tangents = tmp; }
-
-std::vector< int >			Mesh::GetTriangles(void) const { return this->_triangles; }
-void						Mesh::SetTriangles(const std::vector< int > & tmp) { this->_triangles = tmp; }
+std::vector< int >				Mesh::GetIndices(void) const { return _indices; }
+void							Mesh::SetIndices(const std::vector< int > & tmp) { _indices = tmp; }
+std::vector< Mesh::VertexAttributes >	Mesh::GetVertexAttributes(void) const { return _attributes; }
+void							Mesh::SetVertexAttributes(const std::vector< Mesh::VertexAttributes > & tmp) { _attributes = tmp; }
 
 std::ostream &	operator<<(std::ostream & o, Mesh const & r)
 {
-	o << "Mesh of " << r.GetVertices().size() << " Vertices" << std::endl;
+	o << "Mesh of " << r.GetVertexAttributes().size() << " Vertices" << std::endl;
 	(void)r;
 	return (o);
 }

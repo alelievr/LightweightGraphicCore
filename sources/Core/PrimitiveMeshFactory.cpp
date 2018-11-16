@@ -24,23 +24,7 @@ std::shared_ptr< Mesh >		PrimitiveMeshFactory::_CreateCubeMesh(void)
 {
 	std::shared_ptr< Mesh >		m = std::make_shared< Mesh >();
 
-	m->AddVertex(-0.5f, -0.5f, -0.5f);
-	m->AddVertex( 0.5f, -0.5f, -0.5f);
-	m->AddVertex( 0.5f, -0.5f,  0.5f);
-	m->AddVertex(-0.5f, -0.5f,  0.5f);
-
-	m->AddVertex(-0.5f,  0.5f, -0.5f);
-	m->AddVertex( 0.5f,  0.5f, -0.5f);
-	m->AddVertex( 0.5f,  0.5f,  0.5f);
-	m->AddVertex(-0.5f,  0.5f,  0.5f);
-
-	//up
-	m->AddTriangle(2 + 4, 1 + 4, 0 + 4);
-	m->AddTriangle(0 + 4, 2 + 4, 3 + 4);
-
-	//down
-	m->AddTriangle(0, 1, 2);
-	m->AddTriangle(0, 2, 3);
+	// TODO
 
 	return m;
 }
@@ -48,24 +32,47 @@ std::shared_ptr< Mesh >		PrimitiveMeshFactory::_CreateCubeMesh(void)
 std::shared_ptr< Mesh >		PrimitiveMeshFactory::_CreateQuadMesh(void)
 {
 	std::shared_ptr< Mesh >		m = std::make_shared< Mesh >();
+	std::vector< Mesh::VertexAttributes >	attribs(4);
+	
+	// 0	1---0
+	// 1	| \ |
+	// 2    3---2
+	// 3
+	
+	attribs[0] = Mesh::VertexAttributes{
+		{ 0.5f, 0,  0.5f},	// position
+		{0, 1, 0},			// normal
+		{1, 0, 0},			// tangent
+		{0, 0, 0},			// color
+		{1, 1},				// UV
+	};
+	
+	attribs[1] = Mesh::VertexAttributes{
+		{-0.5f, 0,  0.5f},	// position
+		{0, 1, 0},			// normal
+		{1, 0, 0},			// tangent
+		{0, 0, 0},			// color
+		{0, 1},				// UV
+	};
+	
+	attribs[2] = Mesh::VertexAttributes{
+		{ 0.5f, 0, -0.5f},	// position
+		{0, 1, 0},			// normal
+		{1, 0, 0},			// tangent
+		{0, 0, 0},			// color
+		{1, 0},				// UV
+	};
+	
+	attribs[3] = Mesh::VertexAttributes{
+		{-0.5f, 0, -0.5f},	// position
+		{0, 1, 0},			// normal
+		{1, 0, 0},			// tangent
+		{0, 0, 0},			// color
+		{0, 0},				// UV
+	};
 
-	m->AddVertex( 0.5f, 0,  0.5f);	// 0	1---0
-	m->AddVertex(-0.5f, 0,  0.5f);	// 1	| \ |
-	m->AddVertex( 0.5f, 0, -0.5f);	// 2    3---2
-	m->AddVertex(-0.5f, 0, -0.5f);	// 3
-
-	m->AddNormal(0, 1, 0);
-	m->AddNormal(0, 1, 0);
-	m->AddNormal(0, 1, 0);
-	m->AddNormal(0, 1, 0);
-
-	m->AddTangent(1, 0, 0);
-	m->AddTangent(1, 0, 0);
-	m->AddTangent(1, 0, 0);
-	m->AddTangent(1, 0, 0);
-
-	m->AddTriangle(1, 0, 2);
-	m->AddTriangle(2, 3, 1);
+	m->SetVertexAttributes(attribs);
+	m->SetIndices({1, 0, 2, 2, 3, 1});
 
 	return m;
 }
@@ -76,6 +83,8 @@ std::shared_ptr< Mesh >		PrimitiveMeshFactory::CreateMesh(PrimitiveType type)
 	{
 		case PrimitiveType::Cube:
 			return _CreateCubeMesh();
+		case PrimitiveType::Quad:
+			return _CreateQuadMesh();
 	}
 	throw std::runtime_error("Can't find mesh generator for primitive type: " + std::to_string(static_cast< int >(type)));
 }
