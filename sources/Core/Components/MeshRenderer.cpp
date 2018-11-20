@@ -79,7 +79,6 @@ void		MeshRenderer::SetModel(std::shared_ptr< Mesh > mesh, std::shared_ptr< Mate
 
 void MeshRenderer::OnEnable() noexcept
 {
-	printf("hierarchy: %p\n", hierarchy);
 	renderContextIndex = hierarchy->RegisterComponentInRenderContext(RenderComponentType::MeshRenderer, this);
 }
 

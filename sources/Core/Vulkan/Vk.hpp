@@ -30,7 +30,6 @@ namespace LWGC
 			Vk &	operator=(Vk const & src) = delete;
 
 			static void			Initialize(void);
-	
 			static VkImageView	CreateImageView(VkImage image, VkFormat format, int mipLevels, VkImageViewType viewType, VkImageAspectFlags aspectFlags);
 			static void			CreateImage(uint32_t width, uint32_t height, uint32_t depth, int arrayCount, int mipLevels, VkFormat format, VkImageTiling tiling, VkImageUsageFlags usage, VkMemoryPropertyFlags properties, VkImage& image, VkDeviceMemory& imageMemory);
 			static bool			HasStencilComponent(VkFormat format);

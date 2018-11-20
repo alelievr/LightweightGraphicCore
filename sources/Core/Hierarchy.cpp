@@ -36,7 +36,6 @@ GameObject * Hierarchy::GetGameObject(int index)
 
 const ComponentIndex Hierarchy::RegisterComponentInRenderContext(int componentType, Component * component) noexcept
 {
-	printf("Register:\n");
 	const auto & kp = _renderContext.renderComponents[componentType].insert(component);
 
 	return kp.first;
