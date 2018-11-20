@@ -2,7 +2,7 @@
 
 using namespace LWGC;
 
-GameObject::GameObject(void) : _initialized(false)
+GameObject::GameObject(void) : _active(false), _initialized(false)
 {
 	std::cout << "Default constructor of GameObject called" << std::endl;
 	this->_name = "GameObject";
@@ -42,15 +42,22 @@ void		GameObject::Initialize(void) noexcept
 {
 	_initialized = true;
 	for (const auto & component : _components)
+	{
 		component->Initialize();
+		component->OnAdded(*this);
+	}
+
+	SetActive(true);
 }
 
 Component *		GameObject::AddComponent(Component * component) noexcept
 {
 	if (_initialized)
+	{
 		component->Initialize();
+		component->OnAdded(*this);
+	}
 	_components.insert(component);
-	component->OnAdded(*this);
 
 	return component;
 }
@@ -67,10 +74,8 @@ void			GameObject::RemoveComponent(Component * component) noexcept
 	_components.erase(component);
 }
 
-Hierarchy *		GameObject::GetHierarchy(void) const noexcept
-{
-	return _hierarchy;
-}
+void			GameObject::SetHierarchy(Hierarchy * hierarchy) { _hierarchy = hierarchy; }
+Hierarchy *		GameObject::GetHierarchy(void) const noexcept { return _hierarchy; }
 
 Transform		GameObject::GetTransform(void) const { return (this->_transform); }
 void			GameObject::SetTransform(Transform tmp) { this->_transform = tmp; }
@@ -87,11 +92,6 @@ void			GameObject::SetActive(bool active)
 }
 
 bool			GameObject::IsActive(void) const { return _active; }
-
-void			GameObject::SetHierarchy(Hierarchy * hierarchy)
-{
-	_hierarchy = hierarchy;
-}
 
 std::ostream &	operator<<(std::ostream & o, GameObject const & r)
 {

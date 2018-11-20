@@ -238,8 +238,6 @@ void	VulkanRenderPipeline::Render(const std::vector< Camera * > & cameras, Rende
 	for (const auto & meshRenderer : meshRenderers)
 	{
 		meshRenderer->GetMaterial()->UpdateUniformBuffer();
-
-		printf("Drawing mesh renderer !\n");
 		
 		drawBuffers.push_back(meshRenderer->GetDrawCommandBuffer());
 	}

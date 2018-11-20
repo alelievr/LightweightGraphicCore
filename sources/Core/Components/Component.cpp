@@ -5,7 +5,7 @@
 
 using namespace LWGC;
 
-Component::Component(void) {}
+Component::Component(void) : oldState(false), enabled(false) {}
 
 Component::~Component(void) {}
 

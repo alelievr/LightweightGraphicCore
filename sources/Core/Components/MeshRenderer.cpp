@@ -23,6 +23,8 @@ MeshRenderer::~MeshRenderer(void)
 
 void		MeshRenderer::Initialize(void) noexcept
 {
+	Component::Initialize();
+
 	VulkanRenderPipeline * renderPipeline = VulkanRenderPipeline::Get();
 
 	_material->Initialize(renderPipeline->GetSwapChain(), renderPipeline->GetRenderPass());
@@ -77,6 +79,7 @@ void		MeshRenderer::SetModel(std::shared_ptr< Mesh > mesh, std::shared_ptr< Mate
 
 void MeshRenderer::OnEnable() noexcept
 {
+	printf("hierarchy: %p\n", hierarchy);
 	renderContextIndex = hierarchy->RegisterComponentInRenderContext(RenderComponentType::MeshRenderer, this);
 }
 
