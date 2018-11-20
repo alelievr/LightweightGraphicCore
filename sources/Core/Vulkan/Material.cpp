@@ -10,6 +10,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 
 #include "Core/Texture2DArray.hpp"
+#include "Core/Mesh.hpp"
 
 using namespace LWGC;
 
@@ -121,43 +122,6 @@ void					Material::CreateDescriptorSetLayout(void)
 	    throw std::runtime_error("failed to create descriptor set layout!");
 }
 
-// TODO: make another class for that
-struct Vertex {
-	glm::vec3 pos;
-	glm::vec3 color;
-	glm::vec2 texCoord;
-
-	static VkVertexInputBindingDescription getBindingDescription() {
-	    VkVertexInputBindingDescription bindingDescription = {};
-	    bindingDescription.binding = 0;
-	    bindingDescription.stride = sizeof(Vertex);
-	    bindingDescription.inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
-
-	    return bindingDescription;
-	}
-
-	static std::array<VkVertexInputAttributeDescription, 3> getAttributeDescriptions() {
-	    std::array<VkVertexInputAttributeDescription, 3> attributeDescriptions = {};
-
-	    attributeDescriptions[0].binding = 0;
-	    attributeDescriptions[0].location = 0;
-	    attributeDescriptions[0].format = VK_FORMAT_R32G32B32_SFLOAT;
-	    attributeDescriptions[0].offset = offsetof(Vertex, pos);
-
-	    attributeDescriptions[1].binding = 0;
-	    attributeDescriptions[1].location = 1;
-	    attributeDescriptions[1].format = VK_FORMAT_R32G32B32_SFLOAT;
-	    attributeDescriptions[1].offset = offsetof(Vertex, color);
-
-	    attributeDescriptions[2].binding = 0;
-	    attributeDescriptions[2].location = 2;
-	    attributeDescriptions[2].format = VK_FORMAT_R32G32_SFLOAT;
-	    attributeDescriptions[2].offset = offsetof(Vertex, texCoord);
-
-	    return attributeDescriptions;
-	}
-};
-
 // TODO: same here
 static std::vector<char> readFile(const std::string& filename) {
 	std::ifstream file(filename, std::ios::ate | std::ios::binary);
@@ -215,8 +179,8 @@ void					Material::CreateGraphicPipeline(void)
 	VkPipelineVertexInputStateCreateInfo vertexInputInfo = {};
 	vertexInputInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
 
-	auto bindingDescription = Vertex::getBindingDescription();
-	auto attributeDescriptions = Vertex::getAttributeDescriptions();
+	auto bindingDescription = Mesh::GetBindingDescription();
+	auto attributeDescriptions = Mesh::GetAttributeDescriptions();
 
 	vertexInputInfo.vertexBindingDescriptionCount = 1;
 	vertexInputInfo.vertexAttributeDescriptionCount = static_cast<uint32_t>(attributeDescriptions.size());
@@ -347,96 +311,9 @@ void					Material::CreateTextureImage(void)
 	// _textures.push_back((Texture *)(textureArray));
 }
 
-void					Material::TransitionImageLayout(VkImage image, VkFormat format, VkImageLayout oldLayout, VkImageLayout newLayout)
-{
-	const auto graphicCommandBufferPool = _instance->GetGraphicCommandBufferPool();
-	VkCommandBuffer commandBuffer = graphicCommandBufferPool->BeginSingle();
-
-    VkImageMemoryBarrier barrier = {};
-    barrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
-    barrier.oldLayout = oldLayout;
-    barrier.newLayout = newLayout;
-    barrier.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
-    barrier.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
-    barrier.image = image;
-
-    if (newLayout == VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL) {
-        barrier.subresourceRange.aspectMask = VK_IMAGE_ASPECT_DEPTH_BIT;
-
-        if (Vk::HasStencilComponent(format)) {
-            barrier.subresourceRange.aspectMask |= VK_IMAGE_ASPECT_STENCIL_BIT;
-        }
-    } else {
-        barrier.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
-    }
-
-    barrier.subresourceRange.baseMipLevel = 0;
-    barrier.subresourceRange.levelCount = 1;
-    barrier.subresourceRange.baseArrayLayer = 0;
-    barrier.subresourceRange.layerCount = 1;
-
-    VkPipelineStageFlags sourceStage;
-    VkPipelineStageFlags destinationStage;
-
-    if (oldLayout == VK_IMAGE_LAYOUT_UNDEFINED && newLayout == VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL) {
-        barrier.srcAccessMask = 0;
-        barrier.dstAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
-
-        sourceStage = VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT;
-        destinationStage = VK_PIPELINE_STAGE_TRANSFER_BIT;
-    } else if (oldLayout == VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL && newLayout == VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL) {
-        barrier.srcAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
-        barrier.dstAccessMask = VK_ACCESS_SHADER_READ_BIT;
-
-        sourceStage = VK_PIPELINE_STAGE_TRANSFER_BIT;
-        destinationStage = VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT;
-    } else if (oldLayout == VK_IMAGE_LAYOUT_UNDEFINED && newLayout == VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL) {
-        barrier.srcAccessMask = 0;
-        barrier.dstAccessMask = VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_READ_BIT | VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT;
-
-        sourceStage = VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT;
-        destinationStage = VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT;
-    } else {
-        throw std::invalid_argument("unsupported layout transition!");
-    }
-
-    vkCmdPipelineBarrier(
-            commandBuffer,
-            sourceStage, destinationStage,
-            0,
-            0, nullptr,
-            0, nullptr,
-            1, &barrier
-        	);
-
-	graphicCommandBufferPool->EndSingle(commandBuffer);
-}
-
 void					Material::CreateTextureSampler(void)
 {
-	_samplers.resize(1);
-	
-	VkSamplerCreateInfo samplerInfo = {};
-	samplerInfo.sType = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO;
-	samplerInfo.magFilter = VK_FILTER_LINEAR;
-	samplerInfo.minFilter = VK_FILTER_LINEAR;
-	samplerInfo.addressModeU = VK_SAMPLER_ADDRESS_MODE_REPEAT;
-	samplerInfo.addressModeV = VK_SAMPLER_ADDRESS_MODE_REPEAT;
-	samplerInfo.addressModeW = VK_SAMPLER_ADDRESS_MODE_REPEAT;
-	samplerInfo.anisotropyEnable = VK_TRUE;
-	samplerInfo.maxAnisotropy = 16;
-	samplerInfo.borderColor = VK_BORDER_COLOR_INT_OPAQUE_BLACK;
-	samplerInfo.unnormalizedCoordinates = VK_FALSE;
-	samplerInfo.compareEnable = VK_FALSE;
-	samplerInfo.compareOp = VK_COMPARE_OP_ALWAYS;
-	samplerInfo.mipmapMode = VK_SAMPLER_MIPMAP_MODE_LINEAR;
-	samplerInfo.mipLodBias = 0.0f;
-	samplerInfo.minLod = 0.0f;
-	samplerInfo.maxLod = 16.0f;
-
-	// TODO: hardcoded
-	if (vkCreateSampler(_device, &samplerInfo, nullptr, &_samplers[0]) != VK_SUCCESS)
-		throw std::runtime_error("failed to create texture sampler!");
+	_samplers.push_back(Vk::Samplers::trilinearRepeat);
 }
 
 void					Material::CreateUniformBuffer(void)

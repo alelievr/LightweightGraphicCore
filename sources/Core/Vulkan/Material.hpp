@@ -42,8 +42,6 @@ namespace LWGC
 			void		CreateDescriptorPool(void);
 			void		CreateDescriptorSets(void);
 			VkShaderModule	createShaderModule(const std::vector<char>& code);
-
-			void		TransitionImageLayout(VkImage image, VkFormat format, VkImageLayout oldLayout, VkImageLayout newLayout);
 	
 		public:
 			Material(void);

@@ -5,6 +5,8 @@
 #include <vector>
 
 #include "GameObject.hpp"
+#include "Core/Rendering/RenderContext.hpp"
+#include "Core/Vulkan/SwapChain.hpp"
 
 namespace LWGC
 {
@@ -12,6 +14,7 @@ namespace LWGC
 	{
 		private:
 			std::vector< GameObject * >	_gameObjects;
+			RenderContext				_renderContext;
 
 		public:
 			Hierarchy(void);
@@ -20,8 +23,16 @@ namespace LWGC
 
 			Hierarchy &	operator=(Hierarchy const & src) = delete;
 
-			void AddGameObject(GameObject * gameObject);
-			void RemoveGameObject(GameObject * gameObject);
+			void					Initialize(void);
+			void					AddGameObject(GameObject * gameObject);
+			void					RemoveGameObject(GameObject * gameObject);
+			const ComponentIndex	RegisterComponentInRenderContext(int componentType, Component * component) noexcept;
+			void					UnregisterComponentInRenderContext(int componentType, const ComponentIndex & index) noexcept;
+			const ComponentIndex	RegisterComponentInRenderContext(RenderComponentType componentType, Component * component) noexcept;
+			void					UnregisterComponentInRenderContext(RenderComponentType componentType, const ComponentIndex & index) noexcept;
+
+			GameObject *			GetGameObject(int index);
+			RenderContext &			GetRenderContext(void);
 	};
 
 	std::ostream &	operator<<(std::ostream & o, Hierarchy const & r);

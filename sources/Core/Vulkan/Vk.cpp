@@ -2,6 +2,12 @@
 
 using namespace LWGC;
 
+VkSampler Vk::Samplers::depthCompare;
+VkSampler Vk::Samplers::trilinearClamp;
+VkSampler Vk::Samplers::trilinearRepeat;
+VkSampler Vk::Samplers::nearestClamp;
+VkSampler Vk::Samplers::nearestRepeat;
+
 VkImageView		Vk::CreateImageView(VkImage image, VkFormat format, int mipLevels, VkImageViewType viewType, VkImageAspectFlags aspectFlags)
 {
 	VulkanInstance * instance = VulkanInstance::Get();
@@ -148,4 +154,70 @@ void			Vk::CheckResult(VkResult result)
 	printf("VkResult %d\n", result);
     if (result < 0)
         abort();
+}
+
+VkSampler		Vk::CreateSampler(VkFilter filter, VkSamplerAddressMode addressMode, uint32_t maxAniso)
+{
+	VkSampler			sampler;
+	VkSamplerCreateInfo	samplerInfo = {};
+
+	samplerInfo.sType = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO;
+	samplerInfo.magFilter = filter;
+	samplerInfo.minFilter = filter;
+	samplerInfo.addressModeU = addressMode;
+	samplerInfo.addressModeV = addressMode;
+	samplerInfo.addressModeW = addressMode;
+	samplerInfo.anisotropyEnable = maxAniso != 0;
+	samplerInfo.maxAnisotropy = maxAniso;
+	samplerInfo.borderColor = VK_BORDER_COLOR_INT_OPAQUE_BLACK;
+	samplerInfo.unnormalizedCoordinates = VK_FALSE;
+	samplerInfo.compareEnable = VK_FALSE;
+	samplerInfo.compareOp = VK_COMPARE_OP_ALWAYS;
+	samplerInfo.mipmapMode = VK_SAMPLER_MIPMAP_MODE_LINEAR;
+	samplerInfo.mipLodBias = 0.0f;
+	samplerInfo.minLod = 0.0f;
+	samplerInfo.maxLod = 16.0f;
+
+	if (vkCreateSampler(VulkanInstance::Get()->GetDevice(), &samplerInfo, nullptr, &sampler) != VK_SUCCESS)
+		throw std::runtime_error("failed to create texture sampler!");
+	
+	return sampler;
+}
+
+VkSampler	Vk::CreateCompSampler(VkFilter filter, VkSamplerAddressMode addressMode, VkCompareOp compareOp)
+{
+	
+	VkSampler			sampler;
+	VkSamplerCreateInfo	samplerInfo = {};
+
+	samplerInfo.sType = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO;
+	samplerInfo.magFilter = filter;
+	samplerInfo.minFilter = filter;
+	samplerInfo.addressModeU = addressMode;
+	samplerInfo.addressModeV = addressMode;
+	samplerInfo.addressModeW = addressMode;
+	samplerInfo.anisotropyEnable = false;
+	samplerInfo.maxAnisotropy = 0;
+	samplerInfo.borderColor = VK_BORDER_COLOR_INT_OPAQUE_BLACK;
+	samplerInfo.unnormalizedCoordinates = VK_FALSE;
+	samplerInfo.compareEnable = VK_TRUE;
+	samplerInfo.compareOp = compareOp;
+	samplerInfo.mipmapMode = VK_SAMPLER_MIPMAP_MODE_LINEAR;
+	samplerInfo.mipLodBias = 0.0f;
+	samplerInfo.minLod = 0.0f;
+	samplerInfo.maxLod = 16.0f;
+
+	if (vkCreateSampler(VulkanInstance::Get()->GetDevice(), &samplerInfo, nullptr, &sampler) != VK_SUCCESS)
+		throw std::runtime_error("failed to create texture sampler!");
+		
+	return sampler;
+}
+
+void			Vk::Initialize(void)
+{
+	Samplers::trilinearClamp = CreateSampler(VK_FILTER_LINEAR, VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_BORDER, 0);
+	Samplers::trilinearRepeat = CreateSampler(VK_FILTER_LINEAR, VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_BORDER, 0);
+	Samplers::nearestRepeat = CreateSampler(VK_FILTER_NEAREST, VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_BORDER, 0);
+	Samplers::nearestClamp = CreateSampler(VK_FILTER_NEAREST, VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_BORDER, 0);
+	Samplers::depthCompare = CreateCompSampler(VK_FILTER_LINEAR, VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_BORDER, VK_COMPARE_OP_LESS);
 }

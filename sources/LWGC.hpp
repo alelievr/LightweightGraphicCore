@@ -47,7 +47,7 @@
 #include "Core/KeyCode.hpp"
 
 // Components
-#include "Core/Components/IComponent.hpp"
+#include "Core/Components/Component.hpp"
 #include "Core/Components/MeshRenderer.hpp"
 #include "Core/Components/Camera.hpp"
 

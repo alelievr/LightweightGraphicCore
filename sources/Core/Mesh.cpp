@@ -1,12 +1,14 @@
 #include "Mesh.hpp"
 
 #include "GLFW/glfw3.h"
+#include "Core/Vulkan/Vk.hpp"
 
 using namespace LWGC;
 
-Mesh::Mesh(void)
+Mesh::Mesh(void) :	_instance(nullptr), _device(VK_NULL_HANDLE),
+					_vertexBuffer(VK_NULL_HANDLE), _vertexBufferMemory(VK_NULL_HANDLE),
+					_indexBuffer(VK_NULL_HANDLE), _indexBufferMemory(VK_NULL_HANDLE)
 {
-	// TODO: generate buffers
 }
 
 Mesh::Mesh(Mesh const & src)
@@ -16,59 +18,29 @@ Mesh::Mesh(Mesh const & src)
 
 Mesh::~Mesh(void)
 {
-	// TODO: delete buffers
+	if (_indexBuffer != VK_NULL_HANDLE)
+	{
+		vkDestroyBuffer(_device, _indexBuffer, nullptr);
+		vkFreeMemory(_device, _indexBufferMemory, nullptr);
+	}
+
+	if (_vertexBuffer != VK_NULL_HANDLE)
+	{
+		vkDestroyBuffer(_device, _vertexBuffer, nullptr);
+		vkFreeMemory(_device, _vertexBufferMemory, nullptr);
+	}
 }
 
-void	Mesh::AddVertex(float x, float y, float z)
+void	Mesh::AddVertexAttribute(const VertexAttributes & attrib)
 {
-	_vertices.push_back(glm::vec3(x, y, z));
-}
-
-void	Mesh::AddVertex(const glm::vec3 & p)
-{
-	_vertices.push_back(p);
-}
-
-void	Mesh::AddColor(const Color & c)
-{
-	_colors.push_back(c);
+	_attributes.push_back(attrib);
 }
 
 void	Mesh::AddTriangle(int p1, int p2, int p3)
 {
-	_triangles.push_back(p1);
-	_triangles.push_back(p2);
-	_triangles.push_back(p3);
-}
-
-void	Mesh::AddTangent(float x, float y, float z)
-{
-	_tangents.push_back(glm::vec3(x, y, z));
-}
-
-void	Mesh::AddTriangle(const glm::vec3 & t)
-{
-	_tangents.push_back(t);
-}
-
-void	Mesh::AddUv(float u, float v)
-{
-	_uvs.push_back(glm::vec2(u, v));
-}
-
-void	Mesh::AddUv(const glm::vec2 & uv)
-{
-	_uvs.push_back(uv);
-}
-
-void	Mesh::AddNormal(float x, float y, float z)
-{
-	_normals.push_back(glm::vec3(x, y, z));
-}
-
-void	Mesh::AddNormal(const glm::vec3 & n)
-{
-	_normals.push_back(n);
+	_indices.push_back(p1);
+	_indices.push_back(p2);
+	_indices.push_back(p3);
 }
 
 Bounds		Mesh::GetBounds(void) const
@@ -78,63 +50,203 @@ Bounds		Mesh::GetBounds(void) const
 
 void		Mesh::UploadDatas(void)
 {
-	// TODO: Bind all enabled buffers
+	_instance = VulkanInstance::Get();
+	_device = _instance->GetDevice();
+
+	if (_attributes.size() <= 0)
+		throw std::runtime_error("Can't create a mesh with zero vertices");
+	CreateVertexBuffer();
+
+	if (_indices.size() > 0)
+		CreateIndexBuffer();
 }
 
 void		Mesh::RecalculateBounds(void)
 {
-	for (const auto & v : _vertices)
+	for (const auto & a : _attributes)
 	{
-		_bounds.Encapsulate(v);
+		_bounds.Encapsulate(a.position);
 	}
 }
 
 void		Mesh::Clear(void)
 {
-	_vertices.clear();
-	_normals.clear();
-	_uvs.clear();
-	_colors.clear();
-	_tangents.clear();
+	_attributes.clear();
+	_indices.clear();
 }
 
 
 Mesh &	Mesh::operator=(Mesh const & src)
 {
-	std::cout << "Assignment operator called" << std::endl;
-
 	if (this != &src) {
-		this->_vertices = src.GetVertices();
-		this->_normals = src.GetNormals();
-		this->_uvs = src.GetUvs();
-		this->_colors = src.GetColors();
-		this->_tangents = src.GetTangents();
+		this->_attributes = src._attributes;
+		this->_indices = src._indices;
 		this->_bounds = src._bounds;
 	}
 	return (*this);
 }
 
-std::vector< glm::vec3 >		Mesh::GetVertices(void) const { return (this->_vertices); }
-void		Mesh::SetVertices(const std::vector< glm::vec3 > & tmp) { this->_vertices = tmp; }
+// Hardcoded vertexdescriptor, TODO: API to change this
+std::array< VkVertexInputAttributeDescription, 5 >	Mesh::GetAttributeDescriptions(void)
+{
+	std::array< VkVertexInputAttributeDescription, 5 > attributeDescriptions = {};
 
-std::vector< glm::vec3 >		Mesh::GetNormals(void) const { return (this->_normals); }
-void		Mesh::SetNormals(const std::vector< glm::vec3 > & tmp) { this->_normals = tmp; }
+	attributeDescriptions[0].binding = 0;
+	attributeDescriptions[0].location = 0;
+	attributeDescriptions[0].format = VK_FORMAT_R32G32B32_SFLOAT;
+	attributeDescriptions[0].offset = offsetof(VertexAttributes, position);
 
-std::vector< glm::vec2 >		Mesh::GetUvs(void) const { return (this->_uvs); }
-void		Mesh::SetUvs(const std::vector< glm::vec2 > & tmp) { this->_uvs = tmp; }
+	attributeDescriptions[1].binding = 0;
+	attributeDescriptions[1].location = 1;
+	attributeDescriptions[1].format = VK_FORMAT_R32G32B32_SFLOAT;
+	attributeDescriptions[1].offset = offsetof(VertexAttributes, normal);
 
-std::vector< Color >		Mesh::GetColors(void) const { return (this->_colors); }
-void		Mesh::SetColors(const std::vector< Color > & tmp) { this->_colors = tmp; }
+	attributeDescriptions[2].binding = 0;
+	attributeDescriptions[2].location = 2;
+	attributeDescriptions[2].format = VK_FORMAT_R32G32B32_SFLOAT;
+	attributeDescriptions[2].offset = offsetof(VertexAttributes, tangent);
 
-std::vector< glm::vec3 >		Mesh::GetTangents(void) const { return (this->_tangents); }
-void		Mesh::SetTangents(const std::vector< glm::vec3 > & tmp) { this->_tangents = tmp; }
+	attributeDescriptions[3].binding = 0;
+	attributeDescriptions[3].location = 3;
+	attributeDescriptions[3].format = VK_FORMAT_R32G32B32_SFLOAT;
+	attributeDescriptions[3].offset = offsetof(VertexAttributes, color);
 
-std::vector< int >			Mesh::GetTriangles(void) const { return this->_triangles; }
-void		Mesh::SetTriangles(const std::vector< int > & tmp) { this->_triangles = tmp; }
+	attributeDescriptions[4].binding = 0;
+	attributeDescriptions[4].location = 4;
+	attributeDescriptions[4].format = VK_FORMAT_R32G32_SFLOAT;
+	attributeDescriptions[4].offset = offsetof(VertexAttributes, texCoord);
+
+	return attributeDescriptions;
+}
+
+VkVertexInputBindingDescription						Mesh::GetBindingDescription(void)
+{
+	VkVertexInputBindingDescription bindingDescription = {};
+	bindingDescription.binding = 0;
+	bindingDescription.stride = sizeof(VertexAttributes);
+	bindingDescription.inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
+
+	return bindingDescription;
+}
+
+void				Mesh::CreateVertexBuffer()
+{
+	VkDeviceSize bufferSize = sizeof(VertexAttributes) * _attributes.size();
+
+	VkBuffer stagingBuffer;
+	VkDeviceMemory stagingBufferMemory;
+	Vk::CreateBuffer(bufferSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, stagingBuffer, stagingBufferMemory);
+
+	void *data;
+	vkMapMemory(_device, stagingBufferMemory, 0, bufferSize, 0, &data);
+	memcpy(data, _attributes.data(), (size_t)bufferSize);
+	vkUnmapMemory(_device, stagingBufferMemory);
+
+	Vk::CreateBuffer(bufferSize, VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, _vertexBuffer, _vertexBufferMemory);
+	Vk::CopyBuffer(stagingBuffer, _vertexBuffer, bufferSize);
+
+	vkDestroyBuffer(_device, stagingBuffer, nullptr);
+	vkFreeMemory(_device, stagingBufferMemory, nullptr);
+}
+
+void				Mesh::CreateIndexBuffer()
+{
+	VkDeviceSize bufferSize = sizeof(uint32_t) * _indices.size();
+
+	VkBuffer stagingBuffer;
+	VkDeviceMemory stagingBufferMemory;
+	Vk::CreateBuffer(bufferSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, stagingBuffer, stagingBufferMemory);
+
+	void *data;
+	vkMapMemory(_device, stagingBufferMemory, 0, bufferSize, 0, &data);
+	memcpy(data, _indices.data(), (size_t)bufferSize);
+	vkUnmapMemory(_device, stagingBufferMemory);
+
+	Vk::CreateBuffer(bufferSize, VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_INDEX_BUFFER_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, _indexBuffer, _indexBufferMemory);
+	Vk::CopyBuffer(stagingBuffer, _indexBuffer, bufferSize);
+
+	vkDestroyBuffer(_device, stagingBuffer, nullptr);
+	vkFreeMemory(_device, stagingBufferMemory, nullptr);
+}
+
+void				Mesh::BindBuffers(VkCommandBuffer cmd)
+{
+	VkBuffer vertexBuffers[] = {_vertexBuffer};
+	VkDeviceSize offsets[] = {0};
+	vkCmdBindVertexBuffers(cmd, 0, 1, vertexBuffers, offsets);
+	vkCmdBindIndexBuffer(cmd, _indexBuffer, 0, VK_INDEX_TYPE_UINT32);
+}
+
+void				Mesh::Draw(VkCommandBuffer cmd)
+{
+	vkCmdDrawIndexed(cmd, static_cast<uint32_t>(_indices.size()), 1, 0, 0, 0);
+}
+
+std::vector< int >				Mesh::GetIndices(void) const { return _indices; }
+void							Mesh::SetIndices(const std::vector< int > & tmp) { _indices = tmp; }
+std::vector< Mesh::VertexAttributes >	Mesh::GetVertexAttributes(void) const { return _attributes; }
+void							Mesh::SetVertexAttributes(const std::vector< Mesh::VertexAttributes > & tmp) { _attributes = tmp; }
 
 std::ostream &	operator<<(std::ostream & o, Mesh const & r)
 {
-	o << "tostring of the class" << std::endl;
+	o << "Mesh of " << r.GetVertexAttributes().size() << " Vertices" << std::endl;
 	(void)r;
 	return (o);
+}
+
+void Mesh::VertexAttributes::QuadVertexAttrib(
+	const glm::vec3 & p0,
+	const glm::vec3 & p1,
+	const glm::vec3 & p2,
+	const glm::vec3 & p3,
+	Mesh::VertexAttributes * targetAttribs) noexcept
+{
+	// 0	1---0
+	// 1	| \ |
+	// 2    3---2
+	// 3
+	
+	(void)p3;
+
+	glm::vec3 normal = glm::cross(p0 - p2, p0 - p1);
+	glm::vec3 tangent = glm::cross(normal, p0 - p1);
+	glm::vec2 uvs[] = {{1, 1}, {0, 1}, {0, 0}, {1, 0}};
+
+	targetAttribs[0] = Mesh::VertexAttributes{
+		p0, normal, tangent, {0, 0, 0}, uvs[0]
+	};
+	targetAttribs[1] = Mesh::VertexAttributes{
+		p1, normal, tangent, {0, 0, 0}, uvs[1]
+	};
+	targetAttribs[2] = Mesh::VertexAttributes{
+		p2, normal, tangent, {0, 0, 0}, uvs[2]
+	};
+	targetAttribs[3] = Mesh::VertexAttributes{
+		p3, normal, tangent, {0, 0, 0}, uvs[3]
+	};
+}
+
+void Mesh::VertexAttributes::QuadVertexAttrib(float size, const glm::vec3 & normal, Mesh::VertexAttributes * targetAttribs) noexcept
+{
+	glm::vec3 right;
+	glm::vec3 forward;
+
+	if (normal == glm::vec3(0, 1, 0))
+	{
+		right = glm::vec3(1, 0, 0);
+		forward = glm::vec3(0, 0, 1);
+	}
+	else
+	{
+		right = glm::cross(normal, glm::vec3(0, 1, 0));
+		forward = glm::cross(right, normal);
+	}
+
+	float halfLength = size / 2.0f;
+	glm::vec3 p0 = -right * halfLength +  forward * halfLength;
+	glm::vec3 p1 =  right * halfLength +  forward * halfLength;
+	glm::vec3 p2 =  right * halfLength + -forward * halfLength;
+	glm::vec3 p3 = -right * halfLength + -forward * halfLength;
+
+	QuadVertexAttrib(p0, p1, p2, p3, targetAttribs);
 }

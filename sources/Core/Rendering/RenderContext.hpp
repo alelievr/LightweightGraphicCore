@@ -1,11 +1,9 @@
 #pragma once
 
 #include <unordered_map>
-#include <vector>
+#include <unordered_set>
 
-#include "Core/Components/IComponent.hpp"
-#include "Core/Components/Light.hpp"
-#include "Core/Components/MeshRenderer.hpp"
+#include "Core/Components/Component.hpp"
 
 namespace LWGC
 {
@@ -14,6 +12,10 @@ namespace LWGC
         MeshRenderer,
         Light,
     };
+
+
+    class Light;
+    class MeshRenderer;
 
     class RenderContext
     {
@@ -24,11 +26,11 @@ namespace LWGC
 
             RenderContext operator=(const RenderContext & rhs) = delete;
 
-            std::unordered_map< uint32_t, std::vector< IComponent * > > renderComponents;
+            std::unordered_map< uint32_t, std::unordered_set< Component * > > renderComponents;
 
             template< class T >
-            void    GetComponentVector(uint32_t componentType, std::vector< T * > & components);
-            void    GetLights(std::vector< Light * > & lights);
-            void    GetMeshRenderers(std::vector< MeshRenderer * > & meshRenderers);
+            void    GetComponentSet(uint32_t componentType, std::unordered_set< T * > & components);
+            void    GetLights(std::unordered_set< Light * > & lights);
+            void    GetMeshRenderers(std::unordered_set< MeshRenderer * > & meshRenderers);
     };
 }

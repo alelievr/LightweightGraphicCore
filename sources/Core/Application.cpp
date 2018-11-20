@@ -3,6 +3,7 @@
 #include "Application.hpp"
 #include "Rendering/ForwardRenderPipeline.hpp"
 #include "Vulkan/VulkanInstance.hpp"
+#include "Core/Components/MeshRenderer.hpp"
 
 #include "imgui.h"
 #include "imgui_impl_glfw.h"
@@ -10,7 +11,7 @@
 
 using namespace LWGC;
 
-Application::Application(void) : _window(NULL), _shouldNotQuit(true)
+Application::Application(void) : _hierarchy(std::make_shared< Hierarchy >()), _window(NULL), _shouldNotQuit(true)
 {
 	this->_renderPipeline = new ForwardRenderPipeline();
 }
@@ -89,11 +90,12 @@ void			Application::Open(const std::string & name, const int width, const int he
 
 	_surface.Initialize(_window);
 	_swapChain.Initialize(_surface);
+	
+	// Vk needs logical device (which require surface for creation (due to swapchain support checks))
+	Vk::Initialize();
 
 	try {
 		_renderPipeline->Initialize(&_swapChain);
-		_renderPipeline->CreateMeshes();
-		_renderPipeline->PrepareCommandBuffers();
 		_renderPipeline->CreateSyncObjects();
 	} catch (const std::runtime_error & e) {
 		std::cout << "Error while initializing the render pipeline:" << std::endl << e.what() << std::endl;
@@ -104,6 +106,8 @@ void			Application::Open(const std::string & name, const int width, const int he
 	} catch (...) {
 		std::cout << "Unknown error while initializing the render pipeline !" << std::endl;
 	}
+	
+	_hierarchy->Initialize();
 	
 	glfwSetWindowUserPointer(_window, &_renderPipeline);
 	glfwSetFramebufferSizeCallback(_window, FramebufferResizeCallback);
@@ -135,10 +139,8 @@ void				Application::Update(void) noexcept
 {
 	glfwPollEvents();
 
-	RenderContext context;
-
-	//TODO: hierarchy get cameras, and extract the RenderContext
-	_renderPipeline->Render({}, context);
+	//TODO: hierarchy get cameras
+	_renderPipeline->RenderInternal({}, _hierarchy->GetRenderContext());
 
 /*	// Draw GUI on top of everything (after pipeline rendering)
 	// TODO: move to vulkan
@@ -153,7 +155,7 @@ void				Application::Update(void) noexcept
 }
 
 EventSystem *		Application::GetEventSystem(void) noexcept { return &this->_eventSystem; }
-Hierarchy *			Application::GetHierarchy(void) noexcept { return &this->_hierarchy; }
+Hierarchy *			Application::GetHierarchy(void) noexcept { return this->_hierarchy.get(); }
 
 std::ostream &	operator<<(std::ostream & o, Application const & r)
 {

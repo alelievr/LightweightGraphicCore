@@ -3,6 +3,7 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <array>
 
 #include "IncludeDeps.hpp"
 
@@ -10,27 +11,30 @@
 #include GLFW_INCLUDE
 
 #include GLM_INCLUDE
+#include VULKAN_INCLUDE
 #include "../Utils/Color.hpp"
 #include "../Utils/Bounds.hpp"
 #include "PrimitiveType.hpp"
+#include "Core/Vulkan/VulkanInstance.hpp"
 
 namespace LWGC
 {
 	class		Mesh
 	{
-		private:
-			std::vector< glm::vec3 >	_vertices;
-			std::vector< glm::vec3 >	_normals;
-			std::vector< glm::vec2 >	_uvs;
-			std::vector< Color >		_colors;
-			std::vector< glm::vec3 >	_tangents;
-			std::vector< int >			_triangles;
-			Bounds						_bounds;
-
-			GLuint						_vao;
-			GLuint						_vbo[6];
 
 		public:
+			struct VertexAttributes
+			{
+				glm::vec3 position;
+				glm::vec3 normal;
+				glm::vec3 tangent;
+				glm::vec3 color;
+				glm::vec2 texCoord;
+
+				static void QuadVertexAttrib(const glm::vec3 & p0, const glm::vec3 & p1, const glm::vec3 & p2,	const glm::vec3 & p3, Mesh::VertexAttributes * targetAttribs) noexcept;
+				static void QuadVertexAttrib(float size, const glm::vec3 & normal, Mesh::VertexAttributes * targetAttribs) noexcept;
+			};
+
 			Mesh(void);
 			Mesh(const Mesh &);
 			virtual ~Mesh(void);
@@ -39,43 +43,38 @@ namespace LWGC
 
 			Bounds	GetBounds(void) const;
 
-			void	AddVertex(float x, float y, float z);
-			void	AddVertex(const glm::vec3 & p);
-
-			void	AddColor(const Color & c);
-
+			void	AddVertexAttribute(const VertexAttributes & attrib);
 			void	AddTriangle(int p1, int p2, int p3);
-
-			void	AddTangent(float x, float y, float z);
-			void	AddTriangle(const glm::vec3 & t);
-
-			void	AddUv(float u, float v);
-			void	AddUv(const glm::vec2 & uv);
-
-			void	AddNormal(float x, float y, float z);
-			void	AddNormal(const glm::vec3 & n);
 
 			void	RecalculateBounds(void);
 			void	UploadDatas(void);
+			void	BindBuffers(VkCommandBuffer cmd);
+			void	Draw(VkCommandBuffer cmd);
 			void	Clear(void);
 
-			std::vector< glm::vec3 >	GetVertices(void) const;
-			void	SetVertices(const std::vector< glm::vec3 > & tmp);
+			std::vector< int >			GetIndices(void) const;
+			void						SetIndices(const std::vector< int > & tmp);
+			std::vector< VertexAttributes >	GetVertexAttributes(void) const;
+			void						SetVertexAttributes(const std::vector< VertexAttributes > & tmp);
 			
-			std::vector< glm::vec3 >	GetNormals(void) const;
-			void	SetNormals(const std::vector< glm::vec3 > & tmp);
+			static std::array< VkVertexInputAttributeDescription, 5 >	GetAttributeDescriptions(void);
+			static VkVertexInputBindingDescription						GetBindingDescription(void);
 			
-			std::vector< glm::vec2 >	GetUvs(void) const;
-			void	SetUvs(const std::vector< glm::vec2 > & tmp);
-			
-			std::vector< Color >	GetColors(void) const;
-			void	SetColors(const std::vector< Color > & tmp);
-			
-			std::vector< glm::vec3 >	GetTangents(void) const;
-			void	SetTangents(const std::vector< glm::vec3 > & tmp);
+		private:
+			std::vector< int >			_indices;
+			std::vector< VertexAttributes >	_attributes;
+			Bounds						_bounds;
+			VulkanInstance *			_instance;
+			VkDevice					_device;
 
-			std::vector< int >	GetTriangles(void) const;
-			void	SetTriangles(const std::vector< int > & tmp);
+			VkBuffer					_vertexBuffer;
+			VkDeviceMemory				_vertexBufferMemory;
+			VkBuffer					_indexBuffer;
+			VkDeviceMemory				_indexBufferMemory;
+
+			void		CreateVertexBuffer();
+			void		CreateIndexBuffer();
+
 	};
 
 	std::ostream &	operator<<(std::ostream & o, Mesh const & r);

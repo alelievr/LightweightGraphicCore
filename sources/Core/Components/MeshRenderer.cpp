@@ -1,41 +1,68 @@
 #include "MeshRenderer.hpp"
 #include "Core/PrimitiveMeshFactory.hpp"
+#include "Core/Hierarchy.hpp"
+#include "Core/Rendering/VulkanRenderPipeline.hpp"
 
 using namespace LWGC;
 
 MeshRenderer::MeshRenderer(void)
 {
-	std::cout << "Default constructor of MeshRenderer called" << std::endl;
-}
-
-MeshRenderer::MeshRenderer(MeshRenderer const & src)
-{
-	*this = src;
-	std::cout << "Copy constructor called" << std::endl;
+	_mesh = std::make_shared< Mesh >();
+	_material = std::make_shared< Material >();
 }
 
 MeshRenderer::MeshRenderer(const PrimitiveType prim)
 {
 	_mesh = PrimitiveMeshFactory::CreateMesh(prim);
+	_material = std::make_shared< Material >();
 }
 
 MeshRenderer::~MeshRenderer(void)
 {
-	std::cout << "Destructor of MeshRenderer called" << std::endl;
 }
 
-SortingLayer		MeshRenderer::GetSortingLayer(void)
+void		MeshRenderer::Initialize(void) noexcept
 {
+	Component::Initialize();
+
+	VulkanRenderPipeline * renderPipeline = VulkanRenderPipeline::Get();
+
+	_material->Initialize(renderPipeline->GetSwapChain(), renderPipeline->GetRenderPass());
+	_mesh->UploadDatas();
+
+	_drawCommandBuffer = VulkanInstance::Get()->GetGraphicCommandBufferPool()->Allocate(VK_COMMAND_BUFFER_LEVEL_SECONDARY);
+
+	RecordDrawCommandBuffer();
+}
+
+void		MeshRenderer::RecordDrawCommandBuffer(void)
+{
+	VkCommandBufferBeginInfo beginInfo = {};
+	beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+	beginInfo.flags = VK_COMMAND_BUFFER_USAGE_RENDER_PASS_CONTINUE_BIT;
+
+	if (vkBeginCommandBuffer(_drawCommandBuffer, &beginInfo) != VK_SUCCESS)
+	{
+		throw std::runtime_error("failed to begin recording command buffer!");
+	}
+
+	vkCmdBindPipeline(_drawCommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, _material->GetGraphicPipeline());
+
+	_mesh->BindBuffers(_drawCommandBuffer);
+
+	_material->BindDescriptorSets(_drawCommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS);
+	_mesh->Draw(_drawCommandBuffer);
+
+	if (vkEndCommandBuffer(_drawCommandBuffer) != VK_SUCCESS)
+	{
+		throw std::runtime_error("failed to record command buffer!");
+	}
 }
 
 Bounds		MeshRenderer::GetBounds(void)
 {
-	
-}
-
-void		MeshRenderer::Render(void)
-{
-	std::cout << "Render model !\n";
+	// TODO
+	return Bounds();
 }
 
 void		MeshRenderer::SetModel(const Mesh & mesh, const Material & material)
@@ -50,34 +77,34 @@ void		MeshRenderer::SetModel(std::shared_ptr< Mesh > mesh, std::shared_ptr< Mate
 	this->_material = material;
 }
 
-MeshRenderer &	MeshRenderer::operator=(MeshRenderer const & src)
+void MeshRenderer::OnEnable() noexcept
 {
-	std::cout << "Assignment operator called" << std::endl;
-
-	if (this != &src) {
-		this->_mesh = src.GetMesh();
-		this->_material = src.GetMaterial();
-	}
-	return (*this);
+	renderContextIndex = hierarchy->RegisterComponentInRenderContext(RenderComponentType::MeshRenderer, this);
 }
 
-void MeshRenderer::OnRemoved(const GameObject & go) noexcept
+void MeshRenderer::OnDisable() noexcept
 {
-	(void)go;
-	// TODO: register this component in the renderable list of the application
+	hierarchy->UnregisterComponentInRenderContext(RenderComponentType::MeshRenderer, renderContextIndex);
 }
 
-void MeshRenderer::OnAdded(const GameObject & go) noexcept
+void MeshRenderer::CleanupGraphicPipeline(void) noexcept
 {
-	(void)go;
-	// TODO: remove this component from the renderable list
+	_material->CleanupGraphicPipeline();
 }
+
+void MeshRenderer::CreateGraphicPipeline(void) noexcept
+{
+	_material->CreateGraphicPipeline();
+}
+
 
 std::shared_ptr< Mesh >		MeshRenderer::GetMesh(void) const { return (this->_mesh); }
 void		MeshRenderer::SetMesh(std::shared_ptr< Mesh > tmp) { this->_mesh = tmp; }
 
 std::shared_ptr< Material >		MeshRenderer::GetMaterial(void) const { return (this->_material); }
 void		MeshRenderer::SetMaterial(std::shared_ptr< Material > tmp) { this->_material = tmp; }
+
+VkCommandBuffer		MeshRenderer::GetDrawCommandBuffer(void) const { return _drawCommandBuffer; }
 
 std::ostream &	operator<<(std::ostream & o, MeshRenderer const & r)
 {

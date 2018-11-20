@@ -12,12 +12,6 @@ Camera::Camera(void)
 	this->_farPlane = 0;
 }
 
-Camera::Camera(Camera const & src)
-{
-	*this = src;
-	std::cout << "Copy constructor called" << std::endl;
-}
-
 Camera::~Camera(void)
 {
 	std::cout << "Destructor of Camera called" << std::endl;
@@ -41,22 +35,6 @@ glm::vec3		Camera::WorldToScreenPoint(glm::vec3 worldPosition)
 glm::vec3		Camera::ScreenToWorldPoint(glm::vec3 screenPosition)
 {
 	return screenPosition;
-}
-
-
-Camera &	Camera::operator=(Camera const & src)
-{
-	std::cout << "Assignment operator called" << std::endl;
-
-	if (this != &src) {
-		this->_target = src.GetTarget();
-		this->_size = src.GetSize();
-		this->_cameraType = src.GetCameraType();
-		this->_fov = src.GetFov();
-		this->_nearPlane = src.GetNearPlane();
-		this->_farPlane = src.GetFarPlane();
-	}
-	return (*this);
 }
 
 RenderTarget *		Camera::GetTarget(void) const { return (this->_target); }
