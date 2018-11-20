@@ -21,6 +21,8 @@ namespace LWGC
 	
 			virtual void	OnAdded(const GameObject & go) noexcept;
 			virtual void	OnRemoved(const GameObject & go) noexcept;
+
+			static const uint32_t		type = 1;
 	};
 	
 	std::ostream &	operator<<(std::ostream & o, Light const & r);

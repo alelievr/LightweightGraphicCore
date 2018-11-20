@@ -7,13 +7,6 @@
 
 namespace LWGC
 {
-    enum class RenderComponentType
-    {
-        MeshRenderer,
-        Light,
-    };
-
-
     class Light;
     class MeshRenderer;
 

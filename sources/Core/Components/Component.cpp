@@ -22,9 +22,15 @@ void    Component::OnRemoved(const GameObject & go) noexcept
 	(void)go;
 }
 
-void    Component::OnEnable() noexcept {}
+void    Component::OnEnable() noexcept
+{
+	index = hierarchy->RegisterComponent(GetType(), this);
+}
 
-void    Component::OnDisable() noexcept {}
+void    Component::OnDisable() noexcept
+{
+	hierarchy->UnregisterComponent(index);
+}
 
 void			Component::UpdateGameObjectActive(void) noexcept
 {
@@ -61,4 +67,9 @@ void			Component::Disable() noexcept
 bool            Component::IsEnabled() noexcept
 {
     return enabled && gameObject->IsActive();
+}
+
+uint32_t		Component::GetType() const noexcept
+{
+	return -1;
 }

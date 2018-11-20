@@ -3,6 +3,7 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <unordered_set>
 
 #include "GameObject.hpp"
 #include "Core/Rendering/RenderContext.hpp"
@@ -13,8 +14,9 @@ namespace LWGC
 	class		Hierarchy
 	{
 		private:
-			std::vector< GameObject * >	_gameObjects;
-			RenderContext				_renderContext;
+			std::vector< GameObject * >			_gameObjects;
+			RenderContext						_renderContext;
+			std::unordered_set< Component * >	_components;
 
 		public:
 			Hierarchy(void);
@@ -26,10 +28,10 @@ namespace LWGC
 			void					Initialize(void);
 			void					AddGameObject(GameObject * gameObject);
 			void					RemoveGameObject(GameObject * gameObject);
-			const ComponentIndex	RegisterComponentInRenderContext(int componentType, Component * component) noexcept;
-			void					UnregisterComponentInRenderContext(int componentType, const ComponentIndex & index) noexcept;
-			const ComponentIndex	RegisterComponentInRenderContext(RenderComponentType componentType, Component * component) noexcept;
-			void					UnregisterComponentInRenderContext(RenderComponentType componentType, const ComponentIndex & index) noexcept;
+			const ComponentIndex	RegisterComponent(uint32_t componentType, Component * component) noexcept;
+			void					UnregisterComponent(const ComponentIndex & index) noexcept;
+			const ComponentIndex	RegisterComponentInRenderContext(uint32_t componentType, Component * component) noexcept;
+			void					UnregisterComponentInRenderContext(uint32_t componentType, const ComponentIndex & index) noexcept;
 
 			GameObject *			GetGameObject(int index);
 			RenderContext &			GetRenderContext(void);

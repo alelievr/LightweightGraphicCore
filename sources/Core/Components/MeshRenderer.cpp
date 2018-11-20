@@ -79,12 +79,14 @@ void		MeshRenderer::SetModel(std::shared_ptr< Mesh > mesh, std::shared_ptr< Mate
 
 void MeshRenderer::OnEnable() noexcept
 {
-	renderContextIndex = hierarchy->RegisterComponentInRenderContext(RenderComponentType::MeshRenderer, this);
+	Component::OnEnable();
+	_renderContextIndex = hierarchy->RegisterComponentInRenderContext(MeshRenderer::type, this);
 }
 
 void MeshRenderer::OnDisable() noexcept
 {
-	hierarchy->UnregisterComponentInRenderContext(RenderComponentType::MeshRenderer, renderContextIndex);
+	Component::OnEnable();
+	hierarchy->UnregisterComponentInRenderContext(MeshRenderer::type, _renderContextIndex);
 }
 
 void MeshRenderer::CleanupGraphicPipeline(void) noexcept
@@ -97,6 +99,7 @@ void MeshRenderer::CreateGraphicPipeline(void) noexcept
 	_material->CreateGraphicPipeline();
 }
 
+uint32_t					MeshRenderer::GetType(void) const noexcept { return type; }
 
 std::shared_ptr< Mesh >		MeshRenderer::GetMesh(void) const { return (this->_mesh); }
 void		MeshRenderer::SetMesh(std::shared_ptr< Mesh > tmp) { this->_mesh = tmp; }

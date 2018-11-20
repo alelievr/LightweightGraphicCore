@@ -22,7 +22,7 @@ namespace LWGC
 			bool				enabled;
 			const GameObject *	gameObject;
 			Hierarchy *			hierarchy;
-			ComponentIndex		renderContextIndex;
+			ComponentIndex		index;
 
 			// Called when the vulkan is finished to initialize
 			virtual void		Initialize() noexcept;
@@ -43,5 +43,7 @@ namespace LWGC
 
 			void			Enable() noexcept;
 			void			Disable() noexcept;
+
+			virtual uint32_t	GetType() const noexcept;
 	};
 }

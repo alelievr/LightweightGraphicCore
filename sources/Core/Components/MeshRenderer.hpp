@@ -16,6 +16,7 @@ namespace LWGC
 			std::shared_ptr< Mesh >		_mesh;
 			std::shared_ptr< Material >	_material;
 			VkCommandBuffer				_drawCommandBuffer;
+			ComponentIndex				_renderContextIndex;
 
 			void		Initialize(void) noexcept override;
 			void		RecordDrawCommandBuffer(void);
@@ -48,6 +49,9 @@ namespace LWGC
 			void	SetMaterial(std::shared_ptr< Material > tmp);
 
 			VkCommandBuffer		GetDrawCommandBuffer(void) const;
+
+			virtual uint32_t			GetType() const noexcept override;
+			static const uint32_t		type = 0;
 	};
 
 	std::ostream &	operator<<(std::ostream & o, MeshRenderer const & r);

@@ -20,7 +20,6 @@ namespace LWGC
 			float			_nearPlane;
 			float			_farPlane;
 
-
 		public:
 			Camera(void);
 			Camera(const Camera &) = delete;
@@ -52,6 +51,8 @@ namespace LWGC
 			
 			float		GetFarPlane(void) const;
 			void		SetFarPlane(float tmp);
+
+			static const uint32_t		type = 2;
 	};
 
 	std::ostream &	operator<<(std::ostream & o, Camera const & r);

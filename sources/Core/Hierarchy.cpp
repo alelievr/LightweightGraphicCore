@@ -34,26 +34,26 @@ GameObject * Hierarchy::GetGameObject(int index)
 	return _gameObjects[index];
 }
 
-const ComponentIndex Hierarchy::RegisterComponentInRenderContext(int componentType, Component * component) noexcept
+const ComponentIndex	Hierarchy::RegisterComponent(uint32_t componentType, Component * component) noexcept
+{
+	return _components.insert(component).first;
+}
+
+void					Hierarchy::UnregisterComponent(const ComponentIndex & index) noexcept
+{
+	_components.erase(index);
+}
+
+const ComponentIndex Hierarchy::RegisterComponentInRenderContext(uint32_t componentType, Component * component) noexcept
 {
 	const auto & kp = _renderContext.renderComponents[componentType].insert(component);
 
 	return kp.first;
 }
 
-void Hierarchy::UnregisterComponentInRenderContext(int componentType, const ComponentIndex & index) noexcept
+void Hierarchy::UnregisterComponentInRenderContext(uint32_t componentType, const ComponentIndex & index) noexcept
 {
 	_renderContext.renderComponents[componentType].erase(index);
-}
-
-const ComponentIndex Hierarchy::RegisterComponentInRenderContext(RenderComponentType componentType, Component * component) noexcept
-{
-	return RegisterComponentInRenderContext((int)componentType, component);
-}
-
-void Hierarchy::UnregisterComponentInRenderContext(RenderComponentType componentType, const ComponentIndex & index) noexcept
-{
-	UnregisterComponentInRenderContext((int)componentType, index);
 }
 
 RenderContext &	Hierarchy::GetRenderContext(void)
