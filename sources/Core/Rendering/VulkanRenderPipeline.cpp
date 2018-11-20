@@ -3,6 +3,8 @@
 
 #include "Core/PrimitiveMeshFactory.hpp"
 
+#include <unordered_set>
+
 using namespace LWGC;
 
 VulkanRenderPipeline * VulkanRenderPipeline::pipelineInstance = nullptr;
@@ -34,9 +36,12 @@ void                VulkanRenderPipeline::Initialize(SwapChain * swapChain)
 {
     this->instance = VulkanInstance::Get();
     this->swapChain = swapChain;
-    this->graphicCommandBufferPool = instance->GetGraphicCommandBufferPool();
 	renderPass.Initialize(swapChain);
 	CreateRenderPass();
+
+	// Allocate primary command buffers
+	printf("Allocated command buffers !\n");
+	instance->GetGraphicCommandBufferPool()->Allocate(VK_COMMAND_BUFFER_LEVEL_PRIMARY, swapChainCommandBuffers, swapChain->GetImageCount());
 }
 
 void				VulkanRenderPipeline::CreateRenderPass(void)
@@ -62,51 +67,41 @@ void				VulkanRenderPipeline::CreateRenderPass(void)
 	renderPass.Create();
 }
 
-void				VulkanRenderPipeline::PrepareCommandBuffers(void)
+void			VulkanRenderPipeline::BeginRenderPass(void)
 {
-	graphicCommandBufferPool->Allocate(VK_COMMAND_BUFFER_LEVEL_PRIMARY, commandBuffers, swapChain->GetImageCount());
+	VkCommandBufferBeginInfo beginInfo = {};
+	beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+	beginInfo.flags = VK_COMMAND_BUFFER_USAGE_SIMULTANEOUS_USE_BIT;
 
-	for (size_t i = 0; i < commandBuffers.size(); i++)
+	if (vkBeginCommandBuffer(graphicCommandBuffer, &beginInfo) != VK_SUCCESS)
 	{
-		VkCommandBufferBeginInfo beginInfo = {};
-		beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
-		beginInfo.flags = VK_COMMAND_BUFFER_USAGE_SIMULTANEOUS_USE_BIT;
+		throw std::runtime_error("failed to begin recording command buffer!");
+	}
 
-		if (vkBeginCommandBuffer(commandBuffers[i], &beginInfo) != VK_SUCCESS)
-		{
-			throw std::runtime_error("failed to begin recording command buffer!");
-		}
+	VkRenderPassBeginInfo renderPassInfo = {};
+	renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
+	renderPassInfo.renderPass = renderPass.GetRenderPass();
+	renderPassInfo.framebuffer = swapChain->GetFramebuffers()[currentFrame]; // TODO: simplify this
+	renderPassInfo.renderArea.offset = {0, 0};
+	renderPassInfo.renderArea.extent = swapChain->GetExtent();
 
-		VkRenderPassBeginInfo renderPassInfo = {};
-		renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
-		renderPassInfo.renderPass = renderPass.GetRenderPass();
-		renderPassInfo.framebuffer = swapChain->GetFramebuffers()[i]; // TODO: simplify this
-		renderPassInfo.renderArea.offset = {0, 0};
-		renderPassInfo.renderArea.extent = swapChain->GetExtent();
+	std::array<VkClearValue, 2> clearValues = {};
+	clearValues[0].color = {0.0f, 0.0f, 0.0f, 1.0f};
+	clearValues[1].depthStencil = {1.0f, 0};
 
-		std::array<VkClearValue, 2> clearValues = {};
-		clearValues[0].color = {0.0f, 0.0f, 0.0f, 1.0f};
-		clearValues[1].depthStencil = {1.0f, 0};
+	renderPassInfo.clearValueCount = static_cast<uint32_t>(clearValues.size());
+	renderPassInfo.pClearValues = clearValues.data();
 
-		renderPassInfo.clearValueCount = static_cast<uint32_t>(clearValues.size());
-		renderPassInfo.pClearValues = clearValues.data();
+	vkCmdBeginRenderPass(graphicCommandBuffer, &renderPassInfo, VK_SUBPASS_CONTENTS_SECONDARY_COMMAND_BUFFERS);
+}
 
-		vkCmdBeginRenderPass(commandBuffers[i], &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
+void			VulkanRenderPipeline::EndRenderPass(void)
+{
+	vkCmdEndRenderPass(graphicCommandBuffer);
 
-		// TODO: secondary cmd buffer
-		vkCmdBindPipeline(commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, firstMeshRenderer->GetMaterial()->GetGraphicPipeline());
-
-		firstMeshRenderer->GetMesh()->BindBuffers(commandBuffers[i]);
-
-		firstMeshRenderer->GetMaterial()->BindDescriptorSets(commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS);
-		firstMeshRenderer->GetMesh()->Draw(commandBuffers[i]);
-
-		vkCmdEndRenderPass(commandBuffers[i]);
-
-		if (vkEndCommandBuffer(commandBuffers[i]) != VK_SUCCESS)
-		{
-			throw std::runtime_error("failed to record command buffer!");
-		}
+	if (vkEndCommandBuffer(graphicCommandBuffer) != VK_SUCCESS)
+	{
+		throw std::runtime_error("failed to record command buffer!");
 	}
 }
 
@@ -135,25 +130,30 @@ void			VulkanRenderPipeline::CreateSyncObjects(void)
 	printf("Semaphores created !\n");
 }
 
-void			VulkanRenderPipeline::RecreateSwapChain(void)
+void			VulkanRenderPipeline::RecreateSwapChain(RenderContext & renderContext)
 {
+	std::unordered_set< MeshRenderer * >	meshRenderers;
 	auto device = instance->GetDevice();
 	vkDeviceWaitIdle(device);
 
 	swapChain->Cleanup();
 	renderPass.Cleanup();
 
-	firstMeshRenderer->CleanupGraphicPipeline();
+	// Rebuild all Material graphic pipelines
+	renderContext.GetMeshRenderers(meshRenderers);
+	
+	for (auto & meshRenderer : meshRenderers)
+		meshRenderer->CleanupGraphicPipeline();
 
 	instance->UpdateSurface();
 	swapChain->Create();
 	CreateRenderPass();
-	firstMeshRenderer->CreateGraphicPipeline();
 
-	PrepareCommandBuffers();
+	for (auto & meshRenderer : meshRenderers)
+		meshRenderer->CleanupGraphicPipeline();
 }
 
-void			VulkanRenderPipeline::Render(const std::vector< Camera * > & cameras, const RenderContext & context)
+void			VulkanRenderPipeline::RenderInternal(const std::vector< Camera * > & cameras, RenderContext & context)
 {
 	auto device = instance->GetDevice();
 	vkWaitForFences(device, 1, &inFlightFences[currentFrame], VK_TRUE, std::numeric_limits<uint64_t>::max());
@@ -164,7 +164,7 @@ void			VulkanRenderPipeline::Render(const std::vector< Camera * > & cameras, con
 
 	if (result == VK_ERROR_OUT_OF_DATE_KHR)
 	{
-		RecreateSwapChain();
+		RecreateSwapChain(context);
 		return;
 	}
 	else if (result != VK_SUCCESS && result != VK_SUBOPTIMAL_KHR)
@@ -172,7 +172,9 @@ void			VulkanRenderPipeline::Render(const std::vector< Camera * > & cameras, con
 		throw std::runtime_error("failed to acquire swap chain image!");
 	}
 
-	firstMeshRenderer->GetMaterial()->UpdateUniformBuffer();
+	graphicCommandBuffer = swapChainCommandBuffers[imageIndex];
+
+	Render(cameras, context);
 
 	VkSubmitInfo submitInfo = {};
 	submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
@@ -184,7 +186,7 @@ void			VulkanRenderPipeline::Render(const std::vector< Camera * > & cameras, con
 	submitInfo.pWaitDstStageMask = waitStages;
 
 	submitInfo.commandBufferCount = 1;
-	submitInfo.pCommandBuffers = &commandBuffers[imageIndex];
+	submitInfo.pCommandBuffers = &graphicCommandBuffer;
 
 	VkSemaphore signalSemaphores[] = {renderFinishedSemaphores[currentFrame]};
 	submitInfo.signalSemaphoreCount = 1;
@@ -194,7 +196,7 @@ void			VulkanRenderPipeline::Render(const std::vector< Camera * > & cameras, con
 
 	if (vkQueueSubmit(instance->GetGraphicQueue(), 1, &submitInfo, inFlightFences[currentFrame]) != VK_SUCCESS)
 	{
-		throw std::runtime_error("failed to submit draw command buffer!");
+		throw std::runtime_error("failed to submit graphic queue!");
 	}
 
 	VkPresentInfoKHR presentInfo = {};
@@ -214,7 +216,7 @@ void			VulkanRenderPipeline::Render(const std::vector< Camera * > & cameras, con
 	if (result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR || framebufferResized)
 	{
 		framebufferResized = false;
-		RecreateSwapChain();
+		RecreateSwapChain(context);
 	}
 	else if (result != VK_SUCCESS)
 	{
@@ -222,6 +224,29 @@ void			VulkanRenderPipeline::Render(const std::vector< Camera * > & cameras, con
 	}
 
 	currentFrame = (currentFrame + 1) % MAX_FRAMES_IN_FLIGHT;
+}
+
+void	VulkanRenderPipeline::Render(const std::vector< Camera * > & cameras, RenderContext & context)
+{
+	std::vector< VkCommandBuffer > drawBuffers;
+	std::unordered_set< MeshRenderer * >	meshRenderers;
+
+	BeginRenderPass();
+
+	context.GetMeshRenderers(meshRenderers);
+
+	for (const auto & meshRenderer : meshRenderers)
+	{
+		meshRenderer->GetMaterial()->UpdateUniformBuffer();
+
+		printf("Drawing mesh renderer !\n");
+		
+		drawBuffers.push_back(meshRenderer->GetDrawCommandBuffer());
+	}
+
+	vkCmdExecuteCommands(graphicCommandBuffer, drawBuffers.size(), drawBuffers.data());
+
+	EndRenderPass();
 }
 
 SwapChain *		VulkanRenderPipeline::GetSwapChain(void) { return swapChain; }

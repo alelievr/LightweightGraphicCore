@@ -27,6 +27,34 @@ void		MeshRenderer::Initialize(void) noexcept
 
 	_material->Initialize(renderPipeline->GetSwapChain(), renderPipeline->GetRenderPass());
 	_mesh->UploadDatas();
+
+	_drawCommandBuffer = VulkanInstance::Get()->GetGraphicCommandBufferPool()->Allocate(VK_COMMAND_BUFFER_LEVEL_SECONDARY);
+
+	RecordDrawCommandBuffer();
+}
+
+void		MeshRenderer::RecordDrawCommandBuffer(void)
+{
+	VkCommandBufferBeginInfo beginInfo = {};
+	beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+	beginInfo.flags = VK_COMMAND_BUFFER_USAGE_RENDER_PASS_CONTINUE_BIT;
+
+	if (vkBeginCommandBuffer(_drawCommandBuffer, &beginInfo) != VK_SUCCESS)
+	{
+		throw std::runtime_error("failed to begin recording command buffer!");
+	}
+
+	vkCmdBindPipeline(_drawCommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, _material->GetGraphicPipeline());
+
+	_mesh->BindBuffers(_drawCommandBuffer);
+
+	_material->BindDescriptorSets(_drawCommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS);
+	_mesh->Draw(_drawCommandBuffer);
+
+	if (vkEndCommandBuffer(_drawCommandBuffer) != VK_SUCCESS)
+	{
+		throw std::runtime_error("failed to record command buffer!");
+	}
 }
 
 Bounds		MeshRenderer::GetBounds(void)
@@ -73,6 +101,8 @@ void		MeshRenderer::SetMesh(std::shared_ptr< Mesh > tmp) { this->_mesh = tmp; }
 
 std::shared_ptr< Material >		MeshRenderer::GetMaterial(void) const { return (this->_material); }
 void		MeshRenderer::SetMaterial(std::shared_ptr< Material > tmp) { this->_material = tmp; }
+
+VkCommandBuffer		MeshRenderer::GetDrawCommandBuffer(void) const { return _drawCommandBuffer; }
 
 std::ostream &	operator<<(std::ostream & o, MeshRenderer const & r)
 {

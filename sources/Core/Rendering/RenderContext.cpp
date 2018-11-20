@@ -14,20 +14,26 @@ RenderContext::~RenderContext()
 }
 
 template< class T >
-void    RenderContext::GetComponentSet(uint32_t componentType, std::unordered_set< T * > & components)
+void    RenderContext::GetComponentSet(uint32_t componentType, std::unordered_set< T * > & components) 
 {
     components.clear();
 
-    for (Component * comp : renderComponents[componentType])
-        components.insert(dynamic_cast< T * >(comp));
+    const auto & set = renderComponents.find(componentType);
+
+    if (set != renderComponents.end())
+    {
+        const std::unordered_set< Component * > comps = (*set).second;
+        for (const auto & comp : comps)
+            components.insert(dynamic_cast< T * >(comp));
+    }
 }
 
-void    RenderContext::GetLights(std::unordered_set< Light * > & lights)
+void    RenderContext::GetLights(std::unordered_set< Light * > & lights) 
 {
     GetComponentSet< Light >((uint32_t)RenderComponentType::Light, lights);
 }
 
-void    RenderContext::GetMeshRenderers(std::unordered_set< MeshRenderer * > & meshRenderers)
+void    RenderContext::GetMeshRenderers(std::unordered_set< MeshRenderer * > & meshRenderers) 
 {
     GetComponentSet< MeshRenderer >((uint32_t)RenderComponentType::MeshRenderer, meshRenderers);
 }

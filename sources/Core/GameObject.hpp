@@ -21,6 +21,7 @@ namespace LWGC
 			bool			_active;
 			std::unordered_set< Component * >	_components;
 			Hierarchy *		_hierarchy;
+			bool			_initialized;
 
 			void SetHierarchy(Hierarchy * hierarchy);
 			void Initialize() noexcept;

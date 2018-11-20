@@ -32,6 +32,7 @@ namespace LWGC
 			void					UnregisterComponentInRenderContext(RenderComponentType componentType, const ComponentIndex & index) noexcept;
 
 			GameObject *			GetGameObject(int index);
+			RenderContext &			GetRenderContext(void);
 	};
 
 	std::ostream &	operator<<(std::ostream & o, Hierarchy const & r);

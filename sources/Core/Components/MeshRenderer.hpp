@@ -6,18 +6,19 @@
 #include "Core/Object.hpp"
 #include "Core/Mesh.hpp"
 #include "Core/Vulkan/Material.hpp"
-#include "Core/Rendering/IRenderable.hpp"
 #include "Component.hpp"
 
 namespace LWGC
 {
-	class		MeshRenderer : public Object, public IRenderable, public Component
+	class		MeshRenderer : public Object, public Component
 	{
 		private:
 			std::shared_ptr< Mesh >		_mesh;
 			std::shared_ptr< Material >	_material;
+			VkCommandBuffer				_drawCommandBuffer;
 
 			void		Initialize(void) noexcept override;
+			void		RecordDrawCommandBuffer(void);
 
 		public:
 			MeshRenderer(void);
@@ -32,7 +33,7 @@ namespace LWGC
 			void	SetModel(const Mesh & mesh, const Material & material);
 			void	SetModel(std::shared_ptr< Mesh > mesh, std::shared_ptr< Material > material);
 
-			Bounds	GetBounds(void) override;
+			Bounds	GetBounds(void);
 
 			void	OnEnable(void) noexcept override;
 			void	OnDisable(void) noexcept override;
@@ -45,6 +46,8 @@ namespace LWGC
 			
 			std::shared_ptr< Material >	GetMaterial(void) const;
 			void	SetMaterial(std::shared_ptr< Material > tmp);
+
+			VkCommandBuffer		GetDrawCommandBuffer(void) const;
 	};
 
 	std::ostream &	operator<<(std::ostream & o, MeshRenderer const & r);

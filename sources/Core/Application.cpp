@@ -96,11 +96,6 @@ void			Application::Open(const std::string & name, const int width, const int he
 
 	try {
 		_renderPipeline->Initialize(&_swapChain);
-		_renderPipeline->firstMeshRenderer = dynamic_cast< MeshRenderer * >(_hierarchy->GetGameObject(0)->GetComponent());
-
-	_hierarchy->Initialize();
-	
-		_renderPipeline->PrepareCommandBuffers();
 		_renderPipeline->CreateSyncObjects();
 	} catch (const std::runtime_error & e) {
 		std::cout << "Error while initializing the render pipeline:" << std::endl << e.what() << std::endl;
@@ -111,6 +106,8 @@ void			Application::Open(const std::string & name, const int width, const int he
 	} catch (...) {
 		std::cout << "Unknown error while initializing the render pipeline !" << std::endl;
 	}
+	
+	_hierarchy->Initialize();
 	
 	glfwSetWindowUserPointer(_window, &_renderPipeline);
 	glfwSetFramebufferSizeCallback(_window, FramebufferResizeCallback);
@@ -142,10 +139,8 @@ void				Application::Update(void) noexcept
 {
 	glfwPollEvents();
 
-	RenderContext context;
-
-	//TODO: hierarchy get cameras, and extract the RenderContext
-	_renderPipeline->Render({}, context);
+	//TODO: hierarchy get cameras
+	_renderPipeline->RenderInternal({}, _hierarchy->GetRenderContext());
 
 /*	// Draw GUI on top of everything (after pipeline rendering)
 	// TODO: move to vulkan

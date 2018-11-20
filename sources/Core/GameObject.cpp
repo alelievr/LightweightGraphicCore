@@ -2,14 +2,14 @@
 
 using namespace LWGC;
 
-GameObject::GameObject(void)
+GameObject::GameObject(void) : _initialized(false)
 {
 	std::cout << "Default constructor of GameObject called" << std::endl;
 	this->_name = "GameObject";
 	this->_flags = 0;
 }
 
-GameObject::GameObject(Component * component)
+GameObject::GameObject(Component * component) : GameObject()
 {
 	AddComponent(component);
 }
@@ -30,6 +30,7 @@ GameObject &	GameObject::operator=(GameObject const & src)
 	std::cout << "Assignment operator called" << std::endl;
 
 	if (this != &src) {
+		this->_initialized = src._initialized;
 		this->_transform = src.GetTransform();
 		this->_name = src.GetName();
 		this->_flags = src.GetFlags();
@@ -39,12 +40,15 @@ GameObject &	GameObject::operator=(GameObject const & src)
 
 void		GameObject::Initialize(void) noexcept
 {
+	_initialized = true;
 	for (const auto & component : _components)
 		component->Initialize();
 }
 
 Component *		GameObject::AddComponent(Component * component) noexcept
 {
+	if (_initialized)
+		component->Initialize();
 	_components.insert(component);
 	component->OnAdded(*this);
 

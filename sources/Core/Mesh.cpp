@@ -193,3 +193,60 @@ std::ostream &	operator<<(std::ostream & o, Mesh const & r)
 	(void)r;
 	return (o);
 }
+
+void Mesh::VertexAttributes::QuadVertexAttrib(
+	const glm::vec3 & p0,
+	const glm::vec3 & p1,
+	const glm::vec3 & p2,
+	const glm::vec3 & p3,
+	Mesh::VertexAttributes * targetAttribs) noexcept
+{
+	// 0	1---0
+	// 1	| \ |
+	// 2    3---2
+	// 3
+	
+	(void)p3;
+
+	glm::vec3 normal = glm::cross(p0 - p2, p0 - p1);
+	glm::vec3 tangent = glm::cross(normal, p0 - p1);
+	glm::vec2 uvs[] = {{1, 1}, {0, 1}, {0, 0}, {1, 0}};
+
+	targetAttribs[0] = Mesh::VertexAttributes{
+		p0, normal, tangent, {0, 0, 0}, uvs[0]
+	};
+	targetAttribs[1] = Mesh::VertexAttributes{
+		p1, normal, tangent, {0, 0, 0}, uvs[1]
+	};
+	targetAttribs[2] = Mesh::VertexAttributes{
+		p2, normal, tangent, {0, 0, 0}, uvs[2]
+	};
+	targetAttribs[3] = Mesh::VertexAttributes{
+		p3, normal, tangent, {0, 0, 0}, uvs[3]
+	};
+}
+
+void Mesh::VertexAttributes::QuadVertexAttrib(float size, const glm::vec3 & normal, Mesh::VertexAttributes * targetAttribs) noexcept
+{
+	glm::vec3 right;
+	glm::vec3 forward;
+
+	if (normal == glm::vec3(0, 1, 0))
+	{
+		right = glm::vec3(1, 0, 0);
+		forward = glm::vec3(0, 0, 1);
+	}
+	else
+	{
+		right = glm::cross(normal, glm::vec3(0, 1, 0));
+		forward = glm::cross(right, normal);
+	}
+
+	float halfLength = size / 2.0f;
+	glm::vec3 p0 = -right * halfLength +  forward * halfLength;
+	glm::vec3 p1 =  right * halfLength +  forward * halfLength;
+	glm::vec3 p2 =  right * halfLength + -forward * halfLength;
+	glm::vec3 p3 = -right * halfLength + -forward * halfLength;
+
+	QuadVertexAttrib(p0, p1, p2, p3, targetAttribs);
+}

@@ -56,6 +56,11 @@ void Hierarchy::UnregisterComponentInRenderContext(RenderComponentType component
 	UnregisterComponentInRenderContext((int)componentType, index);
 }
 
+RenderContext &	Hierarchy::GetRenderContext(void)
+{
+	return _renderContext;
+}
+
 std::ostream &	operator<<(std::ostream & o, Hierarchy const & r)
 {
 	o << "tostring of the class" << std::endl;

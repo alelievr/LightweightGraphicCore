@@ -12,10 +12,11 @@ namespace LWGC
 		private:
 			RenderTarget	_target;
 
+		protected:
+			void	Render(const std::vector< Camera * > & cameras, RenderContext & context) override;
+
 		public:
 			ForwardRenderPipeline(void);
 			virtual ~ForwardRenderPipeline(void);
-
-			void	Render(const std::vector< Camera * > & cameras, const RenderContext & context) override;
 	};
 }
