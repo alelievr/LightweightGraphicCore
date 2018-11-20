@@ -42,6 +42,8 @@ void			Component::UpdateGameObjectActive(void) noexcept
 	}
 }
 
+void			Component::Initialize() noexcept {}
+
 void			Component::Enable() noexcept
 {
 	if (!enabled && gameObject->IsActive())

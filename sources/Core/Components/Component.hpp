@@ -24,7 +24,9 @@ namespace LWGC
 			Hierarchy *			hierarchy;
 			ComponentIndex		renderContextIndex;
 
-			void UpdateGameObjectActive() noexcept;
+			// Called when the vulkan is finished to initialize
+			virtual void		Initialize() noexcept;
+			void				UpdateGameObjectActive() noexcept;
 
 		public:
 			Component(void);

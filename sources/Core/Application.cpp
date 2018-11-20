@@ -3,6 +3,7 @@
 #include "Application.hpp"
 #include "Rendering/ForwardRenderPipeline.hpp"
 #include "Vulkan/VulkanInstance.hpp"
+#include "Core/Components/MeshRenderer.hpp"
 
 #include "imgui.h"
 #include "imgui_impl_glfw.h"
@@ -95,7 +96,10 @@ void			Application::Open(const std::string & name, const int width, const int he
 
 	try {
 		_renderPipeline->Initialize(&_swapChain);
-		_renderPipeline->CreateMeshes();
+		_renderPipeline->firstMeshRenderer = dynamic_cast< MeshRenderer * >(_hierarchy->GetGameObject(0)->GetComponent());
+
+	_hierarchy->Initialize();
+	
 		_renderPipeline->PrepareCommandBuffers();
 		_renderPipeline->CreateSyncObjects();
 	} catch (const std::runtime_error & e) {

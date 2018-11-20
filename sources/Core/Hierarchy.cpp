@@ -10,6 +10,14 @@ Hierarchy::~Hierarchy(void)
 {
 }
 
+void Hierarchy::Initialize(void)
+{
+	for (const auto & go : _gameObjects)
+	{
+		go->Initialize();
+	}
+}
+
 void Hierarchy::AddGameObject(GameObject * gameObject)
 {
 	gameObject->SetHierarchy(this);
@@ -19,6 +27,11 @@ void Hierarchy::AddGameObject(GameObject * gameObject)
 void Hierarchy::RemoveGameObject(GameObject * gameObject)
 {
 	_gameObjects.erase(std::remove(_gameObjects.begin(), _gameObjects.end(), gameObject), _gameObjects.end());
+}
+
+GameObject * Hierarchy::GetGameObject(int index)
+{
+	return _gameObjects[index];
 }
 
 const ComponentIndex Hierarchy::RegisterComponentInRenderContext(int componentType, Component * component) noexcept

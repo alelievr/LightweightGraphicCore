@@ -22,38 +22,43 @@ namespace LWGC
 		
 		// The private part is only used as internal render-pipeline setup and should be overwritten by a custom render pipeline
 		private:
-			// TODO: move material into the MeshRenderer
-			std::vector<VkSemaphore> imageAvailableSemaphores;
-			std::vector<VkSemaphore> renderFinishedSemaphores;
-			std::vector<VkFence> inFlightFences;
-			size_t currentFrame = 0;
+			static VulkanRenderPipeline *	pipelineInstance;
 
-			std::vector<VkCommandBuffer> commandBuffers;
-			
-			Mesh				mesh;
-			Material			material;
+			// Temporary stuff
+			MeshRenderer *					firstMeshRenderer;
+
+			std::list< Material * >			materials;
 
 		protected:
-			RenderPass			renderPass;
-			SwapChain *			swapChain;
-			VulkanInstance *	instance;
-			CommandBufferPool *	graphicCommandBufferPool;
-			bool				framebufferResized;
+			std::vector<VkSemaphore>		imageAvailableSemaphores;
+			std::vector<VkSemaphore>		renderFinishedSemaphores;
+			std::vector<VkFence>			inFlightFences;
+			std::vector<VkCommandBuffer>	commandBuffers;
+			size_t					currentFrame = 0;
+			RenderPass				renderPass;
+			SwapChain *				swapChain;
+			VulkanInstance *		instance;
+			CommandBufferPool *		graphicCommandBufferPool;
+			bool					framebufferResized;
 			
 			virtual void		CreateRenderPass(void);
 
 		public:
 			VulkanRenderPipeline(void);
 			VulkanRenderPipeline(const VulkanRenderPipeline & p) = delete;
-			virtual		~VulkanRenderPipeline(void);
+			virtual			~VulkanRenderPipeline(void);
 
 			VulkanRenderPipeline & operator=(const VulkanRenderPipeline & rhs) = delete;
 
 			virtual void	Initialize(SwapChain * swapChain);
 			virtual void	Render(const std::vector< Camera * > & cameras, const RenderContext & context) = 0;
-			virtual void	CreateMeshes(void);
 			virtual void	PrepareCommandBuffers(void);
 			virtual void	CreateSyncObjects(void);
 			virtual void	RecreateSwapChain(void);
+
+			SwapChain *		GetSwapChain(void);
+			RenderPass *	GetRenderPass(void);
+
+			static VulkanRenderPipeline *	Get();
 	};
 }

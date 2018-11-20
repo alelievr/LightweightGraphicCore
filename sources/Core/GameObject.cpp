@@ -25,7 +25,6 @@ GameObject::~GameObject(void)
 	std::cout << "Destructor of GameObject called" << std::endl;
 }
 
-
 GameObject &	GameObject::operator=(GameObject const & src)
 {
 	std::cout << "Assignment operator called" << std::endl;
@@ -38,12 +37,24 @@ GameObject &	GameObject::operator=(GameObject const & src)
 	return (*this);
 }
 
-Component *	GameObject::AddComponent(Component * component) noexcept
+void		GameObject::Initialize(void) noexcept
+{
+	for (const auto & component : _components)
+		component->Initialize();
+}
+
+Component *		GameObject::AddComponent(Component * component) noexcept
 {
 	_components.insert(component);
 	component->OnAdded(*this);
 
 	return component;
+}
+
+Component *		GameObject::GetComponent(void) noexcept
+{
+	// TODO: hardcoded single-component object
+	return *_components.begin();
 }
 
 void			GameObject::RemoveComponent(Component * component) noexcept

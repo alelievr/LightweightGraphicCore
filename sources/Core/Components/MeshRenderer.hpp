@@ -17,6 +17,8 @@ namespace LWGC
 			std::shared_ptr< Mesh >		_mesh;
 			std::shared_ptr< Material >	_material;
 
+			void		Initialize(void) noexcept override;
+
 		public:
 			MeshRenderer(void);
 			MeshRenderer(const MeshRenderer &) = delete;
@@ -34,6 +36,9 @@ namespace LWGC
 
 			void	OnEnable(void) noexcept override;
 			void	OnDisable(void) noexcept override;
+
+			void	CleanupGraphicPipeline(void) noexcept;
+			void	CreateGraphicPipeline(void) noexcept;
 
 			std::shared_ptr< Mesh >	GetMesh(void) const;
 			void	SetMesh(std::shared_ptr< Mesh > tmp);

@@ -23,6 +23,7 @@ namespace LWGC
 			Hierarchy *		_hierarchy;
 
 			void SetHierarchy(Hierarchy * hierarchy);
+			void Initialize() noexcept;
 
 		public:
 			GameObject(void);
@@ -40,6 +41,7 @@ namespace LWGC
 
 			Component *		AddComponent(Component * component) noexcept;
 			void			RemoveComponent(Component * component) noexcept;
+			Component *		GetComponent(void) noexcept;
 
 			void			SetActive(bool active);
 			bool			IsActive(void) const;
