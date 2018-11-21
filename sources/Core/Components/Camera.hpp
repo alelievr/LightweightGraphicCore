@@ -5,6 +5,7 @@
 
 #include "Core/Object.hpp"
 #include "Core/Rendering/RenderTarget.hpp"
+#include "Core/Vulkan/UniformBuffer.hpp"
 #include "Core/CameraType.hpp"
 #include "Core/GameObject.hpp"
 
@@ -13,12 +14,22 @@ namespace LWGC
 	class		Camera : public Object, public Component
 	{
 		private:
-			RenderTarget *	_target;
-			glm::vec2		_size;
-			CameraType		_cameraType;
-			float			_fov;
-			float			_nearPlane;
-			float			_farPlane;
+			struct LWGC_PerCamera
+			{
+				glm::mat4	projection;
+				glm::mat4	view;
+				glm::vec4	positionWS;
+				glm::vec4	screenSize;
+			};
+
+			RenderTarget *			_target;
+			glm::vec2				_size;
+			CameraType				_cameraType;
+			float					_fov;
+			float					_nearPlane;
+			float					_farPlane;
+			UniformBuffer			_uniformCameraBuffer;
+			VkDescriptorSetLayout	_descriptorSetLayout;
 
 		public:
 			Camera(void);
@@ -29,6 +40,8 @@ namespace LWGC
 
 			virtual void OnAdded(const GameObject &go) noexcept;
 			virtual void OnRemoved(const GameObject & go) noexcept;
+
+			virtual void Initialize(void) noexcept override;
 
 			glm::vec3	WorldToScreenPoint(glm::vec3 worldPosition);
 
@@ -51,6 +64,10 @@ namespace LWGC
 			
 			float		GetFarPlane(void) const;
 			void		SetFarPlane(float tmp);
+
+			virtual uint32_t	GetType(void) const noexcept override;
+
+			VkDescriptorSetLayout	GetDescriptorSetLayout(void) const noexcept;
 
 			static const uint32_t		type = 2;
 	};

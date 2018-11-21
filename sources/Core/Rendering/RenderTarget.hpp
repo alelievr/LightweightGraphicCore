@@ -15,6 +15,7 @@ namespace LWGC
 	class		RenderTarget
 	{
 		private:
+			// TODO: not really vulkan complient
 			GLuint		_framebuffer;
 			GLuint *	_attachmentIds;
 			std::string	_name;

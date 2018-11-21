@@ -39,5 +39,7 @@ namespace LWGC
 			static void			CheckResult(VkResult result);
 			static VkSampler	CreateSampler(VkFilter filter, VkSamplerAddressMode addressMode, uint32_t maxAniso = 0);
 			static VkSampler	CreateCompSampler(VkFilter filter, VkSamplerAddressMode addressMode, VkCompareOp compareOp);
+			static VkDescriptorSetLayoutBinding	CreateDescriptorSetLayoutBinding(int binding, VkDescriptorType descriptorType, VkShaderStageFlagBits stageFlags);
+			static void			CreateDescriptorSetLayout(std::vector< VkDescriptorSetLayoutBinding > bindings, VkDescriptorSetLayout layout);
 	};
 }

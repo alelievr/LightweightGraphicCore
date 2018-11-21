@@ -18,65 +18,58 @@
 
 #include <iostream>
 #include <string>
-#include <list>
+#include <vector>
 
 class		Transform
 {
 	private:
-		Transform *	_parent;
-		std::list< Transform >	_childs;
-		glm::vec3	_position;
-		glm::quat	_rotation;
-		glm::vec3	_scale;
+		std::shared_ptr< Transform >	_parent;
+		std::vector< std::shared_ptr< Transform > >	_childs;
+		glm::vec3						_position;
+		glm::quat						_rotation;
+		glm::vec3						_scale;
 
+		glm::mat4x4						_localToWorld;
+		glm::vec3						_up;
+		glm::vec3						_right;
+		glm::vec3						_forward;
+
+		void		UpdatePositionDatas(void) noexcept;
+		void		UpdateRotationDatas(void) noexcept;
+		void		UpdateScaleDatas(void) noexcept;
+		void		UpdateLocalToWorldMatrix(void) noexcept;
 
 	public:
 		Transform(void);
-		Transform(const Transform&);
+		Transform(const Transform &) = delete;
 		virtual ~Transform(void);
 
-		Transform &	operator=(Transform const & src);
+		Transform &	operator=(Transform const & src) = delete;
 
-		void	Rotate(const glm::vec3 & eulerAngles);
-
-		void	Rotate(const float xAngle, const float yAngle, const float zAngle);
-
-		void	RotateAround(const glm::vec3 & point, const glm::vec3 & axis, const float angle);
-
-		size_t	GetChildCount(void);
-
-		bool	IsChildOf(const Transform & t);
-
-		Transform	GetChildAt(const int index) const;
-
-		void	LookAt(const int index);
-
+		void		Rotate(const glm::vec3 & eulerAngles);
+		void		Rotate(const float xAngle, const float yAngle, const float zAngle);
+		void		RotateAround(const glm::vec3 & point, const glm::vec3 & axis, const float angle);
+		size_t		GetChildCount(void);
+		bool		IsChildOf(std::shared_ptr< Transform > t);
+		std::shared_ptr< Transform >	GetChildAt(const int index) const;
+		void		LookAt(const int index);
 		glm::vec3	TransformDirection(const glm::vec3 & direction);
-
 		glm::vec3	TransformDirection(const float x, const float y, const float z);
-
 		glm::vec3	TransformPoint(const glm::vec3 & position);
-
 		glm::vec3	TransformPoint(const float x, const float y, const float z);
+		void		Translate(const glm::vec3 & translation);
 
-		void	Translate(const glm::vec3 & translation);
-
-		Transform &	GetRoot(void);
-
-		Transform *	GetParent(void) const;
-		void	SetParent(Transform * tmp);
-		
-		std::list< Transform >	GetChilds(void) const;
-		void	SetChilds(std::list< Transform > tmp);
-		
+		std::shared_ptr< Transform >	GetRoot(void);
+		std::shared_ptr< Transform >	GetParent(void) const;
+		void		AddChild(std::shared_ptr< Transform > child);
+		void		RemoveChild(std::shared_ptr< Transform > child);
+		void		SetParent(std::shared_ptr< Transform > tmp);
 		glm::vec3	GetPosition(void) const;
-		void	SetPosition(glm::vec3 tmp);
-		
+		void		SetPosition(glm::vec3 tmp);
 		glm::quat	GetRotation(void) const;
-		void	SetRotation(glm::quat tmp);
-		
+		void		SetRotation(glm::quat tmp);
 		glm::vec3	GetScale(void) const;
-		void	SetScale(glm::vec3 tmp);
+		void		SetScale(glm::vec3 tmp);
 		
 		glm::vec3	GetUp(void) const;
 		glm::vec3	GetDown(void) const;
@@ -85,6 +78,7 @@ class		Transform
 		glm::vec3	GetForward(void) const;
 		glm::vec3	GetBack(void) const;
 		glm::vec3	GetEulerAngles(void) const;
+		glm::mat4x4	GetLocalToWorldMatrix(void) const;
 };
 
 std::ostream &	operator<<(std::ostream & o, Transform const & r);

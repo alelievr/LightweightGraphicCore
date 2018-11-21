@@ -26,15 +26,11 @@ Object &	Object::operator=(Object const & src)
 	std::cout << "Assignment operator called" << std::endl;
 
 	if (this != &src) {
-		this->_trasform = src.GetTransform();
 		this->_name = src.GetName();
 		this->_flags = src.GetFlags();
 	}
 	return (*this);
 }
-
-Transform		Object::GetTransform(void) const { return (this->_trasform); }
-void		Object::SetTransform(Transform tmp) { this->_trasform = tmp; }
 
 std::string		Object::GetName(void) const { return (this->_name); }
 void		Object::SetName(std::string tmp) { this->_name = tmp; }

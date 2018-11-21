@@ -3,6 +3,7 @@
 
 #include "Core/PrimitiveMeshFactory.hpp"
 
+#include <cmath.h>
 #include <unordered_set>
 
 using namespace LWGC;
@@ -30,6 +31,9 @@ VulkanRenderPipeline::~VulkanRenderPipeline(void)
 		vkDestroySemaphore(device, imageAvailableSemaphores[i], nullptr);
 		vkDestroyFence(device, inFlightFences[i], nullptr);
 	}
+
+	vkDestroyBuffer(device, uniformPerFrame.buffer, nullptr);
+	vkFreeMemory(device, uniformPerFrame.memory, nullptr);
 }
 
 void                VulkanRenderPipeline::Initialize(SwapChain * swapChain)
@@ -40,8 +44,28 @@ void                VulkanRenderPipeline::Initialize(SwapChain * swapChain)
 	CreateRenderPass();
 
 	// Allocate primary command buffers
-	printf("Allocated command buffers !\n");
 	instance->GetGraphicCommandBufferPool()->Allocate(VK_COMMAND_BUFFER_LEVEL_PRIMARY, swapChainCommandBuffers, swapChain->GetImageCount());
+
+	// Allocate LWGC_PerFrame uniform buffer
+	Vk::CreateBuffer(sizeof(LWGC_PerFrame), VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, uniformPerFrame.buffer, uniformPerFrame.memory);
+}
+
+void				VulkanRenderPipeline::CreateDescriptorSetLayouts(void)
+{
+	uniformSetLayouts.resize(3);
+
+	// LWGC per framce cbuffer layout
+	auto layoutBinding = Vk::CreateDescriptorSetLayoutBinding(0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, VK_SHADER_STAGE_VERTEX_BIT);
+	Vk::CreateDescriptorSetLayout({layoutBinding}, uniformSetLayouts[0]);
+
+	// LWGC per camera cbuffer layout
+	uniformSetLayouts[1] = Camera::GetDescriptorSetLayout();
+
+	// LWGC per object cbuffer layout
+	uniformSetLayouts[2] = MeshRenderer::GetDescriptorSetLayout();
+
+	// LWGC per material cbuffer layout
+	uniformSetLayouts[3] = Material::GetDescriptorSetLayout();
 }
 
 void				VulkanRenderPipeline::CreateRenderPass(void)
@@ -153,8 +177,27 @@ void			VulkanRenderPipeline::RecreateSwapChain(RenderContext & renderContext)
 		meshRenderer->CleanupGraphicPipeline();
 }
 
+void			VulkanRenderPipeline::UpdatePerframeUnformBuffer(void) noexcept
+{
+	auto device = instance->GetDevice();
+
+	perFrame.time.x = static_cast< float >(glfwGetTime());
+	perFrame.time.y = sin(perFrame.time.x);
+	perFrame.time.z = cos(perFrame.time.x);
+	perFrame.time.w = 0; // TODO: delta time
+
+	// Upload datas to GPU
+	void* data;
+	vkMapMemory(device, uniformPerFrame.memory, 0, sizeof(LWGC_PerFrame), 0, &data);
+	printf("Perframe buffer memory zone: %p\n", data);
+	memcpy(data, &perFrame, sizeof(LWGC_PerFrame));
+	vkUnmapMemory(device, uniformPerFrame.memory);
+}
+
 void			VulkanRenderPipeline::RenderInternal(const std::vector< Camera * > & cameras, RenderContext & context)
 {
+	UpdatePerframeUnformBuffer();
+
 	auto device = instance->GetDevice();
 	vkWaitForFences(device, 1, &inFlightFences[currentFrame], VK_TRUE, std::numeric_limits<uint64_t>::max());
 
@@ -249,3 +292,8 @@ void	VulkanRenderPipeline::Render(const std::vector< Camera * > & cameras, Rende
 
 SwapChain *		VulkanRenderPipeline::GetSwapChain(void) { return swapChain; }
 RenderPass *	VulkanRenderPipeline::GetRenderPass(void) { return &renderPass; }
+
+const std::vector< VkDescriptorSetLayout >	GetUniformSetLayouts(void) const noexcept
+{
+	return uniformSetLayouts;
+}

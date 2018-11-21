@@ -30,7 +30,9 @@ int			main(void)
 	app.Init();
 
 	LWGC::Component * comp = new LWGC::MeshRenderer(LWGC::PrimitiveType::Cube);
-	hierarchy->AddGameObject(new LWGC::GameObject(comp));
+	auto go = new LWGC::GameObject(comp);
+	go->GetTransform()->Translate(glm::vec3(0, 1, 0));
+	hierarchy->AddGameObject(go);
 
 	//open window
 	app.Open("Test Window", 1920, 1080, LWGC::WindowFlag::Resizable | LWGC::WindowFlag::Decorated | LWGC::WindowFlag::Focused);

@@ -5,6 +5,7 @@ using namespace LWGC;
 GameObject::GameObject(void) : _active(false), _initialized(false)
 {
 	std::cout << "Default constructor of GameObject called" << std::endl;
+	this->_transform = std::make_shared< Transform >();
 	this->_name = "GameObject";
 	this->_flags = 0;
 }
@@ -29,9 +30,9 @@ GameObject &	GameObject::operator=(GameObject const & src)
 {
 	std::cout << "Assignment operator called" << std::endl;
 
-	if (this != &src) {
+	if (this != &src)
+	{
 		this->_initialized = src._initialized;
-		this->_transform = src.GetTransform();
 		this->_name = src.GetName();
 		this->_flags = src.GetFlags();
 	}
@@ -77,8 +78,7 @@ void			GameObject::RemoveComponent(Component * component) noexcept
 void			GameObject::SetHierarchy(Hierarchy * hierarchy) { _hierarchy = hierarchy; }
 Hierarchy *		GameObject::GetHierarchy(void) const noexcept { return _hierarchy; }
 
-Transform		GameObject::GetTransform(void) const { return (this->_transform); }
-void			GameObject::SetTransform(Transform tmp) { this->_transform = tmp; }
+std::shared_ptr< Transform >	GameObject::GetTransform(void) const { return (this->_transform); }
 
 void			GameObject::SetActive(bool active)
 {

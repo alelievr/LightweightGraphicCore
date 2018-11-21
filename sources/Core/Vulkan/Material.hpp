@@ -4,6 +4,7 @@
 #include <string>
 
 #include "Core/Texture.hpp"
+#include "Core/Vulkan/UniformBuffer.hpp"
 #include "IncludeDeps.hpp"
 
 #include VULKAN_INCLUDE
@@ -11,23 +12,23 @@
 #include "SwapChain.hpp"
 #include "Vk.hpp"
 
-struct		UniformBuffers
-{
-	VkBuffer		buffer;
-	VkDeviceMemory	memory;
-};
-
 namespace LWGC
 {
 	class		Material
 	{
 		private:
-			static VkDescriptorPool			_descriptorPool;
+			struct LWGC_PerMaterial
+			{
+				glm::vec4		albedo;
+			};
+
+			static VkDescriptorPool			descriptorPool;
+			static VkDescriptorSetLayout	descriptorSetLayout;
 			VkDescriptorSet					_descriptorSet;
-			VkDescriptorSetLayout			_descriptorSetLayout;
 			VkPipelineLayout				_graphicPipelineLayout;
 			VkPipeline						_graphicPipeline;
-			std::vector< UniformBuffers >	_uniformBuffers;
+			LWGC_PerMaterial				_perMaterial;
+			UniformBuffer					_uniformPerMaterial;
 			std::vector< VkSampler >		_samplers;
 			std::vector< Texture * >		_textures;
 			VulkanInstance *				_instance;
@@ -57,13 +58,15 @@ namespace LWGC
 			void	UpdateUniformBuffer(void);
 	
 			VkDescriptorPool	GetDescriptorPool(void) const;
-			void	SetDescriptorPool(VkDescriptorPool tmp);
+			void				SetDescriptorPool(VkDescriptorPool tmp);
 			
 			VkPipelineLayout	GetGraphicPipelineLayout(void) const;
-			void	SetGraphicPipelineLayout(VkPipelineLayout tmp);
+			void				SetGraphicPipelineLayout(VkPipelineLayout tmp);
 			
-			VkPipeline	GetGraphicPipeline(void) const;
-			void	SetGraphicPipeline(VkPipeline tmp);
+			VkPipeline			GetGraphicPipeline(void) const;
+			void				SetGraphicPipeline(VkPipeline tmp);
+			
+			static VkDescriptorSetLayout	GetDescriptorSetLayout(void);
 	};
 	
 	std::ostream &	operator<<(std::ostream & o, Material const & r);

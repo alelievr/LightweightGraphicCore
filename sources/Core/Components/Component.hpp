@@ -44,6 +44,6 @@ namespace LWGC
 			void			Enable() noexcept;
 			void			Disable() noexcept;
 
-			virtual uint32_t	GetType() const noexcept;
+			virtual uint32_t	GetType(void) const noexcept;
 	};
 }
