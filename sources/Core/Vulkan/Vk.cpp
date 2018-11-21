@@ -151,7 +151,9 @@ void			Vk::CheckResult(VkResult result)
 {
 	if (result == 0)
 		return;
+		
 	printf("VkResult %d\n", result);
+	
     if (result < 0)
         abort();
 }
@@ -220,4 +222,29 @@ void			Vk::Initialize(void)
 	Samplers::nearestRepeat = CreateSampler(VK_FILTER_NEAREST, VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_BORDER, 0);
 	Samplers::nearestClamp = CreateSampler(VK_FILTER_NEAREST, VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_BORDER, 0);
 	Samplers::depthCompare = CreateCompSampler(VK_FILTER_LINEAR, VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_BORDER, VK_COMPARE_OP_LESS);
+}
+
+VkDescriptorSetLayoutBinding	Vk::CreateDescriptorSetLayoutBinding(int binding, VkDescriptorType descriptorType, VkShaderStageFlagBits stageFlags)
+{
+	// LWGC per frame cbuffer layout
+	VkDescriptorSetLayoutBinding layoutBinding = {};
+	layoutBinding.binding = binding;
+	layoutBinding.descriptorCount = 1;
+	layoutBinding.descriptorType = descriptorType;
+	layoutBinding.pImmutableSamplers = nullptr;
+	layoutBinding.stageFlags = stageFlags;
+
+	return layoutBinding;
+}
+
+void			Vk::CreateDescriptorSetLayout(std::vector< VkDescriptorSetLayoutBinding > bindings, VkDescriptorSetLayout layout)
+{
+
+	VkDescriptorSetLayoutCreateInfo layoutInfo = {};
+	layoutInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
+	layoutInfo.bindingCount = static_cast<uint32_t>(bindings.size());
+	layoutInfo.pBindings = bindings.data();
+
+	if (vkCreateDescriptorSetLayout(VulkanInstance::Get()->GetDevice(), &layoutInfo, nullptr, &layout) != VK_SUCCESS)
+	    throw std::runtime_error("failed to create descriptor set layout!");
 }

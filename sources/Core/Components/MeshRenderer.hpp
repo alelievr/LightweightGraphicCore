@@ -6,6 +6,7 @@
 #include "Core/Object.hpp"
 #include "Core/Mesh.hpp"
 #include "Core/Vulkan/Material.hpp"
+#include "Core/Vulkan/UniformBuffer.hpp"
 #include "Component.hpp"
 
 namespace LWGC
@@ -17,6 +18,9 @@ namespace LWGC
 			std::shared_ptr< Material >	_material;
 			VkCommandBuffer				_drawCommandBuffer;
 			ComponentIndex				_renderContextIndex;
+			UniformBuffer				_uniformModelBuffer;
+			VkDescriptorSetLayout		_descriptorSetLayout;
+			VlDescriptorSet				_descriptorSet;
 
 			void		Initialize(void) noexcept override;
 			void		RecordDrawCommandBuffer(void);
@@ -50,7 +54,7 @@ namespace LWGC
 
 			VkCommandBuffer		GetDrawCommandBuffer(void) const;
 
-			virtual uint32_t			GetType() const noexcept override;
+			virtual uint32_t			GetType(void) const noexcept override;
 			static const uint32_t		type = 0;
 	};
 

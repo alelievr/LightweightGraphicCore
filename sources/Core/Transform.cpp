@@ -1,20 +1,13 @@
 #include "Transform.hpp"
-#include "glm/gtc/quaternion.hpp"
 
+#include <algorithm>
 
 Transform::Transform(void)
 {
-	std::cout << "Default constructor of Transform called" << std::endl;
 	this->_parent = nullptr;
 	this->_position = glm::vec3(0, 0, 0);
 	this->_rotation = glm::quat(0, 0, 0, 0);
 	this->_scale = glm::vec3(1, 1, 1);
-}
-
-Transform::Transform(Transform const & src)
-{
-	*this = src;
-	std::cout << "Copy constructor called" << std::endl;
 }
 
 Transform::~Transform(void)
@@ -23,32 +16,32 @@ Transform::~Transform(void)
 
 void		Transform::Rotate(const glm::vec3 & eulerAngles)
 {
-	
+	_rotation *= glm::quat(eulerAngles);
 }
 
 void		Transform::Rotate(const float xAngle, const float yAngle, const float zAngle)
 {
-	
+	Rotate(glm::vec3(xAngle, yAngle, zAngle));
 }
 
 void		Transform::RotateAround(const glm::vec3 & point, const glm::vec3 & axis, const float angle)
 {
-	
+	std::cout << "RotateAround: TODO" << std::endl;
 }
 
 size_t		Transform::GetChildCount(void)
 {
-	
+	return _childs.size();
 }
 
-bool		Transform::IsChildOf(const Transform & t)
+bool		Transform::IsChildOf(std::shared_ptr< Transform > t)
 {
-	
+	std::find(t->_childs.begin(), t->_childs.end(), t);
 }
 
-Transform		Transform::GetChildAt(const int index) const
+std::shared_ptr< Transform >		Transform::GetChildAt(const int index) const
 {
-	
+	return _childs[index];
 }
 
 void		Transform::LookAt(const int index)
@@ -78,34 +71,44 @@ glm::vec3		Transform::TransformPoint(const float x, const float y, const float z
 
 void		Transform::Translate(const glm::vec3 & translation)
 {
-	
+	UpdatePositionDatas();
 }
 
-Transform &		Transform::GetRoot(void)
+std::shared_ptr< Transform >	Transform::GetRoot(void)
 {
 	
 }
 
-
-Transform &	Transform::operator=(Transform const & src)
+void			Transform::UpdatePositionDatas(void) noexcept
 {
-	std::cout << "Assignment operator called" << std::endl;
+	UpdateLocalToWorldMatrix();
 
-	if (this != &src) {
-		this->_parent = src.GetParent();
-		this->_childs = src.GetChilds();
-		this->_position = src.GetPosition();
-		this->_rotation = src.GetRotation();
-		this->_scale = src.GetScale();
-	}
-	return (*this);
+	for (const auto & child : _childs)
+		child->UpdatePositionDatas();
 }
 
-Transform *		Transform::GetParent(void) const { return (this->_parent); }
-void			Transform::SetParent(Transform * tmp) { this->_parent = tmp; }
+void			Transform::UpdateRotationDatas(void) noexcept
+{
+	UpdateLocalToWorldMatrix();
+	
+	for (const auto & child : _childs)
+		child->UpdateRotationDatas();
+}
 
-std::list< Transform >		Transform::GetChilds(void) const { return (this->_childs); }
-void			Transform::SetChilds(std::list< Transform > tmp) { this->_childs = tmp; }
+void			Transform::UpdateScaleDatas(void) noexcept
+{
+	UpdateLocalToWorldMatrix();
+	
+	for (const auto & child : _childs)
+		child->UpdateScaleDatas();
+}
+
+void			Transform::UpdateLocalToWorldMatrix(void) noexcept
+{
+	_localToWorld = glm::toMat4(_rotation);
+}
+
+void			Transform::SetParent(std::shared_ptr< Transform > tmp) { this->_parent = tmp; }
 
 glm::vec3		Transform::GetPosition(void) const { return (this->_position); }
 void			Transform::SetPosition(glm::vec3 tmp) { this->_position = tmp; }

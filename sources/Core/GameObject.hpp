@@ -17,7 +17,7 @@ namespace LWGC
 		friend class Hierarchy;
 
 		private:
-			Transform		_transform;
+			std::shared_ptr< Transform >	_transform;
 			bool			_active;
 			std::unordered_set< Component * >	_components;
 			Hierarchy *		_hierarchy;
@@ -37,8 +37,7 @@ namespace LWGC
 
 			Hierarchy *		GetHierarchy(void) const noexcept;
 
-			Transform		GetTransform(void) const;
-			void			SetTransform(Transform tmp);
+			std::shared_ptr< Transform >	GetTransform(void) const;
 
 			Component *		AddComponent(Component * component) noexcept;
 			void			RemoveComponent(Component * component) noexcept;

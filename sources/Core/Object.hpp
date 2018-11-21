@@ -10,7 +10,6 @@ namespace LWGC
 	class		Object
 	{
 		protected:
-			Transform	_trasform;
 			std::string	_name;
 			int			_flags;
 
@@ -21,9 +20,6 @@ namespace LWGC
 
 			Object &	operator=(Object const & src);
 
-			Transform	GetTransform(void) const;
-			void		SetTransform(Transform tmp);
-			
 			std::string	GetName(void) const;
 			void		SetName(std::string newName);
 			

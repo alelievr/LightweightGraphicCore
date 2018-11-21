@@ -32,6 +32,8 @@ void		MeshRenderer::Initialize(void) noexcept
 
 	_drawCommandBuffer = VulkanInstance::Get()->GetGraphicCommandBufferPool()->Allocate(VK_COMMAND_BUFFER_LEVEL_SECONDARY);
 
+	// TODO: create descriptor set layout
+
 	RecordDrawCommandBuffer();
 }
 

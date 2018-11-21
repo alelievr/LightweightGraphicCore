@@ -61,6 +61,10 @@ void			VulkanInstance::InitializeSurface(VkSurfaceKHR surface)
 	ChoosePhysicalDevice();
 	CreateLogicalDevice();
 	CreateCommandBufferPools();
+
+	VkPhysicalDeviceProperties props;
+    vkGetPhysicalDeviceProperties(_physicalDevice, &props);
+	printf("Max bindings: %i\n", props.limits.maxVertexInputBindings);
 }
 
 void			VulkanInstance::UpdateSurface(void)

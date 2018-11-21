@@ -21,15 +21,24 @@ namespace LWGC
 		
 		// The private part is only used as internal render-pipeline setup and should be overwritten by a custom render pipeline
 		private:
+			struct LWGC_PerFrame
+			{
+				glm::vec4	time;
+			};
+
 			static VulkanRenderPipeline *	pipelineInstance;
 			std::vector< VkCommandBuffer >	swapChainCommandBuffers;
+			LWGC_PerFrame					perFrame;
+			UniformBuffer					uniformPerFrame;
 			
 			void				RenderInternal(const std::vector< Camera * > & cameras, RenderContext & context);
+			void				UpdatePerframeUnformBuffer(void) noexcept;
 
 		protected:
 			std::vector<VkSemaphore>		imageAvailableSemaphores;
 			std::vector<VkSemaphore>		renderFinishedSemaphores;
 			std::vector<VkFence>			inFlightFences;
+			std::vector< VkDescriptorSetLayout >	uniformSetLayouts;
 			size_t					currentFrame = 0;
 			RenderPass				renderPass;
 			SwapChain *				swapChain;
@@ -42,6 +51,7 @@ namespace LWGC
 			void				EndRenderPass(void);
 			virtual void		RecreateSwapChain(RenderContext & renderContext);
 			virtual void		Render(const std::vector< Camera * > & cameras, RenderContext & context) = 0;
+			virtual void		CreateDescriptorSetLayouts(void);
 
 		public:
 			VulkanRenderPipeline(void);
@@ -55,6 +65,8 @@ namespace LWGC
 
 			SwapChain *		GetSwapChain(void);
 			RenderPass *	GetRenderPass(void);
+
+			static const std::vector< VkDescriptorSetLayout >	GetUniformSetLayouts(void) const noexcept;
 
 			static VulkanRenderPipeline *	Get();
 	};
