@@ -8,6 +8,7 @@
 #include "IncludeDeps.hpp"
 
 #include VULKAN_INCLUDE
+#include GLM_INCLUDE
 #include "VulkanInstance.hpp"
 #include "SwapChain.hpp"
 #include "Vk.hpp"
@@ -22,7 +23,6 @@ namespace LWGC
 				glm::vec4		albedo;
 			};
 
-			static VkDescriptorPool			descriptorPool;
 			static VkDescriptorSetLayout	descriptorSetLayout;
 			VkDescriptorSet					_descriptorSet;
 			VkPipelineLayout				_graphicPipelineLayout;
@@ -57,9 +57,6 @@ namespace LWGC
 			void	BindDescriptorSets(VkCommandBuffer cmd, VkPipelineBindPoint bindPoint);
 			void	UpdateUniformBuffer(void);
 	
-			VkDescriptorPool	GetDescriptorPool(void) const;
-			void				SetDescriptorPool(VkDescriptorPool tmp);
-			
 			VkPipelineLayout	GetGraphicPipelineLayout(void) const;
 			void				SetGraphicPipelineLayout(VkPipelineLayout tmp);
 			

@@ -14,13 +14,20 @@ namespace LWGC
 	class		MeshRenderer : public Object, public Component
 	{
 		private:
+			struct LWGC_PerObject
+			{
+				glm::mat4	model;
+			};
+
 			std::shared_ptr< Mesh >		_mesh;
 			std::shared_ptr< Material >	_material;
 			VkCommandBuffer				_drawCommandBuffer;
 			ComponentIndex				_renderContextIndex;
 			UniformBuffer				_uniformModelBuffer;
-			VkDescriptorSetLayout		_descriptorSetLayout;
-			VlDescriptorSet				_descriptorSet;
+			VkDescriptorSet				_descriptorSet;
+			bool						_initDescriptorSetLayout;
+			
+			static VkDescriptorSetLayout	_descriptorSetLayout;
 
 			void		Initialize(void) noexcept override;
 			void		RecordDrawCommandBuffer(void);
@@ -53,6 +60,8 @@ namespace LWGC
 			void	SetMaterial(std::shared_ptr< Material > tmp);
 
 			VkCommandBuffer		GetDrawCommandBuffer(void) const;
+
+			static VkDescriptorSetLayout	GetDescriptorSetLayout(void) noexcept;
 
 			virtual uint32_t			GetType(void) const noexcept override;
 			static const uint32_t		type = 0;

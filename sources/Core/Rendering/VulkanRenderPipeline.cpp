@@ -3,7 +3,7 @@
 
 #include "Core/PrimitiveMeshFactory.hpp"
 
-#include <cmath.h>
+#include <cmath>
 #include <unordered_set>
 
 using namespace LWGC;
@@ -48,6 +48,9 @@ void                VulkanRenderPipeline::Initialize(SwapChain * swapChain)
 
 	// Allocate LWGC_PerFrame uniform buffer
 	Vk::CreateBuffer(sizeof(LWGC_PerFrame), VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, uniformPerFrame.buffer, uniformPerFrame.memory);
+
+	CreateDescriptorSetLayouts();
+	CreatePerFrameDescriptorSet();
 }
 
 void				VulkanRenderPipeline::CreateDescriptorSetLayouts(void)
@@ -66,6 +69,35 @@ void				VulkanRenderPipeline::CreateDescriptorSetLayouts(void)
 
 	// LWGC per material cbuffer layout
 	uniformSetLayouts[3] = Material::GetDescriptorSetLayout();
+}
+
+void				VulkanRenderPipeline::CreatePerFrameDescriptorSet(void)
+{
+	std::vector<VkDescriptorSetLayout> layouts(1, uniformSetLayouts[0]);
+	VkDescriptorSetAllocateInfo allocInfo = {};
+	allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
+	allocInfo.descriptorPool = instance->GetDescriptorPool();
+	allocInfo.descriptorSetCount = 1u;
+	allocInfo.pSetLayouts = &uniformSetLayouts[0]; // First layout set is per frame cbuffer
+
+	if (vkAllocateDescriptorSets(device, &allocInfo, &_descriptorSet) != VK_SUCCESS)
+		throw std::runtime_error("failed to allocate descriptor sets!");
+
+	VkDescriptorBufferInfo bufferInfo = {};
+	bufferInfo.buffer = uniformPerFrame.buffer;
+	bufferInfo.offset = 0;
+	bufferInfo.range = sizeof(LWGC_PerFrame);
+
+	VkWriteDescriptorSet descriptorWrite = {};
+	descriptorWrite.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+	descriptorWrite.dstSet = _descriptorSet;
+	descriptorWrite.dstBinding = 0;
+	descriptorWrite.dstArrayElement = 0;
+	descriptorWrite.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+	descriptorWrite.descriptorCount = 1;
+	descriptorWrite.pBufferInfo = &bufferInfo;
+
+	vkUpdateDescriptorSets(device, 1, &descriptorWrite, 0, nullptr);
 }
 
 void				VulkanRenderPipeline::CreateRenderPass(void)
@@ -293,7 +325,7 @@ void	VulkanRenderPipeline::Render(const std::vector< Camera * > & cameras, Rende
 SwapChain *		VulkanRenderPipeline::GetSwapChain(void) { return swapChain; }
 RenderPass *	VulkanRenderPipeline::GetRenderPass(void) { return &renderPass; }
 
-const std::vector< VkDescriptorSetLayout >	GetUniformSetLayouts(void) const noexcept
+const std::vector< VkDescriptorSetLayout >	GetUniformSetLayouts(void) noexcept
 {
 	return uniformSetLayouts;
 }
