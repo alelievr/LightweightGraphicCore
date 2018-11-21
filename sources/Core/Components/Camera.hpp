@@ -29,7 +29,8 @@ namespace LWGC
 			float					_nearPlane;
 			float					_farPlane;
 			UniformBuffer			_uniformCameraBuffer;
-			VkDescriptorSetLayout	_descriptorSetLayout;
+			static VkDescriptorSetLayout	_descriptorSetLayout;
+			bool					_initDescriptorSetLayout;
 
 		public:
 			Camera(void);
@@ -38,8 +39,8 @@ namespace LWGC
 
 			Camera &	operator=(Camera const & src) = delete;
 
-			virtual void OnAdded(const GameObject &go) noexcept;
-			virtual void OnRemoved(const GameObject & go) noexcept;
+			virtual void OnAdded(const GameObject &go) noexcept override;
+			virtual void OnRemoved(const GameObject & go) noexcept override;
 
 			virtual void Initialize(void) noexcept override;
 
@@ -67,7 +68,7 @@ namespace LWGC
 
 			virtual uint32_t	GetType(void) const noexcept override;
 
-			VkDescriptorSetLayout	GetDescriptorSetLayout(void) const noexcept;
+			static VkDescriptorSetLayout	GetDescriptorSetLayout(void) noexcept;
 
 			static const uint32_t		type = 2;
 	};

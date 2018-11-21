@@ -24,6 +24,7 @@ namespace LWGC
 			std::string					_applicationName;
 			bool						_enableValidationLayers;
 			VkDebugUtilsMessengerEXT	_callback;
+			VkDescriptorPool			_descriptorPool;
 	
 			uint32_t					_graphicQueueIndex;
 			VkQueue						_graphicQueue;
@@ -55,6 +56,7 @@ namespace LWGC
 			void		CreateInstance(void);
 			void		CreateLogicalDevice(void);
 			void		CreateCommandBufferPools(void) noexcept;
+			void		CreateDescriptorPool(void) noexcept;
 			std::vector<const char *>	GetRequiredExtensions(void) noexcept;
 	
 			VkResult	CreateDebugUtilsMessengerEXT(const VkDebugUtilsMessengerCreateInfoEXT* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkDebugUtilsMessengerEXT* pCallback) noexcept;
@@ -94,6 +96,8 @@ namespace LWGC
 			const std::vector< VkPresentModeKHR >	GetSupportedPresentModes(void) const noexcept;
 			const VkSurfaceCapabilitiesKHR			GetSurfaceCapabilities(void) const noexcept;
 			
+			VkDescriptorPool	GetDescriptorPool(void) const noexcept;
+
 			VkPhysicalDevice	GetPhysicalDevice(void) const noexcept;
 			VkDevice			GetDevice(void) const noexcept;
 	

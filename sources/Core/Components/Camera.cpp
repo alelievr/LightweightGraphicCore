@@ -4,7 +4,9 @@
 
 using namespace LWGC;
 
-Camera::Camera(void)
+VkDescriptorSetLayout Camera::_descriptorSetLayout = VK_NULL_HANDLE;
+
+Camera::Camera(void) : _initDescriptorSetLayout(false)
 {
 	std::cout << "Default constructor of Camera called" << std::endl;
 	this->_target = new RenderTarget();
@@ -12,20 +14,29 @@ Camera::Camera(void)
 	this->_fov = 0;
 	this->_nearPlane = 0;
 	this->_farPlane = 0;
+
+	if (_descriptorSetLayout == VK_NULL_HANDLE)
+	{
+		_initDescriptorSetLayout = true;
+	}
 }
 
 Camera::~Camera(void)
 {
-	vkDestroyDescriptorSetLayout(_device, _descriptorSetLayout, nullptr);
+	auto device = VulkanInstance::Get()->GetDevice();
 
-	std::cout << "Destructor of Camera called" << std::endl;
+	if (_initDescriptorSetLayout)
+		vkDestroyDescriptorSetLayout(device, _descriptorSetLayout, nullptr);
+
+	vkDestroyBuffer(device, _uniformCameraBuffer.buffer, nullptr);
+	vkFreeMemory(device, _uniformCameraBuffer.memory, nullptr);
 }
 
-void OnAdded(const GameObject & go) noexcept
+void			Camera::OnAdded(const GameObject & go) noexcept
 {
 }
 
-void OnRemoved(const GameObject & go) noexcept
+void			Camera::OnRemoved(const GameObject & go) noexcept
 {
 	(void)go;
 }
@@ -60,6 +71,11 @@ void		Camera::SetFarPlane(float tmp) { this->_farPlane = tmp; }
 
 void		Camera::Initialize(void) noexcept
 {
+	if (_initDescriptorSetLayout)
+	{
+		std::cout << "Create descriptor set layout !" << std::endl;
+	}
+
 	Vk::CreateBuffer(
 		sizeof(LWGC_PerCamera),
 		VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
@@ -69,12 +85,12 @@ void		Camera::Initialize(void) noexcept
 	);
 }
 
-VkDescriptorSetLayout	Camera::GetDescriptorSetLayout(void) const noexcept
+VkDescriptorSetLayout	Camera::GetDescriptorSetLayout(void) noexcept
 {
 	return _descriptorSetLayout;
 }
 
-uint32_t	Camera::GetType(void) const
+uint32_t	Camera::GetType(void) const noexcept
 {
 	return type;
 }

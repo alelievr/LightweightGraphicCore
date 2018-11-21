@@ -14,12 +14,10 @@
 
 using namespace LWGC;
 
-VkDescriptorPool Material::descriptorPool;
 VkDescriptorSetLayout Material::descriptorSetLayout;
 
 Material::Material(void)
 {
-	this->descriptorPool = VK_NULL_HANDLE;
 	this->_graphicPipelineLayout = VK_NULL_HANDLE;
 	this->_graphicPipeline = VK_NULL_HANDLE;
 }
@@ -38,7 +36,6 @@ Material::~Material(void)
 	delete _textures[0];
 
 	vkDestroySampler(_device, _samplers[0], nullptr);
-	vkDestroyDescriptorPool(_device, descriptorPool, nullptr);
 
 	// Warning: destroying any material will destroy the layout for every other materials !
 	vkDestroyDescriptorSetLayout(_device, descriptorSetLayout, nullptr);
@@ -51,7 +48,6 @@ Material &	Material::operator=(Material const & src)
 {
 	if (this != &src)
 	{
-		this->descriptorPool = src.descriptorPool;
 		this->_graphicPipelineLayout = src._graphicPipelineLayout;
 		this->_graphicPipeline = src._graphicPipeline;
 		this->_uniformPerMaterial = src._uniformPerMaterial;
@@ -305,31 +301,14 @@ void					Material::CreateUniformBuffer(void)
 
 void					Material::CreateDescriptorPool(void)
 {
-	if (descriptorPool != VK_NULL_HANDLE)
-		return ;
-	
-	std::array<VkDescriptorPoolSize, 2> poolSizes = {};
-	poolSizes[0].type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-	poolSizes[0].descriptorCount = static_cast<uint32_t>(1);
-	poolSizes[1].type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
-	poolSizes[1].descriptorCount = static_cast<uint32_t>(1);
-
-	VkDescriptorPoolCreateInfo poolInfo = {};
-	poolInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
-	poolInfo.poolSizeCount = static_cast<uint32_t>(poolSizes.size());
-	poolInfo.pPoolSizes = poolSizes.data();
-	poolInfo.maxSets = static_cast<uint32_t>(2);
-
-	if (vkCreateDescriptorPool(_device, &poolInfo, nullptr, &descriptorPool) != VK_SUCCESS)
-	    throw std::runtime_error("failed to create descriptor pool!");
 }
 
 void					Material::UpdateUniformBuffer()
 {
-	static auto startTime = std::chrono::high_resolution_clock::now();
+	// static auto startTime = std::chrono::high_resolution_clock::now();
 
-	auto currentTime = std::chrono::high_resolution_clock::now();
-	float time = std::chrono::duration<float, std::chrono::seconds::period>(currentTime - startTime).count();
+	// auto currentTime = std::chrono::high_resolution_clock::now();
+	// float time = std::chrono::duration<float, std::chrono::seconds::period>(currentTime - startTime).count();
 
 	LWGC_PerMaterial perMaterial = {};
 	perMaterial.albedo = glm::vec4(1, 1, 0, 1);
@@ -352,8 +331,8 @@ void					Material::CreateDescriptorSets(void)
 	std::vector<VkDescriptorSetLayout> layouts(1, descriptorSetLayout);
 	VkDescriptorSetAllocateInfo allocInfo = {};
 	allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
-	allocInfo.descriptorPool = descriptorPool;
-	allocInfo.descriptorSetCount = static_cast<uint32_t>(1);
+	allocInfo.descriptorPool = _instance->GetDescriptorPool();
+	allocInfo.descriptorSetCount = 1u;
 	allocInfo.pSetLayouts = layouts.data();
 
 	if (vkAllocateDescriptorSets(_device, &allocInfo, &_descriptorSet) != VK_SUCCESS)
@@ -396,9 +375,6 @@ void					Material::BindDescriptorSets(VkCommandBuffer cmd, VkPipelineBindPoint b
 }
 
 // TODO: move this elsewhere
-
-VkDescriptorPool		Material::GetDescriptorPool(void) const { return (this->descriptorPool); }
-void					Material::SetDescriptorPool(VkDescriptorPool tmp) { this->descriptorPool = tmp; }
 
 VkPipelineLayout		Material::GetGraphicPipelineLayout(void) const { return (this->_graphicPipelineLayout); }
 void					Material::SetGraphicPipelineLayout(VkPipelineLayout tmp) { this->_graphicPipelineLayout = tmp; }
