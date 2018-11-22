@@ -8,7 +8,8 @@
 
 using namespace LWGC;
 
-VulkanRenderPipeline * VulkanRenderPipeline::pipelineInstance = nullptr;
+VulkanRenderPipeline *					VulkanRenderPipeline::pipelineInstance = nullptr;
+std::vector< VkDescriptorSetLayout >	VulkanRenderPipeline::uniformSetLayouts;
 
 VulkanRenderPipeline * VulkanRenderPipeline::Get() { return pipelineInstance; }
 
@@ -21,9 +22,7 @@ VulkanRenderPipeline::VulkanRenderPipeline(void) : framebufferResized(false)
 
 VulkanRenderPipeline::~VulkanRenderPipeline(void)
 {
-	vkDeviceWaitIdle(instance->GetDevice());
-
-	auto device = instance->GetDevice();
+	vkDeviceWaitIdle(device);
 
 	for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++)
 	{
@@ -39,6 +38,7 @@ VulkanRenderPipeline::~VulkanRenderPipeline(void)
 void                VulkanRenderPipeline::Initialize(SwapChain * swapChain)
 {
     this->instance = VulkanInstance::Get();
+	this->device = instance->GetDevice();
     this->swapChain = swapChain;
 	renderPass.Initialize(swapChain);
 	CreateRenderPass();
@@ -55,7 +55,7 @@ void                VulkanRenderPipeline::Initialize(SwapChain * swapChain)
 
 void				VulkanRenderPipeline::CreateDescriptorSetLayouts(void)
 {
-	uniformSetLayouts.resize(3);
+	uniformSetLayouts.resize(4);
 
 	// LWGC per framce cbuffer layout
 	auto layoutBinding = Vk::CreateDescriptorSetLayoutBinding(0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, VK_SHADER_STAGE_VERTEX_BIT);
@@ -73,14 +73,13 @@ void				VulkanRenderPipeline::CreateDescriptorSetLayouts(void)
 
 void				VulkanRenderPipeline::CreatePerFrameDescriptorSet(void)
 {
-	std::vector<VkDescriptorSetLayout> layouts(1, uniformSetLayouts[0]);
 	VkDescriptorSetAllocateInfo allocInfo = {};
 	allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
 	allocInfo.descriptorPool = instance->GetDescriptorPool();
 	allocInfo.descriptorSetCount = 1u;
 	allocInfo.pSetLayouts = &uniformSetLayouts[0]; // First layout set is per frame cbuffer
 
-	if (vkAllocateDescriptorSets(device, &allocInfo, &_descriptorSet) != VK_SUCCESS)
+	if (vkAllocateDescriptorSets(device, &allocInfo, &perFrameDescriptorSet) != VK_SUCCESS)
 		throw std::runtime_error("failed to allocate descriptor sets!");
 
 	VkDescriptorBufferInfo bufferInfo = {};
@@ -90,8 +89,8 @@ void				VulkanRenderPipeline::CreatePerFrameDescriptorSet(void)
 
 	VkWriteDescriptorSet descriptorWrite = {};
 	descriptorWrite.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-	descriptorWrite.dstSet = _descriptorSet;
-	descriptorWrite.dstBinding = 0;
+	descriptorWrite.dstSet = perFrameDescriptorSet;
+	descriptorWrite.dstBinding = PER_FRAME_BINDING_INDEX;
 	descriptorWrite.dstArrayElement = 0;
 	descriptorWrite.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
 	descriptorWrite.descriptorCount = 1;
@@ -149,6 +148,8 @@ void			VulkanRenderPipeline::BeginRenderPass(void)
 	renderPassInfo.pClearValues = clearValues.data();
 
 	vkCmdBeginRenderPass(graphicCommandBuffer, &renderPassInfo, VK_SUBPASS_CONTENTS_SECONDARY_COMMAND_BUFFERS);
+
+	vkCmdBindDescriptorSets(graphicCommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, Vk::currentPipelineLayout, PER_FRAME_BINDING_INDEX, 1, &perFrameDescriptorSet, 0, nullptr);
 }
 
 void			VulkanRenderPipeline::EndRenderPass(void)
@@ -163,7 +164,6 @@ void			VulkanRenderPipeline::EndRenderPass(void)
 
 void			VulkanRenderPipeline::CreateSyncObjects(void)
 {
-	auto device = instance->GetDevice();
 	imageAvailableSemaphores.resize(MAX_FRAMES_IN_FLIGHT);
 	renderFinishedSemaphores.resize(MAX_FRAMES_IN_FLIGHT);
 	inFlightFences.resize(MAX_FRAMES_IN_FLIGHT);
@@ -189,7 +189,6 @@ void			VulkanRenderPipeline::CreateSyncObjects(void)
 void			VulkanRenderPipeline::RecreateSwapChain(RenderContext & renderContext)
 {
 	std::unordered_set< MeshRenderer * >	meshRenderers;
-	auto device = instance->GetDevice();
 	vkDeviceWaitIdle(device);
 
 	swapChain->Cleanup();
@@ -211,8 +210,6 @@ void			VulkanRenderPipeline::RecreateSwapChain(RenderContext & renderContext)
 
 void			VulkanRenderPipeline::UpdatePerframeUnformBuffer(void) noexcept
 {
-	auto device = instance->GetDevice();
-
 	perFrame.time.x = static_cast< float >(glfwGetTime());
 	perFrame.time.y = sin(perFrame.time.x);
 	perFrame.time.z = cos(perFrame.time.x);
@@ -230,7 +227,6 @@ void			VulkanRenderPipeline::RenderInternal(const std::vector< Camera * > & came
 {
 	UpdatePerframeUnformBuffer();
 
-	auto device = instance->GetDevice();
 	vkWaitForFences(device, 1, &inFlightFences[currentFrame], VK_TRUE, std::numeric_limits<uint64_t>::max());
 
 	uint32_t imageIndex;
@@ -267,7 +263,7 @@ void			VulkanRenderPipeline::RenderInternal(const std::vector< Camera * > & came
 	submitInfo.signalSemaphoreCount = 1;
 	submitInfo.pSignalSemaphores = signalSemaphores;
 
-	vkResetFences(device, 1, &inFlightFences[currentFrame]);
+	Vk::CheckResult(vkResetFences(device, 1, &inFlightFences[currentFrame]), "Reset fence failed");
 
 	if (vkQueueSubmit(instance->GetGraphicQueue(), 1, &submitInfo, inFlightFences[currentFrame]) != VK_SUCCESS)
 	{
@@ -303,29 +299,34 @@ void			VulkanRenderPipeline::RenderInternal(const std::vector< Camera * > & came
 
 void	VulkanRenderPipeline::Render(const std::vector< Camera * > & cameras, RenderContext & context)
 {
-	std::vector< VkCommandBuffer > drawBuffers;
-	std::unordered_set< MeshRenderer * >	meshRenderers;
-
-	BeginRenderPass();
-
-	context.GetMeshRenderers(meshRenderers);
-
-	for (const auto & meshRenderer : meshRenderers)
+	for (const auto camera : cameras)
 	{
-		meshRenderer->GetMaterial()->UpdateUniformBuffer();
-		
-		drawBuffers.push_back(meshRenderer->GetDrawCommandBuffer());
+		std::vector< VkCommandBuffer >			drawBuffers;
+		std::unordered_set< MeshRenderer * >	meshRenderers;
+
+		camera->BindDescriptorSet(graphicCommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS);
+
+		BeginRenderPass();
+
+		context.GetMeshRenderers(meshRenderers);
+
+		for (const auto & meshRenderer : meshRenderers)
+		{
+			meshRenderer->GetMaterial()->UpdateUniformBuffer();
+			
+			drawBuffers.push_back(meshRenderer->GetDrawCommandBuffer());
+		}
+
+		vkCmdExecuteCommands(graphicCommandBuffer, drawBuffers.size(), drawBuffers.data());
+
+		EndRenderPass();
 	}
-
-	vkCmdExecuteCommands(graphicCommandBuffer, drawBuffers.size(), drawBuffers.data());
-
-	EndRenderPass();
 }
 
 SwapChain *		VulkanRenderPipeline::GetSwapChain(void) { return swapChain; }
 RenderPass *	VulkanRenderPipeline::GetRenderPass(void) { return &renderPass; }
 
-const std::vector< VkDescriptorSetLayout >	GetUniformSetLayouts(void) noexcept
+const std::vector< VkDescriptorSetLayout >	VulkanRenderPipeline::GetUniformSetLayouts(void) noexcept
 {
 	return uniformSetLayouts;
 }

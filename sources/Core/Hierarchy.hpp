@@ -5,9 +5,10 @@
 #include <vector>
 #include <unordered_set>
 
-#include "GameObject.hpp"
 #include "Core/Rendering/RenderContext.hpp"
 #include "Core/Vulkan/SwapChain.hpp"
+#include "Core/GameObject.hpp"
+#include "Core/Components/Camera.hpp"
 
 namespace LWGC
 {
@@ -17,6 +18,7 @@ namespace LWGC
 			std::vector< GameObject * >			_gameObjects;
 			RenderContext						_renderContext;
 			std::unordered_set< Component * >	_components;
+			std::vector< Camera * >				_cameras;
 
 		public:
 			Hierarchy(void);
@@ -34,6 +36,7 @@ namespace LWGC
 			void					UnregisterComponentInRenderContext(uint32_t componentType, const ComponentIndex & index) noexcept;
 
 			GameObject *			GetGameObject(int index);
+			std::vector< Camera * >	GetCameras(void) noexcept;
 			RenderContext &			GetRenderContext(void);
 	};
 

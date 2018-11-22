@@ -71,16 +71,16 @@ void			VulkanInstance::InitializeSurface(VkSurfaceKHR surface)
 	printf("Max bindings: %i\n", props.limits.maxVertexInputBindings);
 }
 
-void			VulkanInstance::CreateDescriptorPool(void)
+void			VulkanInstance::CreateDescriptorPool(void) noexcept
 {
 	if (_descriptorPool != VK_NULL_HANDLE)
 		return ;
 	
-	std::array<VkDescriptorPoolSize, 2> poolSizes = {};
+	std::array<VkDescriptorPoolSize, 3> poolSizes = {};
 	poolSizes[0].type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-	poolSizes[0].descriptorCount = 1u;
+	poolSizes[0].descriptorCount = 4u;
 	poolSizes[1].type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC;
-	poolSizes[1].descriptorCount = 4u;
+	poolSizes[1].descriptorCount = 8u;
 	poolSizes[2].type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
 	poolSizes[2].descriptorCount = 6u;
 
@@ -88,7 +88,7 @@ void			VulkanInstance::CreateDescriptorPool(void)
 	poolInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
 	poolInfo.poolSizeCount = static_cast<uint32_t>(poolSizes.size());
 	poolInfo.pPoolSizes = poolSizes.data();
-	poolInfo.maxSets = 2u;
+	poolInfo.maxSets = 10u;
 
 	if (vkCreateDescriptorPool(_device, &poolInfo, nullptr, &_descriptorPool) != VK_SUCCESS)
 	    throw std::runtime_error("failed to create descriptor pool!");

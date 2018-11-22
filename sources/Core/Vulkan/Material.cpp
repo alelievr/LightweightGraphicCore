@@ -37,9 +37,6 @@ Material::~Material(void)
 
 	vkDestroySampler(_device, _samplers[0], nullptr);
 
-	// Warning: destroying any material will destroy the layout for every other materials !
-	vkDestroyDescriptorSetLayout(_device, descriptorSetLayout, nullptr);
-
 	vkDestroyBuffer(_device, _uniformPerMaterial.buffer, nullptr);
 	vkFreeMemory(_device, _uniformPerMaterial.memory, nullptr);
 }
@@ -67,7 +64,9 @@ void					Material::Initialize(SwapChain * swapChain, RenderPass * renderPass)
 	_swapChain = swapChain;
 	_renderPass = renderPass;
 
-	CreateDescriptorSetLayout();
+	if (descriptorSetLayout == VK_NULL_HANDLE)
+		CreateDescriptorSetLayout();
+	
 	CreateGraphicPipeline();
 	CreateTextureImage();
 	CreateTextureSampler();
@@ -86,9 +85,9 @@ void	Material::CreateDescriptorSetLayout(void)
 {
 	if (descriptorSetLayout != VK_NULL_HANDLE)
 		return ;
-	
-	auto perMaterialBinding = Vk::CreateDescriptorSetLayoutBinding(3, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_ALL_GRAPHICS);
-	auto albedoBinding = Vk::CreateDescriptorSetLayoutBinding(4, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, VK_SHADER_STAGE_FRAGMENT_BIT);
+
+	auto perMaterialBinding = Vk::CreateDescriptorSetLayoutBinding(PER_MATERIAL_BINDING_INDEX, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_ALL_GRAPHICS);
+	auto albedoBinding = Vk::CreateDescriptorSetLayoutBinding(ALBEDO_BINDING_INDEX, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, VK_SHADER_STAGE_FRAGMENT_BIT);
 
 	Vk::CreateDescriptorSetLayout({perMaterialBinding, albedoBinding}, descriptorSetLayout);
 }
@@ -219,6 +218,11 @@ void					Material::CreateGraphicPipeline(void)
 	pipelineLayoutInfo.setLayoutCount = setLayouts.size();
 	pipelineLayoutInfo.pSetLayouts = setLayouts.data();
 
+	printf("Set layout 0: %p\n", setLayouts[0]);
+	printf("Set layout 1: %p\n", setLayouts[1]);
+	printf("Set layout 2: %p\n", setLayouts[2]);
+	printf("Set layout 3: %p\n", setLayouts[3]);
+
 	if (vkCreatePipelineLayout(_device, &pipelineLayoutInfo, nullptr, &_graphicPipelineLayout) != VK_SUCCESS)
 		throw std::runtime_error("failed to create pipeline layout!");
 
@@ -252,6 +256,8 @@ void					Material::CreateGraphicPipeline(void)
 
 	if (vkCreateGraphicsPipelines(_device, VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &_graphicPipeline) != VK_SUCCESS)
 		throw std::runtime_error("failed to create graphics pipeline!");
+
+	Vk::currentPipelineLayout = _graphicPipelineLayout;
 
 	vkDestroyShaderModule(_device, fragShaderModule, nullptr);
 	vkDestroyShaderModule(_device, vertShaderModule, nullptr);
@@ -352,7 +358,7 @@ void					Material::CreateDescriptorSets(void)
 
 	descriptorWrites[0].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
 	descriptorWrites[0].dstSet = _descriptorSet;
-	descriptorWrites[0].dstBinding = 0;
+	descriptorWrites[0].dstBinding = PER_MATERIAL_BINDING_INDEX;
 	descriptorWrites[0].dstArrayElement = 0;
 	descriptorWrites[0].descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
 	descriptorWrites[0].descriptorCount = 1;
@@ -360,7 +366,7 @@ void					Material::CreateDescriptorSets(void)
 
 	descriptorWrites[1].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
 	descriptorWrites[1].dstSet = _descriptorSet;
-	descriptorWrites[1].dstBinding = 1;
+	descriptorWrites[1].dstBinding = ALBEDO_BINDING_INDEX;
 	descriptorWrites[1].dstArrayElement = 0;
 	descriptorWrites[1].descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
 	descriptorWrites[1].descriptorCount = 1;
@@ -371,7 +377,7 @@ void					Material::CreateDescriptorSets(void)
 
 void					Material::BindDescriptorSets(VkCommandBuffer cmd, VkPipelineBindPoint bindPoint)
 {
-	vkCmdBindDescriptorSets(cmd, bindPoint, _graphicPipelineLayout, 0, 1, &_descriptorSet, 0, nullptr);
+	vkCmdBindDescriptorSets(cmd, bindPoint, _graphicPipelineLayout, PER_MATERIAL_BINDING_INDEX, 1, &_descriptorSet, 0, nullptr);
 }
 
 // TODO: move this elsewhere
@@ -384,6 +390,9 @@ void					Material::SetGraphicPipeline(VkPipeline tmp) { this->_graphicPipeline =
 
 VkDescriptorSetLayout	Material::GetDescriptorSetLayout(void)
 {
+	if (descriptorSetLayout == VK_NULL_HANDLE)
+		CreateDescriptorSetLayout();
+	
 	return descriptorSetLayout;
 }
 

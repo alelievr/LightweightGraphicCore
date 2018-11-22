@@ -9,6 +9,8 @@
 #include "Core/Vulkan/UniformBuffer.hpp"
 #include "Component.hpp"
 
+#define PER_OBJECT_BINDING_INDEX	2
+
 namespace LWGC
 {
 	class		MeshRenderer : public Object, public Component
@@ -25,12 +27,14 @@ namespace LWGC
 			ComponentIndex				_renderContextIndex;
 			UniformBuffer				_uniformModelBuffer;
 			VkDescriptorSet				_descriptorSet;
-			bool						_initDescriptorSetLayout;
 			
 			static VkDescriptorSetLayout	_descriptorSetLayout;
 
 			void		Initialize(void) noexcept override;
 			void		RecordDrawCommandBuffer(void);
+			void		CreateDescriptorSet(void);
+			void		BindDescriptorSet(VkCommandBuffer cmd, VkPipelineBindPoint bindPoint);
+			static void	CreateDescriptorSetLayout(void) noexcept;
 
 		public:
 			MeshRenderer(void);

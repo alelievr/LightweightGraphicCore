@@ -1,5 +1,7 @@
 #include "GameObject.hpp"
 
+#include "Core/Hierarchy.hpp"
+
 using namespace LWGC;
 
 GameObject::GameObject(void) : _active(false), _initialized(false)

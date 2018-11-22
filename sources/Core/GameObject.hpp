@@ -8,7 +8,6 @@
 #include "Transform.hpp"
 #include "Object.hpp"
 #include "Core/Components/Component.hpp"
-#include "Core/Hierarchy.hpp"
 
 namespace LWGC
 {

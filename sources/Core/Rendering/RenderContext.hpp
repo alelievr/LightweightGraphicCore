@@ -3,12 +3,11 @@
 #include <unordered_map>
 #include <unordered_set>
 
-#include "Core/Components/Component.hpp"
-
 namespace LWGC
 {
     class Light;
     class MeshRenderer;
+    class Component;
 
     class RenderContext
     {

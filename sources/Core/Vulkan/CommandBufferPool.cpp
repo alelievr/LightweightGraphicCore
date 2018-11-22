@@ -83,28 +83,28 @@ VkCommandBuffer		CommandBufferPool::BeginSingle(VkCommandBufferLevel level) noex
 	allocInfo.commandBufferCount = 1;
 
 	VkCommandBuffer commandBuffer;
-	Vk::CheckResult(vkAllocateCommandBuffers(_instance->GetDevice(), &allocInfo, &commandBuffer));
+	Vk::CheckResult(vkAllocateCommandBuffers(_instance->GetDevice(), &allocInfo, &commandBuffer), "Allocate commnand buffer failed");
 
 	VkCommandBufferBeginInfo beginInfo = {};
 	beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
 	beginInfo.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
 
-	Vk::CheckResult(vkBeginCommandBuffer(commandBuffer, &beginInfo));
+	Vk::CheckResult(vkBeginCommandBuffer(commandBuffer, &beginInfo), "Begin command buffer failed");
 
 	return commandBuffer;
 }
 
 void		CommandBufferPool::EndSingle(VkCommandBuffer commandBuffer) noexcept
 {
-	Vk::CheckResult(vkEndCommandBuffer(commandBuffer));
+	Vk::CheckResult(vkEndCommandBuffer(commandBuffer), "End command buffer failed");
 
 	VkSubmitInfo submitInfo = {};
 	submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
 	submitInfo.commandBufferCount = 1;
 	submitInfo.pCommandBuffers = &commandBuffer;
 
-	Vk::CheckResult(vkQueueSubmit(_queue, 1, &submitInfo, VK_NULL_HANDLE));
-	Vk::CheckResult(vkQueueWaitIdle(_queue));
+	Vk::CheckResult(vkQueueSubmit(_queue, 1, &submitInfo, VK_NULL_HANDLE), "Queue submit failed");
+	Vk::CheckResult(vkQueueWaitIdle(_queue), "QueueWait Idle failed");
 
 	vkFreeCommandBuffers(_instance->GetDevice(), _commandPool, 1, &commandBuffer);
 }

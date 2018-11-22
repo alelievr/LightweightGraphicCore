@@ -48,7 +48,10 @@ void			Component::UpdateGameObjectActive(void) noexcept
 	}
 }
 
-void			Component::Initialize() noexcept {}
+void			Component::Initialize() noexcept
+{
+	device = VulkanInstance::Get()->GetDevice();
+}
 
 void			Component::Enable() noexcept
 {

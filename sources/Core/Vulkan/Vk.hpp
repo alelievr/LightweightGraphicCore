@@ -13,6 +13,9 @@ namespace LWGC
 	
 		public:
 
+			// TODO: remove this !
+			static VkPipelineLayout	currentPipelineLayout;
+
 			class Samplers
 			{
 				public:
@@ -36,10 +39,10 @@ namespace LWGC
 			static void			CreateBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer & buffer, VkDeviceMemory & bufferMemory);
 			static void			CopyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size);
 			static void			CopyBufferToImage(VkBuffer buffer, VkImage image, uint32_t width, uint32_t height, uint32_t depth = 1);
-			static void			CheckResult(VkResult result);
+			static void			CheckResult(VkResult result, const std::string & errorMessage);
 			static VkSampler	CreateSampler(VkFilter filter, VkSamplerAddressMode addressMode, uint32_t maxAniso = 0);
 			static VkSampler	CreateCompSampler(VkFilter filter, VkSamplerAddressMode addressMode, VkCompareOp compareOp);
 			static VkDescriptorSetLayoutBinding	CreateDescriptorSetLayoutBinding(int binding, VkDescriptorType descriptorType, VkShaderStageFlagBits stageFlags);
-			static void			CreateDescriptorSetLayout(std::vector< VkDescriptorSetLayoutBinding > bindings, VkDescriptorSetLayout layout);
+			static void			CreateDescriptorSetLayout(std::vector< VkDescriptorSetLayoutBinding > bindings, VkDescriptorSetLayout & layout);
 	};
 }
