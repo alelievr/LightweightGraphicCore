@@ -8,6 +8,8 @@ VkSampler Vk::Samplers::trilinearRepeat;
 VkSampler Vk::Samplers::nearestClamp;
 VkSampler Vk::Samplers::nearestRepeat;
 
+VkPipelineLayout	Vk::currentPipelineLayout;
+
 VkImageView		Vk::CreateImageView(VkImage image, VkFormat format, int mipLevels, VkImageViewType viewType, VkImageAspectFlags aspectFlags)
 {
 	VulkanInstance * instance = VulkanInstance::Get();
@@ -66,7 +68,7 @@ void			Vk::CreateImage(uint32_t width, uint32_t height, uint32_t depth, int arra
 	if (vkAllocateMemory(device, &allocInfo, nullptr, &imageMemory) != VK_SUCCESS)
 	    throw std::runtime_error("failed to allocate image memory!");
 
-	CheckResult(vkBindImageMemory(device, image, imageMemory, 0));
+	CheckResult(vkBindImageMemory(device, image, imageMemory, 0), "Bind image memory failed");
 }
 
 bool			Vk::HasStencilComponent(VkFormat format)
@@ -99,7 +101,7 @@ void			Vk::CreateBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPro
 	if (vkAllocateMemory(device, &allocInfo, nullptr, &bufferMemory) != VK_SUCCESS)
 		throw std::runtime_error("failed to allocate buffer memory!");
 
-	CheckResult(vkBindBufferMemory(device, buffer, bufferMemory, 0));
+	CheckResult(vkBindBufferMemory(device, buffer, bufferMemory, 0), "Bind Buffer Memory failed");
 }
 
 void			Vk::CopyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size)
@@ -147,15 +149,15 @@ void			Vk::CopyBufferToImage(VkBuffer buffer, VkImage image, uint32_t width, uin
 	graphicCommandBufferPool->EndSingle(commandBuffer);
 }
 
-void			Vk::CheckResult(VkResult result)
+void			Vk::CheckResult(VkResult result, const std::string & errorMessage)
 {
 	if (result == 0)
 		return;
 		
-	printf("VkResult %d\n", result);
+	printf("Vulkan error %d\n", result);
 	
     if (result < 0)
-        abort();
+        throw std::runtime_error(errorMessage);
 }
 
 VkSampler		Vk::CreateSampler(VkFilter filter, VkSamplerAddressMode addressMode, uint32_t maxAniso)
@@ -237,9 +239,8 @@ VkDescriptorSetLayoutBinding	Vk::CreateDescriptorSetLayoutBinding(int binding, V
 	return layoutBinding;
 }
 
-void			Vk::CreateDescriptorSetLayout(std::vector< VkDescriptorSetLayoutBinding > bindings, VkDescriptorSetLayout layout)
+void			Vk::CreateDescriptorSetLayout(std::vector< VkDescriptorSetLayoutBinding > bindings, VkDescriptorSetLayout & layout)
 {
-
 	VkDescriptorSetLayoutCreateInfo layoutInfo = {};
 	layoutInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
 	layoutInfo.bindingCount = static_cast<uint32_t>(bindings.size());

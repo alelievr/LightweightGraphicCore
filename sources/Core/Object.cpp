@@ -20,7 +20,6 @@ Object::~Object(void)
 	std::cout << "Destructor of Object called" << std::endl;
 }
 
-
 Object &	Object::operator=(Object const & src)
 {
 	std::cout << "Assignment operator called" << std::endl;

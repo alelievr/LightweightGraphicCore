@@ -2,6 +2,7 @@
 
 #include "Core/Components/Light.hpp"
 #include "Core/Components/MeshRenderer.hpp"
+#include "Core/Components/Component.hpp"
 
 using namespace LWGC;
 

@@ -2,11 +2,13 @@
 
 #include <unordered_set>
 
+#include "IncludeDeps.hpp"
+#include VULKAN_INCLUDE
+
 namespace LWGC
 {
 	class GameObject;
 	class Hierarchy;
-
 	class Component;
 	
     using ComponentIndex = std::unordered_set< Component * >::iterator;
@@ -23,6 +25,7 @@ namespace LWGC
 			const GameObject *	gameObject;
 			Hierarchy *			hierarchy;
 			ComponentIndex		index;
+			VkDevice			device;
 
 			// Called when the vulkan is finished to initialize
 			virtual void		Initialize() noexcept;
@@ -35,11 +38,11 @@ namespace LWGC
 
 			Component operator=(const Component & rhs) = delete;
 
-			virtual void OnAdded(const GameObject & go) noexcept;
-			virtual void OnRemoved(const GameObject & go) noexcept;
-			virtual void OnEnable() noexcept;
-			virtual void OnDisable() noexcept;
-			bool IsEnabled() noexcept;
+			virtual void	OnAdded(const GameObject & go) noexcept;
+			virtual void	OnRemoved(const GameObject & go) noexcept;
+			virtual void	OnEnable() noexcept;
+			virtual void	OnDisable() noexcept;
+			bool			IsEnabled() noexcept;
 
 			void			Enable() noexcept;
 			void			Disable() noexcept;

@@ -14,12 +14,12 @@ Light::~Light(void)
 
 void		Light::OnAdded(const GameObject & go) noexcept
 {
-	(void)go;	
+	Component::OnAdded(go);
 }
 
 void		Light::OnRemoved(const GameObject & go) noexcept
 {
-	(void)go;	
+	Component::OnRemoved(go);
 }
 
 std::ostream &	operator<<(std::ostream & o, Light const & r)

@@ -1,5 +1,7 @@
 #include "Hierarchy.hpp"
 
+#include "Core/GameObject.hpp"
+
 using namespace LWGC;
 
 Hierarchy::Hierarchy(void)
@@ -36,12 +38,22 @@ GameObject * Hierarchy::GetGameObject(int index)
 
 const ComponentIndex	Hierarchy::RegisterComponent(uint32_t componentType, Component * component) noexcept
 {
+	if (componentType == Camera::type)
+	{
+		_cameras.push_back(dynamic_cast< Camera * >(component));
+	}
+
 	return _components.insert(component).first;
 }
 
 void					Hierarchy::UnregisterComponent(const ComponentIndex & index) noexcept
 {
 	_components.erase(index);
+}
+
+std::vector< Camera * >	Hierarchy::GetCameras(void) noexcept
+{
+	return _cameras;
 }
 
 const ComponentIndex Hierarchy::RegisterComponentInRenderContext(uint32_t componentType, Component * component) noexcept

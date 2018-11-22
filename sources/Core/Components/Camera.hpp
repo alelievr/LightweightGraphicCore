@@ -9,6 +9,8 @@
 #include "Core/CameraType.hpp"
 #include "Core/GameObject.hpp"
 
+#define PER_CAMERA_BINDING_INDEX	1
+
 namespace LWGC
 {
 	class		Camera : public Object, public Component
@@ -29,8 +31,11 @@ namespace LWGC
 			float					_nearPlane;
 			float					_farPlane;
 			UniformBuffer			_uniformCameraBuffer;
-			static VkDescriptorSetLayout	_descriptorSetLayout;
+			VkDescriptorSet			_perCameraDescriptorSet;
+			static VkDescriptorSetLayout	_perCameraDescriptorSetLayout;
 			bool					_initDescriptorSetLayout;
+
+			static void				CreateCameraDescriptorSetLayout(void) noexcept;
 
 		public:
 			Camera(void);
@@ -65,6 +70,8 @@ namespace LWGC
 			
 			float		GetFarPlane(void) const;
 			void		SetFarPlane(float tmp);
+
+			void		BindDescriptorSet(VkCommandBuffer cmd, VkPipelineBindPoint bindPoint);
 
 			virtual uint32_t	GetType(void) const noexcept override;
 

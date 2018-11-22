@@ -13,6 +13,9 @@
 #include "SwapChain.hpp"
 #include "Vk.hpp"
 
+#define PER_MATERIAL_BINDING_INDEX	3
+#define ALBEDO_BINDING_INDEX		4
+
 namespace LWGC
 {
 	class		Material
@@ -36,13 +39,13 @@ namespace LWGC
 			SwapChain *						_swapChain;
 			RenderPass *					_renderPass;
 	
-			void		CreateDescriptorSetLayout(void);
+			static void	CreateDescriptorSetLayout(void);
 			void		CreateTextureImage(void);
 			void		CreateTextureSampler(void);
 			void		CreateUniformBuffer(void);
 			void		CreateDescriptorPool(void);
 			void		CreateDescriptorSets(void);
-			VkShaderModule	createShaderModule(const std::vector<char>& code);
+			VkShaderModule	createShaderModule(const std::vector<char> & code);
 	
 		public:
 			Material(void);
