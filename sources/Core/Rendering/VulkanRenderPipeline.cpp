@@ -31,8 +31,8 @@ VulkanRenderPipeline::~VulkanRenderPipeline(void)
 		vkDestroyFence(device, inFlightFences[i], nullptr);
 	}
 
-	vkDestroyBuffer(device, uniformPerFrame.buffer, nullptr);
-	vkFreeMemory(device, uniformPerFrame.memory, nullptr);
+	// vkDestroyBuffer(device, uniformPerFrame.buffer, nullptr);
+	// vkFreeMemory(device, uniformPerFrame.memory, nullptr);
 }
 
 void                VulkanRenderPipeline::Initialize(SwapChain * swapChain)
@@ -47,57 +47,57 @@ void                VulkanRenderPipeline::Initialize(SwapChain * swapChain)
 	instance->GetGraphicCommandBufferPool()->Allocate(VK_COMMAND_BUFFER_LEVEL_PRIMARY, swapChainCommandBuffers, swapChain->GetImageCount());
 
 	// Allocate LWGC_PerFrame uniform buffer
-	Vk::CreateBuffer(sizeof(LWGC_PerFrame), VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, uniformPerFrame.buffer, uniformPerFrame.memory);
+	// Vk::CreateBuffer(sizeof(LWGC_PerFrame), VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, uniformPerFrame.buffer, uniformPerFrame.memory);
 
-	CreateDescriptorSetLayouts();
-	CreatePerFrameDescriptorSet();
+	// CreateDescriptorSetLayouts();
+	// CreatePerFrameDescriptorSet();
 }
 
-void				VulkanRenderPipeline::CreateDescriptorSetLayouts(void)
-{
-	uniformSetLayouts.resize(4);
+// void				VulkanRenderPipeline::CreateDescriptorSetLayouts(void)
+// {
+// 	uniformSetLayouts.resize(4);
 
-	// LWGC per framce cbuffer layout
-	auto layoutBinding = Vk::CreateDescriptorSetLayoutBinding(0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, VK_SHADER_STAGE_VERTEX_BIT);
-	Vk::CreateDescriptorSetLayout({layoutBinding}, uniformSetLayouts[0]);
+// 	// LWGC per framce cbuffer layout
+// 	auto layoutBinding = Vk::CreateDescriptorSetLayoutBinding(0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, VK_SHADER_STAGE_VERTEX_BIT);
+// 	Vk::CreateDescriptorSetLayout({layoutBinding}, uniformSetLayouts[0]);
 
-	// LWGC per camera cbuffer layout
-	uniformSetLayouts[1] = Camera::GetDescriptorSetLayout();
+// 	// LWGC per camera cbuffer layout
+// 	uniformSetLayouts[1] = Camera::GetDescriptorSetLayout();
 
-	// LWGC per object cbuffer layout
-	uniformSetLayouts[2] = MeshRenderer::GetDescriptorSetLayout();
+// 	// LWGC per object cbuffer layout
+// 	uniformSetLayouts[2] = MeshRenderer::GetDescriptorSetLayout();
 
-	// LWGC per material cbuffer layout
-	uniformSetLayouts[3] = Material::GetDescriptorSetLayout();
-}
+// 	// LWGC per material cbuffer layout
+// 	uniformSetLayouts[3] = Material::GetDescriptorSetLayout();
+// }
 
-void				VulkanRenderPipeline::CreatePerFrameDescriptorSet(void)
-{
-	VkDescriptorSetAllocateInfo allocInfo = {};
-	allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
-	allocInfo.descriptorPool = instance->GetDescriptorPool();
-	allocInfo.descriptorSetCount = 1u;
-	allocInfo.pSetLayouts = &uniformSetLayouts[0]; // First layout set is per frame cbuffer
+// void				VulkanRenderPipeline::CreatePerFrameDescriptorSet(void)
+// {
+// 	VkDescriptorSetAllocateInfo allocInfo = {};
+// 	allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
+// 	allocInfo.descriptorPool = instance->GetDescriptorPool();
+// 	allocInfo.descriptorSetCount = 1u;
+// 	allocInfo.pSetLayouts = &uniformSetLayouts[0]; // First layout set is per frame cbuffer
 
-	if (vkAllocateDescriptorSets(device, &allocInfo, &perFrameDescriptorSet) != VK_SUCCESS)
-		throw std::runtime_error("failed to allocate descriptor sets!");
+// 	if (vkAllocateDescriptorSets(device, &allocInfo, &perFrameDescriptorSet) != VK_SUCCESS)
+// 		throw std::runtime_error("failed to allocate descriptor sets!");
 
-	VkDescriptorBufferInfo bufferInfo = {};
-	bufferInfo.buffer = uniformPerFrame.buffer;
-	bufferInfo.offset = 0;
-	bufferInfo.range = sizeof(LWGC_PerFrame);
+// 	VkDescriptorBufferInfo bufferInfo = {};
+// 	bufferInfo.buffer = uniformPerFrame.buffer;
+// 	bufferInfo.offset = 0;
+// 	bufferInfo.range = sizeof(LWGC_PerFrame);
 
-	VkWriteDescriptorSet descriptorWrite = {};
-	descriptorWrite.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-	descriptorWrite.dstSet = perFrameDescriptorSet;
-	descriptorWrite.dstBinding = PER_FRAME_BINDING_INDEX;
-	descriptorWrite.dstArrayElement = 0;
-	descriptorWrite.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-	descriptorWrite.descriptorCount = 1;
-	descriptorWrite.pBufferInfo = &bufferInfo;
+// 	VkWriteDescriptorSet descriptorWrite = {};
+// 	descriptorWrite.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+// 	descriptorWrite.dstSet = perFrameDescriptorSet;
+// 	descriptorWrite.dstBinding = PER_FRAME_BINDING_INDEX;
+// 	descriptorWrite.dstArrayElement = 0;
+// 	descriptorWrite.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+// 	descriptorWrite.descriptorCount = 1;
+// 	descriptorWrite.pBufferInfo = &bufferInfo;
 
-	vkUpdateDescriptorSets(device, 1, &descriptorWrite, 0, nullptr);
-}
+// 	vkUpdateDescriptorSets(device, 1, &descriptorWrite, 0, nullptr);
+// }
 
 void				VulkanRenderPipeline::CreateRenderPass(void)
 {
@@ -149,7 +149,7 @@ void			VulkanRenderPipeline::BeginRenderPass(void)
 
 	vkCmdBeginRenderPass(graphicCommandBuffer, &renderPassInfo, VK_SUBPASS_CONTENTS_SECONDARY_COMMAND_BUFFERS);
 
-	vkCmdBindDescriptorSets(graphicCommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, Vk::currentPipelineLayout, PER_FRAME_BINDING_INDEX, 1, &perFrameDescriptorSet, 0, nullptr);
+	// vkCmdBindDescriptorSets(graphicCommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, Vk::currentPipelineLayout, PER_FRAME_BINDING_INDEX, 1, &perFrameDescriptorSet, 0, nullptr);
 }
 
 void			VulkanRenderPipeline::EndRenderPass(void)
@@ -210,16 +210,16 @@ void			VulkanRenderPipeline::RecreateSwapChain(RenderContext & renderContext)
 
 void			VulkanRenderPipeline::UpdatePerframeUnformBuffer(void) noexcept
 {
-	perFrame.time.x = static_cast< float >(glfwGetTime());
-	perFrame.time.y = sin(perFrame.time.x);
-	perFrame.time.z = cos(perFrame.time.x);
-	perFrame.time.w = 0; // TODO: delta time
+	// perFrame.time.x = static_cast< float >(glfwGetTime());
+	// perFrame.time.y = sin(perFrame.time.x);
+	// perFrame.time.z = cos(perFrame.time.x);
+	// perFrame.time.w = 0; // TODO: delta time
 
-	// Upload datas to GPU
-	void* data;
-	vkMapMemory(device, uniformPerFrame.memory, 0, sizeof(LWGC_PerFrame), 0, &data);
-	memcpy(data, &perFrame, sizeof(LWGC_PerFrame));
-	vkUnmapMemory(device, uniformPerFrame.memory);
+	// // Upload datas to GPU
+	// void* data;
+	// vkMapMemory(device, uniformPerFrame.memory, 0, sizeof(LWGC_PerFrame), 0, &data);
+	// memcpy(data, &perFrame, sizeof(LWGC_PerFrame));
+	// vkUnmapMemory(device, uniformPerFrame.memory);
 }
 
 void			VulkanRenderPipeline::RenderInternal(const std::vector< Camera * > & cameras, RenderContext & context)
@@ -300,7 +300,7 @@ void	VulkanRenderPipeline::Render(const std::vector< Camera * > & cameras, Rende
 		std::vector< VkCommandBuffer >			drawBuffers;
 		std::unordered_set< MeshRenderer * >	meshRenderers;
 
-		camera->BindDescriptorSet(graphicCommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS);
+		// camera->BindDescriptorSet(graphicCommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS);
 
 		BeginRenderPass();
 
@@ -322,7 +322,7 @@ void	VulkanRenderPipeline::Render(const std::vector< Camera * > & cameras, Rende
 SwapChain *		VulkanRenderPipeline::GetSwapChain(void) { return swapChain; }
 RenderPass *	VulkanRenderPipeline::GetRenderPass(void) { return &renderPass; }
 
-const std::vector< VkDescriptorSetLayout >	VulkanRenderPipeline::GetUniformSetLayouts(void) noexcept
-{
-	return uniformSetLayouts;
-}
+// const std::vector< VkDescriptorSetLayout >	VulkanRenderPipeline::GetUniformSetLayouts(void) noexcept
+// {
+// 	return uniformSetLayouts;
+// }

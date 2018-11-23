@@ -6,35 +6,20 @@
 #include "Core/Object.hpp"
 #include "Core/Mesh.hpp"
 #include "Core/Vulkan/Material.hpp"
-#include "Core/Vulkan/UniformBuffer.hpp"
 #include "Component.hpp"
-
-#define PER_OBJECT_BINDING_INDEX	2
 
 namespace LWGC
 {
 	class		MeshRenderer : public Object, public Component
 	{
 		private:
-			struct LWGC_PerObject
-			{
-				glm::mat4	model;
-			};
-
 			std::shared_ptr< Mesh >		_mesh;
 			std::shared_ptr< Material >	_material;
 			VkCommandBuffer				_drawCommandBuffer;
 			ComponentIndex				_renderContextIndex;
-			UniformBuffer				_uniformModelBuffer;
-			VkDescriptorSet				_descriptorSet;
-			
-			static VkDescriptorSetLayout	_descriptorSetLayout;
 
 			void		Initialize(void) noexcept override;
 			void		RecordDrawCommandBuffer(void);
-			void		CreateDescriptorSet(void);
-			void		BindDescriptorSet(VkCommandBuffer cmd, VkPipelineBindPoint bindPoint);
-			static void	CreateDescriptorSetLayout(void) noexcept;
 
 		public:
 			MeshRenderer(void);
@@ -65,9 +50,7 @@ namespace LWGC
 
 			VkCommandBuffer		GetDrawCommandBuffer(void) const;
 
-			static VkDescriptorSetLayout	GetDescriptorSetLayout(void) noexcept;
-
-			virtual uint32_t			GetType(void) const noexcept override;
+			virtual uint32_t			GetType() const noexcept override;
 			static const uint32_t		type = 0;
 	};
 

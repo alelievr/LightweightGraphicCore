@@ -140,7 +140,6 @@ void				Application::Update(void) noexcept
 	glfwPollEvents();
 
 	//TODO: hierarchy get cameras
-	_hierarchy->GetCameras();
 	_renderPipeline->RenderInternal({}, _hierarchy->GetRenderContext());
 
 /*	// Draw GUI on top of everything (after pipeline rendering)

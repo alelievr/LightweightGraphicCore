@@ -5,37 +5,20 @@
 
 #include "Core/Object.hpp"
 #include "Core/Rendering/RenderTarget.hpp"
-#include "Core/Vulkan/UniformBuffer.hpp"
 #include "Core/CameraType.hpp"
 #include "Core/GameObject.hpp"
-
-#define PER_CAMERA_BINDING_INDEX	1
 
 namespace LWGC
 {
 	class		Camera : public Object, public Component
 	{
 		private:
-			struct LWGC_PerCamera
-			{
-				glm::mat4	projection;
-				glm::mat4	view;
-				glm::vec4	positionWS;
-				glm::vec4	screenSize;
-			};
-
-			RenderTarget *			_target;
-			glm::vec2				_size;
-			CameraType				_cameraType;
-			float					_fov;
-			float					_nearPlane;
-			float					_farPlane;
-			UniformBuffer			_uniformCameraBuffer;
-			VkDescriptorSet			_perCameraDescriptorSet;
-			static VkDescriptorSetLayout	_perCameraDescriptorSetLayout;
-			bool					_initDescriptorSetLayout;
-
-			static void				CreateCameraDescriptorSetLayout(void) noexcept;
+			RenderTarget *	_target;
+			glm::vec2		_size;
+			CameraType		_cameraType;
+			float			_fov;
+			float			_nearPlane;
+			float			_farPlane;
 
 		public:
 			Camera(void);
@@ -44,10 +27,8 @@ namespace LWGC
 
 			Camera &	operator=(Camera const & src) = delete;
 
-			virtual void OnAdded(const GameObject &go) noexcept override;
-			virtual void OnRemoved(const GameObject & go) noexcept override;
-
-			virtual void Initialize(void) noexcept override;
+			virtual void OnAdded(const GameObject &go) noexcept;
+			virtual void OnRemoved(const GameObject & go) noexcept;
 
 			glm::vec3	WorldToScreenPoint(glm::vec3 worldPosition);
 
@@ -70,12 +51,6 @@ namespace LWGC
 			
 			float		GetFarPlane(void) const;
 			void		SetFarPlane(float tmp);
-
-			void		BindDescriptorSet(VkCommandBuffer cmd, VkPipelineBindPoint bindPoint);
-
-			virtual uint32_t	GetType(void) const noexcept override;
-
-			static VkDescriptorSetLayout	GetDescriptorSetLayout(void) noexcept;
 
 			static const uint32_t		type = 2;
 	};

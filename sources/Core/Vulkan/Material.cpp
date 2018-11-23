@@ -4,20 +4,30 @@
 #include <array>
 
 #define GLM_FORCE_RADIANS
+// Force depth range to 0..1 like it would be if OpenGHell wouldn't have made poor design decisions
 #define GLM_FORCE_DEPTH_ZERO_TO_ONE
-#include GLM_INCLUDE
-#include GLM_INCLUDE_MATRIX_TRANSFORM
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 
 #include "Core/Texture2DArray.hpp"
-#include "Core/Rendering/VulkanRenderPipeline.hpp"
 #include "Core/Mesh.hpp"
 
 using namespace LWGC;
 
-VkDescriptorSetLayout Material::descriptorSetLayout;
+// TODO: hardcoded
+struct UniformBufferObject {
+	glm::mat4 model;
+	glm::mat4 view;
+	glm::mat4 proj;
+};
+
+VkDescriptorPool Material::_descriptorPool;
+
 
 Material::Material(void)
 {
+	this->_descriptorPool = VK_NULL_HANDLE;
+	this->_descriptorSetLayout = VK_NULL_HANDLE;
 	this->_graphicPipelineLayout = VK_NULL_HANDLE;
 	this->_graphicPipeline = VK_NULL_HANDLE;
 }
@@ -36,18 +46,25 @@ Material::~Material(void)
 	delete _textures[0];
 
 	vkDestroySampler(_device, _samplers[0], nullptr);
+	vkDestroyDescriptorPool(_device, _descriptorPool, nullptr);
+	vkDestroyDescriptorSetLayout(_device, _descriptorSetLayout, nullptr);
 
-	vkDestroyBuffer(_device, _uniformPerMaterial.buffer, nullptr);
-	vkFreeMemory(_device, _uniformPerMaterial.memory, nullptr);
+	for (size_t i = 0; i < _uniformBuffers.size(); i++)
+	{
+		vkDestroyBuffer(_device, _uniformBuffers[i].buffer, nullptr);
+		vkFreeMemory(_device, _uniformBuffers[i].memory, nullptr);
+	}
 }
 
 Material &	Material::operator=(Material const & src)
 {
 	if (this != &src)
 	{
+		this->_descriptorPool = src._descriptorPool;
+		this->_descriptorSetLayout = src._descriptorSetLayout;
 		this->_graphicPipelineLayout = src._graphicPipelineLayout;
 		this->_graphicPipeline = src._graphicPipeline;
-		this->_uniformPerMaterial = src._uniformPerMaterial;
+		this->_uniformBuffers = src._uniformBuffers;
 		this->_samplers = src._samplers;
 		this->_textures = src._textures;
 		this->_instance = src._instance;
@@ -64,9 +81,7 @@ void					Material::Initialize(SwapChain * swapChain, RenderPass * renderPass)
 	_swapChain = swapChain;
 	_renderPass = renderPass;
 
-	if (descriptorSetLayout == VK_NULL_HANDLE)
-		CreateDescriptorSetLayout();
-	
+	CreateDescriptorSetLayout();
 	CreateGraphicPipeline();
 	CreateTextureImage();
 	CreateTextureSampler();
@@ -81,15 +96,30 @@ void					Material::CleanupGraphicPipeline(void) noexcept
 	vkDestroyPipelineLayout(_device, _graphicPipelineLayout, nullptr);
 }
 
-void	Material::CreateDescriptorSetLayout(void)
+void					Material::CreateDescriptorSetLayout(void)
 {
-	if (descriptorSetLayout != VK_NULL_HANDLE)
-		return ;
+	VkDescriptorSetLayoutBinding uboLayoutBinding = {};
+	uboLayoutBinding.binding = 0;
+	uboLayoutBinding.descriptorCount = 1;
+	uboLayoutBinding.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+	uboLayoutBinding.pImmutableSamplers = nullptr;
+	uboLayoutBinding.stageFlags = VK_SHADER_STAGE_VERTEX_BIT;
 
-	auto perMaterialBinding = Vk::CreateDescriptorSetLayoutBinding(PER_MATERIAL_BINDING_INDEX, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_ALL_GRAPHICS);
-	auto albedoBinding = Vk::CreateDescriptorSetLayoutBinding(ALBEDO_BINDING_INDEX, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, VK_SHADER_STAGE_FRAGMENT_BIT);
+	VkDescriptorSetLayoutBinding samplerLayoutBinding = {};
+	samplerLayoutBinding.binding = 1;
+	samplerLayoutBinding.descriptorCount = 1;
+	samplerLayoutBinding.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+	samplerLayoutBinding.pImmutableSamplers = nullptr;
+	samplerLayoutBinding.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
 
-	Vk::CreateDescriptorSetLayout({perMaterialBinding, albedoBinding}, descriptorSetLayout);
+	std::array<VkDescriptorSetLayoutBinding, 2> bindings = {{uboLayoutBinding, samplerLayoutBinding}};
+	VkDescriptorSetLayoutCreateInfo layoutInfo = {};
+	layoutInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
+	layoutInfo.bindingCount = static_cast<uint32_t>(bindings.size());
+	layoutInfo.pBindings = bindings.data();
+
+	if (vkCreateDescriptorSetLayout(_device, &layoutInfo, nullptr, &_descriptorSetLayout) != VK_SUCCESS)
+	    throw std::runtime_error("failed to create descriptor set layout!");
 }
 
 // TODO: same here
@@ -214,9 +244,8 @@ void					Material::CreateGraphicPipeline(void)
 
 	VkPipelineLayoutCreateInfo pipelineLayoutInfo = {};
 	pipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
-	// const auto & setLayouts = VulkanRenderPipeline::GetUniformSetLayouts();
-	pipelineLayoutInfo.setLayoutCount = 0;
-	pipelineLayoutInfo.pSetLayouts = nullptr;
+	pipelineLayoutInfo.setLayoutCount = 1;
+	pipelineLayoutInfo.pSetLayouts = &_descriptorSetLayout;
 
 	if (vkCreatePipelineLayout(_device, &pipelineLayoutInfo, nullptr, &_graphicPipelineLayout) != VK_SUCCESS)
 		throw std::runtime_error("failed to create pipeline layout!");
@@ -251,8 +280,6 @@ void					Material::CreateGraphicPipeline(void)
 
 	if (vkCreateGraphicsPipelines(_device, VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &_graphicPipeline) != VK_SUCCESS)
 		throw std::runtime_error("failed to create graphics pipeline!");
-
-	Vk::currentPipelineLayout = _graphicPipelineLayout;
 
 	vkDestroyShaderModule(_device, fragShaderModule, nullptr);
 	vkDestroyShaderModule(_device, vertShaderModule, nullptr);
@@ -291,58 +318,70 @@ void					Material::CreateTextureSampler(void)
 
 void					Material::CreateUniformBuffer(void)
 {
-	Vk::CreateBuffer(
-		sizeof(LWGC_PerMaterial),
-		VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
-		VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
-		_uniformPerMaterial.buffer,
-		_uniformPerMaterial.memory
-	);
+	VkDeviceSize bufferSize = sizeof(UniformBufferObject);
+
+	_uniformBuffers.resize(1);
+
+	for (size_t i = 0; i < 1; i++)
+	{
+		Vk::CreateBuffer(bufferSize, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, _uniformBuffers[0].buffer, _uniformBuffers[0].memory);
+	}
 }
 
 void					Material::CreateDescriptorPool(void)
 {
+	std::array<VkDescriptorPoolSize, 2> poolSizes = {};
+	poolSizes[0].type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+	poolSizes[0].descriptorCount = static_cast<uint32_t>(1);
+	poolSizes[1].type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+	poolSizes[1].descriptorCount = static_cast<uint32_t>(1);
+
+	VkDescriptorPoolCreateInfo poolInfo = {};
+	poolInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
+	poolInfo.poolSizeCount = static_cast<uint32_t>(poolSizes.size());
+	poolInfo.pPoolSizes = poolSizes.data();
+	poolInfo.maxSets = static_cast<uint32_t>(2);
+
+	if (vkCreateDescriptorPool(_device, &poolInfo, nullptr, &_descriptorPool) != VK_SUCCESS)
+	    throw std::runtime_error("failed to create descriptor pool!");
 }
 
 void					Material::UpdateUniformBuffer()
 {
-	// static auto startTime = std::chrono::high_resolution_clock::now();
+	static auto startTime = std::chrono::high_resolution_clock::now();
 
-	// auto currentTime = std::chrono::high_resolution_clock::now();
-	// float time = std::chrono::duration<float, std::chrono::seconds::period>(currentTime - startTime).count();
+	auto currentTime = std::chrono::high_resolution_clock::now();
+	float time = std::chrono::duration<float, std::chrono::seconds::period>(currentTime - startTime).count();
 
-	LWGC_PerMaterial perMaterial = {};
-	perMaterial.albedo = glm::vec4(1, 1, 0, 1);
-	
-	// TODO: move this to camera and meshRenderer buffers
-	// perMaterial.model = glm::rotate(glm::mat4(1.0f), time * glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f));
-	// perMaterial.view = glm::lookAt(glm::vec3(2.0f, 2.0f, 2.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f));
-	// perMaterial.proj = glm::perspective(glm::radians(45.0f), _swapChain->GetExtent().width / (float) _swapChain->GetExtent().height, 0.1f, 10.0f);
-	// // GLM projection matrix was designed for OpenGL where y is flipped unlike every other graphic API
-	// perMaterial.proj[1][1] *= -1;
+	UniformBufferObject ubo = {};
+	ubo.model = glm::rotate(glm::mat4(1.0f), time * glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+	ubo.view = glm::lookAt(glm::vec3(2.0f, 2.0f, 2.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+	ubo.proj = glm::perspective(glm::radians(45.0f), _swapChain->GetExtent().width / (float) _swapChain->GetExtent().height, 0.1f, 10.0f);
+	// GLM projection matrix was designed for OpenGL where y is flipped unlike every other graphic API
+	ubo.proj[1][1] *= -1;
 
 	void* data;
-	vkMapMemory(_device, _uniformPerMaterial.memory, 0, sizeof(perMaterial), 0, &data);
-	memcpy(data, &perMaterial, sizeof(perMaterial));
-	vkUnmapMemory(_device, _uniformPerMaterial.memory);
+	vkMapMemory(_device, _uniformBuffers[0].memory, 0, sizeof(ubo), 0, &data);
+	memcpy(data, &ubo, sizeof(ubo));
+	vkUnmapMemory(_device, _uniformBuffers[0].memory);
 }
 
 void					Material::CreateDescriptorSets(void)
 {
-	std::vector<VkDescriptorSetLayout> layouts(1, descriptorSetLayout);
+	std::vector<VkDescriptorSetLayout> layouts(1, _descriptorSetLayout);
 	VkDescriptorSetAllocateInfo allocInfo = {};
 	allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
-	allocInfo.descriptorPool = _instance->GetDescriptorPool();
-	allocInfo.descriptorSetCount = 1u;
+	allocInfo.descriptorPool = _descriptorPool;
+	allocInfo.descriptorSetCount = static_cast<uint32_t>(1);
 	allocInfo.pSetLayouts = layouts.data();
 
 	if (vkAllocateDescriptorSets(_device, &allocInfo, &_descriptorSet) != VK_SUCCESS)
 		throw std::runtime_error("failed to allocate descriptor sets!");
 
 	VkDescriptorBufferInfo bufferInfo = {};
-	bufferInfo.buffer = _uniformPerMaterial.buffer;
+	bufferInfo.buffer = _uniformBuffers[0].buffer;
 	bufferInfo.offset = 0;
-	bufferInfo.range = sizeof(LWGC_PerMaterial);
+	bufferInfo.range = sizeof(UniformBufferObject);
 
 	VkDescriptorImageInfo imageInfo = {};
 	imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
@@ -353,7 +392,7 @@ void					Material::CreateDescriptorSets(void)
 
 	descriptorWrites[0].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
 	descriptorWrites[0].dstSet = _descriptorSet;
-	descriptorWrites[0].dstBinding = PER_MATERIAL_BINDING_INDEX;
+	descriptorWrites[0].dstBinding = 0;
 	descriptorWrites[0].dstArrayElement = 0;
 	descriptorWrites[0].descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
 	descriptorWrites[0].descriptorCount = 1;
@@ -361,7 +400,7 @@ void					Material::CreateDescriptorSets(void)
 
 	descriptorWrites[1].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
 	descriptorWrites[1].dstSet = _descriptorSet;
-	descriptorWrites[1].dstBinding = ALBEDO_BINDING_INDEX;
+	descriptorWrites[1].dstBinding = 1;
 	descriptorWrites[1].dstArrayElement = 0;
 	descriptorWrites[1].descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
 	descriptorWrites[1].descriptorCount = 1;
@@ -372,24 +411,19 @@ void					Material::CreateDescriptorSets(void)
 
 void					Material::BindDescriptorSets(VkCommandBuffer cmd, VkPipelineBindPoint bindPoint)
 {
-	vkCmdBindDescriptorSets(cmd, bindPoint, _graphicPipelineLayout, PER_MATERIAL_BINDING_INDEX, 1, &_descriptorSet, 0, nullptr);
+	vkCmdBindDescriptorSets(cmd, bindPoint, _graphicPipelineLayout, 0, 1, &_descriptorSet, 0, nullptr);
 }
 
 // TODO: move this elsewhere
+
+VkDescriptorPool		Material::GetDescriptorPool(void) const { return (this->_descriptorPool); }
+void					Material::SetDescriptorPool(VkDescriptorPool tmp) { this->_descriptorPool = tmp; }
 
 VkPipelineLayout		Material::GetGraphicPipelineLayout(void) const { return (this->_graphicPipelineLayout); }
 void					Material::SetGraphicPipelineLayout(VkPipelineLayout tmp) { this->_graphicPipelineLayout = tmp; }
 
 VkPipeline				Material::GetGraphicPipeline(void) const { return (this->_graphicPipeline); }
 void					Material::SetGraphicPipeline(VkPipeline tmp) { this->_graphicPipeline = tmp; }
-
-VkDescriptorSetLayout	Material::GetDescriptorSetLayout(void)
-{
-	if (descriptorSetLayout == VK_NULL_HANDLE)
-		CreateDescriptorSetLayout();
-	
-	return descriptorSetLayout;
-}
 
 std::ostream &	operator<<(std::ostream & o, Material const & r)
 {

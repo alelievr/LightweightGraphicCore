@@ -4,34 +4,30 @@
 #include <string>
 
 #include "Core/Texture.hpp"
-#include "Core/Vulkan/UniformBuffer.hpp"
 #include "IncludeDeps.hpp"
 
 #include VULKAN_INCLUDE
-#include GLM_INCLUDE
 #include "VulkanInstance.hpp"
 #include "SwapChain.hpp"
 #include "Vk.hpp"
 
-#define PER_MATERIAL_BINDING_INDEX	3
-#define ALBEDO_BINDING_INDEX		4
+struct		UniformBuffers
+{
+	VkBuffer		buffer;
+	VkDeviceMemory	memory;
+};
 
 namespace LWGC
 {
 	class		Material
 	{
 		private:
-			struct LWGC_PerMaterial
-			{
-				glm::vec4		albedo;
-			};
-
-			static VkDescriptorSetLayout	descriptorSetLayout;
+			static VkDescriptorPool			_descriptorPool;
 			VkDescriptorSet					_descriptorSet;
+			VkDescriptorSetLayout			_descriptorSetLayout;
 			VkPipelineLayout				_graphicPipelineLayout;
 			VkPipeline						_graphicPipeline;
-			LWGC_PerMaterial				_perMaterial;
-			UniformBuffer					_uniformPerMaterial;
+			std::vector< UniformBuffers >	_uniformBuffers;
 			std::vector< VkSampler >		_samplers;
 			std::vector< Texture * >		_textures;
 			VulkanInstance *				_instance;
@@ -39,13 +35,13 @@ namespace LWGC
 			SwapChain *						_swapChain;
 			RenderPass *					_renderPass;
 	
-			static void	CreateDescriptorSetLayout(void);
+			void		CreateDescriptorSetLayout(void);
 			void		CreateTextureImage(void);
 			void		CreateTextureSampler(void);
 			void		CreateUniformBuffer(void);
 			void		CreateDescriptorPool(void);
 			void		CreateDescriptorSets(void);
-			VkShaderModule	createShaderModule(const std::vector<char> & code);
+			VkShaderModule	createShaderModule(const std::vector<char>& code);
 	
 		public:
 			Material(void);
@@ -60,13 +56,14 @@ namespace LWGC
 			void	BindDescriptorSets(VkCommandBuffer cmd, VkPipelineBindPoint bindPoint);
 			void	UpdateUniformBuffer(void);
 	
+			VkDescriptorPool	GetDescriptorPool(void) const;
+			void	SetDescriptorPool(VkDescriptorPool tmp);
+			
 			VkPipelineLayout	GetGraphicPipelineLayout(void) const;
-			void				SetGraphicPipelineLayout(VkPipelineLayout tmp);
+			void	SetGraphicPipelineLayout(VkPipelineLayout tmp);
 			
-			VkPipeline			GetGraphicPipeline(void) const;
-			void				SetGraphicPipeline(VkPipeline tmp);
-			
-			static VkDescriptorSetLayout	GetDescriptorSetLayout(void);
+			VkPipeline	GetGraphicPipeline(void) const;
+			void	SetGraphicPipeline(VkPipeline tmp);
 	};
 	
 	std::ostream &	operator<<(std::ostream & o, Material const & r);

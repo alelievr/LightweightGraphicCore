@@ -2,11 +2,8 @@
 #include "Core/PrimitiveMeshFactory.hpp"
 #include "Core/Hierarchy.hpp"
 #include "Core/Rendering/VulkanRenderPipeline.hpp"
-#include "Core/Vulkan/VulkanInstance.hpp"
 
 using namespace LWGC;
-
-VkDescriptorSetLayout	MeshRenderer::_descriptorSetLayout = VK_NULL_HANDLE;
 
 MeshRenderer::MeshRenderer(void)
 {
@@ -35,56 +32,7 @@ void		MeshRenderer::Initialize(void) noexcept
 
 	_drawCommandBuffer = VulkanInstance::Get()->GetGraphicCommandBufferPool()->Allocate(VK_COMMAND_BUFFER_LEVEL_SECONDARY);
 
-	if (_descriptorSetLayout == VK_NULL_HANDLE)
-		CreateDescriptorSetLayout();
-
-	CreateDescriptorSet();
-
 	RecordDrawCommandBuffer();
-}
-
-void		MeshRenderer::CreateDescriptorSetLayout(void) noexcept
-{
-	printf("Created set layout !\n");
-	auto binding = Vk::CreateDescriptorSetLayoutBinding(PER_OBJECT_BINDING_INDEX, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, VK_SHADER_STAGE_ALL_GRAPHICS);
-	Vk::CreateDescriptorSetLayout({binding}, _descriptorSetLayout);
-}
-
-void		MeshRenderer::CreateDescriptorSet(void)
-{
-	Vk::CreateBuffer(
-		sizeof(LWGC_PerObject),
-		VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
-		VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
-		_uniformModelBuffer.buffer,
-		_uniformModelBuffer.memory
-	);
-
-	std::vector<VkDescriptorSetLayout> layouts(1, _descriptorSetLayout);
-	VkDescriptorSetAllocateInfo allocInfo = {};
-	allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
-	allocInfo.descriptorPool = VulkanInstance::Get()->GetDescriptorPool();
-	allocInfo.descriptorSetCount = 1u;
-	allocInfo.pSetLayouts = layouts.data();
-
-	if (vkAllocateDescriptorSets(device, &allocInfo, &_descriptorSet) != VK_SUCCESS)
-		throw std::runtime_error("failed to allocate descriptor sets!");
-
-	VkDescriptorBufferInfo bufferInfo = {};
-	bufferInfo.buffer = _uniformModelBuffer.buffer;
-	bufferInfo.offset = 0;
-	bufferInfo.range = sizeof(LWGC_PerObject);
-
-	VkWriteDescriptorSet descriptorWrite = {};
-	descriptorWrite.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-	descriptorWrite.dstSet = _descriptorSet;
-	descriptorWrite.dstBinding = PER_OBJECT_BINDING_INDEX;
-	descriptorWrite.dstArrayElement = 0;
-	descriptorWrite.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-	descriptorWrite.descriptorCount = 1;
-	descriptorWrite.pBufferInfo = &bufferInfo;
-
-	vkUpdateDescriptorSets(device, 1, &descriptorWrite, 0, nullptr);
 }
 
 void		MeshRenderer::RecordDrawCommandBuffer(void)
@@ -102,7 +50,6 @@ void		MeshRenderer::RecordDrawCommandBuffer(void)
 
 	_mesh->BindBuffers(_drawCommandBuffer);
 
-	BindDescriptorSet(_drawCommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS);
 	_material->BindDescriptorSets(_drawCommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS);
 	_mesh->Draw(_drawCommandBuffer);
 
@@ -110,11 +57,6 @@ void		MeshRenderer::RecordDrawCommandBuffer(void)
 	{
 		throw std::runtime_error("failed to record command buffer!");
 	}
-}
-
-void		MeshRenderer::BindDescriptorSet(VkCommandBuffer cmd, VkPipelineBindPoint bindPoint)
-{
-	vkCmdBindDescriptorSets(cmd, bindPoint, _material->GetGraphicPipelineLayout(), PER_OBJECT_BINDING_INDEX, 1, &_descriptorSet, 0, nullptr);
 }
 
 Bounds		MeshRenderer::GetBounds(void)
@@ -143,7 +85,7 @@ void MeshRenderer::OnEnable() noexcept
 
 void MeshRenderer::OnDisable() noexcept
 {
-	Component::OnDisable();
+	Component::OnEnable();
 	hierarchy->UnregisterComponentInRenderContext(MeshRenderer::type, _renderContextIndex);
 }
 
@@ -160,23 +102,16 @@ void MeshRenderer::CreateGraphicPipeline(void) noexcept
 uint32_t					MeshRenderer::GetType(void) const noexcept { return type; }
 
 std::shared_ptr< Mesh >		MeshRenderer::GetMesh(void) const { return (this->_mesh); }
-void						MeshRenderer::SetMesh(std::shared_ptr< Mesh > tmp) { this->_mesh = tmp; }
+void		MeshRenderer::SetMesh(std::shared_ptr< Mesh > tmp) { this->_mesh = tmp; }
 
-std::shared_ptr< Material >	MeshRenderer::GetMaterial(void) const { return (this->_material); }
-void						MeshRenderer::SetMaterial(std::shared_ptr< Material > tmp) { this->_material = tmp; }
+std::shared_ptr< Material >		MeshRenderer::GetMaterial(void) const { return (this->_material); }
+void		MeshRenderer::SetMaterial(std::shared_ptr< Material > tmp) { this->_material = tmp; }
 
-VkCommandBuffer				MeshRenderer::GetDrawCommandBuffer(void) const { return _drawCommandBuffer; }
-
-VkDescriptorSetLayout		MeshRenderer::GetDescriptorSetLayout(void) noexcept
-{
-	if (_descriptorSetLayout == VK_NULL_HANDLE)
-		CreateDescriptorSetLayout();
-	return _descriptorSetLayout;
-}
+VkCommandBuffer		MeshRenderer::GetDrawCommandBuffer(void) const { return _drawCommandBuffer; }
 
 std::ostream &	operator<<(std::ostream & o, MeshRenderer const & r)
 {
-	o << "MeshRenderer" << std::endl;
+	o << "tostring of the class" << std::endl;
 	(void)r;
 	return (o);
 }

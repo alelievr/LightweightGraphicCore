@@ -1,12 +1,8 @@
 #include "Camera.hpp"
 
-#include "Core/Vulkan/Vk.hpp"
-
 using namespace LWGC;
 
-VkDescriptorSetLayout Camera::_perCameraDescriptorSetLayout = VK_NULL_HANDLE;
-
-Camera::Camera(void) : _initDescriptorSetLayout(false)
+Camera::Camera(void)
 {
 	std::cout << "Default constructor of Camera called" << std::endl;
 	this->_target = new RenderTarget();
@@ -14,22 +10,11 @@ Camera::Camera(void) : _initDescriptorSetLayout(false)
 	this->_fov = 0;
 	this->_nearPlane = 0;
 	this->_farPlane = 0;
-
-	if (_perCameraDescriptorSetLayout == VK_NULL_HANDLE)
-	{
-		_initDescriptorSetLayout = true;
-	}
 }
 
 Camera::~Camera(void)
 {
-	auto device = VulkanInstance::Get()->GetDevice();
-
-	if (_initDescriptorSetLayout)
-		vkDestroyDescriptorSetLayout(device, _perCameraDescriptorSetLayout, nullptr);
-
-	vkDestroyBuffer(device, _uniformCameraBuffer.buffer, nullptr);
-	vkFreeMemory(device, _uniformCameraBuffer.memory, nullptr);
+	std::cout << "Destructor of Camera called" << std::endl;
 }
 
 void			Camera::OnAdded(const GameObject & go) noexcept
@@ -52,13 +37,13 @@ glm::vec3		Camera::ScreenToWorldPoint(glm::vec3 screenPosition)
 	return screenPosition;
 }
 
-RenderTarget *	Camera::GetTarget(void) const { return (this->_target); }
+RenderTarget *		Camera::GetTarget(void) const { return (this->_target); }
 void		Camera::SetTarget(RenderTarget * tmp) { this->_target = tmp; }
 
-glm::vec2	Camera::GetSize(void) const { return (this->_size); }
+glm::vec2		Camera::GetSize(void) const { return (this->_size); }
 void		Camera::SetSize(glm::vec2 tmp) { this->_size = tmp; }
 
-CameraType	Camera::GetCameraType(void) const { return (this->_cameraType); }
+CameraType		Camera::GetCameraType(void) const { return (this->_cameraType); }
 void		Camera::SetCameraType(CameraType tmp) { this->_cameraType = tmp; }
 
 float		Camera::GetFov(void) const { return (this->_fov); }
@@ -69,72 +54,6 @@ void		Camera::SetNearPlane(float tmp) { this->_nearPlane = tmp; }
 
 float		Camera::GetFarPlane(void) const { return (this->_farPlane); }
 void		Camera::SetFarPlane(float tmp) { this->_farPlane = tmp; }
-
-void		Camera::Initialize(void) noexcept
-{
-	Component::Initialize();
-	
-	if (_initDescriptorSetLayout == VK_NULL_HANDLE)
-		CreateCameraDescriptorSetLayout();
-
-	Vk::CreateBuffer(
-		sizeof(LWGC_PerCamera),
-		VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
-		VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
-		_uniformCameraBuffer.buffer,
-		_uniformCameraBuffer.memory
-	);
-
-	const auto device = VulkanInstance::Get()->GetDevice();
-	VkDescriptorSetAllocateInfo allocInfo = {};
-	allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
-	allocInfo.descriptorPool = VulkanInstance::Get()->GetDescriptorPool();
-	allocInfo.descriptorSetCount = 1u;
-	allocInfo.pSetLayouts = &_perCameraDescriptorSetLayout;
-
-	if (vkAllocateDescriptorSets(device, &allocInfo, &_perCameraDescriptorSet) != VK_SUCCESS)
-		throw std::runtime_error("failed to allocate descriptor sets!");
-
-	VkDescriptorBufferInfo bufferInfo = {};
-	bufferInfo.buffer = _uniformCameraBuffer.buffer;
-	bufferInfo.offset = 0;
-	bufferInfo.range = sizeof(LWGC_PerCamera);
-
-	VkWriteDescriptorSet descriptorWrite = {};
-	descriptorWrite.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-	descriptorWrite.dstSet = _perCameraDescriptorSet;
-	descriptorWrite.dstBinding = PER_CAMERA_BINDING_INDEX;
-	descriptorWrite.dstArrayElement = 0;
-	descriptorWrite.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-	descriptorWrite.descriptorCount = 1;
-	descriptorWrite.pBufferInfo = &bufferInfo;
-
-	vkUpdateDescriptorSets(device, 1, &descriptorWrite, 0, nullptr);
-}
-
-void					Camera::CreateCameraDescriptorSetLayout(void) noexcept
-{
-	auto binding = Vk::CreateDescriptorSetLayoutBinding(PER_CAMERA_BINDING_INDEX, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, VK_SHADER_STAGE_ALL_GRAPHICS);
-	Vk::CreateDescriptorSetLayout({binding}, _perCameraDescriptorSetLayout);
-}
-
-void					Camera::BindDescriptorSet(VkCommandBuffer cmd, VkPipelineBindPoint bindPoint)
-{
-	vkCmdBindDescriptorSets(cmd, bindPoint, Vk::currentPipelineLayout, PER_CAMERA_BINDING_INDEX, 1, &_perCameraDescriptorSet, 0, nullptr);
-}
-
-VkDescriptorSetLayout	Camera::GetDescriptorSetLayout(void) noexcept
-{
-	if (_perCameraDescriptorSetLayout == VK_NULL_HANDLE)
-		CreateCameraDescriptorSetLayout();
-
-	return _perCameraDescriptorSetLayout;
-}
-
-uint32_t	Camera::GetType(void) const noexcept
-{
-	return type;
-}
 
 std::ostream &	operator<<(std::ostream & o, Camera const & r)
 {

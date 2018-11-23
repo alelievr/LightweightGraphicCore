@@ -34,7 +34,7 @@ namespace LWGC
 			static Color		GetColor(void);
 			static float		Range(const float a, const float b);
 			static int			Range(const int a, const int b);
-			static void	SetSeed(const long seed);
+			static void			SetSeed(const long seed);
 	};
 
 	std::ostream &	operator<<(std::ostream & o, Random const & r);

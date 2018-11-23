@@ -1,20 +1,11 @@
 #version 450
 #extension GL_ARB_separate_shader_objects : enable
 
-layout(binding = 0) uniform a {
-	vec4	time; // x: time, y: sin(time), z: cos(time), z: deltaTime
-} LWGC_PerFrame;
-
-layout(binding = 1) uniform b {
-	mat4	projection;
-	mat4	view;
-	vec4	positionWS;
-	vec4	screenSize; // xy: screen size in pixel, zw: 1 / screenSize
-} LWGC_PerCamera;
-
-layout(binding = 2) uniform c {
+layout(binding = 0) uniform UniformBufferObject {
 	mat4 model;
-} LWGC_PerObject;
+	mat4 view;
+	mat4 proj;
+} ubo;
 
 layout(location = 0) in vec3 inPosition;
 layout(location = 1) in vec3 inNormal;
@@ -30,7 +21,8 @@ out gl_PerVertex {
 };
 
 void main() {
-    gl_Position = LWGC_PerCamera.projection * LWGC_PerCamera.view * LWGC_PerObject.model * vec4(inPosition, 1.0);
+    gl_Position = ubo.proj * ubo.view * ubo.model * vec4(inPosition, 1.0);
     fragColor = inColor;
     fragTexCoord = inTexCoord;
 }
+
