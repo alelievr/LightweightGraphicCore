@@ -218,7 +218,6 @@ void			VulkanRenderPipeline::UpdatePerframeUnformBuffer(void) noexcept
 	// Upload datas to GPU
 	void* data;
 	vkMapMemory(device, uniformPerFrame.memory, 0, sizeof(LWGC_PerFrame), 0, &data);
-	printf("Perframe buffer memory zone: %p\n", data);
 	memcpy(data, &perFrame, sizeof(LWGC_PerFrame));
 	vkUnmapMemory(device, uniformPerFrame.memory);
 }
@@ -245,7 +244,7 @@ void			VulkanRenderPipeline::RenderInternal(const std::vector< Camera * > & came
 
 	graphicCommandBuffer = swapChainCommandBuffers[imageIndex];
 
-	Render(cameras, context);
+	// Render(cameras, context);
 
 	VkSubmitInfo submitInfo = {};
 	submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
@@ -265,10 +264,7 @@ void			VulkanRenderPipeline::RenderInternal(const std::vector< Camera * > & came
 
 	Vk::CheckResult(vkResetFences(device, 1, &inFlightFences[currentFrame]), "Reset fence failed");
 
-	if (vkQueueSubmit(instance->GetGraphicQueue(), 1, &submitInfo, inFlightFences[currentFrame]) != VK_SUCCESS)
-	{
-		throw std::runtime_error("failed to submit graphic queue!");
-	}
+	Vk::CheckResult(vkQueueSubmit(instance->GetGraphicQueue(), 1, &submitInfo, inFlightFences[currentFrame]), "Failed to submit graphic queue");
 
 	VkPresentInfoKHR presentInfo = {};
 	presentInfo.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;

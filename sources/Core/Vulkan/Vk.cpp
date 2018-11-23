@@ -153,11 +153,11 @@ void			Vk::CheckResult(VkResult result, const std::string & errorMessage)
 {
 	if (result == 0)
 		return;
-		
-	printf("Vulkan error %d\n", result);
+	
+	std::cout << "Vulkan error [" << result << "]: " << errorMessage << std::endl;
 	
     if (result < 0)
-        throw std::runtime_error(errorMessage);
+		abort();
 }
 
 VkSampler		Vk::CreateSampler(VkFilter filter, VkSamplerAddressMode addressMode, uint32_t maxAniso)
