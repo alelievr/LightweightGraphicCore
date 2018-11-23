@@ -214,14 +214,9 @@ void					Material::CreateGraphicPipeline(void)
 
 	VkPipelineLayoutCreateInfo pipelineLayoutInfo = {};
 	pipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
-	const auto & setLayouts = VulkanRenderPipeline::GetUniformSetLayouts();
-	pipelineLayoutInfo.setLayoutCount = setLayouts.size();
-	pipelineLayoutInfo.pSetLayouts = setLayouts.data();
-
-	printf("Set layout 0: %p\n", setLayouts[0]);
-	printf("Set layout 1: %p\n", setLayouts[1]);
-	printf("Set layout 2: %p\n", setLayouts[2]);
-	printf("Set layout 3: %p\n", setLayouts[3]);
+	// const auto & setLayouts = VulkanRenderPipeline::GetUniformSetLayouts();
+	pipelineLayoutInfo.setLayoutCount = 0;
+	pipelineLayoutInfo.pSetLayouts = nullptr;
 
 	if (vkCreatePipelineLayout(_device, &pipelineLayoutInfo, nullptr, &_graphicPipelineLayout) != VK_SUCCESS)
 		throw std::runtime_error("failed to create pipeline layout!");
