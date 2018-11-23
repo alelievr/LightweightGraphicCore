@@ -1,6 +1,11 @@
 #include "Camera.hpp"
 
 #include "Core/Vulkan/Vk.hpp"
+#include "IncludeDeps.hpp"
+#define GLM_FORCE_RADIANS
+#define GLM_FORCE_DEPTH_ZERO_TO_ONE
+#include GLM_INCLUDE
+#include GLM_INCLUDE_MATRIX_TRANSFORM
 
 using namespace LWGC;
 
@@ -85,7 +90,12 @@ void		Camera::Initialize(void) noexcept
 		_uniformCameraBuffer.memory
 	);
 
-	const auto device = VulkanInstance::Get()->GetDevice();
+	CreateDescriptorSet();
+	UpdateUniformData();
+}
+
+void					Camera::CreateDescriptorSet(void) noexcept
+{
 	VkDescriptorSetAllocateInfo allocInfo = {};
 	allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
 	allocInfo.descriptorPool = VulkanInstance::Get()->GetDescriptorPool();
@@ -112,9 +122,22 @@ void		Camera::Initialize(void) noexcept
 	vkUpdateDescriptorSets(device, 1, &descriptorWrite, 0, nullptr);
 }
 
+void					Camera::UpdateUniformData(void) noexcept
+{
+	_perCamera.positionWS = glm::vec4(0, 0, 0, 1);
+	_perCamera.view = glm::lookAt(glm::vec3(2.0f, 2.0f, 2.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+	float ratio = 1; // TODO
+	_perCamera.projection = glm::perspective(glm::radians(45.0f), ratio, 0.1f, 10.0f);
+ 
+	void* data;
+	vkMapMemory(device, _uniformCameraBuffer.memory, 0, sizeof(LWGC_PerCamera), 0, &data);
+	memcpy(data, &_perCamera, sizeof(_perCamera));
+	vkUnmapMemory(device, _uniformCameraBuffer.memory);
+}
+
 void					Camera::CreateCameraDescriptorSetLayout(void) noexcept
 {
-	auto binding = Vk::CreateDescriptorSetLayoutBinding(PER_CAMERA_BINDING_INDEX, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, VK_SHADER_STAGE_ALL_GRAPHICS);
+	auto binding = Vk::CreateDescriptorSetLayoutBinding(PER_CAMERA_BINDING_INDEX, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_ALL_GRAPHICS);
 	Vk::CreateDescriptorSetLayout({binding}, _perCameraDescriptorSetLayout);
 }
 

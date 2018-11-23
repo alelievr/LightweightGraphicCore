@@ -71,7 +71,6 @@ void					Material::Initialize(SwapChain * swapChain, RenderPass * renderPass)
 	CreateTextureImage();
 	CreateTextureSampler();
 	CreateUniformBuffer();
-	CreateDescriptorPool();
 	CreateDescriptorSets();
 }
 
@@ -87,7 +86,7 @@ void	Material::CreateDescriptorSetLayout(void)
 		return ;
 
 	auto perMaterialBinding = Vk::CreateDescriptorSetLayoutBinding(PER_MATERIAL_BINDING_INDEX, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_ALL_GRAPHICS);
-	auto albedoBinding = Vk::CreateDescriptorSetLayoutBinding(ALBEDO_BINDING_INDEX, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, VK_SHADER_STAGE_FRAGMENT_BIT);
+	auto albedoBinding = Vk::CreateDescriptorSetLayoutBinding(ALBEDO_BINDING_INDEX, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, VK_SHADER_STAGE_ALL_GRAPHICS);
 
 	Vk::CreateDescriptorSetLayout({perMaterialBinding, albedoBinding}, descriptorSetLayout);
 }
@@ -214,9 +213,9 @@ void					Material::CreateGraphicPipeline(void)
 
 	VkPipelineLayoutCreateInfo pipelineLayoutInfo = {};
 	pipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
-	// const auto & setLayouts = VulkanRenderPipeline::GetUniformSetLayouts();
-	pipelineLayoutInfo.setLayoutCount = 0;
-	pipelineLayoutInfo.pSetLayouts = nullptr;
+	const auto & setLayouts = VulkanRenderPipeline::GetUniformSetLayouts();
+	pipelineLayoutInfo.setLayoutCount = setLayouts.size();
+	pipelineLayoutInfo.pSetLayouts = setLayouts.data();
 
 	if (vkCreatePipelineLayout(_device, &pipelineLayoutInfo, nullptr, &_graphicPipelineLayout) != VK_SUCCESS)
 		throw std::runtime_error("failed to create pipeline layout!");
@@ -300,30 +299,13 @@ void					Material::CreateUniformBuffer(void)
 	);
 }
 
-void					Material::CreateDescriptorPool(void)
-{
-}
-
 void					Material::UpdateUniformBuffer()
 {
-	// static auto startTime = std::chrono::high_resolution_clock::now();
-
-	// auto currentTime = std::chrono::high_resolution_clock::now();
-	// float time = std::chrono::duration<float, std::chrono::seconds::period>(currentTime - startTime).count();
-
-	LWGC_PerMaterial perMaterial = {};
-	perMaterial.albedo = glm::vec4(1, 1, 0, 1);
-	
-	// TODO: move this to camera and meshRenderer buffers
-	// perMaterial.model = glm::rotate(glm::mat4(1.0f), time * glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f));
-	// perMaterial.view = glm::lookAt(glm::vec3(2.0f, 2.0f, 2.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f));
-	// perMaterial.proj = glm::perspective(glm::radians(45.0f), _swapChain->GetExtent().width / (float) _swapChain->GetExtent().height, 0.1f, 10.0f);
-	// // GLM projection matrix was designed for OpenGL where y is flipped unlike every other graphic API
-	// perMaterial.proj[1][1] *= -1;
+	_perMaterial.albedo = glm::vec4(1, 1, 0, 1);
 
 	void* data;
-	vkMapMemory(_device, _uniformPerMaterial.memory, 0, sizeof(perMaterial), 0, &data);
-	memcpy(data, &perMaterial, sizeof(perMaterial));
+	vkMapMemory(_device, _uniformPerMaterial.memory, 0, sizeof(_perMaterial), 0, &data);
+	memcpy(data, &_perMaterial, sizeof(_perMaterial));
 	vkUnmapMemory(_device, _uniformPerMaterial.memory);
 }
 
@@ -348,6 +330,9 @@ void					Material::CreateDescriptorSets(void)
 	imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
 	imageInfo.imageView = _textures[0]->GetView();
 	imageInfo.sampler = _samplers[0];
+
+	printf("ImageView: %p\n", _textures[0]->GetView());
+	printf("Sampler: %p\n", _samplers[0]);
 
 	std::array<VkWriteDescriptorSet, 2> descriptorWrites = {};
 

@@ -34,8 +34,11 @@ namespace LWGC
 			VkDescriptorSet			_perCameraDescriptorSet;
 			static VkDescriptorSetLayout	_perCameraDescriptorSetLayout;
 			bool					_initDescriptorSetLayout;
+			LWGC_PerCamera			_perCamera;
 
 			static void				CreateCameraDescriptorSetLayout(void) noexcept;
+			void					CreateDescriptorSet(void) noexcept;
+			void					UpdateUniformData(void) noexcept;
 
 		public:
 			Camera(void);

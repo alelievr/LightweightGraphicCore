@@ -23,6 +23,7 @@ namespace LWGC
 
 			std::shared_ptr< Mesh >		_mesh;
 			std::shared_ptr< Material >	_material;
+			LWGC_PerObject				_perObject;
 			VkCommandBuffer				_drawCommandBuffer;
 			ComponentIndex				_renderContextIndex;
 			UniformBuffer				_uniformModelBuffer;
@@ -35,6 +36,7 @@ namespace LWGC
 			void		CreateDescriptorSet(void);
 			void		BindDescriptorSet(VkCommandBuffer cmd, VkPipelineBindPoint bindPoint);
 			static void	CreateDescriptorSetLayout(void) noexcept;
+			void		UpdateUniformData(void);
 
 		public:
 			MeshRenderer(void);
