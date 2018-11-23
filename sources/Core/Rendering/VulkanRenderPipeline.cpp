@@ -9,7 +9,7 @@
 using namespace LWGC;
 
 VulkanRenderPipeline *					VulkanRenderPipeline::pipelineInstance = nullptr;
-std::vector< VkDescriptorSetLayout >	VulkanRenderPipeline::uniformSetLayouts;
+// std::vector< VkDescriptorSetLayout >	VulkanRenderPipeline::uniformSetLayouts;
 
 VulkanRenderPipeline * VulkanRenderPipeline::Get() { return pipelineInstance; }
 

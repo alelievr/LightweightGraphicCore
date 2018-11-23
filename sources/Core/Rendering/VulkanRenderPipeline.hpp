@@ -28,7 +28,7 @@ namespace LWGC
 			};
 
 			static VulkanRenderPipeline *	pipelineInstance;
-			static std::vector< VkDescriptorSetLayout >	uniformSetLayouts;
+			// static std::vector< VkDescriptorSetLayout >	uniformSetLayouts;
 			std::vector< VkCommandBuffer >	swapChainCommandBuffers;
 			// LWGC_PerFrame					perFrame;
 			// UniformBuffers					uniformPerFrame;
