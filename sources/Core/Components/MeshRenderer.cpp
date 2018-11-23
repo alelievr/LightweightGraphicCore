@@ -22,6 +22,8 @@ MeshRenderer::MeshRenderer(const PrimitiveType prim)
 
 MeshRenderer::~MeshRenderer(void)
 {
+	vkDestroyBuffer(device, _uniformModelBuffer.buffer, nullptr);
+	vkFreeMemory(device, _uniformModelBuffer.memory, nullptr);
 }
 
 void		MeshRenderer::Initialize(void) noexcept
@@ -39,14 +41,13 @@ void		MeshRenderer::Initialize(void) noexcept
 		CreateDescriptorSetLayout();
 
 	CreateDescriptorSet();
-
 	RecordDrawCommandBuffer();
+	UpdateUniformData();
 }
 
 void		MeshRenderer::CreateDescriptorSetLayout(void) noexcept
 {
-	printf("Created set layout !\n");
-	auto binding = Vk::CreateDescriptorSetLayoutBinding(PER_OBJECT_BINDING_INDEX, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, VK_SHADER_STAGE_ALL_GRAPHICS);
+	auto binding = Vk::CreateDescriptorSetLayoutBinding(PER_OBJECT_BINDING_INDEX, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_ALL_GRAPHICS);
 	Vk::CreateDescriptorSetLayout({binding}, _descriptorSetLayout);
 }
 
@@ -85,6 +86,17 @@ void		MeshRenderer::CreateDescriptorSet(void)
 	descriptorWrite.pBufferInfo = &bufferInfo;
 
 	vkUpdateDescriptorSets(device, 1, &descriptorWrite, 0, nullptr);
+}
+
+void		MeshRenderer::UpdateUniformData(void)
+{
+	// perMaterial.model = glm::rotate(glm::mat4(1.0f), time * glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+	_perObject.model = glm::mat4(1);
+
+	void* data;
+	vkMapMemory(device, _uniformModelBuffer.memory, 0, sizeof(LWGC_PerObject), 0, &data);
+	memcpy(data, &_perObject, sizeof(_perObject));
+	vkUnmapMemory(device, _uniformModelBuffer.memory);
 }
 
 void		MeshRenderer::RecordDrawCommandBuffer(void)

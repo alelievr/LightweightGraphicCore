@@ -43,7 +43,6 @@ namespace LWGC
 			void		CreateTextureImage(void);
 			void		CreateTextureSampler(void);
 			void		CreateUniformBuffer(void);
-			void		CreateDescriptorPool(void);
 			void		CreateDescriptorSets(void);
 			VkShaderModule	createShaderModule(const std::vector<char> & code);
 	
