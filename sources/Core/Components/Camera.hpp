@@ -8,6 +8,7 @@
 #include "Core/Vulkan/UniformBuffer.hpp"
 #include "Core/CameraType.hpp"
 #include "Core/GameObject.hpp"
+#include "Core/Vulkan/SwapChain.hpp"
 
 #define PER_CAMERA_BINDING_INDEX	1
 
@@ -32,6 +33,7 @@ namespace LWGC
 			float					_farPlane;
 			UniformBuffer			_uniformCameraBuffer;
 			VkDescriptorSet			_perCameraDescriptorSet;
+			SwapChain *				_swapChain;
 			static VkDescriptorSetLayout	_perCameraDescriptorSetLayout;
 			bool					_initDescriptorSetLayout;
 			LWGC_PerCamera			_perCamera;

@@ -7,7 +7,6 @@
 #include "RenderContext.hpp"
 #include "Core/Vulkan/RenderPass.hpp"
 #include "Core/Vulkan/Material.hpp"
-#include "Core/Vulkan/SwapChain.hpp"
 #include "Core/Vulkan/VulkanInstance.hpp"
 #include "Core/Mesh.hpp"
 

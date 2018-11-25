@@ -86,12 +86,13 @@ void	Material::CreateDescriptorSetLayout(void)
 		return ;
 
 	auto perMaterialBinding = Vk::CreateDescriptorSetLayoutBinding(PER_MATERIAL_BINDING_INDEX, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_ALL_GRAPHICS);
-	auto albedoBinding = Vk::CreateDescriptorSetLayoutBinding(ALBEDO_BINDING_INDEX, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, VK_SHADER_STAGE_ALL_GRAPHICS);
+	auto albedoBinding = Vk::CreateDescriptorSetLayoutBinding(ALBEDO_BINDING_INDEX, VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE, VK_SHADER_STAGE_ALL_GRAPHICS);
+	auto samplerBinding = Vk::CreateDescriptorSetLayoutBinding(SAMPLER_BINDING_INDEX, VK_DESCRIPTOR_TYPE_SAMPLER, VK_SHADER_STAGE_ALL_GRAPHICS);
 
-	Vk::CreateDescriptorSetLayout({perMaterialBinding, albedoBinding}, descriptorSetLayout);
+	Vk::CreateDescriptorSetLayout({perMaterialBinding, albedoBinding, samplerBinding}, descriptorSetLayout);
 }
 
-// TODO: same here
+// TODO: move this to shader class
 static std::vector<char> readFile(const std::string& filename) {
 	std::ifstream file(filename, std::ios::ate | std::ios::binary);
 
@@ -329,10 +330,10 @@ void					Material::CreateDescriptorSets(void)
 	VkDescriptorImageInfo imageInfo = {};
 	imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
 	imageInfo.imageView = _textures[0]->GetView();
-	imageInfo.sampler = _samplers[0];
+	imageInfo.sampler = 0;
 
-	printf("ImageView: %p\n", _textures[0]->GetView());
-	printf("Sampler: %p\n", _samplers[0]);
+    VkDescriptorImageInfo samplerInfo = {};
+    samplerInfo.sampler = Vk::Samplers::trilinearClamp;
 
 	std::array<VkWriteDescriptorSet, 2> descriptorWrites = {};
 
@@ -348,9 +349,17 @@ void					Material::CreateDescriptorSets(void)
 	descriptorWrites[1].dstSet = _descriptorSet;
 	descriptorWrites[1].dstBinding = ALBEDO_BINDING_INDEX;
 	descriptorWrites[1].dstArrayElement = 0;
-	descriptorWrites[1].descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+	descriptorWrites[1].descriptorType = VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE;
 	descriptorWrites[1].descriptorCount = 1;
 	descriptorWrites[1].pImageInfo = &imageInfo;
+
+	descriptorWrites[2].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+	descriptorWrites[2].dstSet = _descriptorSet;
+	descriptorWrites[2].dstBinding = SAMPLER_BINDING_INDEX;
+	descriptorWrites[2].dstArrayElement = 0;
+	descriptorWrites[2].descriptorType = VK_DESCRIPTOR_TYPE_SAMPLER;
+	descriptorWrites[2].descriptorCount = 1;
+	descriptorWrites[2].pImageInfo = &samplerInfo;
 
 	vkUpdateDescriptorSets(_device, static_cast<uint32_t>(descriptorWrites.size()), descriptorWrites.data(), 0, nullptr);
 }
