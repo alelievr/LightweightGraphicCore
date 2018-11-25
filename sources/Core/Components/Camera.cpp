@@ -1,6 +1,8 @@
 #include "Camera.hpp"
 
 #include "Core/Vulkan/Vk.hpp"
+#include "Core/Vulkan/SwapChain.hpp"
+#include "Core/Rendering/VulkanRenderPipeline.hpp"
 #include "IncludeDeps.hpp"
 #define GLM_FORCE_RADIANS
 #define GLM_FORCE_DEPTH_ZERO_TO_ONE
@@ -78,6 +80,8 @@ void		Camera::SetFarPlane(float tmp) { this->_farPlane = tmp; }
 void		Camera::Initialize(void) noexcept
 {
 	Component::Initialize();
+
+	_swapChain = VulkanRenderPipeline::Get()->GetSwapChain();
 	
 	if (_initDescriptorSetLayout == VK_NULL_HANDLE)
 		CreateCameraDescriptorSetLayout();
@@ -126,7 +130,7 @@ void					Camera::UpdateUniformData(void) noexcept
 {
 	_perCamera.positionWS = glm::vec4(0, 0, 0, 1);
 	_perCamera.view = glm::lookAt(glm::vec3(2.0f, 2.0f, 2.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f));
-	float ratio = 1; // TODO
+	float ratio = (float)_swapChain->GetExtent().width / (float)_swapChain->GetExtent().height;
 	_perCamera.projection = glm::perspective(glm::radians(45.0f), ratio, 0.1f, 10.0f);
  
 	void* data;

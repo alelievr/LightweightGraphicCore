@@ -76,13 +76,15 @@ void			VulkanInstance::CreateDescriptorPool(void) noexcept
 	if (_descriptorPool != VK_NULL_HANDLE)
 		return ;
 	
-	std::array<VkDescriptorPoolSize, 3> poolSizes = {};
+	std::array<VkDescriptorPoolSize, 4> poolSizes = {};
 	poolSizes[0].type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
 	poolSizes[0].descriptorCount = 4u;
 	poolSizes[1].type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC;
-	poolSizes[1].descriptorCount = 8u;
-	poolSizes[2].type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+	poolSizes[1].descriptorCount = 2u;
+	poolSizes[2].type = VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE;
 	poolSizes[2].descriptorCount = 6u;
+	poolSizes[2].type = VK_DESCRIPTOR_TYPE_SAMPLER;
+	poolSizes[2].descriptorCount = 4u;
 
 	VkDescriptorPoolCreateInfo poolInfo = {};
 	poolInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;

@@ -14,7 +14,9 @@
 #include "Vk.hpp"
 
 #define PER_MATERIAL_BINDING_INDEX	3
-#define ALBEDO_BINDING_INDEX		4
+// Ubo sampler does not count for smapler image count
+#define ALBEDO_BINDING_INDEX		5
+#define SAMPLER_BINDING_INDEX		0
 
 namespace LWGC
 {
