@@ -87,7 +87,7 @@ void	Material::CreateDescriptorSetLayout(void)
 
 	auto perMaterialBinding = Vk::CreateDescriptorSetLayoutBinding(PER_MATERIAL_BINDING_INDEX, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_ALL_GRAPHICS);
 	auto albedoBinding = Vk::CreateDescriptorSetLayoutBinding(ALBEDO_BINDING_INDEX, VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE, VK_SHADER_STAGE_ALL_GRAPHICS);
-	auto samplerBinding = Vk::CreateDescriptorSetLayoutBinding(SAMPLER_BINDING_INDEX, VK_DESCRIPTOR_TYPE_SAMPLER, VK_SHADER_STAGE_ALL_GRAPHICS);
+	auto samplerBinding = Vk::CreateDescriptorSetLayoutBinding(SAMPLER_BINDING_INDEX, VK_DESCRIPTOR_TYPE_SAMPLER, VK_SHADER_STAGE_FRAGMENT_BIT);
 
 	Vk::CreateDescriptorSetLayout({perMaterialBinding, albedoBinding, samplerBinding}, descriptorSetLayout);
 }

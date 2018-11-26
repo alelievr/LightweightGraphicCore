@@ -15,8 +15,8 @@
 
 #define PER_MATERIAL_BINDING_INDEX	3
 // Ubo sampler does not count for smapler image count
-#define ALBEDO_BINDING_INDEX		5
-#define SAMPLER_BINDING_INDEX		0
+#define ALBEDO_BINDING_INDEX		1
+#define SAMPLER_BINDING_INDEX		2
 
 namespace LWGC
 {
