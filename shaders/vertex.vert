@@ -2,18 +2,18 @@
 #extension GL_ARB_shading_language_420pack : enable
 #extension GL_ARB_separate_shader_objects : enable
 
-layout(binding = 0) uniform a {
+layout(set = 0, binding = 0) uniform a {
 	vec4	time; // x: time, y: sin(time), z: cos(time), z: deltaTime
 } LWGC_PerFrame;
 
-layout(binding = 1) uniform b {
+layout(set = 1, binding = 1) uniform b {
 	mat4	projection;
 	mat4	view;
 	vec4	positionWS;
 	vec4	screenSize; // xy: screen size in pixel, zw: 1 / screenSize
 } LWGC_PerCamera;
 
-layout(binding = 2) uniform c {
+layout(set = 2, binding = 2) uniform c {
 	mat4 model;
 } LWGC_PerObject;
 
@@ -31,6 +31,22 @@ out gl_PerVertex {
 };
 
 void main() {
+	switch (gl_VertexIndex % 4)
+	{
+		case 0:
+			gl_Position = vec4(1, 1, 0, 1);
+			break ;
+		case 1:
+			gl_Position = vec4(0, 1, 0, 1);
+			break ;
+		case 2:
+			gl_Position = vec4(0, 0, 0, 1);
+			break ;
+		case 3:
+			gl_Position = vec4(1, 0, 0, 1);
+			break ;
+	}
+	// gl_Position *= LWGC_PerObject.model;
     gl_Position = LWGC_PerCamera.projection * LWGC_PerCamera.view * LWGC_PerObject.model * vec4(inPosition, 1.0);
     fragColor = inColor;
     fragTexCoord = inTexCoord;
