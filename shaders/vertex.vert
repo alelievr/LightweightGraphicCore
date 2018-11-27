@@ -6,16 +6,24 @@ layout(set = 0, binding = 0) uniform a {
 	vec4	time; // x: time, y: sin(time), z: cos(time), z: deltaTime
 } LWGC_PerFrame;
 
-layout(set = 1, binding = 1) uniform b {
+layout(set = 1, binding = 0) uniform b {
 	mat4	projection;
 	mat4	view;
 	vec4	positionWS;
 	vec4	screenSize; // xy: screen size in pixel, zw: 1 / screenSize
 } LWGC_PerCamera;
 
-layout(set = 2, binding = 2) uniform c {
+layout(set = 2, binding = 0) uniform c {
 	mat4 model;
 } LWGC_PerObject;
+
+layout(set = 3, binding = 0) uniform d {
+	vec4		albedo;
+} LWGC_PerMaterial;
+
+layout(set = 3, binding = 1) uniform texture2D	albedoMap;
+
+layout(set = 3, binding = 2) uniform sampler samp;
 
 layout(location = 0) in vec3 inPosition;
 layout(location = 1) in vec3 inNormal;

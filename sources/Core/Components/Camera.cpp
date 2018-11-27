@@ -117,7 +117,7 @@ void					Camera::CreateDescriptorSet(void) noexcept
 	VkWriteDescriptorSet descriptorWrite = {};
 	descriptorWrite.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
 	descriptorWrite.dstSet = _perCameraDescriptorSet;
-	descriptorWrite.dstBinding = PER_CAMERA_BINDING_INDEX;
+	descriptorWrite.dstBinding = 0;
 	descriptorWrite.dstArrayElement = 0;
 	descriptorWrite.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
 	descriptorWrite.descriptorCount = 1;
@@ -141,7 +141,7 @@ void					Camera::UpdateUniformData(void) noexcept
 
 void					Camera::CreateCameraDescriptorSetLayout(void) noexcept
 {
-	auto binding = Vk::CreateDescriptorSetLayoutBinding(PER_CAMERA_BINDING_INDEX, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_ALL_GRAPHICS);
+	auto binding = Vk::CreateDescriptorSetLayoutBinding(0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_ALL_GRAPHICS);
 	Vk::CreateDescriptorSetLayout({binding}, _perCameraDescriptorSetLayout);
 }
 

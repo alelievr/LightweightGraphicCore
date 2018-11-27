@@ -231,7 +231,7 @@ VkPresentModeKHR	SwapChain::ChoosePresentMode(void) noexcept
 	const auto & availablePresentModes = _instance->GetSupportedPresentModes();
 	VkPresentModeKHR bestMode = VK_PRESENT_MODE_FIFO_KHR;
 
-	for (const auto& availablePresentMode : availablePresentModes)
+	for (const auto & availablePresentMode : availablePresentModes)
 	{
 	    if (availablePresentMode == VK_PRESENT_MODE_MAILBOX_KHR)
 	        return availablePresentMode;

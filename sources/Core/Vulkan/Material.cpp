@@ -85,9 +85,9 @@ void	Material::CreateDescriptorSetLayout(void)
 	if (descriptorSetLayout != VK_NULL_HANDLE)
 		return ;
 
-	auto perMaterialBinding = Vk::CreateDescriptorSetLayoutBinding(PER_MATERIAL_BINDING_INDEX, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_ALL_GRAPHICS);
+	auto perMaterialBinding = Vk::CreateDescriptorSetLayoutBinding(0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_ALL_GRAPHICS);
 	auto albedoBinding = Vk::CreateDescriptorSetLayoutBinding(ALBEDO_BINDING_INDEX, VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE, VK_SHADER_STAGE_ALL_GRAPHICS);
-	auto samplerBinding = Vk::CreateDescriptorSetLayoutBinding(SAMPLER_BINDING_INDEX, VK_DESCRIPTOR_TYPE_SAMPLER, VK_SHADER_STAGE_FRAGMENT_BIT);
+	auto samplerBinding = Vk::CreateDescriptorSetLayoutBinding(TRILINEAR_CLAMP_BINDING_INDEX, VK_DESCRIPTOR_TYPE_SAMPLER, VK_SHADER_STAGE_FRAGMENT_BIT);
 
 	Vk::CreateDescriptorSetLayout({perMaterialBinding, albedoBinding, samplerBinding}, descriptorSetLayout);
 }
@@ -286,7 +286,7 @@ void					Material::CreateTextureImage(void)
 
 void					Material::CreateTextureSampler(void)
 {
-	_samplers.push_back(Vk::Samplers::trilinearRepeat);
+	_samplers.push_back(Vk::Samplers::trilinearClamp);
 }
 
 void					Material::CreateUniformBuffer(void)
@@ -332,14 +332,35 @@ void					Material::CreateDescriptorSets(void)
 	imageInfo.imageView = _textures[0]->GetView();
 	imageInfo.sampler = 0;
 
-    VkDescriptorImageInfo samplerInfo = {};
-    samplerInfo.sampler = Vk::Samplers::trilinearClamp;
+	// create sampler:
 
-	std::array<VkWriteDescriptorSet, 2> descriptorWrites = {};
+	VkSamplerCreateInfo samplerInfo2 = {};
+	samplerInfo2.sType = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO;
+	samplerInfo2.magFilter = VK_FILTER_NEAREST;
+	samplerInfo2.minFilter = VK_FILTER_NEAREST;
+	samplerInfo2.addressModeU = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_BORDER;
+	samplerInfo2.addressModeV = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_BORDER;
+	samplerInfo2.addressModeW = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_BORDER;
+	samplerInfo2.anisotropyEnable = VK_FALSE;
+	samplerInfo2.maxAnisotropy = 0;
+	samplerInfo2.borderColor = VK_BORDER_COLOR_INT_OPAQUE_BLACK;
+	samplerInfo2.unnormalizedCoordinates = VK_FALSE;
+	samplerInfo2.compareEnable = VK_FALSE;
+	samplerInfo2.compareOp = VK_COMPARE_OP_ALWAYS;
+	samplerInfo2.mipmapMode = VK_SAMPLER_MIPMAP_MODE_LINEAR;
+
+	if (vkCreateSampler(_device, &samplerInfo2, nullptr, &textureSampler) != VK_SUCCESS) {
+		throw std::runtime_error("failed to create texture sampler!");
+	}
+
+    VkDescriptorImageInfo samplerInfo = {};
+    samplerInfo.sampler = textureSampler;
+
+	std::array<VkWriteDescriptorSet, 3> descriptorWrites = {};
 
 	descriptorWrites[0].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
 	descriptorWrites[0].dstSet = _descriptorSet;
-	descriptorWrites[0].dstBinding = PER_MATERIAL_BINDING_INDEX;
+	descriptorWrites[0].dstBinding = 0;
 	descriptorWrites[0].dstArrayElement = 0;
 	descriptorWrites[0].descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
 	descriptorWrites[0].descriptorCount = 1;
@@ -355,7 +376,7 @@ void					Material::CreateDescriptorSets(void)
 
 	descriptorWrites[2].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
 	descriptorWrites[2].dstSet = _descriptorSet;
-	descriptorWrites[2].dstBinding = SAMPLER_BINDING_INDEX;
+	descriptorWrites[2].dstBinding = TRILINEAR_CLAMP_BINDING_INDEX;
 	descriptorWrites[2].dstArrayElement = 0;
 	descriptorWrites[2].descriptorType = VK_DESCRIPTOR_TYPE_SAMPLER;
 	descriptorWrites[2].descriptorCount = 1;
