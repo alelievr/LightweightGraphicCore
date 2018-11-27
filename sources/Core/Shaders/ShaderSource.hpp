@@ -1,11 +1,11 @@
 #pragma once
 
-#include <iostream>
-#include <list>
+#include <vector>
 #include <string>
 
 #include "IncludeDeps.hpp"
 
+#include VULKAN_INCLUDE
 #include GLFW_INCLUDE
 
 namespace LWGC
@@ -15,32 +15,32 @@ namespace LWGC
 		private:
 			struct ShaderFileInfo
 			{
-				std::string		path;
-				long			lastModificationTime;
+				std::string			path;
+				long				lastModificationTime;
 			};
 
-			std::list< ShaderFileInfo >	_sourceFiles;
+			ShaderFileInfo			_sourceFile;
+			VkShaderModule			_module;
+			VkShaderStageFlagBits	_stage;
 
+			std::vector<char>	ReadFile(const std::string & fileName);
+			long				GetFileModificationTime(const std::string & file) const;
+
+			friend std::ostream &	operator<<(std::ostream & o, ShaderSource const & r);
 
 		public:
 			ShaderSource(void);
-			ShaderSource(const ShaderSource&);
+			ShaderSource(const ShaderSource &) = delete;
 			virtual ~ShaderSource(void);
 
-			ShaderSource &	operator=(ShaderSource const & src);
+			ShaderSource &	operator=(ShaderSource const & src) = delete;
 
-			void	AddSourceFile(const std::string source);
+			void	SetSourceFile(const std::string file, const VkShaderStageFlagBits stage);
+			void	SetSource(const std::vector< char > HLSLSource, const VkShaderStageFlagBits stage);
+			bool	NeedReload(void) const;
+			void	Reload(void);
 
-			void	AddSource(const std::string source);
-
-			bool	NeedReload(void);
-
-			const GLchar **	GetVertexSources(int *nSources);
-
-			const GLchar **	GetGeometrySources(int *nSources);
-
-			const GLchar **	GetFragmentSources(int *nSources);
+			VkShaderModule	GetModule(void) const;
+			VkShaderStageFlagBits	GetStage(void) const;
 	};
-
-	std::ostream &	operator<<(std::ostream & o, ShaderSource const & r);
 }

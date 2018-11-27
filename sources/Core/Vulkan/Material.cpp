@@ -92,59 +92,12 @@ void	Material::CreateDescriptorSetLayout(void)
 	Vk::CreateDescriptorSetLayout({perMaterialBinding, albedoBinding, samplerBinding}, descriptorSetLayout);
 }
 
-// TODO: move this to shader class
-static std::vector<char> readFile(const std::string& filename) {
-	std::ifstream file(filename, std::ios::ate | std::ios::binary);
-
-	if (!file.is_open()) {
-	    throw std::runtime_error("failed to open file!");
-	}
-
-	size_t fileSize = (size_t) file.tellg();
-	std::vector<char> buffer(fileSize);
-
-	file.seekg(0);
-	file.read(buffer.data(), fileSize);
-
-	file.close();
-
-	return buffer;
-}
-
-VkShaderModule	Material::createShaderModule(const std::vector<char>& code) {
-	VkShaderModuleCreateInfo createInfo = {};
-	createInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
-	createInfo.codeSize = code.size();
-	createInfo.pCode = reinterpret_cast<const uint32_t*>(code.data());
-
-	VkShaderModule shaderModule;
-	if (vkCreateShaderModule(_device, &createInfo, nullptr, &shaderModule) != VK_SUCCESS)
-		throw std::runtime_error("failed to create shader module!");
-
-	return shaderModule;
-}
-
 void					Material::CreateGraphicPipeline(void)
 {
-	auto vertShaderCode = readFile("shaders/vert.spv");
-	auto fragShaderCode = readFile("shaders/frag.spv");
+	_program.SetFragmentSourceFile("shaders/debug/AlbedoTextue.hlsl");
+	_program.SetVertexSourceFile("shaders/DefaultVertex.hlsl");
 
-	VkShaderModule vertShaderModule = createShaderModule(vertShaderCode);
-	VkShaderModule fragShaderModule = createShaderModule(fragShaderCode);
-
-	VkPipelineShaderStageCreateInfo vertShaderStageInfo = {};
-	vertShaderStageInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
-	vertShaderStageInfo.stage = VK_SHADER_STAGE_VERTEX_BIT;
-	vertShaderStageInfo.module = vertShaderModule;
-	vertShaderStageInfo.pName = "main";
-
-	VkPipelineShaderStageCreateInfo fragShaderStageInfo = {};
-	fragShaderStageInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
-	fragShaderStageInfo.stage = VK_SHADER_STAGE_FRAGMENT_BIT;
-	fragShaderStageInfo.module = fragShaderModule;
-	fragShaderStageInfo.pName = "main";
-
-	VkPipelineShaderStageCreateInfo shaderStages[] = {vertShaderStageInfo, fragShaderStageInfo};
+	_program.CreateStages();
 
 	VkPipelineVertexInputStateCreateInfo vertexInputInfo = {};
 	vertexInputInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
@@ -236,7 +189,7 @@ void					Material::CreateGraphicPipeline(void)
 	VkGraphicsPipelineCreateInfo pipelineInfo = {};
 	pipelineInfo.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
 	pipelineInfo.stageCount = 2;
-	pipelineInfo.pStages = shaderStages;
+	pipelineInfo.pStages = _program.GetShaderStages();
 	pipelineInfo.pVertexInputState = &vertexInputInfo;
 	pipelineInfo.pInputAssemblyState = &inputAssembly;
 	pipelineInfo.pViewportState = &viewportState;
@@ -253,9 +206,6 @@ void					Material::CreateGraphicPipeline(void)
 		throw std::runtime_error("failed to create graphics pipeline!");
 
 	Vk::currentPipelineLayout = _graphicPipelineLayout;
-
-	vkDestroyShaderModule(_device, fragShaderModule, nullptr);
-	vkDestroyShaderModule(_device, vertShaderModule, nullptr);
 
 	printf("Graphic pipeline created !\n");
 }
@@ -332,29 +282,8 @@ void					Material::CreateDescriptorSets(void)
 	imageInfo.imageView = _textures[0]->GetView();
 	imageInfo.sampler = 0;
 
-	// create sampler:
-
-	VkSamplerCreateInfo samplerInfo2 = {};
-	samplerInfo2.sType = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO;
-	samplerInfo2.magFilter = VK_FILTER_NEAREST;
-	samplerInfo2.minFilter = VK_FILTER_NEAREST;
-	samplerInfo2.addressModeU = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_BORDER;
-	samplerInfo2.addressModeV = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_BORDER;
-	samplerInfo2.addressModeW = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_BORDER;
-	samplerInfo2.anisotropyEnable = VK_FALSE;
-	samplerInfo2.maxAnisotropy = 0;
-	samplerInfo2.borderColor = VK_BORDER_COLOR_INT_OPAQUE_BLACK;
-	samplerInfo2.unnormalizedCoordinates = VK_FALSE;
-	samplerInfo2.compareEnable = VK_FALSE;
-	samplerInfo2.compareOp = VK_COMPARE_OP_ALWAYS;
-	samplerInfo2.mipmapMode = VK_SAMPLER_MIPMAP_MODE_LINEAR;
-
-	if (vkCreateSampler(_device, &samplerInfo2, nullptr, &textureSampler) != VK_SUCCESS) {
-		throw std::runtime_error("failed to create texture sampler!");
-	}
-
     VkDescriptorImageInfo samplerInfo = {};
-    samplerInfo.sampler = textureSampler;
+    samplerInfo.sampler = Vk::Samplers::trilinearClamp;
 
 	std::array<VkWriteDescriptorSet, 3> descriptorWrites = {};
 

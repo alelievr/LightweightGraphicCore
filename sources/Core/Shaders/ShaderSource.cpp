@@ -1,67 +1,99 @@
 #include "ShaderSource.hpp"
 
+#include <sys/stat.h>
+#include <fstream>
+#include "Core/Vulkan/VulkanInstance.hpp"
+
 using namespace LWGC;
 
-ShaderSource::ShaderSource(void)
+ShaderSource::ShaderSource(void) : _module(VK_NULL_HANDLE)
 {
-	std::cout << "Default constructor of ShaderSource called" << std::endl;
-}
-
-ShaderSource::ShaderSource(ShaderSource const & src)
-{
-	*this = src;
-	std::cout << "Copy constructor called" << std::endl;
 }
 
 ShaderSource::~ShaderSource(void)
 {
-	std::cout << "Destructor of ShaderSource called" << std::endl;
+	const auto & device = VulkanInstance::Get()->GetDevice();
+
+	if (_module != VK_NULL_HANDLE)
+		vkDestroyShaderModule(device, _module, nullptr);
 }
 
-void		ShaderSource::AddSourceFile(const std::string source)
+std::vector<char> ShaderSource::ReadFile(const std::string & fileName)
 {
-	
+	std::ifstream file(fileName, std::ios::ate | std::ios::binary);
+
+	if (!file.is_open())
+	    throw std::runtime_error("failed to open file!");
+
+	size_t fileSize = (size_t) file.tellg();
+	std::vector< char > buffer(fileSize);
+
+	file.seekg(0);
+	file.read(buffer.data(), fileSize);
+
+	file.close();
+
+	return buffer;
 }
 
-void		ShaderSource::AddSource(const std::string source)
+long		ShaderSource::GetFileModificationTime(const std::string & file) const
 {
-	
+	struct stat st;
+
+	lstat(file.c_str(), &st);
+
+	return st.st_mtimespec.tv_sec;
 }
 
-bool		ShaderSource::NeedReload(void)
+void		ShaderSource::SetSourceFile(const std::string file, const VkShaderStageFlagBits stage)
 {
-	
+	_sourceFile = ShaderFileInfo{file, GetFileModificationTime(file)};
+	SetSource(ReadFile(file), stage);
 }
 
-const GLchar **		ShaderSource::GetVertexSources(int *nSources)
+void		ShaderSource::SetSource(const std::vector< char > HLSLSource, const VkShaderStageFlagBits stage)
 {
-	
+	_stage = stage;
+
+	// TODO: compile HLSL to spirV here
+
+	std::vector<char> spirV;
+
+	VkShaderModuleCreateInfo createInfo = {};
+	createInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
+	createInfo.codeSize = spirV.size();
+	createInfo.pCode = reinterpret_cast< const uint32_t* >(spirV.data());
+
+	if (vkCreateShaderModule(VulkanInstance::Get()->GetDevice(), &createInfo, nullptr, &_module) != VK_SUCCESS)
+		throw std::runtime_error("failed to create shader module!");
 }
 
-const GLchar **		ShaderSource::GetGeometrySources(int *nSources)
+bool		ShaderSource::NeedReload(void) const
 {
-	
+	if (_sourceFile.lastModificationTime != GetFileModificationTime(_sourceFile.path))
+		return true;
+	else
+		return false;
 }
 
-const GLchar **		ShaderSource::GetFragmentSources(int *nSources)
+VkShaderModule			ShaderSource::GetModule(void) const
 {
-	
+	return _module;
 }
 
-
-ShaderSource &	ShaderSource::operator=(ShaderSource const & src)
+VkShaderStageFlagBits	ShaderSource::GetStage(void) const
 {
-	std::cout << "Assignment operator called" << std::endl;
-
-	if (this != &src) {
-		this->_sourceFiles = _sourceFiles;
-	}
-	return (*this);
+	return _stage;
 }
 
-std::ostream &	operator<<(std::ostream & o, ShaderSource const & r)
+void		ShaderSource::Reload(void)
 {
-	o << "tostring of the class" << std::endl;
+	std::cout << "TODO" << std::endl;
+}
+
+std::ostream &	LWGC::operator<<(std::ostream & o, ShaderSource const & r)
+{
+	o << "Shader(" << r._sourceFile.path << ")";
 	(void)r;
 	return (o);
 }

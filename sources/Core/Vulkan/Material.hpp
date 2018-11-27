@@ -12,6 +12,7 @@
 #include "VulkanInstance.hpp"
 #include "SwapChain.hpp"
 #include "Vk.hpp"
+#include "Core/Shaders/ShaderProgram.hpp"
 
 #define PER_MATERIAL_BINDING_INDEX		3
 #define TRILINEAR_CLAMP_BINDING_INDEX	1
@@ -39,7 +40,7 @@ namespace LWGC
 			VkDevice						_device;
 			SwapChain *						_swapChain;
 			RenderPass *					_renderPass;
-			VkSampler						textureSampler;
+			ShaderProgram					_program;
 	
 			static void	CreateDescriptorSetLayout(void);
 			void		CreateTextureImage(void);
