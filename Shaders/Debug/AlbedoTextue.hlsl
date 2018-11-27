@@ -1,4 +1,4 @@
-#include "Uniforms.hlsl"
+#include "Shaders/Uniforms.hlsl"
 
 struct FragmentOutput
 {

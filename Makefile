@@ -15,7 +15,7 @@
 #################
 
 #	Sources
-SRCDIR		=	sources
+SRCDIR		=	Sources
 SRC			=	Core/Application.cpp \
 				Core/Transform.cpp \
 				Core/GameObject.cpp \

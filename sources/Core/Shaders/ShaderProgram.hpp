@@ -13,40 +13,32 @@ namespace LWGC
 	class		ShaderProgram
 	{
 		private:
-			GLuint	_id;
-			ShaderSource	_sources;
+			ShaderSource	_fragmentShaderSource;
+			ShaderSource	_vertexShaderSource;
+			ShaderSource	_geometryShaderSource;
+			ShaderSource	_computeShaderSource;
 
+			std::vector< ShaderSource * >					_shaderSources;
+			std::vector< VkPipelineShaderStageCreateInfo >	_shaderStages;
 
 		public:
 			ShaderProgram(void);
-			ShaderProgram(const ShaderProgram&);
+			ShaderProgram(const ShaderProgram &) = delete;
 			virtual ~ShaderProgram(void);
 
-			ShaderProgram &	operator=(ShaderProgram const & src);
+			ShaderProgram &	operator=(ShaderProgram const & src) = delete;
 
-			bool	CompileAndLink(void);
+			void	CreateStages(void);
 
-			void	AddVertexSourceFile(const std::string file);
-
-			void	AddFragmentSourceFile(const std::string file);
-
-			void	AddVertexSource(const std::string source);
-
-			void	AddFragmentSource(const std::string source);
-
-			void	AddGeometrySourceFile(const std::string file);
-
-			void	AddGeometrySource(const std::string source);
+			void	SetVertexSourceFile(const std::string & file);
+			void	SetFragmentSourceFile(const std::string & file);
+			void	SetGeometrySourceFile(const std::string & file);
+			void	SetComputeSourceFile(const std::string & file);
 
 			void	Bind(void);
+			bool	Update(void);
 
-			void	Update(void);
-
-			GLuint	GetId(void) const;
-			void	SetId(GLuint tmp);
-			
-			ShaderSource	GetSources(void) const;
-			void	SetSources(ShaderSource tmp);
+			VkPipelineShaderStageCreateInfo *	GetShaderStages();
 	};
 
 	std::ostream &	operator<<(std::ostream & o, ShaderProgram const & r);
