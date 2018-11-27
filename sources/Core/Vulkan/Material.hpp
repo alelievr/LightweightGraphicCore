@@ -13,10 +13,9 @@
 #include "SwapChain.hpp"
 #include "Vk.hpp"
 
-#define PER_MATERIAL_BINDING_INDEX	3
-// Ubo sampler does not count for smapler image count
-#define ALBEDO_BINDING_INDEX		1
-#define SAMPLER_BINDING_INDEX		2
+#define PER_MATERIAL_BINDING_INDEX		3
+#define TRILINEAR_CLAMP_BINDING_INDEX	1
+#define ALBEDO_BINDING_INDEX			2
 
 namespace LWGC
 {
@@ -40,6 +39,7 @@ namespace LWGC
 			VkDevice						_device;
 			SwapChain *						_swapChain;
 			RenderPass *					_renderPass;
+			VkSampler						textureSampler;
 	
 			static void	CreateDescriptorSetLayout(void);
 			void		CreateTextureImage(void);

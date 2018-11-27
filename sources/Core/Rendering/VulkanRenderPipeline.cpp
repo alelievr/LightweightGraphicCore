@@ -90,7 +90,7 @@ void				VulkanRenderPipeline::CreatePerFrameDescriptorSet(void)
 	VkWriteDescriptorSet descriptorWrite = {};
 	descriptorWrite.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
 	descriptorWrite.dstSet = perFrameDescriptorSet;
-	descriptorWrite.dstBinding = PER_FRAME_BINDING_INDEX;
+	descriptorWrite.dstBinding = 0;
 	descriptorWrite.dstArrayElement = 0;
 	descriptorWrite.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
 	descriptorWrite.descriptorCount = 1;

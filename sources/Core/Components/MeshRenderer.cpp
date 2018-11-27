@@ -47,7 +47,7 @@ void		MeshRenderer::Initialize(void) noexcept
 
 void		MeshRenderer::CreateDescriptorSetLayout(void) noexcept
 {
-	auto binding = Vk::CreateDescriptorSetLayoutBinding(PER_OBJECT_BINDING_INDEX, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_ALL_GRAPHICS);
+	auto binding = Vk::CreateDescriptorSetLayoutBinding(0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_ALL_GRAPHICS);
 	Vk::CreateDescriptorSetLayout({binding}, _descriptorSetLayout);
 }
 
@@ -79,7 +79,7 @@ void		MeshRenderer::CreateDescriptorSet(void)
 	VkWriteDescriptorSet descriptorWrite = {};
 	descriptorWrite.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
 	descriptorWrite.dstSet = _descriptorSet;
-	descriptorWrite.dstBinding = PER_OBJECT_BINDING_INDEX;
+	descriptorWrite.dstBinding = 0;
 	descriptorWrite.dstArrayElement = 0;
 	descriptorWrite.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
 	descriptorWrite.descriptorCount = 1;
