@@ -32,6 +32,7 @@ namespace LWGC
 			LWGC_PerFrame					perFrame;
 			UniformBuffer					uniformPerFrame;
 			VkDescriptorSet					perFrameDescriptorSet;
+			std::vector<std::string> IncludeDirectoryList;
 			
 			void				RenderInternal(const std::vector< Camera * > & cameras, RenderContext & context);
 			void				UpdatePerframeUnformBuffer(void) noexcept;

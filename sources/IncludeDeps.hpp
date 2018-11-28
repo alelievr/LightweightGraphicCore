@@ -3,18 +3,21 @@
 
 # define GLM_ENABLE_EXPERIMENTAL
 
-# define GLM_INCLUDE "../deps/glm/glm/glm.hpp"
-# define GLM_INCLUDE_QUATERNION "../deps/glm/glm/gtx/quaternion.hpp"
-# define GLM_INCLUDE_MATRIX_TRANSFORM "../deps/glm/glm/gtc/matrix_transform.hpp"
-# define GLFW_INCLUDE "../deps/glfw/include/GLFW/glfw3.h"
-# define GLSLANG_INCLUDE "../deps/glslang/glslang/Public/ShaderLang.h"
-# define IMGUI_INCLUDE "../deps/imgui/imgui.h"
-# define STB_INCLUDE "../deps/stb/stb.h"
-# define STB_INCLUDE_IMAGE "../deps/stb/stb_image.h"
-# define GLSLANG_RESOURCES_INCLUDE "../deps/glslang/StandAlone/ResourceLimits.h"
+# define GLM_INCLUDE "../Deps/glm/glm/glm.hpp"
+# define GLM_INCLUDE_QUATERNION "../Deps/glm/glm/gtx/quaternion.hpp"
+# define GLM_INCLUDE_MATRIX_TRANSFORM "../Deps/glm/glm/gtc/matrix_transform.hpp"
+# define GLFW_INCLUDE "../Deps/glfw/include/GLFW/glfw3.h"
+# define IMGUI_INCLUDE "../Deps/imgui/imgui.h"
+# define STB_INCLUDE "../Deps/stb/stb.h"
+# define STB_INCLUDE_IMAGE "../Deps/stb/stb_image.h"
+// Unusable API
+// # define GLSLANG_INCLUDE "../Deps/glslang/glslang/Public/ShaderLang.h"
+// # define GLSLANG_RESOURCES_INCLUDE "../Deps/glslang/StandAlone/ResourceLimits.h"
+// # define GLSLANG_DIRSTACK_INCLUDE "../Deps/glslang/StandAlone/DirStackFileIncluder.h"
+// # define GLSLANG_SPV_INCLDUE "../Deps/glslang/SPIRV/GlslangToSpv.h"
 
 # ifdef __APPLE__
-#  define VULKAN_INCLUDE "../deps/vulkansdk-macos-1.1.85.0/macOS/include/vulkan/vulkan.h"
+#  define VULKAN_INCLUDE "../Deps/vulkansdk-macos-1.1.85.0/macOS/include/vulkan/vulkan.h"
 # else
 #  define VULKAN_INCLUDE <vulkan/vulkan.h>
 # endif

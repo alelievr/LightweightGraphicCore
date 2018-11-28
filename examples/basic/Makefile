@@ -36,7 +36,7 @@ INCDIRS		=	../../sources
 
 #	Libraries
 LIBDIRS		=	../../ ../../deps/glfw/src/ ../../deps/imgui/ ../../deps/vulkansdk-macos-1.1.85.0/macOS/lib
-LDLIBS		=	-lLWGC -lglfw3 -limgui -lvulkan
+LDLIBS		=	-lLWGC -lglfw3 -limgui -lvulkan -lglslang -lSPIRV -lHLSL -lSPVRemapper -lSPIRV-Tools -lSPIRV-Tools-link -lSPIRV-Tools-opt -lspirv-cross -lOSDependent -lOGLCompiler
 
 #	Output
 NAME		=	simple

@@ -1,15 +1,15 @@
 [submodule "glfw"]
-	path = deps/glfw
+	path = Deps/glfw
 	url = https://github.com/glfw/glfw
 [submodule "glm"]
-	path = deps/glm
+	path = Deps/glm
 	url = https://github.com/g-truc/glm
-[submodule "deps/glslang"]
-	path = deps/glslang
+[submodule "Deps/glslang"]
+	path = Deps/glslang
 	url = https://github.com/KhronosGroup/glslang
-[submodule "deps/imgui"]
-	path = deps/imgui
+[submodule "Deps/imgui"]
+	path = Deps/imgui
 	url = https://github.com/ocornut/imgui
-[submodule "deps/stb"]
-	path = deps/stb
+[submodule "Deps/stb"]
+	path = Deps/stb
 	url = https://github.com/nothings/stb

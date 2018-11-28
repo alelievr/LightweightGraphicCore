@@ -21,9 +21,6 @@
 #include "Core/Rendering/ForwardRenderPipeline.hpp"
 
 // Shaders & materials
-#include "Core/Shaders/IChannel.hpp"
-#include "Core/Shaders/ImageChannel.hpp"
-#include "Core/Shaders/ProgramChannel.hpp"
 #include "Core/Shaders/ShaderProgram.hpp"
 #include "Core/Shaders/ShaderSource.hpp"
 #include "Core/Vulkan/Material.hpp"

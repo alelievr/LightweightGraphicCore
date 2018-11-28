@@ -6,7 +6,6 @@
 #include "IncludeDeps.hpp"
 
 #include GLFW_INCLUDE
-#include GLSLANG_INCLUDE
 #include "ShaderSource.hpp"
 
 namespace LWGC

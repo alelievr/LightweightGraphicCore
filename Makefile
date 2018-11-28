@@ -35,8 +35,6 @@ SRC			=	Core/Application.cpp \
 				Core/Rendering/RenderTarget.cpp \
 				Core/Rendering/VulkanRenderPipeline.cpp \
 				Core/Rendering/RenderContext.cpp \
-				Core/Shaders/ImageChannel.cpp \
-				Core/Shaders/ProgramChannel.cpp \
 				Core/Shaders/ShaderProgram.cpp \
 				Core/Shaders/ShaderSource.cpp \
 				Core/Vulkan/CommandBufferPool.cpp \
@@ -58,7 +56,7 @@ SRC			=	Core/Application.cpp \
 				Utils/Rect.cpp \
 
 #	Objects
-OBJDIR		=	obj
+OBJDIR		=	Objects
 
 #	Variables
 LIBFT		=	2	#1 or 0 to include the libft / 2 for autodetct
