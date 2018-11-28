@@ -4,9 +4,11 @@
 #include <fstream>
 #include "Core/Vulkan/VulkanInstance.hpp"
 
+#include GLSLANG_RESOURCES_INCLUDE
+
 using namespace LWGC;
 
-ShaderSource::ShaderSource(void) : _module(VK_NULL_HANDLE)
+ShaderSource::ShaderSource(void) : _module(VK_NULL_HANDLE), _shader(nullptr)
 {
 }
 
@@ -16,6 +18,9 @@ ShaderSource::~ShaderSource(void)
 
 	if (_module != VK_NULL_HANDLE)
 		vkDestroyShaderModule(device, _module, nullptr);
+	
+	if (_shader != nullptr)
+		delete _shader;
 }
 
 std::vector<char> ShaderSource::ReadFile(const std::string & fileName)
@@ -51,11 +56,55 @@ void		ShaderSource::SetSourceFile(const std::string file, const VkShaderStageFla
 	SetSource(ReadFile(file), stage);
 }
 
+EShLanguage	ShaderSource::ShaderStageToLang(const VkShaderStageFlagBits stage)
+{
+	switch (stage)
+	{
+		case VK_SHADER_STAGE_VERTEX_BIT:
+			return EShLangVertex;
+			break ;
+		case VK_SHADER_STAGE_FRAGMENT_BIT:
+			return EShLangFragment;
+			break ;
+		case VK_SHADER_STAGE_COMPUTE_BIT:
+			return EShLangCompute;
+			break ;
+		default:
+			throw std::runtime_error("Can't compile the shader, unknown stage");
+	}
+}
+
 void		ShaderSource::SetSource(const std::vector< char > HLSLSource, const VkShaderStageFlagBits stage)
 {
 	_stage = stage;
 
-	// TODO: compile HLSL to spirV here
+	const char *						data = HLSLSource.data();
+	EShLanguage							language = ShaderStageToLang(stage);
+	glslang::EShTargetClientVersion		targetVersion = glslang::EShTargetVulkan_1_1;
+	glslang::EShTargetLanguageVersion	targetLanguageVersion = glslang::EShTargetSpv_1_3;
+
+	_shader = new glslang::TShader(language);
+	_shader->setStrings(&data , 1);
+	_shader->setAutoMapLocations(true);
+	_shader->setAutoMapBindings(true);
+	_shader->setEnvInput(glslang::EShSourceHlsl, language, glslang::EShClientVulkan, 650);
+	_shader->setEnvClient(glslang::EShClientVulkan, targetVersion);
+	_shader->setEnvTarget(glslang::EShTargetSpv, targetLanguageVersion);
+	
+	_shader->parse(&glslang::DefaultTBuiltInResource, 650, false, EShMsgDefault);
+
+	// TODO: do this in another function
+	_program.addShader(_sahder);
+
+	success &= program.link(controls);
+	success &= program.mapIO();
+
+	std::vector<uint32_t>	spirv_binary;
+	glslang::SpvOptions		options;
+	options.validate = true;
+	spv::SpvBuildLogger		logger;
+	glslang::GlslangToSpv(*_program.getIntermediate(language),
+						  spirv_binary, &logger, &options);
 
 	std::vector<char> spirV;
 
@@ -84,6 +133,11 @@ VkShaderModule			ShaderSource::GetModule(void) const
 VkShaderStageFlagBits	ShaderSource::GetStage(void) const
 {
 	return _stage;
+}
+
+glslang::TShader *		ShaderSource::GetShader(void) const
+{
+	return _shader;
 }
 
 void		ShaderSource::Reload(void)

@@ -97,7 +97,7 @@ void					Material::CreateGraphicPipeline(void)
 	_program.SetFragmentSourceFile("shaders/debug/AlbedoTextue.hlsl");
 	_program.SetVertexSourceFile("shaders/DefaultVertex.hlsl");
 
-	_program.CreateStages();
+	_program.CompileAndLink();
 
 	VkPipelineVertexInputStateCreateInfo vertexInputInfo = {};
 	vertexInputInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;

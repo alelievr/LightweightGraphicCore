@@ -6,6 +6,7 @@
 #include "IncludeDeps.hpp"
 
 #include GLFW_INCLUDE
+#include GLSLANG_INCLUDE
 #include "ShaderSource.hpp"
 
 namespace LWGC
@@ -13,10 +14,10 @@ namespace LWGC
 	class		ShaderProgram
 	{
 		private:
-			ShaderSource	_fragmentShaderSource;
-			ShaderSource	_vertexShaderSource;
-			ShaderSource	_geometryShaderSource;
-			ShaderSource	_computeShaderSource;
+			ShaderSource		_fragmentShaderSource;
+			ShaderSource		_vertexShaderSource;
+			ShaderSource		_geometryShaderSource;
+			ShaderSource		_computeShaderSource;
 
 			std::vector< ShaderSource * >					_shaderSources;
 			std::vector< VkPipelineShaderStageCreateInfo >	_shaderStages;
@@ -28,7 +29,7 @@ namespace LWGC
 
 			ShaderProgram &	operator=(ShaderProgram const & src) = delete;
 
-			void	CreateStages(void);
+			void	CompileAndLink(void);
 
 			void	SetVertexSourceFile(const std::string & file);
 			void	SetFragmentSourceFile(const std::string & file);

@@ -7,6 +7,7 @@
 
 #include VULKAN_INCLUDE
 #include GLFW_INCLUDE
+#include GLSLANG_INCLUDE
 
 namespace LWGC
 {
@@ -22,9 +23,12 @@ namespace LWGC
 			ShaderFileInfo			_sourceFile;
 			VkShaderModule			_module;
 			VkShaderStageFlagBits	_stage;
+			glslang::TShader *		_shader;
+			glslang::TProgram		_program;
 
 			std::vector<char>	ReadFile(const std::string & fileName);
 			long				GetFileModificationTime(const std::string & file) const;
+			EShLanguage			ShaderStageToLang(const VkShaderStageFlagBits stage);
 
 			friend std::ostream &	operator<<(std::ostream & o, ShaderSource const & r);
 
@@ -40,7 +44,8 @@ namespace LWGC
 			bool	NeedReload(void) const;
 			void	Reload(void);
 
-			VkShaderModule	GetModule(void) const;
+			VkShaderModule			GetModule(void) const;
 			VkShaderStageFlagBits	GetStage(void) const;
+			glslang::TShader *		GetShader(void) const;
 	};
 }
