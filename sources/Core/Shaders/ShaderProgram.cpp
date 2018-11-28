@@ -18,7 +18,7 @@ void		ShaderProgram::CompileAndLink(void)
 {
 	for (auto & shaderSource : _shaderSources)
 	{
-		const auto & shader = shaderSource->GetShader();
+		shaderSource->Compile();
 
 		VkPipelineShaderStageCreateInfo shaderStageInfo = {};
 		shaderStageInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;

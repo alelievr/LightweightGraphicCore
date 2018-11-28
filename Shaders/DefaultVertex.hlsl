@@ -41,9 +41,13 @@ uniform SamplerState trilinearClamp;
 [[vk::binding(4, 3)]] uniform Texture2D	heightMap;
 [[vk::binding(5, 3)]] uniform Texture2D	smoothnessMap;
 
-struct FragmentOutput
+struct	VertexInput
 {
-	[[vk::location(0)]] float4	color : SV_Target0;
+	[[vk::location(0)]] float3	position : POSITION;
+	[[vk::location(1)]] float3	normal : NORMAL;
+	[[vk::location(2)]] float3	tangent : TANGENT;
+	[[vk::location(3)]] float3	color : COLOR;
+	[[vk::location(4)]] float2	uv : TEXCOORD0;
 };
 
 struct	FragmentInput
@@ -52,11 +56,12 @@ struct	FragmentInput
 	[[vk::location(1)]] float2	uv : TEXCOORD0;
 };
 
-FragmentOutput main(FragmentInput i)
+FragmentInput main(VertexInput i, int id : SV_VertexID)
 {
-	FragmentOutput	o;
+	FragmentInput	o;
 
-	o.color = float4(albedoMap.Sample(trilinearClamp, i.uv * 2).rgb, 1.0);
+    o.uv = i.uv;
+	o.positionWS = transpose(camera.projection) * transpose(camera.view) * object.model * (float4(i.position.xyz, 1));
 
 	return o;
 }

@@ -2,12 +2,12 @@
 
 #include <vector>
 #include <string>
+#include <stdint.h>
 
 #include "IncludeDeps.hpp"
 
 #include VULKAN_INCLUDE
 #include GLFW_INCLUDE
-#include GLSLANG_INCLUDE
 
 namespace LWGC
 {
@@ -23,12 +23,13 @@ namespace LWGC
 			ShaderFileInfo			_sourceFile;
 			VkShaderModule			_module;
 			VkShaderStageFlagBits	_stage;
-			glslang::TShader *		_shader;
-			glslang::TProgram		_program;
+			std::vector< uint32_t >	_SpirVCode;
 
-			std::vector<char>	ReadFile(const std::string & fileName);
-			long				GetFileModificationTime(const std::string & file) const;
-			EShLanguage			ShaderStageToLang(const VkShaderStageFlagBits stage);
+			std::vector< uint32_t >	ReadFile(const std::string & fileName);
+			long					GetFileModificationTime(const std::string & file) const;
+			std::string				StageToText(const VkShaderStageFlagBits stage);
+
+			const std::string		tmpFilePath = "/tmp/LWGC_spirV.tmp";
 
 			friend std::ostream &	operator<<(std::ostream & o, ShaderSource const & r);
 
@@ -40,12 +41,11 @@ namespace LWGC
 			ShaderSource &	operator=(ShaderSource const & src) = delete;
 
 			void	SetSourceFile(const std::string file, const VkShaderStageFlagBits stage);
-			void	SetSource(const std::vector< char > HLSLSource, const VkShaderStageFlagBits stage);
 			bool	NeedReload(void) const;
 			void	Reload(void);
+			void	Compile(void);
 
 			VkShaderModule			GetModule(void) const;
 			VkShaderStageFlagBits	GetStage(void) const;
-			glslang::TShader *		GetShader(void) const;
 	};
 }
