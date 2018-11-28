@@ -32,7 +32,7 @@ CPPVERSION	=	c++11
 #Example $> make DEBUG=2 will set debuglevel to 2
 
 #	Includes
-INCDIRS		=	../../sources ../../gl3w/include
+INCDIRS		=	../../sources
 
 #	Libraries
 LIBDIRS		=	../../ ../../deps/glfw/src/ ../../deps/imgui/ ../../deps/vulkansdk-macos-1.1.85.0/macOS/lib

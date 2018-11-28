@@ -14,10 +14,12 @@ ShaderProgram::~ShaderProgram(void)
 	std::cout << "Destructor of ShaderProgram called" << std::endl;
 }
 
-void		ShaderProgram::CreateStages(void)
+void		ShaderProgram::CompileAndLink(void)
 {
 	for (auto & shaderSource : _shaderSources)
 	{
+		const auto & shader = shaderSource->GetShader();
+
 		VkPipelineShaderStageCreateInfo shaderStageInfo = {};
 		shaderStageInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
 		shaderStageInfo.stage = shaderSource->GetStage();
