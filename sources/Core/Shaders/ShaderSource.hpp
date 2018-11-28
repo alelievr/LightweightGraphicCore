@@ -23,9 +23,9 @@ namespace LWGC
 			ShaderFileInfo			_sourceFile;
 			VkShaderModule			_module;
 			VkShaderStageFlagBits	_stage;
-			std::vector< uint32_t >	_SpirVCode;
+			std::vector< char >		_SpirVCode;
 
-			std::vector< uint32_t >	ReadFile(const std::string & fileName);
+			std::vector< char >		ReadFile(const std::string & fileName);
 			long					GetFileModificationTime(const std::string & file) const;
 			std::string				StageToText(const VkShaderStageFlagBits stage);
 
