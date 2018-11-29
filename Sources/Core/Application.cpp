@@ -11,13 +11,15 @@
 
 using namespace LWGC;
 
-Application::Application(void) : _hierarchy(std::make_shared< Hierarchy >()), _window(NULL), _shouldNotQuit(true)
+Application::Application(void) : _window(NULL), _hierarchy(std::make_shared< Hierarchy >()), _shouldNotQuit(true)
 {
 	this->_renderPipeline = new ForwardRenderPipeline();
 }
 
 Application::~Application(void)
 {
+	delete _renderPipeline;
+	
 	if (_window != NULL)
 	{
 		// 	ImGui_ImplVulkan_Shutdown();

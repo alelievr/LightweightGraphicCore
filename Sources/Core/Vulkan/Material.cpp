@@ -20,6 +20,14 @@ Material::Material(void)
 {
 	this->_graphicPipelineLayout = VK_NULL_HANDLE;
 	this->_graphicPipeline = VK_NULL_HANDLE;
+	_program = new ShaderProgram();
+	_program->SetFragmentSourceFile("Shaders/Error/Pink.hlsl");
+	_program->SetVertexSourceFile("Shaders/DefaultVertex.hlsl");
+}
+
+Material::Material(ShaderProgram * program)
+{
+	_program = program;
 }
 
 Material::Material(Material const & src)
@@ -29,6 +37,8 @@ Material::Material(Material const & src)
 
 Material::~Material(void)
 {
+	delete _program;
+	
 	vkDeviceWaitIdle(_instance->GetDevice());
 
 	CleanupGraphicPipeline();
@@ -94,10 +104,7 @@ void	Material::CreateDescriptorSetLayout(void)
 
 void					Material::CreateGraphicPipeline(void)
 {
-	_program.SetFragmentSourceFile("shaders/debug/AlbedoTextue.hlsl");
-	_program.SetVertexSourceFile("shaders/DefaultVertex.hlsl");
-
-	_program.CompileAndLink();
+	_program->CompileAndLink();
 
 	VkPipelineVertexInputStateCreateInfo vertexInputInfo = {};
 	vertexInputInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
@@ -189,7 +196,7 @@ void					Material::CreateGraphicPipeline(void)
 	VkGraphicsPipelineCreateInfo pipelineInfo = {};
 	pipelineInfo.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
 	pipelineInfo.stageCount = 2;
-	pipelineInfo.pStages = _program.GetShaderStages();
+	pipelineInfo.pStages = _program->GetShaderStages();
 	pipelineInfo.pVertexInputState = &vertexInputInfo;
 	pipelineInfo.pInputAssemblyState = &inputAssembly;
 	pipelineInfo.pViewportState = &viewportState;

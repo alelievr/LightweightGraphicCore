@@ -26,10 +26,13 @@ int			main(void)
 	LWGC::EventSystem *		es = app.GetEventSystem();
 	LWGC::Hierarchy *		hierarchy = app.GetHierarchy();
 
+	LWGC::ShaderSource::AddIncludePath("../../");
+
 	//Initialize application
 	app.Init();
 
-	auto cube = new LWGC::GameObject(new LWGC::MeshRenderer(LWGC::PrimitiveType::Cube));
+	auto testMat = std::make_shared< LWGC::Material >(LWGC::ShaderProgram::Standard);
+	auto cube = new LWGC::GameObject(new LWGC::MeshRenderer(LWGC::PrimitiveType::Cube, testMat));
 	auto cam = new LWGC::GameObject(new LWGC::Camera());
 	cube->GetTransform()->Translate(glm::vec3(0, 1, 0));
 	cam->GetTransform()->Translate(glm::vec3(0, 0, -5));

@@ -18,7 +18,6 @@
 
 // Pipelines
 #include "Core/Rendering/VulkanRenderPipeline.hpp"
-#include "Core/Rendering/ForwardRenderPipeline.hpp"
 
 // Shaders & materials
 #include "Core/Shaders/ShaderProgram.hpp"
@@ -28,10 +27,10 @@
 // Rendering
 #include "Core/Rendering/RenderTarget.hpp"
 #include "Core/Mesh.hpp"
+#include "Core/PrimitiveType.hpp"
 #include "Core/PrimitiveMeshFactory.hpp"
 
 // App & core
-#include "Core/PrimitiveType.hpp"
 #include "Core/Application.hpp"
 #include "Core/Hierarchy.hpp"
 #include "Core/Transform.hpp"

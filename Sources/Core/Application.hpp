@@ -23,13 +23,13 @@ namespace LWGC
 	class		Application
 	{
 		private:
-			VulkanRenderPipeline *				_renderPipeline;
-			EventSystem							_eventSystem;
-			std::shared_ptr< Hierarchy >		_hierarchy;
-			GLFWwindow *						_window;
 			VulkanInstance						_instance;
 			VulkanSurface						_surface;
 			SwapChain							_swapChain;
+			VulkanRenderPipeline *				_renderPipeline;
+			GLFWwindow *						_window;
+			EventSystem							_eventSystem;
+			std::shared_ptr< Hierarchy >		_hierarchy;
 
 			bool		_shouldNotQuit;
 

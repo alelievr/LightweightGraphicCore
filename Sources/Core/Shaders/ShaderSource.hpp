@@ -30,6 +30,8 @@ namespace LWGC
 			std::string				StageToText(const VkShaderStageFlagBits stage);
 
 			const std::string		tmpFilePath = "/tmp/LWGC_spirV.tmp";
+			
+			static std::vector< std::string >	shaderIncludePaths;
 
 			friend std::ostream &	operator<<(std::ostream & o, ShaderSource const & r);
 
@@ -40,12 +42,14 @@ namespace LWGC
 
 			ShaderSource &	operator=(ShaderSource const & src) = delete;
 
-			void	SetSourceFile(const std::string file, const VkShaderStageFlagBits stage);
+			void	SetSourceFile(const std::string & file, const VkShaderStageFlagBits stage);
 			bool	NeedReload(void) const;
 			void	Reload(void);
 			void	Compile(void);
 
 			VkShaderModule			GetModule(void) const;
 			VkShaderStageFlagBits	GetStage(void) const;
+
+			static void	AddIncludePath(const std::string & path);
 	};
 }

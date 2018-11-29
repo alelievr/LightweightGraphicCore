@@ -40,7 +40,7 @@ namespace LWGC
 			VkDevice						_device;
 			SwapChain *						_swapChain;
 			RenderPass *					_renderPass;
-			ShaderProgram					_program;
+			ShaderProgram *					_program;
 	
 			static void	CreateDescriptorSetLayout(void);
 			void		CreateTextureImage(void);
@@ -52,6 +52,7 @@ namespace LWGC
 		public:
 			Material(void);
 			Material(const Material &);
+			Material(ShaderProgram * program);
 			virtual ~Material(void);
 	
 			Material &	operator=(Material const & src);

@@ -4,9 +4,16 @@
 
 using namespace LWGC;
 
+ShaderProgram *	ShaderProgram::Standard = new ShaderProgram("Shaders/Debug/AlbedoTexture.hlsl");
+
 ShaderProgram::ShaderProgram(void)
 {
-	std::cout << "Default constructor of ShaderProgram called" << std::endl;
+}
+
+ShaderProgram::ShaderProgram(const std::string & fragmentShaderName, const std::string & vertexShaderName)
+{
+	SetFragmentSourceFile(fragmentShaderName);
+	SetVertexSourceFile(vertexShaderName);
 }
 
 ShaderProgram::~ShaderProgram(void)

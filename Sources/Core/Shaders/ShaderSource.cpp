@@ -8,7 +8,9 @@
 
 using namespace LWGC;
 
-ShaderSource::ShaderSource(void) : _module(VK_NULL_HANDLE)
+std::vector< std::string > ShaderSource::shaderIncludePaths;
+
+ShaderSource::ShaderSource(void) : _sourceFile({"", 0}), _module(VK_NULL_HANDLE)
 {
 }
 
@@ -17,7 +19,9 @@ ShaderSource::~ShaderSource(void)
 	const auto & device = VulkanInstance::Get()->GetDevice();
 
 	if (_module != VK_NULL_HANDLE)
+	{
 		vkDestroyShaderModule(device, _module, nullptr);
+	}
 }
 
 std::vector< char > ShaderSource::ReadFile(const std::string & fileName)
@@ -61,32 +65,35 @@ std::string	ShaderSource::StageToText(const VkShaderStageFlagBits stage)
 	}
 }
 
-void		ShaderSource::SetSourceFile(const std::string file, const VkShaderStageFlagBits stage)
+void		ShaderSource::SetSourceFile(const std::string & file, const VkShaderStageFlagBits stage)
 {
 	_stage = stage;
 	_sourceFile = ShaderFileInfo{file, GetFileModificationTime(file)};
+}
+
+void		ShaderSource::Compile(void)
+{
 
 	char path[2048];
 	getcwd(path, sizeof(path));
 	
 	// I gave up using the c++ api of glslang, it's totally unusable
-	std::string cmd = "glslangValidator -e main -V -D -S " + StageToText(stage) + " -I" + path + " ";
-	cmd += file + " -o " + tmpFilePath;
-	printf("cmd: %s\n", cmd.c_str());
-	system(cmd.c_str());
+	std::string cmd = "glslangValidator -e main -V -D -S " + StageToText(_stage) + " -I" + path;
+	std::cout << shaderIncludePaths.size() << std::endl;
+	for (const auto & p : shaderIncludePaths)
+		cmd += " -I" + p;
+	cmd += " " + _sourceFile.path + " -o " + tmpFilePath;
+	if (system(cmd.c_str()) != 0)
+		throw std::runtime_error("Shader compilation error");
 
 	// Read back spriv from tmp file
 	_SpirVCode = ReadFile(tmpFilePath);
-}
 
-void		ShaderSource::Compile(void)
-{
+	// Create Vulkan module
 	VkShaderModuleCreateInfo createInfo = {};
 	createInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
 	createInfo.codeSize = _SpirVCode.size();
 	createInfo.pCode = reinterpret_cast< uint32_t * >(_SpirVCode.data());
-
-	printf("spirv length: %i\n", _SpirVCode.size());
 
 	if (vkCreateShaderModule(VulkanInstance::Get()->GetDevice(), &createInfo, nullptr, &_module) != VK_SUCCESS)
 		throw std::runtime_error("failed to create shader module!");
@@ -108,6 +115,11 @@ VkShaderModule			ShaderSource::GetModule(void) const
 VkShaderStageFlagBits	ShaderSource::GetStage(void) const
 {
 	return _stage;
+}
+
+void		ShaderSource::AddIncludePath(const std::string & path)
+{
+	shaderIncludePaths.push_back(path);
 }
 
 void		ShaderSource::Reload(void)

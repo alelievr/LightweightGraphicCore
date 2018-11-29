@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include <string>
+#include <vector>
 
 #include "IncludeDeps.hpp"
 
@@ -23,6 +24,7 @@ namespace LWGC
 
 		public:
 			ShaderProgram(void);
+			ShaderProgram(const std::string & fragmentShaderName, const std::string & vertexShaderName = "Shaders/DefaultVertex.hlsl");
 			ShaderProgram(const ShaderProgram &) = delete;
 			virtual ~ShaderProgram(void);
 
@@ -39,6 +41,8 @@ namespace LWGC
 			bool	Update(void);
 
 			VkPipelineShaderStageCreateInfo *	GetShaderStages();
+
+			static ShaderProgram *	Standard;
 	};
 
 	std::ostream &	operator<<(std::ostream & o, ShaderProgram const & r);

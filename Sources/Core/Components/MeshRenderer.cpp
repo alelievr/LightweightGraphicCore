@@ -14,14 +14,17 @@ MeshRenderer::MeshRenderer(void)
 	_material = std::make_shared< Material >();
 }
 
-MeshRenderer::MeshRenderer(const PrimitiveType prim)
+MeshRenderer::MeshRenderer(const PrimitiveType prim, std::shared_ptr< Material > material)
 {
 	_mesh = PrimitiveMeshFactory::CreateMesh(prim);
-	_material = std::make_shared< Material >();
+	_material = material;
 }
 
 MeshRenderer::~MeshRenderer(void)
 {
+	_mesh.reset();
+	_material.reset();
+	std::cout << "Destroyed meshRenderer" << std::endl;
 	vkDestroyBuffer(device, _uniformModelBuffer.buffer, nullptr);
 	vkFreeMemory(device, _uniformModelBuffer.memory, nullptr);
 }

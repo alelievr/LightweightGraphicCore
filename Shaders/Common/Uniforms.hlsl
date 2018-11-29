@@ -1,3 +1,6 @@
+#ifndef UNIFORMS
+# define UNIFORMS
+
 struct LWGC_PerFrame
 {
 	float4		time; // x: time, y: sin(time), z: cos(time), z: deltaTime
@@ -40,3 +43,5 @@ uniform SamplerState trilinearClamp;
 [[vk::binding(3, 3)]] uniform Texture2D	normalMap;
 [[vk::binding(4, 3)]] uniform Texture2D	heightMap;
 [[vk::binding(5, 3)]] uniform Texture2D	smoothnessMap;
+
+#endif

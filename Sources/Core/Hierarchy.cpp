@@ -10,6 +10,10 @@ Hierarchy::Hierarchy(void)
 
 Hierarchy::~Hierarchy(void)
 {
+	std::cout << "Hierarchy destructed" << std::endl;
+
+	for (auto & comps : _components)
+		comps->~Component();
 }
 
 void Hierarchy::Initialize(void)
