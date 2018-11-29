@@ -14,6 +14,7 @@
 #include "Vulkan/RenderPass.hpp"
 #include "Vulkan/Material.hpp"
 #include "Core/Rendering/RenderContext.hpp"
+#include "Core/Delegate.hpp"
 
 #include VULKAN_INCLUDE
 #include GLFW_INCLUDE
@@ -50,6 +51,9 @@ namespace LWGC
 
 			EventSystem *		GetEventSystem(void) noexcept;
 			Hierarchy *			GetHierarchy(void) noexcept;
+
+			// public events
+			static Delegate		update;
 	};
 
 	std::ostream &	operator<<(std::ostream & o, Application const & r);

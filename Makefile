@@ -23,6 +23,7 @@ SRC			=	Core/Application.cpp \
 				Core/Components/Component.cpp \
 				Core/Components/Camera.cpp \
 				Core/Components/MeshRenderer.cpp \
+				Core/Components/FreeCameraControls.cpp \
 				Core/Components/Light.cpp \
 				Core/Events/Event.cpp \
 				Core/Events/EventSystem.cpp \
@@ -50,6 +51,7 @@ SRC			=	Core/Application.cpp \
 				Core/TextureCube.cpp \
 				Core/TextureCubeArray.cpp \
 				Core/Texture3D.cpp \
+				Core/Delegate.cpp \
 				Utils/Bounds.cpp \
 				Utils/Color.cpp \
 				Utils/Random.cpp \

@@ -2,6 +2,8 @@
 
 #include "Core/GameObject.hpp"
 #include "Core/Hierarchy.hpp"
+#include "Core/Transform.hpp"
+#include "Core/Application.hpp"
 
 using namespace LWGC;
 
@@ -13,6 +15,7 @@ void    Component::OnAdded(const GameObject & go) noexcept
 {
     gameObject = &go;
     hierarchy = gameObject->GetHierarchy();
+	transform = gameObject->GetTransform();
 }
 
 void    Component::OnRemoved(const GameObject & go) noexcept
@@ -25,12 +28,16 @@ void    Component::OnRemoved(const GameObject & go) noexcept
 void    Component::OnEnable() noexcept
 {
 	index = hierarchy->RegisterComponent(GetType(), this);
+	updateIndex = Application::update.AddListener(std::bind(&Component::Update, this));
 }
 
 void    Component::OnDisable() noexcept
 {
 	hierarchy->UnregisterComponent(index);
+	Application::update.RemoveListener(updateIndex);
 }
+
+void			Component::Update(void) noexcept {}
 
 void			Component::UpdateGameObjectActive(void) noexcept
 {

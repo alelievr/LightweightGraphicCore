@@ -80,7 +80,7 @@ void			GameObject::RemoveComponent(Component * component) noexcept
 void			GameObject::SetHierarchy(Hierarchy * hierarchy) { _hierarchy = hierarchy; }
 Hierarchy *		GameObject::GetHierarchy(void) const noexcept { return _hierarchy; }
 
-std::shared_ptr< Transform >	GameObject::GetTransform(void) const { return (this->_transform); }
+Transform *		GameObject::GetTransform(void) const { return (this->_transform.get()); }
 
 void			GameObject::SetActive(bool active)
 {

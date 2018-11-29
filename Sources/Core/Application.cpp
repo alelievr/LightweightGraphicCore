@@ -11,6 +11,8 @@
 
 using namespace LWGC;
 
+Delegate	Application::update;
+
 Application::Application(void) : _window(NULL), _hierarchy(std::make_shared< Hierarchy >()), _shouldNotQuit(true)
 {
 	this->_renderPipeline = new ForwardRenderPipeline();
@@ -140,6 +142,8 @@ void			Application::Open(const std::string & name, const int width, const int he
 void				Application::Update(void) noexcept
 {
 	glfwPollEvents();
+
+	Application::update.Invoke();
 
 	//TODO: hierarchy get cameras
 	const auto cameras =_hierarchy->GetCameras();

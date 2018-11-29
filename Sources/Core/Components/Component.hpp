@@ -2,7 +2,9 @@
 
 #include <unordered_set>
 
+#include "Core/Transform.hpp"
 #include "IncludeDeps.hpp"
+#include "Core/Delegate.hpp"
 #include VULKAN_INCLUDE
 
 namespace LWGC
@@ -23,9 +25,11 @@ namespace LWGC
 		protected:
 			bool				enabled;
 			const GameObject *	gameObject;
+			Transform *			transform;
 			Hierarchy *			hierarchy;
 			ComponentIndex		index;
 			VkDevice			device;
+			DelegateIndex		updateIndex;
 
 			// Called when the vulkan is finished to initialize
 			virtual void		Initialize() noexcept;
@@ -42,6 +46,7 @@ namespace LWGC
 			virtual void	OnRemoved(const GameObject & go) noexcept;
 			virtual void	OnEnable() noexcept;
 			virtual void	OnDisable() noexcept;
+			virtual	void	Update() noexcept;
 			bool			IsEnabled() noexcept;
 
 			void			Enable() noexcept;

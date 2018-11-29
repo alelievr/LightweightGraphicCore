@@ -56,7 +56,7 @@ glm::vec3		Transform::TransformDirection(const glm::vec3 & direction)
 
 glm::vec3		Transform::TransformDirection(const float x, const float y, const float z)
 {
-	
+	return TransformDirection(glm::vec3(x, y, z));
 }
 
 glm::vec3		Transform::TransformPoint(const glm::vec3 & position)
@@ -66,11 +66,12 @@ glm::vec3		Transform::TransformPoint(const glm::vec3 & position)
 
 glm::vec3		Transform::TransformPoint(const float x, const float y, const float z)
 {
-	
+	return TransformPoint(glm::vec3(x, y, z));
 }
 
 void		Transform::Translate(const glm::vec3 & translation)
 {
+	_position += translation;
 	UpdatePositionDatas();
 }
 

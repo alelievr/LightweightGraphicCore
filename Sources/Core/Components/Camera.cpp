@@ -18,9 +18,9 @@ Camera::Camera(void) : _initDescriptorSetLayout(false)
 	std::cout << "Default constructor of Camera called" << std::endl;
 	this->_target = new RenderTarget();
 	this->_cameraType = CameraType::Perspective;
-	this->_fov = 0;
-	this->_nearPlane = 0;
-	this->_farPlane = 0;
+	this->_fov = 60;
+	this->_nearPlane = 0.001f;
+	this->_farPlane = 1e10;
 
 	if (_perCameraDescriptorSetLayout == VK_NULL_HANDLE)
 	{
@@ -39,14 +39,19 @@ Camera::~Camera(void)
 	vkFreeMemory(device, _uniformCameraBuffer.memory, nullptr);
 }
 
-void			Camera::OnAdded(const GameObject & go) noexcept
+void			Camera::OnEnable(void) noexcept
 {
-	Component::OnAdded(go);
+	Component::OnEnable();
 }
 
-void			Camera::OnRemoved(const GameObject & go) noexcept
+void			Camera::OnDisable(void) noexcept
 {
-	Component::OnRemoved(go);
+	Component::OnDisable();
+}
+
+void					Camera::Update(void) noexcept
+{
+	UpdateUniformData();
 }
 
 glm::vec3		Camera::WorldToScreenPoint(glm::vec3 worldPosition)
@@ -95,7 +100,6 @@ void		Camera::Initialize(void) noexcept
 	);
 
 	CreateDescriptorSet();
-	UpdateUniformData();
 }
 
 void					Camera::CreateDescriptorSet(void) noexcept
@@ -128,10 +132,10 @@ void					Camera::CreateDescriptorSet(void) noexcept
 
 void					Camera::UpdateUniformData(void) noexcept
 {
-	_perCamera.positionWS = glm::vec4(0, 0, 0, 1);
+	_perCamera.positionWS = glm::vec4(transform->GetPosition(), 1.0f);
 	_perCamera.view = glm::lookAt(glm::vec3(2.0f, 2.0f, 2.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f));
 	float ratio = (float)_swapChain->GetExtent().width / (float)_swapChain->GetExtent().height;
-	_perCamera.projection = glm::perspective(glm::radians(45.0f), ratio, 0.1f, 10.0f);
+	_perCamera.projection = glm::perspective(glm::radians(_fov), ratio, _nearPlane, _farPlane);
  
 	void* data;
 	vkMapMemory(device, _uniformCameraBuffer.memory, 0, sizeof(LWGC_PerCamera), 0, &data);

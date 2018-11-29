@@ -41,6 +41,7 @@ namespace LWGC
 			static void				CreateCameraDescriptorSetLayout(void) noexcept;
 			void					CreateDescriptorSet(void) noexcept;
 			void					UpdateUniformData(void) noexcept;
+			virtual void			Update(void) noexcept override;
 
 		public:
 			Camera(void);
@@ -49,8 +50,8 @@ namespace LWGC
 
 			Camera &	operator=(Camera const & src) = delete;
 
-			virtual void OnAdded(const GameObject &go) noexcept override;
-			virtual void OnRemoved(const GameObject & go) noexcept override;
+			virtual void OnEnable(void) noexcept override;
+			virtual void OnDisable(void) noexcept override;
 
 			virtual void Initialize(void) noexcept override;
 

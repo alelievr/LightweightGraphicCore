@@ -43,6 +43,7 @@ namespace LWGC
 			Event					_current;
 
 			static std::map< GLFWwindow *, EventSystem * > eventSystems;
+			static EventSystem *	eventSystemInstance;
 			
 			void DefaultMouseMoveAction(float x, float y);
 			void DefaultMouseDownAction(float x, float y, int button);
@@ -82,6 +83,8 @@ namespace LWGC
 			void	SetOnMouseUp(OnMouseUpCallback tmp);
 
 			const Event &	GetCurrentEvent(void) const;
+
+			static EventSystem *	Get(void);
 	};
 
 	std::ostream &	operator<<(std::ostream & o, EventSystem const & r);

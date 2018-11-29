@@ -5,6 +5,7 @@
 using namespace LWGC;
 
 std::map< GLFWwindow *, EventSystem * > EventSystem::eventSystems;
+EventSystem *	EventSystem::eventSystemInstance;
 
 EventSystem::EventSystem(void)
 {
@@ -110,6 +111,11 @@ void			EventSystem::BindWindow(GLFWwindow * window)
 				self->_onMouseMove(posX, posY);
 		}
 	);
+}
+
+EventSystem *		EventSystem::Get(void)
+{
+	return eventSystemInstance;
 }
 
 OnQuitCallback		EventSystem::GetOnQuit(void) const { return (this->_onQuit); }

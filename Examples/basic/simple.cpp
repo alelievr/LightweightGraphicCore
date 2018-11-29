@@ -36,6 +36,7 @@ int			main(void)
 	auto cam = new LWGC::GameObject(new LWGC::Camera());
 	cube->GetTransform()->Translate(glm::vec3(0, 1, 0));
 	cam->GetTransform()->Translate(glm::vec3(0, 0, -5));
+	cam->AddComponent(new LWGC::FreeCameraControls());
 	hierarchy->AddGameObject(cube);
 	hierarchy->AddGameObject(cam);
 

@@ -26,7 +26,6 @@ namespace LWGC
 			glm::vec2	delta;
 			glm::vec2	mousePosition;
 
-
 			Event(void);
 			Event(const Event&);
 			virtual ~Event(void);

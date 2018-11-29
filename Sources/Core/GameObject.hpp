@@ -35,8 +35,7 @@ namespace LWGC
 			GameObject &	operator=(GameObject const & src);
 
 			Hierarchy *		GetHierarchy(void) const noexcept;
-
-			std::shared_ptr< Transform >	GetTransform(void) const;
+			Transform *		GetTransform(void) const;
 
 			Component *		AddComponent(Component * component) noexcept;
 			void			RemoveComponent(Component * component) noexcept;
