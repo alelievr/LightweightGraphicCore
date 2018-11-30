@@ -53,13 +53,14 @@ void		FreeCameraControls::Update(void) noexcept
 		case KeyCode::RIGHT:
 			_right = (keyDown) ? 1 : 0;
 			break ;
+		// Warning: weird thing x and y are swapped but not z, will figure out when i have good debug tools
 		case KeyCode::W:
 		case KeyCode::UP:
-			_forward = (keyDown) ? 1 : 0;
+			_forward = (keyDown) ? -1 : 0;
 			break ;
 		case KeyCode::S:
 		case KeyCode::DOWN:
-			_forward = (keyDown) ? -1 : 0;
+			_forward = (keyDown) ? 1 : 0;
 			break ;
 		case KeyCode::E:
 			_up = (keyDown) ? 1 : 0;
@@ -75,7 +76,7 @@ void		FreeCameraControls::Update(void) noexcept
 	// transform->RotateAxis(delta.y / 100.0f, glm::vec3(1, 0, 0));
 	transform->Rotate(glm::vec3(
 		event.delta.x,
-		-event.delta.y,
+		event.delta.y,
 		0
 	) * _mouseSpeed * 0.01f);
 

@@ -79,7 +79,6 @@ void		ShaderSource::Compile(void)
 	
 	// I gave up using the c++ api of glslang, it's totally unusable
 	std::string cmd = "glslangValidator -e main -V -D -S " + StageToText(_stage) + " -I" + path;
-	std::cout << shaderIncludePaths.size() << std::endl;
 	for (const auto & p : shaderIncludePaths)
 		cmd += " -I" + p;
 	cmd += " " + _sourceFile.path + " -o " + tmpFilePath;

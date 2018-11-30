@@ -92,15 +92,16 @@ void			Application::Open(const std::string & name, const int width, const int he
 
 	_eventSystem.BindWindow(_window);
 
-	_surface.Initialize(_window);
-	_swapChain.Initialize(_surface);
-	
-	// Vk needs logical device (which require surface for creation (due to swapchain support checks))
-	Vk::Initialize();
-
 	try {
+		_surface.Initialize(_window);
+		_swapChain.Initialize(_surface);
+		
+		// Vk needs logical device (which require surface for creation (due to swapchain support checks))
+		Vk::Initialize();
+
 		_renderPipeline->Initialize(&_swapChain);
 		_renderPipeline->CreateSyncObjects();
+		_hierarchy->Initialize();
 	} catch (const std::runtime_error & e) {
 		std::cout << "Error while initializing the render pipeline:" << std::endl << e.what() << std::endl;
 		exit(-1);
@@ -110,8 +111,6 @@ void			Application::Open(const std::string & name, const int width, const int he
 	} catch (...) {
 		std::cout << "Unknown error while initializing the render pipeline !" << std::endl;
 	}
-	
-	_hierarchy->Initialize();
 	
 	glfwSetWindowUserPointer(_window, &_renderPipeline);
 	glfwSetFramebufferSizeCallback(_window, FramebufferResizeCallback);

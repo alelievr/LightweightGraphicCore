@@ -104,7 +104,14 @@ void	Material::CreateDescriptorSetLayout(void)
 
 void					Material::CreateGraphicPipeline(void)
 {
-	_program->CompileAndLink();
+	try {
+		_program->CompileAndLink();
+	} catch (const std::runtime_error & e) {
+		std::cout << e.what() << std::endl;
+		_program->SetFragmentSourceFile("Shaders/Error/Pink.hlsl");
+		_program->SetVertexSourceFile("Shaders/DefaultVertex.hlsl");
+		_program->CompileAndLink();
+	}
 
 	VkPipelineVertexInputStateCreateInfo vertexInputInfo = {};
 	vertexInputInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;

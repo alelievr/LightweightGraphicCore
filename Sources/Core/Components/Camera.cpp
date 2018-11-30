@@ -6,7 +6,7 @@
 #include "IncludeDeps.hpp"
 #define GLM_FORCE_RADIANS
 #define GLM_FORCE_DEPTH_ZERO_TO_ONE
-#include GLM_INCLUDE
+#include GLM_INCLUDE_QUATERNION
 #include GLM_INCLUDE_MATRIX_TRANSFORM
 
 using namespace LWGC;
@@ -132,11 +132,17 @@ void					Camera::CreateDescriptorSet(void) noexcept
 
 void					Camera::UpdateUniformData(void) noexcept
 {
-	glm::vec3 lookAt = transform->GetPosition() + transform->GetForward();
+	std::cout << "pos" << transform->GetPosition().x << ", " << transform->GetPosition().y << ", " << transform->GetPosition().z << std::endl;
 	_perCamera.positionWS = glm::vec4(transform->GetPosition(), 1.0f);
-	_perCamera.view = glm::lookAt(glm::vec3(_perCamera.positionWS), lookAt, glm::vec3(0.0f, 1.0f, 0.0f));
+
+	// view from positon and rotation
+	_perCamera.view = glm::translate(glm::toMat4(transform->GetRotation()), -transform->GetPosition());
+
 	float ratio = (float)_swapChain->GetExtent().width / (float)_swapChain->GetExtent().height;
 	_perCamera.projection = glm::perspective(glm::radians(_fov), ratio, _nearPlane, _farPlane);
+
+	// Invert y because opengl
+	_perCamera.projection[1][1] *= -1;
  
 	void* data;
 	vkMapMemory(device, _uniformCameraBuffer.memory, 0, sizeof(LWGC_PerCamera), 0, &data);
