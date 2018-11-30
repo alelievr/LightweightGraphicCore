@@ -5,6 +5,7 @@
 
 # define GLM_INCLUDE "../Deps/glm/glm/glm.hpp"
 # define GLM_INCLUDE_QUATERNION "../Deps/glm/glm/gtx/quaternion.hpp"
+# define GLM_INCLUDE_QUATERNION2 "../Deps/glm/glm/gtc/quaternion.hpp"
 # define GLM_INCLUDE_MATRIX_TRANSFORM "../Deps/glm/glm/gtc/matrix_transform.hpp"
 # define GLFW_INCLUDE "../Deps/glfw/include/GLFW/glfw3.h"
 # define IMGUI_INCLUDE "../Deps/imgui/imgui.h"

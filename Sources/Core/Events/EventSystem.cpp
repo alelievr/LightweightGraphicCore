@@ -1,6 +1,7 @@
 #include "EventSystem.hpp"
 
 #include <memory>
+#include "Core/Application.hpp"
 
 using namespace LWGC;
 
@@ -9,15 +10,19 @@ EventSystem *	EventSystem::eventSystemInstance;
 
 EventSystem::EventSystem(void)
 {
-	std::cout << "Default constructor of EventSystem called" << std::endl;
+	eventSystemInstance = this;
+
 	this->_onQuit = nullptr;
 	this->_onFocus = nullptr;
 
+	// wtf ...
 	using std::placeholders::_1;
+	using std::placeholders::_2;
+	using std::placeholders::_3;
 
-	this->_onMouseMove = std::bind(&EventSystem::DefaultMouseMoveAction, this, _1, _1);
-	this->_onMouseDown = std::bind(&EventSystem::DefaultMouseDownAction, this, _1, _1, _1);
-	this->_onMouseUp = std::bind(&EventSystem::DefaultMouseUpAction, this, _1, _1, _1);
+	this->_onMouseMove = std::bind(&EventSystem::DefaultMouseMoveAction, this, _1, _2);
+	this->_onMouseDown = std::bind(&EventSystem::DefaultMouseDownAction, this, _1, _2, _3);
+	this->_onMouseUp = std::bind(&EventSystem::DefaultMouseUpAction, this, _1, _2, _3);
 
 	this->_onKeyDown = std::bind(&EventSystem::DefaultKeyDownAction, this, _1);
 	this->_onKeyUp = std::bind(&EventSystem::DefaultKeyUpAction, this, _1);
@@ -109,6 +114,20 @@ void			EventSystem::BindWindow(GLFWwindow * window)
 
 			if (self->_onMouseMove != nullptr)
 				self->_onMouseMove(posX, posY);
+		}
+	);
+
+	double mouseX, mouseY;
+	glfwGetCursorPos(window, &mouseX, &mouseY);
+	_current.mousePosition.x = mouseX;
+	_current.mousePosition.y = mouseY;
+	
+	static glm::vec2 oldMousePosition = _current.mousePosition;
+
+	Application::update.AddListener([&](){
+			// Per-frame event system internal update
+			_current.delta = _current.mousePosition - oldMousePosition;
+			oldMousePosition = _current.mousePosition;
 		}
 	);
 }

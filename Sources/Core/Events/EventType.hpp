@@ -4,8 +4,6 @@ namespace LWGC
 	{
 		MouseDown,
 		MouseUp,
-		MouseMove,
-		MouseDrag,
 		KeyDown,
 		KeyUp,
 		ScrollWheel,

@@ -15,6 +15,7 @@
 #include "IncludeDeps.hpp"
 
 #include GLM_INCLUDE_QUATERNION
+#include GLM_INCLUDE_MATRIX_TRANSFORM
 
 #include <iostream>
 #include <string>
@@ -28,6 +29,9 @@ class		Transform
 		glm::vec3						_position;
 		glm::quat						_rotation;
 		glm::vec3						_scale;
+		float							_yaw;
+		float							_pitch;
+		float							_roll;
 
 		glm::mat4x4						_localToWorld;
 		glm::vec3						_up;
@@ -48,6 +52,7 @@ class		Transform
 
 		void		Rotate(const glm::vec3 & eulerAngles);
 		void		Rotate(const float xAngle, const float yAngle, const float zAngle);
+		void		RotateAxis(float angle, const glm::vec3 & axis);
 		void		RotateAround(const glm::vec3 & point, const glm::vec3 & axis, const float angle);
 		size_t		GetChildCount(void);
 		bool		IsChildOf(std::shared_ptr< Transform > t);

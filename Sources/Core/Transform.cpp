@@ -6,8 +6,11 @@ Transform::Transform(void)
 {
 	this->_parent = nullptr;
 	this->_position = glm::vec3(0, 0, 0);
-	this->_rotation = glm::quat(0, 0, 0, 0);
+	this->_rotation = glm::quat(1, 0, 0, 0);
 	this->_scale = glm::vec3(1, 1, 1);
+	this->_yaw = 0;
+	this->_pitch = 0;
+	this->_roll = 0;
 }
 
 Transform::~Transform(void)
@@ -16,7 +19,29 @@ Transform::~Transform(void)
 
 void		Transform::Rotate(const glm::vec3 & eulerAngles)
 {
-	_rotation *= glm::quat(eulerAngles);
+	_yaw += eulerAngles.x;
+	_pitch += eulerAngles.y;
+	_roll += eulerAngles.z;
+
+	//FPS camera:  RotationX(pitch) * RotationY(yaw)
+	glm::quat qPitch = glm::angleAxis(_pitch, glm::vec3(1, 0, 0));
+	glm::quat qYaw = glm::angleAxis(_yaw, glm::vec3(0, 1, 0));
+	glm::quat qRoll = glm::angleAxis(_roll, glm::vec3(0, 0, 1));
+
+	std::cout << "_yaw: " << _yaw << ", pitch: " << _pitch << ", roll: " << _roll << "\n";
+
+	//For a FPS camera we can omit roll
+	_rotation = qPitch * qYaw;
+	_rotation = glm::normalize(_rotation);
+	//   glm::mat4 rotate = glm::mat4_cast(orientation);
+
+	UpdateRotationDatas();
+}
+
+void		Transform::RotateAxis(float angle, const glm::vec3 & axis)
+{
+	_rotation = glm::rotate(_rotation, angle, axis);
+	_rotation = glm::normalize(_rotation);
 }
 
 void		Transform::Rotate(const float xAngle, const float yAngle, const float zAngle)
@@ -106,7 +131,7 @@ void			Transform::UpdateScaleDatas(void) noexcept
 
 void			Transform::UpdateLocalToWorldMatrix(void) noexcept
 {
-	_localToWorld = glm::toMat4(_rotation);
+	_localToWorld = glm::toMat4(_rotation) * glm::translate(glm::mat4(1.0f), _position);
 }
 
 void			Transform::SetParent(std::shared_ptr< Transform > tmp) { this->_parent = tmp; }
@@ -120,17 +145,17 @@ void			Transform::SetRotation(glm::quat tmp) { this->_rotation = tmp; }
 glm::vec3		Transform::GetScale(void) const { return (this->_scale); }
 void			Transform::SetScale(glm::vec3 tmp) { this->_scale = tmp; }
 
-glm::vec3		Transform::GetUp(void) const { return (glm::vec3(0, 0, 0)); }
+glm::vec3		Transform::GetUp(void) const { return glm::vec3(0, 1, 0) * _rotation; }
 
-glm::vec3		Transform::GetDown(void) const { return (glm::vec3(0, 0, 0)); }
+glm::vec3		Transform::GetDown(void) const { return glm::vec3(0, -1, 0) * _rotation; }
 
-glm::vec3		Transform::GetRight(void) const { return (glm::vec3(0, 0, 0)); }
+glm::vec3		Transform::GetRight(void) const { return glm::vec3(1, 0, 0) * _rotation; }
 
-glm::vec3		Transform::GetLeft(void) const { return (glm::vec3(0, 0, 0)); }
+glm::vec3		Transform::GetLeft(void) const { return glm::vec3(-1, 0, 0) * _rotation; }
 
-glm::vec3		Transform::GetForward(void) const { return (glm::vec3(0, 0, 0)); }
+glm::vec3		Transform::GetForward(void) const { return glm::vec3(0, 0, 1) * _rotation;; }
 
-glm::vec3		Transform::GetBack(void) const { return (glm::vec3(0, 0, 0)); }
+glm::vec3		Transform::GetBack(void) const { return glm::vec3(0, 0, -1) * _rotation; }
 
 glm::vec3		Transform::GetEulerAngles(void) const { return glm::eulerAngles(_rotation); }
 

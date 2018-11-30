@@ -14,6 +14,8 @@ namespace LWGC
 			float			_forward;
 			float			_right;
 			float			_up;
+			float			_speed;
+			float			_mouseSpeed;
 
 			virtual void	Update(void) noexcept override;
 
@@ -31,6 +33,8 @@ namespace LWGC
 			virtual void OnDisable() noexcept override;
 
 			virtual void Initialize(void) noexcept override;
+
+			void			SetSpeed(float speed) noexcept;
 
 			virtual uint32_t			GetType(void) const noexcept override;
 			static const uint32_t		type = 4;

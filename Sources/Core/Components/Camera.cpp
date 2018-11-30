@@ -132,8 +132,9 @@ void					Camera::CreateDescriptorSet(void) noexcept
 
 void					Camera::UpdateUniformData(void) noexcept
 {
+	glm::vec3 lookAt = transform->GetPosition() + transform->GetForward();
 	_perCamera.positionWS = glm::vec4(transform->GetPosition(), 1.0f);
-	_perCamera.view = glm::lookAt(glm::vec3(2.0f, 2.0f, 2.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+	_perCamera.view = glm::lookAt(glm::vec3(_perCamera.positionWS), lookAt, glm::vec3(0.0f, 1.0f, 0.0f));
 	float ratio = (float)_swapChain->GetExtent().width / (float)_swapChain->GetExtent().height;
 	_perCamera.projection = glm::perspective(glm::radians(_fov), ratio, _nearPlane, _farPlane);
  
