@@ -15,6 +15,7 @@
 #include "Vulkan/Material.hpp"
 #include "Core/Rendering/RenderContext.hpp"
 #include "Core/Delegate.hpp"
+#include "Core/ImGUIWrapper.hpp"
 
 #include VULKAN_INCLUDE
 #include GLFW_INCLUDE
@@ -31,6 +32,7 @@ namespace LWGC
 			GLFWwindow *						_window;
 			EventSystem							_eventSystem;
 			std::shared_ptr< Hierarchy >		_hierarchy;
+			// ImGUIWrapper						_imGUI;
 
 			bool		_shouldNotQuit;
 

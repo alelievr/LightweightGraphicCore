@@ -9,6 +9,8 @@
 # define GLM_INCLUDE_MATRIX_TRANSFORM "../Deps/glm/glm/gtc/matrix_transform.hpp"
 # define GLFW_INCLUDE "../Deps/glfw/include/GLFW/glfw3.h"
 # define IMGUI_INCLUDE "../Deps/imgui/imgui.h"
+# define IMGUI_GLFW_INCLUDE "../Deps/imgui/examples/imgui_impl_glfw.h"
+# define IMGUI_VULKAN_INCLUDE "../Deps/imgui/examples/imgui_impl_vulkan.h"
 # define STB_INCLUDE "../Deps/stb/stb.h"
 # define STB_INCLUDE_IMAGE "../Deps/stb/stb_image.h"
 // Unusable API

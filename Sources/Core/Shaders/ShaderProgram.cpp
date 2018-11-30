@@ -37,6 +37,11 @@ void		ShaderProgram::CompileAndLink(void)
 	}
 }
 
+bool		ShaderProgram::IsCompiled(void)
+{
+	return _shaderStages.size() > 0;
+}
+
 void		ShaderProgram::SetVertexSourceFile(const std::string & file)
 {
 	_vertexShaderSource.SetSourceFile(file, VK_SHADER_STAGE_VERTEX_BIT);

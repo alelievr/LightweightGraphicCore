@@ -10,6 +10,8 @@
 #include "Core/Vulkan/VulkanInstance.hpp"
 #include "Core/Mesh.hpp"
 
+#include IMGUI_INCLUDE
+
 #define MAX_FRAMES_IN_FLIGHT	2
 #define PER_FRAME_BINDING_INDEX	0
 
@@ -65,6 +67,7 @@ namespace LWGC
 
 			virtual void	Initialize(SwapChain * swapChain);
 			virtual void	CreateSyncObjects(void);
+			virtual void	RenderGUI(void) noexcept;
 
 			SwapChain *		GetSwapChain(void);
 			RenderPass *	GetRenderPass(void);

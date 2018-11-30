@@ -5,10 +5,6 @@
 #include "Vulkan/VulkanInstance.hpp"
 #include "Core/Components/MeshRenderer.hpp"
 
-#include "imgui.h"
-#include "imgui_impl_glfw.h"
-#include "imgui_impl_vulkan.h"
-
 using namespace LWGC;
 
 Delegate	Application::update;
@@ -24,9 +20,6 @@ Application::~Application(void)
 	
 	if (_window != NULL)
 	{
-		// 	ImGui_ImplVulkan_Shutdown();
-		// 	ImGui_ImplGlfw_Shutdown();
-		// 	ImGui::DestroyContext();
 		glfwDestroyWindow(_window);
 		glfwTerminate();
 	}
@@ -115,27 +108,7 @@ void			Application::Open(const std::string & name, const int width, const int he
 	glfwSetWindowUserPointer(_window, &_renderPipeline);
 	glfwSetFramebufferSizeCallback(_window, FramebufferResizeCallback);
 
-	// // Init IMGUI
-	// IMGUI_CHECKVERSION();
-	// ImGui::CreateContext();
-
-	// // Is this important ?
-    // ImGuiIO& io = ImGui::GetIO(); (void)io;
-
-	// ImGui_ImplVulkan_InitInfo initInfo = {};
-	// initInfo.Instance = _instance.GetInstance();
-	// initInfo.PhysicalDevice = _instance.GetPhysicalDevice();
-	// initInfo.Device = _instance.GetDevice();
-	// initInfo.QueueFamily = _instance.GetGraphicQueueIndex();
-	// initInfo.Queue = _instance.GetGraphicQueue();
-	// initInfo.PipelineCache = VK_NULL_HANDLE;
-	// initInfo.DescriptorPool = _material.GetDescriptorPool();
-	// initInfo.Allocator = VK_NULL_HANDLE;
-	// initInfo.CheckVkResultFn = Vk::CheckResult;
-
-	// ImGui_ImplGlfw_InitForVulkan(_window, true);
-	// ImGui_ImplVulkan_Init(&initInfo, _renderPass.GetRenderPass());
-	// ImGui::StyleColorsDark();
+	// _imGUI.Initialize(&_swapChain, &_surface);
 }
 
 void				Application::Update(void) noexcept
@@ -148,14 +121,11 @@ void				Application::Update(void) noexcept
 	const auto cameras =_hierarchy->GetCameras();
 	_renderPipeline->RenderInternal(cameras, _hierarchy->GetRenderContext());
 
-/*	// Draw GUI on top of everything (after pipeline rendering)
-	// TODO: move to vulkan
-	ImGui_ImplOpenGL3_NewFrame();
-	ImGui_ImplGlfw_NewFrame();
-	ImGui::NewFrame();
+	// _imGUI.BeginFrame();
 
-	ImGui::Render();
-	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());*/
+	// _renderPipeline->RenderGUI();
+
+	// _imGUI.EndFrame();
 
 	_shouldNotQuit = !glfwWindowShouldClose(_window);
 }

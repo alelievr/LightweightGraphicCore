@@ -6,7 +6,7 @@
 #    By: alelievr <marvin@42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2014/07/15 15:13:38 by alelievr          #+#    #+#              #
-#    Updated: 2018/11/06 21:45:44 by alelievr         ###   ########.fr        #
+#    Updated: 2018/11/30 23:13:50 by alelievr         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -36,7 +36,7 @@ CPPVERSION	=	c++1z
 #Example $> make DEBUG=2 will set debuglevel to 2
 
 #	Includes
-INCDIRS		=	deps/imgui deps/glfw/include gl3w/include
+INCDIRS		=	deps/imgui deps/glfw/include gl3w/include Deps/vulkansdk-macos-1.1.85.0/macOS/include/
 
 #	Libraries
 LIBDIRS		=	
