@@ -31,10 +31,10 @@ void    RenderContext::GetComponentSet(uint32_t componentType, std::unordered_se
 
 void    RenderContext::GetLights(std::unordered_set< Light * > & lights) 
 {
-    GetComponentSet< Light >(Light::type, lights);
+    GetComponentSet< Light >(static_cast< uint32_t >(ComponentType::Light), lights);
 }
 
 void    RenderContext::GetMeshRenderers(std::unordered_set< MeshRenderer * > & meshRenderers) 
 {
-    GetComponentSet< MeshRenderer >(MeshRenderer::type, meshRenderers);
+    GetComponentSet< MeshRenderer >(static_cast< uint32_t >(ComponentType::MeshRenderer), meshRenderers);
 }

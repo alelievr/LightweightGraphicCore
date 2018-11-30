@@ -28,7 +28,7 @@ void		Transform::Rotate(const glm::vec3 & eulerAngles)
 	glm::quat qYaw = glm::angleAxis(_yaw, glm::vec3(0, 1, 0));
 	glm::quat qRoll = glm::angleAxis(_roll, glm::vec3(0, 0, 1));
 
-	std::cout << "_yaw: " << _yaw << ", pitch: " << _pitch << ", roll: " << _roll << "\n";
+	// std::cout << "_yaw: " << _yaw << ", pitch: " << _pitch << ", roll: " << _roll << "\n";
 
 	//For a FPS camera we can omit roll
 	_rotation = qPitch * qYaw;

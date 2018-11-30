@@ -72,15 +72,12 @@ void		FreeCameraControls::Update(void) noexcept
 		break;
 	}
 
-	// transform->RotateAxis(delta.x / 100.0f, glm::vec3(0, 1, 0));
-	// transform->RotateAxis(delta.y / 100.0f, glm::vec3(1, 0, 0));
 	transform->Rotate(glm::vec3(
 		event.delta.x,
 		event.delta.y,
 		0
 	) * _mouseSpeed * 0.01f);
 
-	std::cout << "delta: " << event.delta.x << ", " << event.delta.y << std::endl;
 	transform->Translate((
 		transform->GetRight() * _right
 		+ transform->GetUp() * _up

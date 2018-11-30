@@ -50,6 +50,7 @@ Bounds		Mesh::GetBounds(void) const
 
 void		Mesh::UploadDatas(void)
 {
+	printf("UPLAOD !\n");
 	_instance = VulkanInstance::Get();
 	_device = _instance->GetDevice();
 

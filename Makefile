@@ -22,6 +22,8 @@ SRC			=	Core/Application.cpp \
 				Core/Hierarchy.cpp \
 				Core/Components/Component.cpp \
 				Core/Components/Camera.cpp \
+				Core/Components/Renderer.cpp \
+				Core/Components/ProceduralRenderer.cpp \
 				Core/Components/MeshRenderer.cpp \
 				Core/Components/FreeCameraControls.cpp \
 				Core/Components/Light.cpp \

@@ -132,7 +132,6 @@ void					Camera::CreateDescriptorSet(void) noexcept
 
 void					Camera::UpdateUniformData(void) noexcept
 {
-	std::cout << "pos" << transform->GetPosition().x << ", " << transform->GetPosition().y << ", " << transform->GetPosition().z << std::endl;
 	_perCamera.positionWS = glm::vec4(transform->GetPosition(), 1.0f);
 
 	// view from positon and rotation

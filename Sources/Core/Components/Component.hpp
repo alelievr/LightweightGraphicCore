@@ -15,6 +15,15 @@ namespace LWGC
 	
     using ComponentIndex = std::unordered_set< Component * >::iterator;
 
+	enum class	ComponentType : uint32_t
+	{
+		MeshRenderer,
+		ProceduralRenderer,
+		Light,
+		Camera,
+		FreeCameraControls,
+	};
+
 	class Component
 	{
 		friend class GameObject;
