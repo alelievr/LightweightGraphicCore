@@ -54,6 +54,7 @@ SRC			=	Core/Application.cpp \
 				Core/TextureCubeArray.cpp \
 				Core/Texture3D.cpp \
 				Core/Delegate.cpp \
+				Core/ImGUIWrapper.cpp \
 				Utils/Bounds.cpp \
 				Utils/Color.cpp \
 				Utils/Random.cpp \
@@ -73,7 +74,7 @@ CPPVERSION	=	c++1z
 #Example $> make DEBUG=2 will set debuglevel to 2
 
 #	Includes
-INCDIRS		=	sources/ deps/glfw/include deps/stb deps/glm deps/glslang/install/include deps/imgui/ deps/imgui/examples/
+INCDIRS		=	sources/ Deps/vulkansdk-macos-1.1.85.0/macOS/include/
 
 #	Libraries
 LIBDIRS		=	deps/glfw/src deps/glslang/install/lib deps/glm

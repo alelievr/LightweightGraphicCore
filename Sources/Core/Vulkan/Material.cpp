@@ -77,6 +77,7 @@ void					Material::Initialize(SwapChain * swapChain, RenderPass * renderPass)
 	if (descriptorSetLayout == VK_NULL_HANDLE)
 		CreateDescriptorSetLayout();
 	
+	CreatePipelineLayout();
 	CreateGraphicPipeline();
 	CreateTextureImage();
 	CreateTextureSampler();
@@ -102,10 +103,23 @@ void	Material::CreateDescriptorSetLayout(void)
 	Vk::CreateDescriptorSetLayout({perMaterialBinding, albedoBinding, samplerBinding}, descriptorSetLayout);
 }
 
+void					Material::CreatePipelineLayout(void)
+{
+	VkPipelineLayoutCreateInfo pipelineLayoutInfo = {};
+	pipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
+	const auto & setLayouts = VulkanRenderPipeline::GetUniformSetLayouts();
+	pipelineLayoutInfo.setLayoutCount = setLayouts.size();
+	pipelineLayoutInfo.pSetLayouts = setLayouts.data();
+
+	if (vkCreatePipelineLayout(_device, &pipelineLayoutInfo, nullptr, &_graphicPipelineLayout) != VK_SUCCESS)
+		throw std::runtime_error("failed to create pipeline layout!");
+}
+
 void					Material::CreateGraphicPipeline(void)
 {
 	try {
-		_program->CompileAndLink();
+		if (!_program->IsCompiled())
+			_program->CompileAndLink();
 	} catch (const std::runtime_error & e) {
 		std::cout << e.what() << std::endl;
 		_program->SetFragmentSourceFile("Shaders/Error/Pink.hlsl");
@@ -179,15 +193,6 @@ void					Material::CreateGraphicPipeline(void)
 	colorBlending.blendConstants[2] = 0.0f;
 	colorBlending.blendConstants[3] = 0.0f;
 
-	VkPipelineLayoutCreateInfo pipelineLayoutInfo = {};
-	pipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
-	const auto & setLayouts = VulkanRenderPipeline::GetUniformSetLayouts();
-	pipelineLayoutInfo.setLayoutCount = setLayouts.size();
-	pipelineLayoutInfo.pSetLayouts = setLayouts.data();
-
-	if (vkCreatePipelineLayout(_device, &pipelineLayoutInfo, nullptr, &_graphicPipelineLayout) != VK_SUCCESS)
-		throw std::runtime_error("failed to create pipeline layout!");
-
 	VkPipelineDepthStencilStateCreateInfo depthStencil = {};
 	depthStencil.sType = VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO;
 	depthStencil.depthTestEnable = VK_TRUE;
@@ -221,7 +226,7 @@ void					Material::CreateGraphicPipeline(void)
 
 	Vk::currentPipelineLayout = _graphicPipelineLayout;
 
-	printf("Graphic pipeline created !\n");
+	printf("Graphic pipeline created: %p\n", (void *)_graphicPipeline);
 }
 
 #include "Core/Texture2D.hpp"

@@ -6,7 +6,7 @@
 #    By: alelievr <marvin@42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2014/07/15 15:13:38 by alelievr          #+#    #+#              #
-#    Updated: 2018/11/13 15:31:51 by alelievr         ###   ########.fr        #
+#    Updated: 2018/11/30 23:06:10 by alelievr         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -32,7 +32,8 @@ CPPVERSION	=	c++11
 #Example $> make DEBUG=2 will set debuglevel to 2
 
 #	Includes
-INCDIRS		=	../../sources
+#	The only two required inlcude is sources for LWGC.hpp and the path for vulkan include
+INCDIRS		=	../../sources ../../Deps/vulkansdk-macos-1.1.85.0/macOS/include/
 
 #	Libraries
 LIBDIRS		=	../../ ../../deps/glfw/src/ ../../deps/imgui/ ../../deps/vulkansdk-macos-1.1.85.0/macOS/lib

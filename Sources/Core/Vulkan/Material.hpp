@@ -47,7 +47,7 @@ namespace LWGC
 			void		CreateTextureSampler(void);
 			void		CreateUniformBuffer(void);
 			void		CreateDescriptorSets(void);
-			VkShaderModule	createShaderModule(const std::vector<char> & code);
+			void		CreatePipelineLayout(void);
 	
 		public:
 			Material(void);
