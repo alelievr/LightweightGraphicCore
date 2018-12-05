@@ -14,6 +14,11 @@ ShaderSource::ShaderSource(void) : _sourceFile({"", 0}), _module(VK_NULL_HANDLE)
 {
 }
 
+ShaderSource::ShaderSource(const std::string & shaderName, VkShaderStageFlagBits stage)
+{
+	SetSourceFile(shaderName, stage);
+}
+
 ShaderSource::~ShaderSource(void)
 {
 	const auto & device = VulkanInstance::Get()->GetDevice();

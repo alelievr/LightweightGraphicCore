@@ -1,7 +1,7 @@
 #ifndef UNIFORM_GRAPHIC
 # define UNIFORM_GRAPHIC
 
-# include "UniformsStructs.hlsl"
+# include "UniformStructs.hlsl"
 
 [[vk::binding(0, 0)]]
 ConstantBuffer< LWGC_PerFrame >	frame;

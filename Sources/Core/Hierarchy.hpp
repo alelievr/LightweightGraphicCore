@@ -19,6 +19,7 @@ namespace LWGC
 			RenderContext						_renderContext;
 			std::unordered_set< Component * >	_components;
 			std::vector< Camera * >				_cameras;
+			bool								_initialized;
 
 		public:
 			Hierarchy(void);

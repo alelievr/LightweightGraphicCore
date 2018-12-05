@@ -35,14 +35,13 @@ namespace LWGC
 				glm::vec4		albedo;
 			};
 
-			static VkDescriptorSetLayout			descriptorSetLayout;
+			static VkDescriptorSetLayout			graphicDescriptorSetLayout;
 			VkDescriptorSet							_descriptorSet;
 			VkPipelineLayout						_graphicPipelineLayout;
 			VkPipeline								_graphicPipeline;
 			LWGC_PerMaterial						_perMaterial;
 			UniformBuffer							_uniformPerMaterial;
 			std::vector< VkSampler >				_samplers;
-			std::vector< Texture * >				_textures;
 			VulkanInstance *						_instance;
 			VkDevice								_device;
 			SwapChain *								_swapChain;
@@ -50,8 +49,7 @@ namespace LWGC
 			ShaderProgram *							_program;
 			std::vector< VkDescriptorSetLayout >	_setLayouts;
 	
-			static void	CreateDescriptorSetLayout(void);
-			void		CreateTextureImage(void);
+			static void	CreateGraphicDescriptorSetLayout(void);
 			void		CreateTextureSampler(void);
 			void		CreateUniformBuffer(void);
 			void		CreateDescriptorSets(void);
@@ -60,6 +58,8 @@ namespace LWGC
 		public:
 			Material(void);
 			Material(const Material &);
+			Material(const std::string & shader, VkShaderStageFlagBits stage);
+			Material(const std::string & fragmentShader);
 			Material(ShaderProgram * program);
 			virtual ~Material(void);
 	
@@ -70,14 +70,21 @@ namespace LWGC
 			void	CreateGraphicPipeline(void);
 			void	BindDescriptorSets(VkCommandBuffer cmd, VkPipelineBindPoint bindPoint);
 			void	UpdateUniformBuffer(void);
+			void	AddShader(const std::string & shader, VkShaderStageFlagBits stage);
+
+			void				SetDescriptorSetLayout(uint32_t setIndex, VkDescriptorSetLayout layout);
 	
 			VkPipelineLayout	GetGraphicPipelineLayout(void) const;
 			void				SetGraphicPipelineLayout(VkPipelineLayout tmp);
 			
 			VkPipeline			GetGraphicPipeline(void) const;
 			void				SetGraphicPipeline(VkPipeline tmp);
+
+			void				SetBuffer(uint32_t setIndex, uint32_t bindingIndex, VkBuffer buffer, size_t size);
+			void				SetTexture(uint32_t setIndex, uint32_t bindingIndex, const Texture & texture, VkImageLayout imageLayout, VkDescriptorType descriptorType);
+			void				SetTexture(TextureBinding binding, const Texture & texture, VkImageLayout imageLayout, VkDescriptorType descriptorType);
 			
-			static VkDescriptorSetLayout	GetDescriptorSetLayout(void);
+			static VkDescriptorSetLayout	GetGraphicDescriptorSetLayout(void);
 	};
 	
 	std::ostream &	operator<<(std::ostream & o, Material const & r);

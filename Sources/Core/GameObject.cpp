@@ -43,6 +43,7 @@ GameObject &	GameObject::operator=(GameObject const & src)
 
 void		GameObject::Initialize(void) noexcept
 {
+	std::cout << "INitialize gameOBject !\n";
 	_initialized = true;
 	for (const auto & component : _components)
 	{
@@ -88,6 +89,8 @@ void			GameObject::SetActive(bool active)
 		return ;
 	
 	_active = active;
+
+	std::cout << "Update active !\n";
 
 	for (const auto & comp : _components)
 		comp->UpdateGameObjectActive();

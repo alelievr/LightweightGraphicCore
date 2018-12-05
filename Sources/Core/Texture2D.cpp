@@ -10,7 +10,7 @@ Texture2D::Texture2D(const std::string fileName, VkFormat format, int usage, boo
     usage |= VK_IMAGE_USAGE_TRANSFER_DST_BIT;
 	this->usage = usage;
 
-    stbi_uc * pixels = LoadFromFile(fileName, this->width, this->height);
+    _pixels = LoadFromFile(fileName, this->width, this->height);
 
 	if (generateMips)
 	{
@@ -19,16 +19,17 @@ Texture2D::Texture2D(const std::string fileName, VkFormat format, int usage, boo
 	}
 
     this->depth = 1;
-    AllocateImage(VK_IMAGE_VIEW_TYPE_2D);
-
-    UploadImage(pixels, this->width * this->height * 4);
-
-	UploadImageWithMips(image, format, pixels, this->width * this->height * 4);
 	
-	stbi_image_free(pixels);
+	AllocateImage(VK_IMAGE_VIEW_TYPE_2D);
+
+    // UploadImage(_pixels, this->width * this->height * 4);
+
+	UploadImageWithMips(image, format, _pixels, this->width * this->height * 4);
+	
+	stbi_image_free(_pixels);
 }
 
-Texture2D::Texture2D(std::size_t width, std::size_t height, VkFormat format, int usage)
+Texture2D::Texture2D(std::size_t width, std::size_t height, VkFormat format, int usage, bool allocateMips)
 {
 	this->format = format;
 	this->width = width;
@@ -36,7 +37,7 @@ Texture2D::Texture2D(std::size_t width, std::size_t height, VkFormat format, int
     this->arraySize = 1;
     this->usage = usage;
 	
-	maxMipLevel = static_cast<uint32_t>(std::floor(std::log2(std::max(width, height)))) + 1;
+	maxMipLevel = (allocateMips) ? static_cast<uint32_t>(std::floor(std::log2(std::max(width, height)))) + 1 : 0;
 
     AllocateImage(VK_IMAGE_VIEW_TYPE_2D);
 }

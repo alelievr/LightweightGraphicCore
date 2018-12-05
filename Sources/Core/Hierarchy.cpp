@@ -18,6 +18,7 @@ Hierarchy::~Hierarchy(void)
 
 void Hierarchy::Initialize(void)
 {
+	_initialized = true;
 	for (const auto & go : _gameObjects)
 	{
 		go->Initialize();
@@ -28,6 +29,9 @@ void Hierarchy::AddGameObject(GameObject * gameObject)
 {
 	gameObject->SetHierarchy(this);
 	_gameObjects.push_back(gameObject);
+
+	if (_initialized)
+		gameObject->Initialize();
 }
 
 void Hierarchy::RemoveGameObject(GameObject * gameObject)
