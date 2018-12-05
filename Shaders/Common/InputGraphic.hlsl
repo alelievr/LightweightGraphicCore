@@ -1,5 +1,5 @@
-#ifndef INPUTS
-# define INPUTS
+#ifndef INPUT_GRAPHIC
+# define INPUT_GRAPHIC
 
 struct	VertexInput
 {

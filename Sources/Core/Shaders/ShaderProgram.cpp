@@ -37,7 +37,7 @@ void		ShaderProgram::CompileAndLink(void)
 	}
 }
 
-bool		ShaderProgram::IsCompiled(void)
+bool		ShaderProgram::IsCompiled(void) const noexcept
 {
 	return _shaderStages.size() > 0;
 }
@@ -64,6 +64,11 @@ void		ShaderProgram::SetComputeSourceFile(const std::string & file)
 {
 	_computeShaderSource.SetSourceFile(file, VK_SHADER_STAGE_COMPUTE_BIT);
 	_shaderSources.push_back(&_computeShaderSource);
+}
+
+bool		ShaderProgram::IsCompute(void) const noexcept
+{
+	return _computeShaderSource.HasSource();
 }
 
 bool		ShaderProgram::Update(void)

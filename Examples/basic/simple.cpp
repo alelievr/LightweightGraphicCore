@@ -1,15 +1,17 @@
 #include "LWGC.hpp"
 
-void		ProcessEvent(LWGC::EventSystem * es, LWGC::Application & app)
+using LWGC;
+
+void		ProcessEvent(EventSystem * es, Application & app)
 {
-	const LWGC::Event &	current = es->GetCurrentEvent();
+	const Event &	current = es->GetCurrentEvent();
 
 	auto keyCode = current.GetKeyCode();
 
 	switch (current.GetType())
 	{
-		case LWGC::EventType::KeyDown:
-			if (keyCode == LWGC::KeyCode::ESCAPE)
+		case EventType::KeyDown:
+			if (keyCode == KeyCode::ESCAPE)
 				app.Quit();
 			break ;
 
@@ -20,25 +22,35 @@ void		ProcessEvent(LWGC::EventSystem * es, LWGC::Application & app)
 
 int			main(void)
 {
-	LWGC::Application		app;
-	LWGC::EventSystem *		es = app.GetEventSystem();
-	LWGC::Hierarchy *		hierarchy = app.GetHierarchy();
+	Application		app;
+	EventSystem *	es = app.GetEventSystem();
+	Hierarchy *		hierarchy = app.GetHierarchy();
 
-	LWGC::ShaderSource::AddIncludePath("../../");
+	ShaderSource::AddIncludePath("../../");
 
 	//Initialize application
 	app.Init();
 
-	auto testMat = std::make_shared< LWGC::Material >(LWGC::ShaderProgram::Standard);
-	auto cube = new LWGC::GameObject(new LWGC::MeshRenderer(LWGC::PrimitiveType::Cube, testMat));
-	auto cam = new LWGC::GameObject(new LWGC::Camera());
+	Texture2D	proceduralTexture(512, 512, VK_FORMAT_R8G8B8_UNORM, VK_USAGE, VK_IMAGE_USAGE_STORAGE_BIT | VK_IMAGE_USAGE_SAMPLED_BIT);
+	Material	writeProceduralTexture("Shaders/Compute/ProceduralTexture.hlsl");
+	Material	displayProceduralTexture(ShaderProgram::Standard); // Copy of the standard material
+
+	displayProceduralTexture.SetTexture(TextureBinding::Albedo, proceduralTexture);
+	// We manually set the binding index because it's a custom compute shader and we know it's layout
+	writeProceduralTexture.SetTexture(0, proceduralTexture);
+
+	auto testMat = std::make_shared< Material >(ShaderProgram::Standard);
+	auto cube = new GameObject(new MeshRenderer(PrimitiveType::Cube, testMat));
+	auto cam = new GameObject(new Camera());
 	cube->GetTransform()->Translate(glm::vec3(0, 1, 0));
-	cam->AddComponent(new LWGC::FreeCameraControls());
+	cam->AddComponent(new FreeCameraControls());
 	hierarchy->AddGameObject(cube);
 	hierarchy->AddGameObject(cam);
 
+	hierarchy->AddGameObject(new ComputeDispatcher());
+
 	//open window
-	app.Open("Test Window", 1920, 1080, LWGC::WindowFlag::Resizable | LWGC::WindowFlag::Decorated | LWGC::WindowFlag::Focused);
+	app.Open("Test Window", 1920, 1080, WindowFlag::Resizable | WindowFlag::Decorated | WindowFlag::Focused);
 
 	while (app.ShouldNotQuit())
 	{

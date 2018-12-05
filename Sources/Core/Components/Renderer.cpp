@@ -41,13 +41,13 @@ void		Renderer::Initialize(void) noexcept
 	_drawCommandBuffer = VulkanInstance::Get()->GetGraphicCommandBufferPool()->Allocate(VK_COMMAND_BUFFER_LEVEL_SECONDARY);
 
 	if (_descriptorSetLayout == VK_NULL_HANDLE)
-		CreateDescriptorSetLayout();
+		CreateGraphicDescriptorSetLayout();
 
 	CreateDescriptorSet();
 	RecordDrawCommandBuffer();
 }
 
-void		Renderer::CreateDescriptorSetLayout(void) noexcept
+void		Renderer::CreateGraphicDescriptorSetLayout(void) noexcept
 {
 	auto binding = Vk::CreateDescriptorSetLayoutBinding(0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_ALL_GRAPHICS);
 	Vk::CreateDescriptorSetLayout({binding}, _descriptorSetLayout);
@@ -168,10 +168,10 @@ void						Renderer::SetMaterial(std::shared_ptr< Material > tmp) { this->_materi
 
 VkCommandBuffer				Renderer::GetDrawCommandBuffer(void) const { return _drawCommandBuffer; }
 
-VkDescriptorSetLayout		Renderer::GetDescriptorSetLayout(void) noexcept
+VkDescriptorSetLayout		Renderer::GetGraphicDescriptorSetLayout(void) noexcept
 {
 	if (_descriptorSetLayout == VK_NULL_HANDLE)
-		CreateDescriptorSetLayout();
+		CreateGraphicDescriptorSetLayout();
 	return _descriptorSetLayout;
 }
 

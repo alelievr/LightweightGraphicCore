@@ -72,7 +72,7 @@ namespace LWGC
 			SwapChain *		GetSwapChain(void);
 			RenderPass *	GetRenderPass(void);
 
-			static const std::vector< VkDescriptorSetLayout >	GetUniformSetLayouts(void) noexcept;
+			static const std::vector< VkDescriptorSetLayout >	GetGraphicUniformSetLayouts(void) noexcept;
 
 			static VulkanRenderPipeline *	Get();
 	};

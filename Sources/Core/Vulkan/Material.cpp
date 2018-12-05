@@ -97,7 +97,7 @@ void	Material::CreateDescriptorSetLayout(void)
 		return ;
 
 	auto perMaterialBinding = Vk::CreateDescriptorSetLayoutBinding(0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_ALL_GRAPHICS);
-	auto albedoBinding = Vk::CreateDescriptorSetLayoutBinding(ALBEDO_BINDING_INDEX, VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE, VK_SHADER_STAGE_ALL_GRAPHICS);
+	auto albedoBinding = Vk::CreateDescriptorSetLayoutBinding(TextureBinding::Albedo, VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE, VK_SHADER_STAGE_ALL_GRAPHICS);
 	auto samplerBinding = Vk::CreateDescriptorSetLayoutBinding(TRILINEAR_CLAMP_BINDING_INDEX, VK_DESCRIPTOR_TYPE_SAMPLER, VK_SHADER_STAGE_FRAGMENT_BIT);
 
 	Vk::CreateDescriptorSetLayout({perMaterialBinding, albedoBinding, samplerBinding}, descriptorSetLayout);
@@ -107,12 +107,17 @@ void					Material::CreatePipelineLayout(void)
 {
 	VkPipelineLayoutCreateInfo pipelineLayoutInfo = {};
 	pipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
-	const auto & setLayouts = VulkanRenderPipeline::GetUniformSetLayouts();
-	pipelineLayoutInfo.setLayoutCount = setLayouts.size();
-	pipelineLayoutInfo.pSetLayouts = setLayouts.data();
+	
+	if (!_program->IsCompute())
+		_setLayouts = VulkanRenderPipeline::GetGraphicUniformSetLayouts();
+	else if (_setLayouts.size() == 0)
+		throw std::runtime_error("No descriptor layout set provided for material !");
+
+	pipelineLayoutInfo.setLayoutCount = _setLayouts.size();
+	pipelineLayoutInfo.pSetLayouts = _setLayouts.data();
 
 	if (vkCreatePipelineLayout(_device, &pipelineLayoutInfo, nullptr, &_graphicPipelineLayout) != VK_SUCCESS)
-		throw std::runtime_error("failed to create pipeline layout!");
+		throw std::runtime_error("failed to create pipeline layout !");
 }
 
 void					Material::CreateGraphicPipeline(void)
@@ -316,7 +321,7 @@ void					Material::CreateDescriptorSets(void)
 
 	descriptorWrites[1].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
 	descriptorWrites[1].dstSet = _descriptorSet;
-	descriptorWrites[1].dstBinding = ALBEDO_BINDING_INDEX;
+	descriptorWrites[1].dstBinding = static_cast< uint32_t >(TextureBinding::Albedo);
 	descriptorWrites[1].dstArrayElement = 0;
 	descriptorWrites[1].descriptorType = VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE;
 	descriptorWrites[1].descriptorCount = 1;

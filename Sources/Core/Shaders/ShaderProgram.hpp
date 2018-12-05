@@ -39,7 +39,8 @@ namespace LWGC
 
 			void	Bind(void);
 			bool	Update(void);
-			bool	IsCompiled(void);
+			bool	IsCompiled(void) const noexcept;
+			bool	IsCompute(void) const noexcept;
 
 			VkPipelineShaderStageCreateInfo *	GetShaderStages();
 

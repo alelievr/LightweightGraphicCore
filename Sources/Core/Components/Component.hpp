@@ -22,6 +22,8 @@ namespace LWGC
 		Light,
 		Camera,
 		FreeCameraControls,
+		ComputeDispatcher,
+		Count, // Note: this MUST be the last element of the enum
 	};
 
 	class Component

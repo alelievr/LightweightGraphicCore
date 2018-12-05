@@ -6,6 +6,8 @@
 
 namespace LWGC
 {
+	enum class TextureBinding;
+	
 	// Helper class for small functions
 	class		Vk
 	{
@@ -42,7 +44,8 @@ namespace LWGC
 			static void			CheckResult(VkResult result, const std::string & errorMessage);
 			static VkSampler	CreateSampler(VkFilter filter, VkSamplerAddressMode addressMode, uint32_t maxAniso = 0);
 			static VkSampler	CreateCompSampler(VkFilter filter, VkSamplerAddressMode addressMode, VkCompareOp compareOp);
-			static VkDescriptorSetLayoutBinding	CreateDescriptorSetLayoutBinding(int binding, VkDescriptorType descriptorType, VkShaderStageFlagBits stageFlags);
+			static VkDescriptorSetLayoutBinding	CreateDescriptorSetLayoutBinding(uint32_t binding, VkDescriptorType descriptorType, VkShaderStageFlagBits stageFlags);
+			static VkDescriptorSetLayoutBinding	CreateDescriptorSetLayoutBinding(TextureBinding binding, VkDescriptorType descriptorType, VkShaderStageFlagBits stageFlags);
 			static void			CreateDescriptorSetLayout(std::vector< VkDescriptorSetLayoutBinding > bindings, VkDescriptorSetLayout & layout);
 	};
 }

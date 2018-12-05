@@ -16,10 +16,17 @@
 
 #define PER_MATERIAL_BINDING_INDEX		3
 #define TRILINEAR_CLAMP_BINDING_INDEX	1
-#define ALBEDO_BINDING_INDEX			2
 
 namespace LWGC
 {
+	enum class TextureBinding
+	{
+		Albedo = 2,
+		Normal = 3,
+		Height = 4,
+		Smoothness = 5,
+	};
+
 	class		Material
 	{
 		private:
@@ -28,19 +35,20 @@ namespace LWGC
 				glm::vec4		albedo;
 			};
 
-			static VkDescriptorSetLayout	descriptorSetLayout;
-			VkDescriptorSet					_descriptorSet;
-			VkPipelineLayout				_graphicPipelineLayout;
-			VkPipeline						_graphicPipeline;
-			LWGC_PerMaterial				_perMaterial;
-			UniformBuffer					_uniformPerMaterial;
-			std::vector< VkSampler >		_samplers;
-			std::vector< Texture * >		_textures;
-			VulkanInstance *				_instance;
-			VkDevice						_device;
-			SwapChain *						_swapChain;
-			RenderPass *					_renderPass;
-			ShaderProgram *					_program;
+			static VkDescriptorSetLayout			descriptorSetLayout;
+			VkDescriptorSet							_descriptorSet;
+			VkPipelineLayout						_graphicPipelineLayout;
+			VkPipeline								_graphicPipeline;
+			LWGC_PerMaterial						_perMaterial;
+			UniformBuffer							_uniformPerMaterial;
+			std::vector< VkSampler >				_samplers;
+			std::vector< Texture * >				_textures;
+			VulkanInstance *						_instance;
+			VkDevice								_device;
+			SwapChain *								_swapChain;
+			RenderPass *							_renderPass;
+			ShaderProgram *							_program;
+			std::vector< VkDescriptorSetLayout >	_setLayouts;
 	
 			static void	CreateDescriptorSetLayout(void);
 			void		CreateTextureImage(void);

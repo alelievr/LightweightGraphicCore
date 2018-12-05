@@ -29,7 +29,6 @@ namespace LWGC
 			virtual void Initialize(void) noexcept override;
 
 			virtual uint32_t	GetType(void) const noexcept override;
-			static const uint32_t		type = 2;
 	};
 
 	std::ostream &	operator<<(std::ostream & o, Template const & r);
