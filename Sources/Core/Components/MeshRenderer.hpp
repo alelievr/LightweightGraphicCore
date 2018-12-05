@@ -34,8 +34,8 @@ namespace LWGC
 			void	SetModel(const Mesh & mesh, const Material & material);
 			void	SetModel(std::shared_ptr< Mesh > mesh, std::shared_ptr< Material > material);
 
-			std::shared_ptr< Mesh >	GetMesh(void) const;
-			void	SetMesh(std::shared_ptr< Mesh > tmp);
+			std::shared_ptr< Mesh >		GetMesh(void) const;
+			void						SetMesh(std::shared_ptr< Mesh > tmp);
 
 			virtual uint32_t			GetType(void) const noexcept override;
 	};

@@ -47,6 +47,7 @@
 #include "Core/Components/MeshRenderer.hpp"
 #include "Core/Components/Camera.hpp"
 #include "Core/Components/FreeCameraControls.hpp"
+#include "Core/Components/ComputeDispatcher.hpp"
 
 // Utils
 #include "Utils/Bounds.hpp"

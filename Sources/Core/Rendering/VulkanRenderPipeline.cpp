@@ -65,7 +65,7 @@ void				VulkanRenderPipeline::CreateDescriptorSetLayouts(void)
 	uniformSetLayouts[1] = Camera::GetDescriptorSetLayout();
 
 	// LWGC per object cbuffer layout
-	uniformSetLayouts[2] = MeshRenderer::GetDescriptorSetLayout();
+	uniformSetLayouts[2] = MeshRenderer::GetGraphicDescriptorSetLayout();
 
 	// LWGC per material cbuffer layout
 	uniformSetLayouts[3] = Material::GetDescriptorSetLayout();
@@ -364,7 +364,7 @@ void	VulkanRenderPipeline::Render(const std::vector< Camera * > & cameras, Rende
 SwapChain *		VulkanRenderPipeline::GetSwapChain(void) { return swapChain; }
 RenderPass *	VulkanRenderPipeline::GetRenderPass(void) { return &renderPass; }
 
-const std::vector< VkDescriptorSetLayout >	VulkanRenderPipeline::GetUniformSetLayouts(void) noexcept
+const std::vector< VkDescriptorSetLayout >	VulkanRenderPipeline::GetGraphicUniformSetLayouts(void) noexcept
 {
 	return uniformSetLayouts;
 }

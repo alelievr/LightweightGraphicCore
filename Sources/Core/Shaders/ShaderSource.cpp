@@ -73,7 +73,6 @@ void		ShaderSource::SetSourceFile(const std::string & file, const VkShaderStageF
 
 void		ShaderSource::Compile(void)
 {
-
 	char path[2048];
 	getcwd(path, sizeof(path));
 	
@@ -114,6 +113,11 @@ VkShaderModule			ShaderSource::GetModule(void) const
 VkShaderStageFlagBits	ShaderSource::GetStage(void) const
 {
 	return _stage;
+}
+
+bool		ShaderSource::HasSource(void) const
+{
+	return !_sourceFile.path.empty();
 }
 
 void		ShaderSource::AddIncludePath(const std::string & path)

@@ -27,6 +27,7 @@ SRC			=	Core/Application.cpp \
 				Core/Components/MeshRenderer.cpp \
 				Core/Components/FreeCameraControls.cpp \
 				Core/Components/Light.cpp \
+				Core/ComputeDispatcher.cpp \
 				Core/Events/Event.cpp \
 				Core/Events/EventSystem.cpp \
 				Core/Events/Input.cpp \

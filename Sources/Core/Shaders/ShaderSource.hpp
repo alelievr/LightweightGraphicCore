@@ -49,6 +49,7 @@ namespace LWGC
 
 			VkShaderModule			GetModule(void) const;
 			VkShaderStageFlagBits	GetStage(void) const;
+			bool					HasSource(void) const;
 
 			static void	AddIncludePath(const std::string & path);
 	};

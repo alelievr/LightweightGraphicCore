@@ -28,11 +28,11 @@ namespace LWGC
 			
 			static VkDescriptorSetLayout	_descriptorSetLayout;
 			
-			static void		CreateDescriptorSetLayout(void) noexcept;
+			static void		CreateGraphicDescriptorSetLayout(void) noexcept;
 
-			void		RecordDrawCommandBuffer(void);
-			void		CreateDescriptorSet(void);
-			void		BindDescriptorSet(VkCommandBuffer cmd, VkPipelineBindPoint bindPoint);
+			void			RecordDrawCommandBuffer(void);
+			virtual void	CreateDescriptorSet(void);
+			void			BindDescriptorSet(VkCommandBuffer cmd, VkPipelineBindPoint bindPoint);
 
 		protected:
 			std::shared_ptr< Material >	_material;
@@ -65,9 +65,9 @@ namespace LWGC
 
 			VkCommandBuffer		GetDrawCommandBuffer(void) const;
 
-			static VkDescriptorSetLayout	GetDescriptorSetLayout(void) noexcept;
+			static VkDescriptorSetLayout	GetGraphicDescriptorSetLayout(void) noexcept;
 
-			virtual uint32_t			GetType(void) const noexcept override = 0;
+			virtual uint32_t	GetType(void) const noexcept override = 0;
 	};
 
 	std::ostream &	operator<<(std::ostream & o, Renderer const & r);

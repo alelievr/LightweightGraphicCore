@@ -1,5 +1,7 @@
 #include "Vk.hpp"
 
+#include "Core/Vulkan/Material.hpp"
+
 using namespace LWGC;
 
 VkSampler Vk::Samplers::depthCompare;
@@ -226,7 +228,7 @@ void			Vk::Initialize(void)
 	Samplers::depthCompare = CreateCompSampler(VK_FILTER_LINEAR, VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_BORDER, VK_COMPARE_OP_LESS);
 }
 
-VkDescriptorSetLayoutBinding	Vk::CreateDescriptorSetLayoutBinding(int binding, VkDescriptorType descriptorType, VkShaderStageFlagBits stageFlags)
+VkDescriptorSetLayoutBinding	Vk::CreateDescriptorSetLayoutBinding(uint32_t binding, VkDescriptorType descriptorType, VkShaderStageFlagBits stageFlags)
 {
 	// LWGC per frame cbuffer layout
 	VkDescriptorSetLayoutBinding layoutBinding = {};
@@ -237,6 +239,11 @@ VkDescriptorSetLayoutBinding	Vk::CreateDescriptorSetLayoutBinding(int binding, V
 	layoutBinding.stageFlags = stageFlags;
 
 	return layoutBinding;
+}
+
+VkDescriptorSetLayoutBinding	Vk::CreateDescriptorSetLayoutBinding(TextureBinding binding, VkDescriptorType descriptorType, VkShaderStageFlagBits stageFlags)
+{
+	return CreateDescriptorSetLayoutBinding(static_cast< uint32_t >(binding), descriptorType, stageFlags);
 }
 
 void			Vk::CreateDescriptorSetLayout(std::vector< VkDescriptorSetLayoutBinding > bindings, VkDescriptorSetLayout & layout)
