@@ -41,6 +41,7 @@ SRC			=	Core/Application.cpp \
 				Core/Rendering/RenderContext.cpp \
 				Core/Shaders/ShaderProgram.cpp \
 				Core/Shaders/ShaderSource.cpp \
+				Core/Shaders/BuiltinShaders.cpp \
 				Core/Vulkan/CommandBufferPool.cpp \
 				Core/Vulkan/Material.cpp \
 				Core/Vulkan/RenderPass.cpp \

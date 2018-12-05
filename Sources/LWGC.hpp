@@ -19,16 +19,15 @@
 // Pipelines
 #include "Core/Rendering/VulkanRenderPipeline.hpp"
 
-// Shaders & materials
-#include "Core/Shaders/ShaderProgram.hpp"
-#include "Core/Shaders/ShaderSource.hpp"
-#include "Core/Vulkan/Material.hpp"
-
 // Rendering
 #include "Core/Rendering/RenderTarget.hpp"
 #include "Core/Mesh.hpp"
 #include "Core/PrimitiveType.hpp"
 #include "Core/PrimitiveMeshFactory.hpp"
+#include "Core/Texture2D.hpp"
+#include "Core/Texture3D.hpp"
+#include "Core/Vulkan/Material.hpp"
+#include "Core/Shaders/BuiltinShaders.hpp"
 
 // App & core
 #include "Core/Application.hpp"

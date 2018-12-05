@@ -38,6 +38,7 @@ namespace LWGC
 		public:
 			ShaderSource(void);
 			ShaderSource(const ShaderSource &) = delete;
+			ShaderSource(const std::string & shaderName, VkShaderStageFlagBits stage);
 			virtual ~ShaderSource(void);
 
 			ShaderSource &	operator=(ShaderSource const & src) = delete;

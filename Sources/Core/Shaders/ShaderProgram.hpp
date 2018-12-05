@@ -14,11 +14,6 @@ namespace LWGC
 	class		ShaderProgram
 	{
 		private:
-			ShaderSource		_fragmentShaderSource;
-			ShaderSource		_vertexShaderSource;
-			ShaderSource		_geometryShaderSource;
-			ShaderSource		_computeShaderSource;
-
 			std::vector< ShaderSource * >					_shaderSources;
 			std::vector< VkPipelineShaderStageCreateInfo >	_shaderStages;
 
@@ -32,10 +27,7 @@ namespace LWGC
 
 			void	CompileAndLink(void);
 
-			void	SetVertexSourceFile(const std::string & file);
-			void	SetFragmentSourceFile(const std::string & file);
-			void	SetGeometrySourceFile(const std::string & file);
-			void	SetComputeSourceFile(const std::string & file);
+			void	SetSourceFile(const std::string & file, VkShaderStageFlagBits stage);
 
 			void	Bind(void);
 			bool	Update(void);
@@ -43,8 +35,6 @@ namespace LWGC
 			bool	IsCompute(void) const noexcept;
 
 			VkPipelineShaderStageCreateInfo *	GetShaderStages();
-
-			static ShaderProgram *	Standard;
 	};
 
 	std::ostream &	operator<<(std::ostream & o, ShaderProgram const & r);

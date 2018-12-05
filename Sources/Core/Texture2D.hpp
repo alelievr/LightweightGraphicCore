@@ -11,15 +11,16 @@
 
 namespace LWGC
 {
-	class		Texture2D : Texture
+class		Texture2D : public Texture
 	{
 		private:
 			std::string		_name;
+			stbi_uc *		_pixels;
 
 		public:
 			Texture2D(void) = delete;
 			Texture2D(const std::string fileName, VkFormat format, int usage, bool generateMips = false);
-			Texture2D(std::size_t width, std::size_t height, VkFormat format, int usage);
+			Texture2D(std::size_t width, std::size_t height, VkFormat format, int usage, bool allocateMips = false);
 			Texture2D(const Texture2D &);
 			virtual ~Texture2D(void);
 

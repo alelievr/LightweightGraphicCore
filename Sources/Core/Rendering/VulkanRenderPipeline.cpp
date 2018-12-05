@@ -68,7 +68,7 @@ void				VulkanRenderPipeline::CreateDescriptorSetLayouts(void)
 	uniformSetLayouts[2] = MeshRenderer::GetGraphicDescriptorSetLayout();
 
 	// LWGC per material cbuffer layout
-	uniformSetLayouts[3] = Material::GetDescriptorSetLayout();
+	uniformSetLayouts[3] = Material::GetGraphicDescriptorSetLayout();
 }
 
 void				VulkanRenderPipeline::CreatePerFrameDescriptorSet(void)
@@ -337,6 +337,9 @@ void			VulkanRenderPipeline::RenderInternal(const std::vector< Camera * > & came
 
 void	VulkanRenderPipeline::Render(const std::vector< Camera * > & cameras, RenderContext & context)
 {
+	if (cameras.empty())
+		throw std::runtime_error("No camera for rendering !");
+	
 	for (const auto camera : cameras)
 	{
 		std::vector< VkCommandBuffer >			drawBuffers;

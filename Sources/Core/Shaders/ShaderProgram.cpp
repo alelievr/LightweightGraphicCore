@@ -4,16 +4,14 @@
 
 using namespace LWGC;
 
-ShaderProgram *	ShaderProgram::Standard = new ShaderProgram("Shaders/Debug/AlbedoTexture.hlsl");
-
 ShaderProgram::ShaderProgram(void)
 {
 }
 
 ShaderProgram::ShaderProgram(const std::string & fragmentShaderName, const std::string & vertexShaderName)
 {
-	SetFragmentSourceFile(fragmentShaderName);
-	SetVertexSourceFile(vertexShaderName);
+	SetSourceFile(fragmentShaderName, VK_SHADER_STAGE_FRAGMENT_BIT);
+	SetSourceFile(vertexShaderName, VK_SHADER_STAGE_VERTEX_BIT);
 }
 
 ShaderProgram::~ShaderProgram(void)
@@ -42,33 +40,16 @@ bool		ShaderProgram::IsCompiled(void) const noexcept
 	return _shaderStages.size() > 0;
 }
 
-void		ShaderProgram::SetVertexSourceFile(const std::string & file)
+void		ShaderProgram::SetSourceFile(const std::string & file, VkShaderStageFlagBits stage)
 {
-	_vertexShaderSource.SetSourceFile(file, VK_SHADER_STAGE_VERTEX_BIT);
-	_shaderSources.push_back(&_vertexShaderSource);
-}
-
-void		ShaderProgram::SetFragmentSourceFile(const std::string & file)
-{
-	_fragmentShaderSource.SetSourceFile(file, VK_SHADER_STAGE_FRAGMENT_BIT);
-	_shaderSources.push_back(&_fragmentShaderSource);
-}
-
-void		ShaderProgram::SetGeometrySourceFile(const std::string & file)
-{
-	_geometryShaderSource.SetSourceFile(file, VK_SHADER_STAGE_GEOMETRY_BIT);
-	_shaderSources.push_back(&_geometryShaderSource);
-}
-
-void		ShaderProgram::SetComputeSourceFile(const std::string & file)
-{
-	_computeShaderSource.SetSourceFile(file, VK_SHADER_STAGE_COMPUTE_BIT);
-	_shaderSources.push_back(&_computeShaderSource);
+	_shaderSources.push_back(new ShaderSource(file, stage));
 }
 
 bool		ShaderProgram::IsCompute(void) const noexcept
 {
-	return _computeShaderSource.HasSource();
+	return std::any_of(_shaderSources.begin(), _shaderSources.end(), [](const auto & s){
+		return s->GetStage() == VK_SHADER_STAGE_COMPUTE_BIT;
+	});
 }
 
 bool		ShaderProgram::Update(void)

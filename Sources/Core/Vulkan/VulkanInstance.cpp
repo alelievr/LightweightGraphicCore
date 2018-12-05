@@ -268,7 +268,10 @@ void			VulkanInstance::ChoosePhysicalDevice(void)
 
 	std::vector<VkPhysicalDevice> devices(deviceCount);
 	vkEnumeratePhysicalDevices(_instance, &deviceCount, devices.data());
-
+	
+	if (deviceCount == 0)
+		throw std::runtime_error("No GPU detected");
+	
 	for (const auto & device : devices)
 	{
 		if (IsPhysicalDeviceSuitable(device))
@@ -326,6 +329,8 @@ void			VulkanInstance::CreateLogicalDevice(void)
 	vkGetDeviceQueue(_device, _graphicQueueIndex, 0, &_graphicQueue);
 	vkGetDeviceQueue(_device, _presentQueueIndex, 0, &_presentQueue);
 	vkGetDeviceQueue(_device, _computeQueueIndex, 0, &_computeQueue);
+
+	printf("Create logical device !\n");
 }
 
 void			VulkanInstance::CreateCommandBufferPools(void) noexcept
