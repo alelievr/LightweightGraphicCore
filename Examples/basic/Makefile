@@ -6,7 +6,7 @@
 #    By: alelievr <marvin@42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2014/07/15 15:13:38 by alelievr          #+#    #+#              #
-#    Updated: 2018/11/30 23:06:10 by alelievr         ###   ########.fr        #
+#    Updated: 2018/12/06 16:38:24 by alelievr         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -36,8 +36,8 @@ CPPVERSION	=	c++11
 INCDIRS		=	../../sources ../../Deps/vulkansdk-macos-1.1.85.0/macOS/include/
 
 #	Libraries
-LIBDIRS		=	../../ ../../deps/glfw/src/ ../../deps/imgui/ ../../deps/vulkansdk-macos-1.1.85.0/macOS/lib
-LDLIBS		=	-lLWGC -lglfw3 -limgui -lvulkan -lglslang -lSPIRV -lHLSL -lSPVRemapper -lSPIRV-Tools -lSPIRV-Tools-link -lSPIRV-Tools-opt -lspirv-cross -lOSDependent -lOGLCompiler
+LIBDIRS		=	../../ ../../Deps/glfw/src/ ../../Deps/imgui/ ../../Deps/vulkansdk-macos-1.1.85.0/macOS/lib
+LDLIBS		=	-lLWGC -lglfw3 -limgui -lvulkan -lglslang -lSPIRV -lHLSL -lSPVRemapper -lSPIRV-Tools -lSPIRV-Tools-link -lSPIRV-Tools-opt -lspirv-cross -lOSDependent -lOGLCompiler -lspirv-cross
 
 #	Output
 NAME		=	simple

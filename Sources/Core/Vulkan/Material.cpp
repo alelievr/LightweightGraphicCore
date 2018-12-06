@@ -52,6 +52,10 @@ Material::Material(Material const & src)
 Material::~Material(void)
 {
 	delete _program;
+
+	// Don't delete if the material have not been initialized
+	if (_instance == nullptr)
+		return ;
 	
 	vkDeviceWaitIdle(_instance->GetDevice());
 

@@ -5,6 +5,7 @@
 #include <stdint.h>
 
 #include "IncludeDeps.hpp"
+#include "Core/Shaders/ShaderBindingTable.hpp"
 
 #include VULKAN_INCLUDE
 #include GLFW_INCLUDE
@@ -23,11 +24,13 @@ namespace LWGC
 			ShaderFileInfo			_sourceFile;
 			VkShaderModule			_module;
 			VkShaderStageFlagBits	_stage;
-			std::vector< char >		_SpirVCode;
+			std::vector< uint32_t >	_SpirVCode;
+			ShaderBindingTable		_bindingTable;
 
 			std::vector< char >		ReadFile(const std::string & fileName);
 			long					GetFileModificationTime(const std::string & file) const;
 			std::string				StageToText(const VkShaderStageFlagBits stage);
+			void					GenerateShaderBindingTable(void);
 
 			const std::string		tmpFilePath = "/tmp/LWGC_spirV.tmp";
 			

@@ -3,6 +3,9 @@
 #include <sys/stat.h>
 #include <fstream>
 #include <unistd.h>
+#include "IncludeDeps.hpp"
+
+#include SPIRV_CROSS_INCLUDE
 
 #include "Core/Vulkan/VulkanInstance.hpp"
 
@@ -90,16 +93,40 @@ void		ShaderSource::Compile(void)
 		throw std::runtime_error("Shader compilation error");
 
 	// Read back spriv from tmp file
-	_SpirVCode = ReadFile(tmpFilePath);
+	const auto & spirV = ReadFile(tmpFilePath);
+
+	_SpirVCode.resize(spirV.size() / 4);
+	std::memcpy(_SpirVCode.data(), spirV.data(), spirV.size());
 
 	// Create Vulkan module
 	VkShaderModuleCreateInfo createInfo = {};
 	createInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
-	createInfo.codeSize = _SpirVCode.size();
+	createInfo.codeSize = spirV.size();
 	createInfo.pCode = reinterpret_cast< uint32_t * >(_SpirVCode.data());
 
 	if (vkCreateShaderModule(VulkanInstance::Get()->GetDevice(), &createInfo, nullptr, &_module) != VK_SUCCESS)
 		throw std::runtime_error("failed to create shader module!");
+
+	GenerateShaderBindingTable();
+}
+
+void		ShaderSource::GenerateShaderBindingTable(void)
+{
+	auto glsl = new spirv_cross::CompilerGLSL(_SpirVCode);
+
+	spirv_cross::ShaderResources resources = glsl->get_shader_resources();
+
+	for (auto & resource : resources.uniform_buffers)
+	{
+		unsigned set = glsl->get_decoration(resource.id, spv::DecorationDescriptorSet);
+		unsigned binding = glsl->get_decoration(resource.id, spv::DecorationBinding);
+		// unsigned block = glsl->get_decoration(resource.id, spv::Decoration::);
+		printf("Image %s at set = %u, binding = %u, resource name: %s\n", resource.name.c_str(), set, binding, glsl->get_name(resource.id).c_str());
+		const spirv_cross::SPIRType & type = glsl->get_type(resource.type_id);
+		printf("Is struct: %i\n", (type.basetype == spirv_cross::SPIRType::Struct));
+	}
+
+	delete glsl;
 }
 
 bool		ShaderSource::NeedReload(void) const
