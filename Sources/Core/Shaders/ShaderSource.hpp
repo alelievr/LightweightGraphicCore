@@ -25,12 +25,10 @@ namespace LWGC
 			VkShaderModule			_module;
 			VkShaderStageFlagBits	_stage;
 			std::vector< uint32_t >	_SpirVCode;
-			ShaderBindingTable		_bindingTable;
 
 			std::vector< char >		ReadFile(const std::string & fileName);
 			long					GetFileModificationTime(const std::string & file) const;
 			std::string				StageToText(const VkShaderStageFlagBits stage);
-			void					GenerateShaderBindingTable(void);
 
 			const std::string		tmpFilePath = "/tmp/LWGC_spirV.tmp";
 			
@@ -50,6 +48,7 @@ namespace LWGC
 			bool	NeedReload(void) const;
 			void	Reload(void);
 			void	Compile(void);
+			void	GenerateBindingTable(ShaderBindingTable & bindingTable);
 
 			VkShaderModule			GetModule(void) const;
 			VkShaderStageFlagBits	GetStage(void) const;

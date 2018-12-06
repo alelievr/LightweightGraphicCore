@@ -106,27 +106,47 @@ void		ShaderSource::Compile(void)
 
 	if (vkCreateShaderModule(VulkanInstance::Get()->GetDevice(), &createInfo, nullptr, &_module) != VK_SUCCESS)
 		throw std::runtime_error("failed to create shader module!");
-
-	GenerateShaderBindingTable();
 }
 
-void		ShaderSource::GenerateShaderBindingTable(void)
+void		ShaderSource::GenerateBindingTable(ShaderBindingTable & bindingTable)
 {
 	auto glsl = new spirv_cross::CompilerGLSL(_SpirVCode);
 
 	spirv_cross::ShaderResources resources = glsl->get_shader_resources();
 
-	for (auto & resource : resources.uniform_buffers)
-	{
+	// Warning: currently no differenciation between Buffer/Texture2D and RWBuffer/RWTexture2D is done
+	const auto & addBinding = [&](const spirv_cross::Resource & resource, const VkDescriptorType descriptorType) {
 		unsigned set = glsl->get_decoration(resource.id, spv::DecorationDescriptorSet);
 		unsigned binding = glsl->get_decoration(resource.id, spv::DecorationBinding);
-		// unsigned block = glsl->get_decoration(resource.id, spv::Decoration::);
-		printf("Image %s at set = %u, binding = %u, resource name: %s\n", resource.name.c_str(), set, binding, glsl->get_name(resource.id).c_str());
 		const spirv_cross::SPIRType & type = glsl->get_type(resource.type_id);
-		printf("Is struct: %i\n", (type.basetype == spirv_cross::SPIRType::Struct));
-	}
+		auto & shaderBinding = bindingTable.AddBinding(resource.name, set, binding, descriptorType);
+		if (type.basetype == spirv_cross::SPIRType::Struct)
+			shaderBinding.elementSize = glsl->get_declared_struct_size(type);
+	};
 
-	delete glsl;
+	// Uniform buffers
+	for (auto & resource : resources.uniform_buffers)
+		addBinding(resource, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER);
+	
+	// SRVs
+	for (auto & resource : resources.sampled_images)
+		addBinding(resource, VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE);
+	
+	// UAVs
+	for (auto & resource : resources.storage_images)
+		addBinding(resource, VK_DESCRIPTOR_TYPE_STORAGE_IMAGE);
+	
+	// Samplers
+	for (auto & resource : resources.separate_samplers)
+		addBinding(resource, VK_DESCRIPTOR_TYPE_SAMPLER);
+	
+	// StructedBuffers RW and read-only
+	for (auto & resource : resources.storage_buffers)
+		addBinding(resource, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER);
+
+	bindingTable.GenerateSetLayouts();
+	
+	// delete glsl;
 }
 
 bool		ShaderSource::NeedReload(void) const

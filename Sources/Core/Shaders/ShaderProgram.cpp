@@ -21,9 +21,12 @@ ShaderProgram::~ShaderProgram(void)
 
 void		ShaderProgram::CompileAndLink(void)
 {
+	_bindingTable.SetStage(IsCompute() ? VK_SHADER_STAGE_COMPUTE_BIT : VK_SHADER_STAGE_ALL_GRAPHICS);
+
 	for (auto & shaderSource : _shaderSources)
 	{
 		shaderSource->Compile();
+		shaderSource->GenerateBindingTable(_bindingTable);
 
 		VkPipelineShaderStageCreateInfo shaderStageInfo = {};
 		shaderStageInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
