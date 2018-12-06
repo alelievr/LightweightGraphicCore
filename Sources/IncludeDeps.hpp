@@ -13,6 +13,7 @@
 # define IMGUI_VULKAN_INCLUDE "../Deps/imgui/examples/imgui_impl_vulkan.h"
 # define STB_INCLUDE "../Deps/stb/stb.h"
 # define STB_INCLUDE_IMAGE "../Deps/stb/stb_image.h"
+# define SPIRV_CROSS_INCLUDE "../Deps/SPIRV-Cross/spirv_glsl.hpp"
 // Unusable API
 // # define GLSLANG_INCLUDE "../Deps/glslang/glslang/Public/ShaderLang.h"
 // # define GLSLANG_RESOURCES_INCLUDE "../Deps/glslang/StandAlone/ResourceLimits.h"

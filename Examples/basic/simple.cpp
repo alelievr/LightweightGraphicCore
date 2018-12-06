@@ -31,13 +31,15 @@ int			main(void)
 	//Initialize application
 	app.Init();
 
-	//open window
+	// We must Open the window before doing anything related to vulkan
 	app.Open("Test Window", 1920, 1080, WindowFlag::Resizable | WindowFlag::Decorated | WindowFlag::Focused);
 
-	// Texture2D	proceduralTexture(512, 512, VK_FORMAT_R8G8B8_UNORM, VK_IMAGE_USAGE_STORAGE_BIT | VK_IMAGE_USAGE_SAMPLED_BIT);
-	// Material	writeProceduralTexture("Shaders/Compute/ProceduralTexture.hlsl", VK_SHADER_STAGE_COMPUTE_BIT);
+	Texture2D	proceduralTexture(512, 512, VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_USAGE_STORAGE_BIT | VK_IMAGE_USAGE_SAMPLED_BIT);
+	Material	writeProceduralTexture("Shaders/Compute/ProceduralTexture.hlsl", VK_SHADER_STAGE_COMPUTE_BIT);
+	// TODO: fixme !
 	// Material	displayProceduralTexture(BuiltinShaders::Standard); // Copy of the standard material
 
+	// writeProceduralTexture.SetTexture("WriteTexture", proceduralTexture);
 	// VkDescriptorSetLayout proceduralTextureLayout;
 	// Vk::CreateDescriptorSetLayout({Vk::CreateDescriptorSetLayoutBinding(0, VK_DESCRIPTOR_TYPE_STORAGE_IMAGE, VK_SHADER_STAGE_COMPUTE_BIT)}, proceduralTextureLayout);
 

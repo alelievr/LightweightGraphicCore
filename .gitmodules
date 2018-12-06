@@ -13,3 +13,6 @@
 [submodule "Deps/stb"]
 	path = Deps/stb
 	url = https://github.com/nothings/stb
+[submodule "Deps/SPIRV-Cross"]
+	path = Deps/SPIRV-Cross
+	url = https://github.com/KhronosGroup/SPIRV-Cross
