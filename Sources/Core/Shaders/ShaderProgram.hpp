@@ -8,6 +8,7 @@
 
 #include GLFW_INCLUDE
 #include "ShaderSource.hpp"
+#include "Core/Shaders/ShaderBindingTable.hpp"
 
 namespace LWGC
 {
@@ -16,6 +17,7 @@ namespace LWGC
 		private:
 			std::vector< ShaderSource * >					_shaderSources;
 			std::vector< VkPipelineShaderStageCreateInfo >	_shaderStages;
+			ShaderBindingTable								_bindingTable;
 
 		public:
 			ShaderProgram(void);
