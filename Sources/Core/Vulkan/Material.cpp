@@ -315,9 +315,19 @@ void					Material::CreateDescriptorSets(void)
 	vkUpdateDescriptorSets(_device, static_cast<uint32_t>(descriptorWrites.size()), descriptorWrites.data(), 0, nullptr);
 }
 
-void					Material::BindDescriptorSets(VkCommandBuffer cmd, VkPipelineBindPoint bindPoint)
+vkDescriptorSet			Material::GetDescriptorSet(void) const
 {
-	vkCmdBindDescriptorSets(cmd, bindPoint, _graphicPipelineLayout, PER_MATERIAL_BINDING_INDEX, 1, &_descriptorSet, 0, nullptr);
+	return _descriptorSet;
+}
+
+uint32_t				Material::GetDescriptorSetBinding(const std::string & setName) const
+{
+	return _program.
+}
+
+VkDescriptorSetLayout	Material::GetDescriptorSetLayout(const std::string & setName) const
+{
+	return _descriptorSetLayout;
 }
 
 void					Material::SetDescriptorSetLayout(uint32_t index, VkDescriptorSetLayout layout)

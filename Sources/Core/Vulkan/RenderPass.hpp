@@ -2,8 +2,10 @@
 
 #include <iostream>
 #include <string>
+#include <unordered_map>
 
 #include "VulkanInstance.hpp"
+#include "Core/Vulkan/Material.hpp"
 
 namespace LWGC
 {
@@ -12,6 +14,14 @@ namespace LWGC
 	class		RenderPass
 	{
 		private:
+			struct DescriptorSet
+			{
+				VkDescriptorSet	set;
+				bool			hasChanged;
+			};
+
+			using DescriptorBindings = std::unordered_map< std::string, DescriptorSet >;
+
 			VkRenderPass							_renderPass;
 			VulkanInstance *						_instance;
 			SwapChain *								_swapChain;
@@ -21,6 +31,11 @@ namespace LWGC
 			std::vector< VkSubpassDependency >		_dependencies;
 			VkAttachmentReference					_depthAttachmentRef;
 			uint32_t								_attachmentCount;
+			VkCommandBuffer							_graphicCommandBuffer;
+			VkCommandBuffer							_computeCommandBuffer;
+			DescriptorBindings						_currentBindings;
+			std::vector< VkCommandBuffer >			_drawBuffers;
+			std::shared_ptr< Material > 			_currentMaterial;
 	
 		public:
 			RenderPass(void);
@@ -33,8 +48,14 @@ namespace LWGC
 			void	AddAttachment(const VkAttachmentDescription & attachment, VkImageLayout finalLayout) noexcept;
 			void	SetDepthAttachment(const VkAttachmentDescription & attachment, VkImageLayout layout) noexcept;
 			void	AddDependency(const VkSubpassDependency & dependency) noexcept;
+			bool	BindDescriptorSet(const std::string & name, VkDescriptorSet set);
+			void	BindMaterial(std::shared_ptr< Material > material);
+			void	SetCurrentCommandBuffers(const VkCommandBuffer graphicCommandBuffer, const VkCommandBuffer computeCommandBuffer);
+			void	EnqueueDrawCommand(VkCommandBuffer drawCommandBuffer);
 			void	Cleanup(void) noexcept;
 			void	Create(void);
+			void	ExecuteCommands(void);
+			void	ClearBindings(void);
 	
 			VkRenderPass	GetRenderPass(void) const noexcept;
 	

@@ -147,9 +147,9 @@ void			VulkanRenderPipeline::BeginRenderPass(void)
 	renderPassInfo.clearValueCount = static_cast<uint32_t>(clearValues.size());
 	renderPassInfo.pClearValues = clearValues.data();
 
-	vkCmdBeginRenderPass(graphicCommandBuffer, &renderPassInfo, VK_SUBPASS_CONTENTS_SECONDARY_COMMAND_BUFFERS);
+	renderPass.SetCurrentCommandBuffers(graphicCommandBuffer, VK_NULL_HANDLE); // TODO: pass the compute command buffer
 
-	vkCmdBindDescriptorSets(graphicCommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, Vk::currentPipelineLayout, PER_FRAME_BINDING_INDEX, 1, &perFrameDescriptorSet, 0, nullptr);
+	vkCmdBeginRenderPass(graphicCommandBuffer, &renderPassInfo, VK_SUBPASS_CONTENTS_SECONDARY_COMMAND_BUFFERS);
 }
 
 void			VulkanRenderPipeline::EndRenderPass(void)
@@ -339,29 +339,36 @@ void	VulkanRenderPipeline::Render(const std::vector< Camera * > & cameras, Rende
 {
 	if (cameras.empty())
 		throw std::runtime_error("No camera for rendering !");
+
+	BeginRenderPass();
+		
+	renderPass.BindDescriptorSet("frame", perFrameDescriptorSet);
 	
 	for (const auto camera : cameras)
 	{
-		std::vector< VkCommandBuffer >			drawBuffers;
 		std::unordered_set< MeshRenderer * >	meshRenderers;
-
-		BeginRenderPass();
-
-		camera->BindDescriptorSet(graphicCommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS);
+		
+		renderPass.BindDescriptorSet("camera", camera->GetDescriptorSet());
 
 		context.GetMeshRenderers(meshRenderers);
 
 		for (const auto & meshRenderer : meshRenderers)
 		{
-			meshRenderer->GetMaterial()->UpdateUniformBuffer();
+			auto m = meshRenderer->GetMaterial();
+			renderPass.BindMaterial(m.get());
+
+			// TODO: put an event listener in MeshRenderer and update uniforms from there
+			m->UpdateUniformBuffer();
 			
-			drawBuffers.push_back(meshRenderer->GetDrawCommandBuffer());
+			renderPass.EnqueueDrawCommand(meshRenderer->GetDrawCommandBuffer());
 		}
 
-		vkCmdExecuteCommands(graphicCommandBuffer, drawBuffers.size(), drawBuffers.data());
-
-		EndRenderPass();
+		renderPass.ExecuteCommands();
 	}
+
+	EndRenderPass();
+
+	renderPass.ClearBindings();
 }
 
 SwapChain *		VulkanRenderPipeline::GetSwapChain(void) { return swapChain; }

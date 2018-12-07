@@ -77,7 +77,7 @@ namespace LWGC
 			float		GetFarPlane(void) const;
 			void		SetFarPlane(float tmp);
 
-			void		BindDescriptorSet(VkCommandBuffer cmd, VkPipelineBindPoint bindPoint);
+			VkDescriptorSet		GetDescriptorSet(void) const;
 
 			virtual uint32_t	GetType(void) const noexcept override;
 
