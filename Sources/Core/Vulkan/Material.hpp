@@ -68,15 +68,17 @@ namespace LWGC
 			void	Initialize(SwapChain * swapchain, RenderPass * renderPass);
 			void	CleanupGraphicPipeline(void) noexcept;
 			void	CreateGraphicPipeline(void);
-			void	BindDescriptorSets(VkCommandBuffer cmd, VkPipelineBindPoint bindPoint);
 			void	UpdateUniformBuffer(void);
 			void	AddShader(const std::string & shader, VkShaderStageFlagBits stage);
 
+			VkPipelineLayout	Material::GetPipelineLayout(const std::string & setName) const
+			uint32_t			Material::GetDescriptorSetBinding(const std::string & setName) const
 			void				SetDescriptorSetLayout(uint32_t setIndex, VkDescriptorSetLayout layout);
 	
 			VkPipelineLayout	GetGraphicPipelineLayout(void) const;
 			void				SetGraphicPipelineLayout(VkPipelineLayout tmp);
 			
+			VkDescriptorSet		GetDescriptorSet(void) const;
 			VkPipeline			GetGraphicPipeline(void) const;
 			void				SetGraphicPipeline(VkPipeline tmp);
 

@@ -73,6 +73,59 @@ void		RenderPass::Create(void)
 	_swapChain->CreateFrameBuffers(*this);
 }
 
+bool	RenderPass::BindDescriptorSet(const std::string & name, VkDescriptorSet set)
+{
+	if (_currentBindings.find(name) != _currentBindings.end())
+	{
+		_currentBindings[name] = set;
+		return true;
+	}
+	return false;
+}
+
+void	RenderPass::BindMaterial(std::shared_ptr< Material > material)
+{
+	if (BindDescriptorSet("material", material->GetDescriptorSet()))
+	{
+		_currentMaterial = material;
+
+		// mark all bindings to changed set they're all rebinded to the new material
+		for (auto & b : _currentBindings)
+			b.second.hasChanged = true;
+	}
+}
+
+void	RenderPass::SetCurrentCommandBuffers(const VkCommandBuffer graphicCommandBuffer, const VkCommandBuffer computeCommandBuffer)
+{
+	_graphicCommandBuffer = graphicCommandBuffer;
+	_computeCommandBuffer = computeCommandBuffer;
+}
+
+void	RenderPass::EnqueueDrawCommand(VkCommandBuffer drawCommandBuffer)
+{
+	for (auto & b : _currentBindings)
+	{
+		vkCmdBindDescriptorSets(
+			_graphicCommandBuffer,
+			VK_PIPELINE_BIND_POINT_GRAPHICS, 
+			_currentMaterial->GetPipelineLayout(),
+			_currentMaterial->GetDescriptorSetBinding(b.first),
+			1, &b.second.set,
+			0, nullptr
+		);
+	}
+}
+
+void	RenderPass::ExecuteCommands(void)
+{
+	vkCmdExecuteCommands(_graphicCommandBuffer, _drawBuffers.size(), _drawBuffers.data());
+}
+
+void	RenderPass::ClearBindings(void)
+{
+	_currentBindings.clear();
+}
+
 VkAttachmentDescription RenderPass::GetDefaultColorAttachment(VkFormat format) noexcept
 {
 	VkAttachmentDescription colorAttachment = {};
