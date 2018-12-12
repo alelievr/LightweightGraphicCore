@@ -53,6 +53,11 @@ void			ShaderBindingTable::GenerateSetLayouts()
 	}
 }
 
+uint32_t		ShaderBindingTable::GetDescriptorSetBinding(const std::string & bindingName)
+{
+	return _bindings[bindingName].descriptorSet;
+}
+
 const std::vector< VkDescriptorSetLayout > &	ShaderBindingTable::GetDescriptorSetLayout(void) const { return _descriptorSetLayout; }
 
 std::ostream &	operator<<(std::ostream & o, ShaderBindingTable const & r)

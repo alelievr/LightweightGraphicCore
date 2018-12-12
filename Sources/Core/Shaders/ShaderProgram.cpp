@@ -88,6 +88,11 @@ VkPipelineShaderStageCreateInfo *	ShaderProgram::GetShaderStages()
 	return _shaderStages.data();
 }
 
+uint32_t		ShaderProgram::GetDescriptorSetBinding(const std::string & bindingName)
+{
+	return _bindingTable.GetDescriptorSetBinding(bindingName);
+}
+
 std::ostream &	operator<<(std::ostream & o, ShaderProgram const & r)
 {
 	o << "tostring of the class" << std::endl;

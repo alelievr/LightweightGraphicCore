@@ -26,7 +26,6 @@ void		Transform::Rotate(const glm::vec3 & eulerAngles)
 	//FPS camera:  RotationX(pitch) * RotationY(yaw)
 	glm::quat qPitch = glm::angleAxis(_pitch, glm::vec3(1, 0, 0));
 	glm::quat qYaw = glm::angleAxis(_yaw, glm::vec3(0, 1, 0));
-	glm::quat qRoll = glm::angleAxis(_roll, glm::vec3(0, 0, 1));
 
 	// std::cout << "_yaw: " << _yaw << ", pitch: " << _pitch << ", roll: " << _roll << "\n";
 
@@ -51,6 +50,8 @@ void		Transform::Rotate(const float xAngle, const float yAngle, const float zAng
 
 void		Transform::RotateAround(const glm::vec3 & point, const glm::vec3 & axis, const float angle)
 {
+	(void)point, (void)axis, (void)angle;
+	
 	std::cout << "RotateAround: TODO" << std::endl;
 }
 

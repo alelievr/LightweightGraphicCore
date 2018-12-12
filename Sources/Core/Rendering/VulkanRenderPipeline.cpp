@@ -355,7 +355,7 @@ void	VulkanRenderPipeline::Render(const std::vector< Camera * > & cameras, Rende
 		for (const auto & meshRenderer : meshRenderers)
 		{
 			auto m = meshRenderer->GetMaterial();
-			renderPass.BindMaterial(m.get());
+			renderPass.BindMaterial(m);
 
 			// TODO: put an event listener in MeshRenderer and update uniforms from there
 			m->UpdateUniformBuffer();

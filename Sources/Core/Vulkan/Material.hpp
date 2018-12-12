@@ -10,7 +10,6 @@
 #include VULKAN_INCLUDE
 #include GLM_INCLUDE
 #include "VulkanInstance.hpp"
-#include "SwapChain.hpp"
 #include "Vk.hpp"
 #include "Core/Shaders/ShaderProgram.hpp"
 
@@ -27,6 +26,9 @@ namespace LWGC
 		Smoothness = 5,
 	};
 
+	class SwapChain;
+	class RenderPass;
+
 	class		Material
 	{
 		private:
@@ -37,8 +39,8 @@ namespace LWGC
 
 			static VkDescriptorSetLayout			graphicDescriptorSetLayout;
 			VkDescriptorSet							_descriptorSet;
-			VkPipelineLayout						_graphicPipelineLayout;
-			VkPipeline								_graphicPipeline;
+			VkPipelineLayout						_pipelineLayout;
+			VkPipeline								_pipeline;
 			LWGC_PerMaterial						_perMaterial;
 			UniformBuffer							_uniformPerMaterial;
 			std::vector< VkSampler >				_samplers;
@@ -71,16 +73,12 @@ namespace LWGC
 			void	UpdateUniformBuffer(void);
 			void	AddShader(const std::string & shader, VkShaderStageFlagBits stage);
 
-			VkPipelineLayout	Material::GetPipelineLayout(const std::string & setName) const
-			uint32_t			Material::GetDescriptorSetBinding(const std::string & setName) const
-			void				SetDescriptorSetLayout(uint32_t setIndex, VkDescriptorSetLayout layout);
-	
-			VkPipelineLayout	GetGraphicPipelineLayout(void) const;
-			void				SetGraphicPipelineLayout(VkPipelineLayout tmp);
+			VkPipelineLayout	GetPipelineLayout(void) const;
+			uint32_t			GetDescriptorSetBinding(const std::string & setName) const;
+			// void				SetDescriptorSetLayout(uint32_t setIndex, VkDescriptorSetLayout layout);
 			
-			VkDescriptorSet		GetDescriptorSet(void) const;
-			VkPipeline			GetGraphicPipeline(void) const;
-			void				SetGraphicPipeline(VkPipeline tmp);
+			// VkDescriptorSet		GetDescriptorSet(void) const;
+			VkPipeline			GetPipeline(void) const;
 
 			void				SetBuffer(uint32_t setIndex, uint32_t bindingIndex, VkBuffer buffer, size_t size);
 			void				SetTexture(uint32_t setIndex, uint32_t bindingIndex, const Texture & texture, VkImageLayout imageLayout, VkDescriptorType descriptorType);

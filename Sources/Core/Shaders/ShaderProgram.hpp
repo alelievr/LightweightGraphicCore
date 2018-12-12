@@ -27,14 +27,15 @@ namespace LWGC
 
 			ShaderProgram &	operator=(ShaderProgram const & src) = delete;
 
-			void	CompileAndLink(void);
+			void		CompileAndLink(void);
 
-			void	SetSourceFile(const std::string & file, VkShaderStageFlagBits stage);
+			void		SetSourceFile(const std::string & file, VkShaderStageFlagBits stage);
+			uint32_t	GetDescriptorSetBinding(const std::string & bindingName);
 
-			void	Bind(void);
-			bool	Update(void);
-			bool	IsCompiled(void) const noexcept;
-			bool	IsCompute(void) const noexcept;
+			void		Bind(void);
+			bool		Update(void);
+			bool		IsCompiled(void) const noexcept;
+			bool		IsCompute(void) const noexcept;
 
 			VkPipelineShaderStageCreateInfo *	GetShaderStages();
 	};
