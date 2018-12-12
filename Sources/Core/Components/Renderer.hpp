@@ -57,8 +57,8 @@ namespace LWGC
 			void	OnEnable(void) noexcept override;
 			void	OnDisable(void) noexcept override;
 
-			void	CleanupGraphicPipeline(void) noexcept;
-			void	CreateGraphicPipeline(void) noexcept;
+			void	CleanupPipeline(void) noexcept;
+			void	CreatePipeline(void) noexcept;
 
 			std::shared_ptr< Material >	GetMaterial(void) const;
 			void	SetMaterial(std::shared_ptr< Material > tmp);

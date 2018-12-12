@@ -29,14 +29,14 @@ namespace LWGC
 
 			void		CompileAndLink(void);
 
-			void		SetSourceFile(const std::string & file, VkShaderStageFlagBits stage);
-			uint32_t	GetDescriptorSetBinding(const std::string & bindingName);
-
 			void		Bind(void);
 			bool		Update(void);
 			bool		IsCompiled(void) const noexcept;
 			bool		IsCompute(void) const noexcept;
 
+			void								SetSourceFile(const std::string & file, VkShaderStageFlagBits stage);
+			uint32_t							GetDescriptorSetBinding(const std::string & bindingName);
+			std::vector< VkDescriptorSetLayout >GetDescriptorSetLayouts(void);
 			VkPipelineShaderStageCreateInfo *	GetShaderStages();
 	};
 

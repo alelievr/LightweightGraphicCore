@@ -17,8 +17,6 @@
 
 using namespace LWGC;
 
-VkDescriptorSetLayout Material::graphicDescriptorSetLayout;
-
 Material::Material(void)
 {
 	this->_pipelineLayout = VK_NULL_HANDLE;
@@ -61,7 +59,7 @@ Material::~Material(void)
 	
 	vkDeviceWaitIdle(_instance->GetDevice());
 
-	CleanupGraphicPipeline();
+	CleanupPipeline();
 
 	vkDestroySampler(_device, _samplers[0], nullptr);
 
@@ -91,53 +89,30 @@ void					Material::Initialize(SwapChain * swapChain, RenderPass * renderPass)
 	_swapChain = swapChain;
 	_renderPass = renderPass;
 
-	if (graphicDescriptorSetLayout == VK_NULL_HANDLE)
-		CreateGraphicDescriptorSetLayout();
-	
+	CompileShaders();
 	CreatePipelineLayout();
-	CreateGraphicPipeline();
+	CreatePipeline();
 	CreateTextureSampler();
 	CreateUniformBuffer();
 	CreateDescriptorSets();
 }
 
-void					Material::CleanupGraphicPipeline(void) noexcept
+void					Material::CleanupPipeline(void) noexcept
 {
 	vkDestroyPipeline(_device, _pipeline, nullptr);
 	vkDestroyPipelineLayout(_device, _pipelineLayout, nullptr);
 }
 
-void	Material::CreateGraphicDescriptorSetLayout(void)
-{
-	if (graphicDescriptorSetLayout != VK_NULL_HANDLE)
-		return ;
+// void	Material::CreateGraphicDescriptorSetLayout(void)
+// {
+// 	auto perMaterialBinding = Vk::CreateDescriptorSetLayoutBinding(0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_ALL_GRAPHICS);
+// 	auto albedoBinding = Vk::CreateDescriptorSetLayoutBinding(TextureBinding::Albedo, VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE, VK_SHADER_STAGE_ALL_GRAPHICS);
+// 	auto samplerBinding = Vk::CreateDescriptorSetLayoutBinding(TRILINEAR_CLAMP_BINDING_INDEX, VK_DESCRIPTOR_TYPE_SAMPLER, VK_SHADER_STAGE_FRAGMENT_BIT);
 
-	auto perMaterialBinding = Vk::CreateDescriptorSetLayoutBinding(0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_ALL_GRAPHICS);
-	auto albedoBinding = Vk::CreateDescriptorSetLayoutBinding(TextureBinding::Albedo, VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE, VK_SHADER_STAGE_ALL_GRAPHICS);
-	auto samplerBinding = Vk::CreateDescriptorSetLayoutBinding(TRILINEAR_CLAMP_BINDING_INDEX, VK_DESCRIPTOR_TYPE_SAMPLER, VK_SHADER_STAGE_FRAGMENT_BIT);
+// 	Vk::CreateDescriptorSetLayout({perMaterialBinding, albedoBinding, samplerBinding}, graphicDescriptorSetLayout);
+// }
 
-	Vk::CreateDescriptorSetLayout({perMaterialBinding, albedoBinding, samplerBinding}, graphicDescriptorSetLayout);
-}
-
-void					Material::CreatePipelineLayout(void)
-{
-	VkPipelineLayoutCreateInfo pipelineLayoutInfo = {};
-	pipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
-	
-	// if the shader is a common graphic pipeline shader, we use the default draw mesh layout
-	if (!_program->IsCompute())
-		_setLayouts = VulkanRenderPipeline::GetGraphicUniformSetLayouts();
-	else if (_setLayouts.size() == 0)
-		throw std::runtime_error("No descriptor layout set provided for material !");
-
-	pipelineLayoutInfo.setLayoutCount = _setLayouts.size();
-	pipelineLayoutInfo.pSetLayouts = _setLayouts.data();
-
-	if (vkCreatePipelineLayout(_device, &pipelineLayoutInfo, nullptr, &_pipelineLayout) != VK_SUCCESS)
-		throw std::runtime_error("failed to create pipeline layout !");
-}
-
-void					Material::CreateGraphicPipeline(void)
+void					Material::CompileShaders(void)
 {
 	try {
 		if (!_program->IsCompiled())
@@ -151,6 +126,31 @@ void					Material::CreateGraphicPipeline(void)
 		_program->SetSourceFile("Shaders/DefaultVertex.hlsl", VK_SHADER_STAGE_VERTEX_BIT);
 		_program->CompileAndLink();
 	}
+
+	// Retreive set layout of the shader program:
+	// if the shader is a common graphic pipeline shader, we use the default draw mesh layout
+	if (!_program->IsCompute())
+		_setLayouts = VulkanRenderPipeline::GetGraphicUniformSetLayouts(); // TODO: remove
+	else if (_setLayouts.size() == 0)
+		throw std::runtime_error("No descriptor layout set provided for material !");
+
+	_descriptorSetLayout = _program->GetDescriptorSetLayout();
+}
+
+void					Material::CreatePipelineLayout(void)
+{
+	VkPipelineLayoutCreateInfo pipelineLayoutInfo = {};
+	pipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
+	
+	pipelineLayoutInfo.setLayoutCount = _setLayouts.size();
+	pipelineLayoutInfo.pSetLayouts = _setLayouts.data();
+
+	if (vkCreatePipelineLayout(_device, &pipelineLayoutInfo, nullptr, &_pipelineLayout) != VK_SUCCESS)
+		throw std::runtime_error("failed to create pipeline layout !");
+}
+
+void					Material::CreatePipeline(void)
+{
 
 	VkPipelineVertexInputStateCreateInfo vertexInputInfo = {};
 	vertexInputInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
@@ -279,7 +279,7 @@ void					Material::UpdateUniformBuffer()
 // Create the default graphic descriptor set layout
 void					Material::CreateDescriptorSets(void)
 {
-	std::vector<VkDescriptorSetLayout> layouts(1, graphicDescriptorSetLayout);
+	std::vector<VkDescriptorSetLayout> layouts(1, _descriptorSetLayout);
 	VkDescriptorSetAllocateInfo allocInfo = {};
 	allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
 	allocInfo.descriptorPool = _instance->GetDescriptorPool();
@@ -341,6 +341,11 @@ VkPipelineLayout	Material::GetPipelineLayout(void) const
 	return _pipelineLayout;
 }
 
+VkDescriptorSet		Material::GetDescriptorSet(void) const
+{
+	return _descriptorSet;
+}
+
 VkPipeline			Material::GetPipeline(void) const
 {
 	return _pipeline;
@@ -395,14 +400,6 @@ void					Material::SetTexture(TextureBinding binding, const Texture & texture, V
 	descriptorWrites[0].pImageInfo = &imageInfo;
 	
 	vkUpdateDescriptorSets(_device, static_cast<uint32_t>(descriptorWrites.size()), descriptorWrites.data(), 0, nullptr);
-}
-
-VkDescriptorSetLayout	Material::GetGraphicDescriptorSetLayout(void)
-{
-	if (graphicDescriptorSetLayout == VK_NULL_HANDLE)
-		CreateGraphicDescriptorSetLayout();
-	
-	return graphicDescriptorSetLayout;
 }
 
 std::ostream &	operator<<(std::ostream & o, Material const & r)

@@ -240,14 +240,14 @@ void			VulkanRenderPipeline::RecreateSwapChain(RenderContext & renderContext)
 	renderContext.GetMeshRenderers(meshRenderers);
 	
 	for (auto & meshRenderer : meshRenderers)
-		meshRenderer->CleanupGraphicPipeline();
+		meshRenderer->CleanupPipeline();
 
 	instance->UpdateSurface();
 	swapChain->Create();
 	CreateRenderPass();
 
 	for (auto & meshRenderer : meshRenderers)
-		meshRenderer->CreateGraphicPipeline();
+		meshRenderer->CreatePipeline();
 }
 
 void			VulkanRenderPipeline::UpdatePerframeUnformBuffer(void) noexcept

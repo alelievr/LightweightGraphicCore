@@ -2,6 +2,8 @@
 
 #include <algorithm>
 
+#include "Core/Vulkan/Vk.hpp"
+
 using namespace LWGC;
 
 ShaderProgram::ShaderProgram(void)
@@ -45,6 +47,9 @@ bool		ShaderProgram::IsCompiled(void) const noexcept
 
 void		ShaderProgram::SetSourceFile(const std::string & file, VkShaderStageFlagBits stage)
 {
+	if (IsCompiled())
+		throw std::runtime_error("Can't add shader source file after it's compiled: " + file);
+
 	_shaderSources.push_back(new ShaderSource(file, stage));
 }
 
@@ -83,7 +88,12 @@ bool		ShaderProgram::Update(void)
 	return hasReloaded;
 }
 
-VkPipelineShaderStageCreateInfo *	ShaderProgram::GetShaderStages()
+std::vector< VkDescriptorSetLayout >	ShaderProgram::GetDescriptorSetLayouts(void)
+{
+	return _bindingTable.GetDescriptorSetLayout();
+}
+
+VkPipelineShaderStageCreateInfo *		ShaderProgram::GetShaderStages(void)
 {
 	return _shaderStages.data();
 }
