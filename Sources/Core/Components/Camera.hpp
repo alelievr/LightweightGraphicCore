@@ -34,14 +34,16 @@ namespace LWGC
 			UniformBuffer			_uniformCameraBuffer;
 			VkDescriptorSet			_perCameraDescriptorSet;
 			SwapChain *				_swapChain;
-			static VkDescriptorSetLayout	_perCameraDescriptorSetLayout;
 			bool					_initDescriptorSetLayout;
 			LWGC_PerCamera			_perCamera;
+			
+			static VkDescriptorSetLayout	_perCameraDescriptorSetLayout;
 
-			static void				CreateCameraDescriptorSetLayout(void) noexcept;
-			void					CreateDescriptorSet(void) noexcept;
-			void					UpdateUniformData(void) noexcept;
-			virtual void			Update(void) noexcept override;
+			static void						CreateCameraDescriptorSetLayout(void) noexcept;
+			static VkDescriptorSetLayout	GetDescriptorSetLayout(void) noexcept;
+			void							CreateDescriptorSet(void) noexcept;
+			void							UpdateUniformData(void) noexcept;
+			virtual void					Update(void) noexcept override;
 
 		public:
 			Camera(void);
@@ -80,8 +82,6 @@ namespace LWGC
 			VkDescriptorSet		GetDescriptorSet(void) const;
 
 			virtual uint32_t	GetType(void) const noexcept override;
-
-			static VkDescriptorSetLayout	GetDescriptorSetLayout(void) noexcept;
 
 			static const uint32_t		type = 2;
 	};

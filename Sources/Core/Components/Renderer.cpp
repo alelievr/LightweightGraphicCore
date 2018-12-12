@@ -25,7 +25,6 @@ Renderer::Renderer(std::shared_ptr< Material > material)
 Renderer::~Renderer(void)
 {
 	_material.reset();
-	std::cout << "Destroyed meshRenderer" << std::endl;
 	vkDestroyBuffer(device, _uniformModelBuffer.buffer, nullptr);
 	vkFreeMemory(device, _uniformModelBuffer.memory, nullptr);
 }

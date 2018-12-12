@@ -29,14 +29,15 @@ namespace LWGC
 			};
 
 			static VulkanRenderPipeline *	pipelineInstance;
-			static std::vector< VkDescriptorSetLayout >	uniformSetLayouts;
 			std::vector< VkCommandBuffer >	swapChainCommandBuffers;
 			LWGC_PerFrame					perFrame;
 			UniformBuffer					uniformPerFrame;
 			VkDescriptorSet					perFrameDescriptorSet;
+			VkDescriptorSetLayout			perFrameDescriptorSetLayout;
 			
 			void				RenderInternal(const std::vector< Camera * > & cameras, RenderContext & context);
 			void				UpdatePerframeUnformBuffer(void) noexcept;
+			void				CreatePerFrameDescriptorSet(void) noexcept;
 
 		protected:
 			std::vector<VkSemaphore>		imageAvailableSemaphores;
@@ -55,8 +56,7 @@ namespace LWGC
 			void				EndRenderPass(void);
 			virtual void		RecreateSwapChain(RenderContext & renderContext);
 			virtual void		Render(const std::vector< Camera * > & cameras, RenderContext & context) = 0;
-			virtual void		CreateDescriptorSetLayouts(void);
-			virtual void		CreatePerFrameDescriptorSet(void);
+			virtual void		CreateDescriptorSets(void);
 
 		public:
 			VulkanRenderPipeline(void);
@@ -71,8 +71,6 @@ namespace LWGC
 
 			SwapChain *		GetSwapChain(void);
 			RenderPass *	GetRenderPass(void);
-
-			static const std::vector< VkDescriptorSetLayout >	GetGraphicUniformSetLayouts(void) noexcept;
 
 			static VulkanRenderPipeline *	Get();
 	};

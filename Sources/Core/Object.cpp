@@ -4,7 +4,6 @@ using namespace LWGC;
 
 Object::Object(void)
 {
-	std::cout << "Default constructor of Object called" << std::endl;
 	this->_name = "Object";
 	this->_flags = 0;
 }
@@ -12,18 +11,14 @@ Object::Object(void)
 Object::Object(Object const & src)
 {
 	*this = src;
-	std::cout << "Copy constructor called" << std::endl;
 }
 
 Object::~Object(void)
 {
-	std::cout << "Destructor of Object called" << std::endl;
 }
 
 Object &	Object::operator=(Object const & src)
 {
-	std::cout << "Assignment operator called" << std::endl;
-
 	if (this != &src) {
 		this->_name = src.GetName();
 		this->_flags = src.GetFlags();

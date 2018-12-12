@@ -4,7 +4,6 @@ using namespace LWGC;
 
 RenderTarget::RenderTarget(void)
 {
-	std::cout << "Default constructor of RenderTarget called" << std::endl;
 	this->_attachmentIds = NULL;
 	this->_name = "Default target";
 	this->_enabledAttachments = 0;
@@ -13,12 +12,10 @@ RenderTarget::RenderTarget(void)
 RenderTarget::RenderTarget(RenderTarget const & src)
 {
 	*this = src;
-	std::cout << "Copy constructor called" << std::endl;
 }
 
 RenderTarget::~RenderTarget(void)
 {
-	std::cout << "Destructor of RenderTarget called" << std::endl;
 }
 
 void		RenderTarget::AddAttachment(const FramebufferAttachment fba)
@@ -43,8 +40,6 @@ void		RenderTarget::Update(void)
 
 RenderTarget &	RenderTarget::operator=(RenderTarget const & src)
 {
-	std::cout << "Assignment operator called" << std::endl;
-
 	if (this != &src) {
 		this->_framebuffer = src.GetFramebuffer();
 		this->_attachmentIds = src.GetAttachmentIds();

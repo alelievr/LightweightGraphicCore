@@ -9,7 +9,6 @@
 using namespace LWGC;
 
 VulkanRenderPipeline *					VulkanRenderPipeline::pipelineInstance = nullptr;
-std::vector< VkDescriptorSetLayout >	VulkanRenderPipeline::uniformSetLayouts;
 
 VulkanRenderPipeline * VulkanRenderPipeline::Get() { return pipelineInstance; }
 
@@ -49,35 +48,22 @@ void                VulkanRenderPipeline::Initialize(SwapChain * swapChain)
 	// Allocate LWGC_PerFrame uniform buffer
 	Vk::CreateBuffer(sizeof(LWGC_PerFrame), VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, uniformPerFrame.buffer, uniformPerFrame.memory);
 
-	CreateDescriptorSetLayouts();
+	CreateDescriptorSets();
 	CreatePerFrameDescriptorSet();
 }
 
-void				VulkanRenderPipeline::CreateDescriptorSetLayouts(void)
+void				VulkanRenderPipeline::CreateDescriptorSets(void) {}
+
+void				VulkanRenderPipeline::CreatePerFrameDescriptorSet(void) noexcept
 {
-	uniformSetLayouts.resize(4);
+	auto layoutBinding = Vk::CreateDescriptorSetLayoutBinding(0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_ALL);
+	Vk::CreateDescriptorSetLayout({layoutBinding}, perFrameDescriptorSetLayout);
 
-	// LWGC per framce cbuffer layout
-	auto layoutBinding = Vk::CreateDescriptorSetLayoutBinding(0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_ALL_GRAPHICS);
-	Vk::CreateDescriptorSetLayout({layoutBinding}, uniformSetLayouts[0]);
-
-	// LWGC per camera cbuffer layout
-	uniformSetLayouts[1] = Camera::GetDescriptorSetLayout();
-
-	// LWGC per object cbuffer layout
-	uniformSetLayouts[2] = MeshRenderer::GetGraphicDescriptorSetLayout();
-
-	// LWGC per material cbuffer layout
-	uniformSetLayouts[3] = Material::GetGraphicDescriptorSetLayout();
-}
-
-void				VulkanRenderPipeline::CreatePerFrameDescriptorSet(void)
-{
 	VkDescriptorSetAllocateInfo allocInfo = {};
 	allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
 	allocInfo.descriptorPool = instance->GetDescriptorPool();
 	allocInfo.descriptorSetCount = 1u;
-	allocInfo.pSetLayouts = &uniformSetLayouts[0]; // First layout set is per frame cbuffer
+	allocInfo.pSetLayouts = &perFrameDescriptorSetLayout; // First layout set is per frame cbuffer
 
 	if (vkAllocateDescriptorSets(device, &allocInfo, &perFrameDescriptorSet) != VK_SUCCESS)
 		throw std::runtime_error("failed to allocate descriptor sets!");
@@ -373,8 +359,3 @@ void	VulkanRenderPipeline::Render(const std::vector< Camera * > & cameras, Rende
 
 SwapChain *		VulkanRenderPipeline::GetSwapChain(void) { return swapChain; }
 RenderPass *	VulkanRenderPipeline::GetRenderPass(void) { return &renderPass; }
-
-const std::vector< VkDescriptorSetLayout >	VulkanRenderPipeline::GetGraphicUniformSetLayouts(void) noexcept
-{
-	return uniformSetLayouts;
-}

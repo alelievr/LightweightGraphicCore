@@ -65,7 +65,6 @@ void EventSystem::DefaultKeyUpAction(KeyCode k)
 
 EventSystem::~EventSystem(void)
 {
-	std::cout << "Destructor of EventSystem called" << std::endl;
 }
 
 void			EventSystem::BindWindow(GLFWwindow * window)

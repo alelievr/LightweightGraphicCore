@@ -6,7 +6,6 @@ using namespace LWGC;
 
 GameObject::GameObject(void) : _active(false), _initialized(false)
 {
-	std::cout << "Default constructor of GameObject called" << std::endl;
 	this->_transform = std::make_shared< Transform >();
 	this->_name = "GameObject";
 	this->_flags = 0;
@@ -20,18 +19,14 @@ GameObject::GameObject(Component * component) : GameObject()
 GameObject::GameObject(GameObject const & src)
 {
 	*this = src;
-	std::cout << "Copy constructor called" << std::endl;
 }
 
 GameObject::~GameObject(void)
 {
-	std::cout << "Destructor of GameObject called" << std::endl;
 }
 
 GameObject &	GameObject::operator=(GameObject const & src)
 {
-	std::cout << "Assignment operator called" << std::endl;
-
 	if (this != &src)
 	{
 		this->_initialized = src._initialized;
@@ -43,7 +38,6 @@ GameObject &	GameObject::operator=(GameObject const & src)
 
 void		GameObject::Initialize(void) noexcept
 {
-	std::cout << "INitialize gameOBject !\n";
 	_initialized = true;
 	for (const auto & component : _components)
 	{
@@ -89,8 +83,6 @@ void			GameObject::SetActive(bool active)
 		return ;
 	
 	_active = active;
-
-	std::cout << "Update active !\n";
 
 	for (const auto & comp : _components)
 		comp->UpdateGameObjectActive();
