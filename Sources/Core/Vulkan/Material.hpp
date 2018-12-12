@@ -37,7 +37,6 @@ namespace LWGC
 				glm::vec4		albedo;
 			};
 
-			static VkDescriptorSetLayout			graphicDescriptorSetLayout;
 			VkDescriptorSet							_descriptorSet;
 			VkPipelineLayout						_pipelineLayout;
 			VkPipeline								_pipeline;
@@ -51,11 +50,11 @@ namespace LWGC
 			ShaderProgram *							_program;
 			std::vector< VkDescriptorSetLayout >	_setLayouts;
 	
-			static void	CreateGraphicDescriptorSetLayout(void);
 			void		CreateTextureSampler(void);
 			void		CreateUniformBuffer(void);
 			void		CreateDescriptorSets(void);
 			void		CreatePipelineLayout(void);
+			void		CompileShaders(void);
 	
 		public:
 			Material(void);
@@ -68,23 +67,18 @@ namespace LWGC
 			Material &	operator=(Material const & src);
 	
 			void	Initialize(SwapChain * swapchain, RenderPass * renderPass);
-			void	CleanupGraphicPipeline(void) noexcept;
-			void	CreateGraphicPipeline(void);
+			void	CleanupPipeline(void) noexcept;
+			void	CreatePipeline(void);
 			void	UpdateUniformBuffer(void);
-			void	AddShader(const std::string & shader, VkShaderStageFlagBits stage);
 
+			VkPipeline			GetPipeline(void) const;
 			VkPipelineLayout	GetPipelineLayout(void) const;
 			uint32_t			GetDescriptorSetBinding(const std::string & setName) const;
-			// void				SetDescriptorSetLayout(uint32_t setIndex, VkDescriptorSetLayout layout);
-			
-			// VkDescriptorSet		GetDescriptorSet(void) const;
-			VkPipeline			GetPipeline(void) const;
+			VkDescriptorSet		GetDescriptorSet(void) const;
 
 			void				SetBuffer(uint32_t setIndex, uint32_t bindingIndex, VkBuffer buffer, size_t size);
 			void				SetTexture(uint32_t setIndex, uint32_t bindingIndex, const Texture & texture, VkImageLayout imageLayout, VkDescriptorType descriptorType);
 			void				SetTexture(TextureBinding binding, const Texture & texture, VkImageLayout imageLayout, VkDescriptorType descriptorType);
-			
-			static VkDescriptorSetLayout	GetGraphicDescriptorSetLayout(void);
 	};
 	
 	std::ostream &	operator<<(std::ostream & o, Material const & r);

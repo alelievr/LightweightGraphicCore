@@ -120,6 +120,7 @@ void		Renderer::RecordDrawCommandBuffer(void)
 	// TODO: is this working with compute shaders ?
 	vkCmdBindPipeline(_drawCommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, _material->GetPipeline());
 
+	// TODO: remove
 	BindDescriptorSet(_drawCommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS);
 	
 	RecordDrawCommand(_drawCommandBuffer);
@@ -132,6 +133,7 @@ void		Renderer::RecordDrawCommandBuffer(void)
 
 void		Renderer::BindDescriptorSet(VkCommandBuffer cmd, VkPipelineBindPoint bindPoint)
 {
+	// TODO: use renderpass binding
 	vkCmdBindDescriptorSets(cmd, bindPoint, _material->GetPipelineLayout(), PER_OBJECT_BINDING_INDEX, 1, &_descriptorSet, 0, nullptr);
 }
 
@@ -153,14 +155,14 @@ void Renderer::OnDisable() noexcept
 	hierarchy->UnregisterComponentInRenderContext(GetType(), _renderContextIndex);
 }
 
-void Renderer::CleanupGraphicPipeline(void) noexcept
+void Renderer::CleanupPipeline(void) noexcept
 {
-	_material->CleanupGraphicPipeline();
+	_material->CleanupPipeline();
 }
 
-void Renderer::CreateGraphicPipeline(void) noexcept
+void Renderer::CreatePipeline(void) noexcept
 {
-	_material->CreateGraphicPipeline();
+	_material->CreatePipeline();
 }
 
 std::shared_ptr< Material >	Renderer::GetMaterial(void) const { return (this->_material); }

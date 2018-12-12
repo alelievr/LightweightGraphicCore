@@ -146,7 +146,7 @@ void		ShaderSource::GenerateBindingTable(ShaderBindingTable & bindingTable)
 
 	bindingTable.GenerateSetLayouts();
 	
-	// delete glsl;
+	delete glsl;
 }
 
 bool		ShaderSource::NeedReload(void) const

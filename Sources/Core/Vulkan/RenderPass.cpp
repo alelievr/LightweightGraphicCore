@@ -22,13 +22,13 @@ void		RenderPass::Initialize(SwapChain * swapChain) noexcept
 
 void		RenderPass::AddAttachment(const VkAttachmentDescription & attachment, VkImageLayout layout) noexcept
 {
-	_references.push_back((VkAttachmentReference){_attachmentCount++, layout});
+	_references.push_back({_attachmentCount++, layout});
 	_attachments.push_back(attachment);
 }
 
 void		RenderPass::SetDepthAttachment(const VkAttachmentDescription & attachment, VkImageLayout layout) noexcept
 {
-	_depthAttachmentRef = (VkAttachmentReference){_attachmentCount++, layout};
+	_depthAttachmentRef = {_attachmentCount++, layout};
 	_attachments.push_back(attachment);
 }
 
@@ -75,20 +75,27 @@ void		RenderPass::Create(void)
 
 bool	RenderPass::BindDescriptorSet(const std::string & name, VkDescriptorSet set)
 {
-	if (_currentBindings.find(name) == _currentBindings.end())
+	DescriptorBindings::iterator binding = _currentBindings.find(name);
+	if (binding == _currentBindings.end())
 	{
-		std::cerr << "Tryed to bind inhexistant descriptor set: " + name << std::endl;
-		return false;
+		_currentBindings[name] = {set, true};
 	}
-
-	_currentBindings[name].set = set;
-	_currentBindings[name].hasChanged = true;
+	else
+	{
+		if (binding->second.set != set)
+		{
+			binding->second.set = set;
+			binding->second.hasChanged = true;
+		}
+	}
 	return true;
 }
 
 void	RenderPass::BindMaterial(std::shared_ptr< Material > material)
 {
 	_currentMaterial = material;
+
+	BindDescriptorSet("material", material->GetDescriptorSet());
 
 	// mark all bindings to changed set they're all rebinded to the new material
 	for (auto & b : _currentBindings)
