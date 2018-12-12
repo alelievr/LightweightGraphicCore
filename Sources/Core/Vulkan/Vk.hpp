@@ -14,10 +14,7 @@ namespace LWGC
 		private:
 	
 		public:
-
-			// TODO: remove this !
-			static VkPipelineLayout	currentPipelineLayout;
-
+		
 			class Samplers
 			{
 				public:

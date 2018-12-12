@@ -75,24 +75,24 @@ void		RenderPass::Create(void)
 
 bool	RenderPass::BindDescriptorSet(const std::string & name, VkDescriptorSet set)
 {
-	if (_currentBindings.find(name) != _currentBindings.end())
+	if (_currentBindings.find(name) == _currentBindings.end())
 	{
-		_currentBindings[name] = set;
-		return true;
+		std::cerr << "Tryed to bind inhexistant descriptor set: " + name << std::endl;
+		return false;
 	}
-	return false;
+
+	_currentBindings[name].set = set;
+	_currentBindings[name].hasChanged = true;
+	return true;
 }
 
 void	RenderPass::BindMaterial(std::shared_ptr< Material > material)
 {
-	if (BindDescriptorSet("material", material->GetDescriptorSet()))
-	{
-		_currentMaterial = material;
+	_currentMaterial = material;
 
-		// mark all bindings to changed set they're all rebinded to the new material
-		for (auto & b : _currentBindings)
-			b.second.hasChanged = true;
-	}
+	// mark all bindings to changed set they're all rebinded to the new material
+	for (auto & b : _currentBindings)
+		b.second.hasChanged = true;
 }
 
 void	RenderPass::SetCurrentCommandBuffers(const VkCommandBuffer graphicCommandBuffer, const VkCommandBuffer computeCommandBuffer)
@@ -103,17 +103,25 @@ void	RenderPass::SetCurrentCommandBuffers(const VkCommandBuffer graphicCommandBu
 
 void	RenderPass::EnqueueDrawCommand(VkCommandBuffer drawCommandBuffer)
 {
+	// Bind all descriptor that have changed
 	for (auto & b : _currentBindings)
 	{
-		vkCmdBindDescriptorSets(
-			_graphicCommandBuffer,
-			VK_PIPELINE_BIND_POINT_GRAPHICS, 
-			_currentMaterial->GetPipelineLayout(),
-			_currentMaterial->GetDescriptorSetBinding(b.first),
-			1, &b.second.set,
-			0, nullptr
-		);
+		if (b.second.hasChanged)
+		{
+			vkCmdBindDescriptorSets(
+				_graphicCommandBuffer,
+				VK_PIPELINE_BIND_POINT_GRAPHICS, 
+				_currentMaterial->GetPipelineLayout(),
+				_currentMaterial->GetDescriptorSetBinding(b.first),
+				1, &b.second.set,
+				0, nullptr
+			);
+		}
 	}
+
+	// The bind pipeline command is inside this command buffer, for opaque objects it 
+	// should be sorted to avoid unnecessary pipeline switch
+	_drawBuffers.push_back(drawCommandBuffer);
 }
 
 void	RenderPass::ExecuteCommands(void)

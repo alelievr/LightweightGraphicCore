@@ -24,17 +24,23 @@ Color::~Color(void)
 
 Color		Color::HSVToRGB(const float H, const float S, const float V)
 {
-	
+	(void)H, (void)S, (void)V;
+	// TODO:
+	return Color();
 }
 
 Color		Color::Lerp(const Color & b, const float t)
 {
-	
+	(void)b, (void)t;
+	// TODO:
+	return Color();
 }
 
 Color		Color::Lerp(const Color & a, const Color & b, const float t)
 {
-	
+	(void)a, (void)b, (void)t;
+	// TODO:
+	return Color();
 }
 
 

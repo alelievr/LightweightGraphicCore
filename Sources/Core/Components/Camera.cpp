@@ -155,7 +155,7 @@ void					Camera::CreateCameraDescriptorSetLayout(void) noexcept
 	Vk::CreateDescriptorSetLayout({binding}, _perCameraDescriptorSetLayout);
 }
 
-VkDescriptorSet			Camera::GetDescriptorSet(VkCommandBuffer cmd, VkPipelineBindPoint bindPoint) const
+VkDescriptorSet			Camera::GetDescriptorSet(void) const
 {
 	return _perCameraDescriptorSet;
 }

@@ -10,8 +10,6 @@ VkSampler Vk::Samplers::trilinearRepeat;
 VkSampler Vk::Samplers::nearestClamp;
 VkSampler Vk::Samplers::nearestRepeat;
 
-VkPipelineLayout	Vk::currentPipelineLayout;
-
 VkImageView		Vk::CreateImageView(VkImage image, VkFormat format, int mipLevels, VkImageViewType viewType, VkImageAspectFlags aspectFlags)
 {
 	VulkanInstance * instance = VulkanInstance::Get();

@@ -117,10 +117,10 @@ void		Renderer::RecordDrawCommandBuffer(void)
 		throw std::runtime_error("failed to begin recording command buffer!");
 	}
 
-	vkCmdBindPipeline(_drawCommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, _material->GetGraphicPipeline());
+	// TODO: is this working with compute shaders ?
+	vkCmdBindPipeline(_drawCommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, _material->GetPipeline());
 
 	BindDescriptorSet(_drawCommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS);
-	_material->BindDescriptorSets(_drawCommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS);
 	
 	RecordDrawCommand(_drawCommandBuffer);
 
@@ -132,7 +132,7 @@ void		Renderer::RecordDrawCommandBuffer(void)
 
 void		Renderer::BindDescriptorSet(VkCommandBuffer cmd, VkPipelineBindPoint bindPoint)
 {
-	vkCmdBindDescriptorSets(cmd, bindPoint, _material->GetGraphicPipelineLayout(), PER_OBJECT_BINDING_INDEX, 1, &_descriptorSet, 0, nullptr);
+	vkCmdBindDescriptorSets(cmd, bindPoint, _material->GetPipelineLayout(), PER_OBJECT_BINDING_INDEX, 1, &_descriptorSet, 0, nullptr);
 }
 
 Bounds		Renderer::GetBounds(void)

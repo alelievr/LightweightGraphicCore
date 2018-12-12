@@ -23,17 +23,17 @@ RenderTarget::~RenderTarget(void)
 
 void		RenderTarget::AddAttachment(const FramebufferAttachment fba)
 {
-	
+	(void)fba;
 }
 
 void		RenderTarget::AddAttachment(const FramebufferAttachment fba, GLuint attachmentId)
 {
-	
+	(void)fba, (void)attachmentId;
 }
 
 void		RenderTarget::RemoveAttachment(const FramebufferAttachment fba)
 {
-	
+	(void)fba;
 }
 
 void		RenderTarget::Update(void)

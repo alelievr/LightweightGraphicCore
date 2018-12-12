@@ -39,12 +39,14 @@ void EventSystem::DefaultMouseMoveAction(float x, float y)
 
 void EventSystem::DefaultMouseDownAction(float x, float y, int button)
 {
+	_current.mouseButton = button;
 	_current.type = EventType::MouseDown;
 	_current.SetMousePosition(x, y);
 }
 
 void EventSystem::DefaultMouseUpAction(float x, float y, int button)
 {
+	_current.mouseButton = button;
 	_current.type = EventType::MouseUp;
 	_current.SetMousePosition(x, y);
 }

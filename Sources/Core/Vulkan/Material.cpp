@@ -12,6 +12,8 @@
 #include "Core/Rendering/VulkanRenderPipeline.hpp"
 #include "Core/Mesh.hpp"
 #include "Core/Shaders/BuiltinShaders.hpp"
+#include "Core/Vulkan/SwapChain.hpp"
+#include "Core/Vulkan/RenderPass.hpp"
 
 using namespace LWGC;
 
@@ -19,8 +21,8 @@ VkDescriptorSetLayout Material::graphicDescriptorSetLayout;
 
 Material::Material(void)
 {
-	this->_graphicPipelineLayout = VK_NULL_HANDLE;
-	this->_graphicPipeline = VK_NULL_HANDLE;
+	this->_pipelineLayout = VK_NULL_HANDLE;
+	this->_pipeline = VK_NULL_HANDLE;
 	_program = new ShaderProgram();
 	_program->SetSourceFile("Shaders/Error/Pink.hlsl", VK_SHADER_STAGE_FRAGMENT_BIT);
 	_program->SetSourceFile(BuiltinShaders::DefaultVertex, VK_SHADER_STAGE_VERTEX_BIT);
@@ -71,8 +73,8 @@ Material &	Material::operator=(Material const & src)
 {
 	if (this != &src)
 	{
-		this->_graphicPipelineLayout = src._graphicPipelineLayout;
-		this->_graphicPipeline = src._graphicPipeline;
+		this->_pipelineLayout = src._pipelineLayout;
+		this->_pipeline = src._pipeline;
 		this->_uniformPerMaterial = src._uniformPerMaterial;
 		this->_samplers = src._samplers;
 		this->_instance = src._instance;
@@ -101,8 +103,8 @@ void					Material::Initialize(SwapChain * swapChain, RenderPass * renderPass)
 
 void					Material::CleanupGraphicPipeline(void) noexcept
 {
-	vkDestroyPipeline(_device, _graphicPipeline, nullptr);
-	vkDestroyPipelineLayout(_device, _graphicPipelineLayout, nullptr);
+	vkDestroyPipeline(_device, _pipeline, nullptr);
+	vkDestroyPipelineLayout(_device, _pipelineLayout, nullptr);
 }
 
 void	Material::CreateGraphicDescriptorSetLayout(void)
@@ -131,7 +133,7 @@ void					Material::CreatePipelineLayout(void)
 	pipelineLayoutInfo.setLayoutCount = _setLayouts.size();
 	pipelineLayoutInfo.pSetLayouts = _setLayouts.data();
 
-	if (vkCreatePipelineLayout(_device, &pipelineLayoutInfo, nullptr, &_graphicPipelineLayout) != VK_SUCCESS)
+	if (vkCreatePipelineLayout(_device, &pipelineLayoutInfo, nullptr, &_pipelineLayout) != VK_SUCCESS)
 		throw std::runtime_error("failed to create pipeline layout !");
 }
 
@@ -142,6 +144,9 @@ void					Material::CreateGraphicPipeline(void)
 			_program->CompileAndLink();
 	} catch (const std::runtime_error & e) {
 		std::cout << e.what() << std::endl;
+		if (_program->IsCompute())
+			throw std::runtime_error("Failed to compile compute shader");
+		
 		_program->SetSourceFile("Shaders/Error/Pink.hlsl", VK_SHADER_STAGE_FRAGMENT_BIT);
 		_program->SetSourceFile("Shaders/DefaultVertex.hlsl", VK_SHADER_STAGE_VERTEX_BIT);
 		_program->CompileAndLink();
@@ -235,16 +240,14 @@ void					Material::CreateGraphicPipeline(void)
 	pipelineInfo.pRasterizationState = &rasterizer;
 	pipelineInfo.pMultisampleState = &multisampling;
 	pipelineInfo.pColorBlendState = &colorBlending;
-	pipelineInfo.layout = _graphicPipelineLayout;
+	pipelineInfo.layout = _pipelineLayout;
 	pipelineInfo.renderPass = _renderPass->GetRenderPass();
 	pipelineInfo.subpass = 0;
 	pipelineInfo.basePipelineHandle = VK_NULL_HANDLE;
 	pipelineInfo.pDepthStencilState = &depthStencil;
 
-	if (vkCreateGraphicsPipelines(_device, VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &_graphicPipeline) != VK_SUCCESS)
+	if (vkCreateGraphicsPipelines(_device, VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &_pipeline) != VK_SUCCESS)
 		throw std::runtime_error("failed to create graphics pipeline!");
-
-	Vk::currentPipelineLayout = _graphicPipelineLayout;
 }
 
 void					Material::CreateTextureSampler(void)
@@ -315,32 +318,43 @@ void					Material::CreateDescriptorSets(void)
 	vkUpdateDescriptorSets(_device, static_cast<uint32_t>(descriptorWrites.size()), descriptorWrites.data(), 0, nullptr);
 }
 
-vkDescriptorSet			Material::GetDescriptorSet(void) const
-{
-	return _descriptorSet;
-}
+// vkDescriptorSet			Material::GetDescriptorSet(void) const
+// {
+// 	return _descriptorSet;
+// }
 
-uint32_t				Material::GetDescriptorSetBinding(const std::string & setName) const
-{
-	return _program.
-}
+// VkDescriptorSetLayout	Material::GetDescriptorSetLayout(const std::string & setName) const
+// {
+// 	return _descriptorSetLayout;
+// }
 
-VkDescriptorSetLayout	Material::GetDescriptorSetLayout(const std::string & setName) const
-{
-	return _descriptorSetLayout;
-}
-
-void					Material::SetDescriptorSetLayout(uint32_t index, VkDescriptorSetLayout layout)
-{
-	if (_setLayouts.size() <= index)
-		_setLayouts.resize(index + 1);
+// void					Material::SetDescriptorSetLayout(uint32_t index, VkDescriptorSetLayout layout)
+// {
+// 	if (_setLayouts.size() <= index)
+// 		_setLayouts.resize(index + 1);
 	
-	_setLayouts[index] = layout;
+// 	_setLayouts[index] = layout;
+// }
+
+VkPipelineLayout	Material::GetPipelineLayout(void) const
+{
+	return _pipelineLayout;
 }
+
+VkPipeline			Material::GetPipeline(void) const
+{
+	return _pipeline;
+}
+
+uint32_t			Material::GetDescriptorSetBinding(const std::string & setName) const
+{
+	return _program->GetDescriptorSetBinding(setName);
+}
+
 
 void					Material::SetBuffer(uint32_t setIndex, uint32_t bindingIndex, VkBuffer buffer, size_t size)
 {
-
+	std::cout << "TODO !" << std::endl;
 }
 
 void					Material::SetTexture(uint32_t setIndex, uint32_t bindingIndex, const Texture & texture, VkImageLayout imageLayout, VkDescriptorType descriptorType)
@@ -382,12 +396,6 @@ void					Material::SetTexture(TextureBinding binding, const Texture & texture, V
 	
 	vkUpdateDescriptorSets(_device, static_cast<uint32_t>(descriptorWrites.size()), descriptorWrites.data(), 0, nullptr);
 }
-
-VkPipelineLayout		Material::GetGraphicPipelineLayout(void) const { return (this->_graphicPipelineLayout); }
-void					Material::SetGraphicPipelineLayout(VkPipelineLayout tmp) { this->_graphicPipelineLayout = tmp; }
-
-VkPipeline				Material::GetGraphicPipeline(void) const { return (this->_graphicPipeline); }
-void					Material::SetGraphicPipeline(VkPipeline tmp) { this->_graphicPipeline = tmp; }
 
 VkDescriptorSetLayout	Material::GetGraphicDescriptorSetLayout(void)
 {
