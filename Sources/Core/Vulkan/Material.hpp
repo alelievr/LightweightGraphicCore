@@ -18,12 +18,24 @@
 
 namespace LWGC
 {
-	enum class TextureBinding
+	class		TextureBinding
 	{
-		Albedo = 2,
-		Normal = 3,
-		Height = 4,
-		Smoothness = 5,
+		public:
+			static const std::string	Albedo;
+			static const std::string	Normal;
+			static const std::string	Height;
+			static const std::string	Smoothness;
+	};
+
+	class		SamplerBinding
+	{
+		public:
+			static const std::string	TrilinearClamp;
+			static const std::string	TrilinearRepeat;
+			static const std::string	NearestClamp;
+			static const std::string	NearestRepeat;
+			static const std::string	AnisotropicTrilinearClamp;
+			static const std::string	DepthCompare;
 	};
 
 	class SwapChain;
@@ -76,9 +88,9 @@ namespace LWGC
 			uint32_t			GetDescriptorSetBinding(const std::string & setName) const;
 			VkDescriptorSet		GetDescriptorSet(void) const;
 
-			void				SetBuffer(uint32_t setIndex, uint32_t bindingIndex, VkBuffer buffer, size_t size);
-			void				SetTexture(uint32_t setIndex, uint32_t bindingIndex, const Texture & texture, VkImageLayout imageLayout, VkDescriptorType descriptorType);
-			void				SetTexture(TextureBinding binding, const Texture & texture, VkImageLayout imageLayout, VkDescriptorType descriptorType);
+			void				SetBuffer(const std::string & bindingName, VkBuffer buffer, size_t size);
+			void				SetTexture(const std::string & bindingName, const Texture & texture, VkImageLayout imageLayout, VkDescriptorType descriptorType);
+			void				SetSampler(const std::string & bindingName, VkSampler sampler);
 	};
 	
 	std::ostream &	operator<<(std::ostream & o, Material const & r);

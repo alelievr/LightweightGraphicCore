@@ -9,19 +9,15 @@ Event::Event(void)
 Event::Event(Event const & src)
 {
 	*this = src;
-	std::cout << "Copy constructor called" << std::endl;
 }
 
 Event::~Event(void)
 {
-	std::cout << "Destructor of Event called" << std::endl;
 }
 
 
 Event &	Event::operator=(Event const & src)
 {
-	std::cout << "Assignment operator called" << std::endl;
-
 	if (this != &src) {
 		this->type = src.GetType();
 		this->alt = src.GetAlt();

@@ -9,6 +9,7 @@ VkSampler Vk::Samplers::trilinearClamp;
 VkSampler Vk::Samplers::trilinearRepeat;
 VkSampler Vk::Samplers::nearestClamp;
 VkSampler Vk::Samplers::nearestRepeat;
+VkSampler Vk::Samplers::anisotropicTrilinearClamp;
 
 VkImageView		Vk::CreateImageView(VkImage image, VkFormat format, int mipLevels, VkImageViewType viewType, VkImageAspectFlags aspectFlags)
 {
@@ -220,9 +221,10 @@ VkSampler	Vk::CreateCompSampler(VkFilter filter, VkSamplerAddressMode addressMod
 void			Vk::Initialize(void)
 {
 	Samplers::trilinearClamp = CreateSampler(VK_FILTER_LINEAR, VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_BORDER, 0);
-	Samplers::trilinearRepeat = CreateSampler(VK_FILTER_LINEAR, VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_BORDER, 0);
-	Samplers::nearestRepeat = CreateSampler(VK_FILTER_NEAREST, VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_BORDER, 0);
+	Samplers::trilinearRepeat = CreateSampler(VK_FILTER_LINEAR, VK_SAMPLER_ADDRESS_MODE_REPEAT, 0);
 	Samplers::nearestClamp = CreateSampler(VK_FILTER_NEAREST, VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_BORDER, 0);
+	Samplers::nearestRepeat = CreateSampler(VK_FILTER_NEAREST, VK_SAMPLER_ADDRESS_MODE_REPEAT, 0);
+	Samplers::anisotropicTrilinearClamp = CreateSampler(VK_FILTER_LINEAR, VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_BORDER, 16);
 	Samplers::depthCompare = CreateCompSampler(VK_FILTER_LINEAR, VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_BORDER, VK_COMPARE_OP_LESS);
 }
 
@@ -237,11 +239,6 @@ VkDescriptorSetLayoutBinding	Vk::CreateDescriptorSetLayoutBinding(uint32_t bindi
 	layoutBinding.stageFlags = stageFlags;
 
 	return layoutBinding;
-}
-
-VkDescriptorSetLayoutBinding	Vk::CreateDescriptorSetLayoutBinding(TextureBinding binding, VkDescriptorType descriptorType, VkShaderStageFlagBits stageFlags)
-{
-	return CreateDescriptorSetLayoutBinding(static_cast< uint32_t >(binding), descriptorType, stageFlags);
 }
 
 void			Vk::CreateDescriptorSetLayout(std::vector< VkDescriptorSetLayoutBinding > bindings, VkDescriptorSetLayout & layout)

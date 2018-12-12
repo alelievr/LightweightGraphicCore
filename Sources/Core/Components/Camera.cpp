@@ -15,14 +15,13 @@ VkDescriptorSetLayout Camera::_perCameraDescriptorSetLayout = VK_NULL_HANDLE;
 
 Camera::Camera(void) : _initDescriptorSetLayout(false)
 {
-	std::cout << "Default constructor of Camera called" << std::endl;
 	this->_target = new RenderTarget();
 	this->_cameraType = CameraType::Perspective;
 	this->_fov = 60;
 	this->_nearPlane = 0.001f;
 	this->_farPlane = 1e10;
 
-	if (_perCameraDescriptorSetLayout == VK_NULL_HANDLE)
+	if (_perCameraDescriptorSetLayout != VK_NULL_HANDLE)
 	{
 		_initDescriptorSetLayout = true;
 	}
@@ -88,7 +87,7 @@ void		Camera::Initialize(void) noexcept
 
 	_swapChain = VulkanRenderPipeline::Get()->GetSwapChain();
 	
-	if (_initDescriptorSetLayout == VK_NULL_HANDLE)
+	if (_initDescriptorSetLayout == false)
 		CreateCameraDescriptorSetLayout();
 
 	Vk::CreateBuffer(

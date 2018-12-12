@@ -129,7 +129,7 @@ void		ShaderSource::GenerateBindingTable(ShaderBindingTable & bindingTable)
 		addBinding(resource, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER);
 	
 	// SRVs
-	for (auto & resource : resources.sampled_images)
+	for (auto & resource : resources.separate_images)
 		addBinding(resource, VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE);
 	
 	// UAVs
@@ -143,10 +143,8 @@ void		ShaderSource::GenerateBindingTable(ShaderBindingTable & bindingTable)
 	// StructedBuffers RW and read-only
 	for (auto & resource : resources.storage_buffers)
 		addBinding(resource, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER);
-
-	bindingTable.GenerateSetLayouts();
 	
-	delete glsl;
+	// delete glsl;
 }
 
 bool		ShaderSource::NeedReload(void) const

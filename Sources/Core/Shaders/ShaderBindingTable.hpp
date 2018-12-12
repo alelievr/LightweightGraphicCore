@@ -22,9 +22,10 @@ namespace LWGC
 	class		ShaderBindingTable
 	{
 		private:
-			std::unordered_map< std::string, ShaderBinding >	_bindings;
-			VkShaderStageFlagBits								_stageFlags;
-			std::vector< VkDescriptorSetLayout >				_descriptorSetLayout;
+			std::unordered_map< std::string, ShaderBinding >			_bindings;
+			std::unordered_map< std::string, VkDescriptorSetLayout >	_elementLayouts;
+			VkShaderStageFlagBits										_stageFlags;
+			std::vector< VkDescriptorSetLayout >						_descriptorSetLayout;
 
 		public:
 			ShaderBindingTable(void);
@@ -34,9 +35,11 @@ namespace LWGC
 			void			SetStage(VkShaderStageFlagBits stage);
 			ShaderBinding &	AddBinding(const std::string & name, int descriptorSet, int bindingIndex, VkDescriptorType descriptorType);
 			void			GenerateSetLayouts(void);
-			uint32_t		GetDescriptorSetBinding(const std::string & bindingName);
+			uint32_t		GetDescriptorSetBinding(const std::string & bindingName) const;
+			uint32_t		GetDescriptorIndex(const std::string & bindingName) const;
 
-			const std::vector< VkDescriptorSetLayout > &	GetDescriptorSetLayout(void) const;
+			const std::vector< VkDescriptorSetLayout > &	GetDescriptorSetLayouts(void) const;
+			VkDescriptorSetLayout							GetDescriptorSetLayout(const std::string & setElementName) const;
 
 			ShaderBindingTable &	operator=(ShaderBindingTable const & src) = delete;
 	};

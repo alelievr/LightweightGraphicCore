@@ -6,7 +6,7 @@
 
 namespace LWGC
 {
-	enum class TextureBinding;
+	class TextureBinding;
 	
 	// Helper class for small functions
 	class		Vk
@@ -22,6 +22,7 @@ namespace LWGC
 					static VkSampler	trilinearRepeat;
 					static VkSampler	nearestClamp;
 					static VkSampler	nearestRepeat;
+					static VkSampler	anisotropicTrilinearClamp;
 					static VkSampler	depthCompare;
 			};
 

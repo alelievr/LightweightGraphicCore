@@ -18,7 +18,6 @@ ShaderProgram::ShaderProgram(const std::string & fragmentShaderName, const std::
 
 ShaderProgram::~ShaderProgram(void)
 {
-	std::cout << "Destructor of ShaderProgram called" << std::endl;
 }
 
 void		ShaderProgram::CompileAndLink(void)
@@ -38,6 +37,8 @@ void		ShaderProgram::CompileAndLink(void)
 
 		_shaderStages.push_back(shaderStageInfo);
 	}
+
+	_bindingTable.GenerateSetLayouts();
 }
 
 bool		ShaderProgram::IsCompiled(void) const noexcept
@@ -88,9 +89,14 @@ bool		ShaderProgram::Update(void)
 	return hasReloaded;
 }
 
-std::vector< VkDescriptorSetLayout >	ShaderProgram::GetDescriptorSetLayouts(void)
+std::vector< VkDescriptorSetLayout >	ShaderProgram::GetDescriptorSetLayouts(void) const
 {
-	return _bindingTable.GetDescriptorSetLayout();
+	return _bindingTable.GetDescriptorSetLayouts();
+}
+
+VkDescriptorSetLayout					ShaderProgram::GetDescriptorSetLayout(const std::string & setElementName) const
+{
+	return _bindingTable.GetDescriptorSetLayout(setElementName);
 }
 
 VkPipelineShaderStageCreateInfo *		ShaderProgram::GetShaderStages(void)
@@ -98,9 +104,14 @@ VkPipelineShaderStageCreateInfo *		ShaderProgram::GetShaderStages(void)
 	return _shaderStages.data();
 }
 
-uint32_t		ShaderProgram::GetDescriptorSetBinding(const std::string & bindingName)
+uint32_t		ShaderProgram::GetDescriptorSetBinding(const std::string & bindingName) const
 {
 	return _bindingTable.GetDescriptorSetBinding(bindingName);
+}
+
+uint32_t		ShaderProgram::GetDescriptorIndex(const std::string & bindingName) const
+{
+	return _bindingTable.GetDescriptorIndex(bindingName);
 }
 
 std::ostream &	operator<<(std::ostream & o, ShaderProgram const & r)
