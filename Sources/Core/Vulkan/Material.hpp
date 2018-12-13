@@ -67,6 +67,8 @@ namespace LWGC
 			void		CreateDescriptorSets(void);
 			void		CreatePipelineLayout(void);
 			void		CompileShaders(void);
+			void		CreateGraphicPipeline(void);
+			void		CreateComputePipeline(void);
 	
 		public:
 			Material(void);
@@ -91,6 +93,10 @@ namespace LWGC
 			void				SetBuffer(const std::string & bindingName, VkBuffer buffer, size_t size);
 			void				SetTexture(const std::string & bindingName, const Texture & texture, VkImageLayout imageLayout, VkDescriptorType descriptorType);
 			void				SetSampler(const std::string & bindingName, VkSampler sampler);
+
+
+			// TMP:
+			void				SetDescriptorSet(VkDescriptorSet set);
 	};
 	
 	std::ostream &	operator<<(std::ostream & o, Material const & r);

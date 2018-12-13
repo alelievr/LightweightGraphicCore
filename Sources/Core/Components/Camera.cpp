@@ -133,13 +133,13 @@ void					Camera::UpdateUniformData(void) noexcept
 {
 	_perCamera.positionWS = glm::vec4(transform->GetPosition(), 1.0f);
 
-	// view from positon and rotation
+	// view from position and rotation
 	_perCamera.view = glm::translate(glm::toMat4(transform->GetRotation()), -transform->GetPosition());
 
 	float ratio = (float)_swapChain->GetExtent().width / (float)_swapChain->GetExtent().height;
 	_perCamera.projection = glm::perspective(glm::radians(_fov), ratio, _nearPlane, _farPlane);
 
-	// Invert y because opengl
+	// Invert y because Opengl
 	_perCamera.projection[1][1] *= -1;
  
 	void* data;

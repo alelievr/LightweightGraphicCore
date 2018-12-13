@@ -21,10 +21,10 @@ namespace LWGC
 				glm::mat4	model;
 			};
 
-			LWGC_PerObject				_perObject;
-			ComponentIndex				_renderContextIndex;
-			UniformBuffer				_uniformModelBuffer;
-			VkDescriptorSet				_descriptorSet;
+			LWGC_PerObject		_perObject;
+			ComponentIndex		_renderContextIndex;
+			UniformBuffer		_uniformModelBuffer;
+			VkDescriptorSet		_descriptorSet;
 			
 			static VkDescriptorSetLayout	_descriptorSetLayout;
 			

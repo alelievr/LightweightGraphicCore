@@ -36,6 +36,8 @@ namespace LWGC
 			DescriptorBindings						_currentBindings;
 			std::vector< VkCommandBuffer >			_drawBuffers;
 			std::shared_ptr< Material > 			_currentMaterial;
+
+			void	UpdateDescriptorBindings(void);
 	
 		public:
 			RenderPass(void);
@@ -52,6 +54,7 @@ namespace LWGC
 			void	BindMaterial(std::shared_ptr< Material > material);
 			void	SetCurrentCommandBuffers(const VkCommandBuffer graphicCommandBuffer, const VkCommandBuffer computeCommandBuffer);
 			void	EnqueueDrawCommand(VkCommandBuffer drawCommandBuffer);
+			void	EnqueueComputeCommand(VkCommandBuffer computeCommandBuffer);
 			void	Cleanup(void) noexcept;
 			void	Create(void);
 			void	ExecuteCommands(void);

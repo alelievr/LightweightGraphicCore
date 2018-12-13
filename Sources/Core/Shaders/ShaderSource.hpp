@@ -26,6 +26,10 @@ namespace LWGC
 			VkShaderStageFlagBits	_stage;
 			std::vector< uint32_t >	_SpirVCode;
 
+			uint32_t				_threadWidth;
+			uint32_t				_threadHeight;
+			uint32_t				_threadDepth;
+
 			std::vector< char >		ReadFile(const std::string & fileName);
 			long					GetFileModificationTime(const std::string & file) const;
 			std::string				StageToText(const VkShaderStageFlagBits stage);
@@ -53,6 +57,7 @@ namespace LWGC
 			VkShaderModule			GetModule(void) const;
 			VkShaderStageFlagBits	GetStage(void) const;
 			bool					HasSource(void) const;
+			void					GetWorkingThreadSize(uint32_t & width, uint32_t & height, uint32_t & depth);
 
 			static void	AddIncludePath(const std::string & path);
 	};

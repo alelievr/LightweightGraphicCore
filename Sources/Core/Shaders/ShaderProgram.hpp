@@ -18,6 +18,9 @@ namespace LWGC
 			std::vector< ShaderSource * >					_shaderSources;
 			std::vector< VkPipelineShaderStageCreateInfo >	_shaderStages;
 			ShaderBindingTable								_bindingTable;
+			uint32_t										_threadWidth;
+			uint32_t										_threadHeight;
+			uint32_t										_threadDepth;
 
 		public:
 			ShaderProgram(void);
@@ -40,6 +43,8 @@ namespace LWGC
 			std::vector< VkDescriptorSetLayout >GetDescriptorSetLayouts(void) const;
 			VkPipelineShaderStageCreateInfo *	GetShaderStages();
 			VkDescriptorSetLayout				GetDescriptorSetLayout(const std::string & setElementName) const;
+			void								GetWorkingThreadSize(uint32_t & width, uint32_t & height, uint32_t & depth);
+			bool								HasBinding(const std::string & bindingName) const;
 	};
 
 	std::ostream &	operator<<(std::ostream & o, ShaderProgram const & r);
