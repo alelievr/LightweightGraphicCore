@@ -108,32 +108,49 @@ void	RenderPass::SetCurrentCommandBuffers(const VkCommandBuffer graphicCommandBu
 	_computeCommandBuffer = computeCommandBuffer;
 }
 
-void	RenderPass::EnqueueDrawCommand(VkCommandBuffer drawCommandBuffer)
+void	RenderPass::UpdateDescriptorBindings(void)
 {
 	// Bind all descriptor that have changed
 	for (auto & b : _currentBindings)
 	{
 		if (b.second.hasChanged)
 		{
-			vkCmdBindDescriptorSets(
-				_graphicCommandBuffer,
-				VK_PIPELINE_BIND_POINT_GRAPHICS, 
-				_currentMaterial->GetPipelineLayout(),
-				_currentMaterial->GetDescriptorSetBinding(b.first),
-				1, &b.second.set,
-				0, nullptr
-			);
+			uint32_t firstSet = _currentMaterial->GetDescriptorSetBinding(b.first);
+
+			if (firstSet != -1u)
+			{
+				vkCmdBindDescriptorSets(
+					_graphicCommandBuffer,
+					VK_PIPELINE_BIND_POINT_GRAPHICS, 
+					_currentMaterial->GetPipelineLayout(),
+					firstSet,
+					1, &b.second.set,
+					0, nullptr
+				);
+			}
 		}
 	}
+}
 
-	// The bind pipeline command is inside this command buffer, for opaque objects it 
+void	RenderPass::EnqueueDrawCommand(VkCommandBuffer drawCommandBuffer)
+{
+	UpdateDescriptorBindings();
+
+	// The bind pipeline command is inside this command buffer, it 
 	// should be sorted to avoid unnecessary pipeline switch
 	_drawBuffers.push_back(drawCommandBuffer);
+}
+
+void	RenderPass::EnqueueComputeCommand(VkCommandBuffer computeCommandBuffer)
+{
+
 }
 
 void	RenderPass::ExecuteCommands(void)
 {
 	vkCmdExecuteCommands(_graphicCommandBuffer, _drawBuffers.size(), _drawBuffers.data());
+
+	_drawBuffers.clear();
 }
 
 void	RenderPass::ClearBindings(void)

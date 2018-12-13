@@ -83,6 +83,7 @@ void		ShaderSource::Compile(void)
 {
 	char path[2048];
 	getcwd(path, sizeof(path));
+
 	
 	// I gave up using the c++ api of glslang, it's totally unusable
 	std::string cmd = "glslangValidator -e main -V -D -S " + StageToText(_stage) + " -I" + path;
@@ -111,6 +112,16 @@ void		ShaderSource::Compile(void)
 void		ShaderSource::GenerateBindingTable(ShaderBindingTable & bindingTable)
 {
 	auto glsl = new spirv_cross::CompilerGLSL(_SpirVCode);
+
+	// Retrieve working group size of compute shader
+	if (_stage == VK_SHADER_STAGE_COMPUTE_BIT)
+	{
+		const auto & entry = glsl->get_entry_point("main", spv::ExecutionModel::ExecutionModelGLCompute);
+
+		_threadWidth = entry.workgroup_size.x;
+		_threadHeight = entry.workgroup_size.y;
+		_threadDepth = entry.workgroup_size.z;
+	}
 
 	spirv_cross::ShaderResources resources = glsl->get_shader_resources();
 
@@ -145,6 +156,13 @@ void		ShaderSource::GenerateBindingTable(ShaderBindingTable & bindingTable)
 		addBinding(resource, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER);
 	
 	// delete glsl;
+}
+
+void		ShaderSource::GetWorkingThreadSize(uint32_t & width, uint32_t & height, uint32_t & depth)
+{
+	width = _threadWidth;
+	height = _threadHeight;
+	depth = _threadDepth;
 }
 
 bool		ShaderSource::NeedReload(void) const

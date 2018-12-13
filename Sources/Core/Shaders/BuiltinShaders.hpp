@@ -9,6 +9,5 @@ namespace LWGC
 		public:
 			static const std::string Standard;
 			static const std::string DefaultVertex;
-
 	};
 }

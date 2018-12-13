@@ -1,23 +1,31 @@
 #pragma once
 
 #include "IncludeDeps.hpp"
-#include "Core/Components/Renderer.hpp"
+#include "Core/Components/Component.hpp"
+#include "Core/Vulkan/Material.hpp"
 
 #include <iostream>
 #include <string>
+#include <memory>
 
 namespace LWGC
 {
-	class		ComputeDispatcher : public Renderer
+	class		ComputeDispatcher : public Component
 	{
 		private:
+			std::shared_ptr< Material >	_material;
+			int							_width;
+			int							_height;
+			int							_depth;
+			VkCommandBuffer				_computeCommandBuffer;
+
 			virtual void	Initialize(void) noexcept override;
-			void			RecordDrawCommand(VkCommandBuffer cmd) noexcept override;
-			void			CreateDescriptorSet(void) override;
-			void			CreateDescriptorSetLayout(void) noexcept;
+			void			RecordComputeCommand(VkCommandBuffer cmd) noexcept;
+			void			CreateDescriptorSet(void);
 
 		public:
-			ComputeDispatcher(void);
+			ComputeDispatcher(void) = delete;
+			ComputeDispatcher(std::shared_ptr< Material > material, int width, int height, int depth = 0);
 			ComputeDispatcher(const ComputeDispatcher &) = delete;
 			virtual ~ComputeDispatcher(void);
 

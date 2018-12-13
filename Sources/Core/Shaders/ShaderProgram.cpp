@@ -29,6 +29,9 @@ void		ShaderProgram::CompileAndLink(void)
 		shaderSource->Compile();
 		shaderSource->GenerateBindingTable(_bindingTable);
 
+		if (IsCompute())
+			shaderSource->GetWorkingThreadSize(_threadWidth, _threadHeight, _threadDepth);
+
 		VkPipelineShaderStageCreateInfo shaderStageInfo = {};
 		shaderStageInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
 		shaderStageInfo.stage = shaderSource->GetStage();
@@ -112,6 +115,18 @@ uint32_t		ShaderProgram::GetDescriptorSetBinding(const std::string & bindingName
 uint32_t		ShaderProgram::GetDescriptorIndex(const std::string & bindingName) const
 {
 	return _bindingTable.GetDescriptorIndex(bindingName);
+}
+
+void			ShaderProgram::GetWorkingThreadSize(uint32_t & width, uint32_t & height, uint32_t & depth)
+{
+	width = _threadWidth;
+	height = _threadHeight;
+	depth = _threadDepth;
+}
+
+bool			ShaderProgram::HasBinding(const std::string & bindingName) const
+{
+	return _bindingTable.HasBinding(bindingName);
 }
 
 std::ostream &	operator<<(std::ostream & o, ShaderProgram const & r)

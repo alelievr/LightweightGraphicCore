@@ -115,15 +115,6 @@ void					Material::CleanupPipeline(void) noexcept
 	vkDestroyPipelineLayout(_device, _pipelineLayout, nullptr);
 }
 
-// void	Material::CreateGraphicDescriptorSetLayout(void)
-// {
-// 	auto perMaterialBinding = Vk::CreateDescriptorSetLayoutBinding(0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_ALL_GRAPHICS);
-// 	auto albedoBinding = Vk::CreateDescriptorSetLayoutBinding(TextureBinding::Albedo, VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE, VK_SHADER_STAGE_ALL_GRAPHICS);
-// 	auto samplerBinding = Vk::CreateDescriptorSetLayoutBinding(TRILINEAR_CLAMP_BINDING_INDEX, VK_DESCRIPTOR_TYPE_SAMPLER, VK_SHADER_STAGE_FRAGMENT_BIT);
-
-// 	Vk::CreateDescriptorSetLayout({perMaterialBinding, albedoBinding, samplerBinding}, graphicDescriptorSetLayout);
-// }
-
 void					Material::CompileShaders(void)
 {
 	try {
@@ -140,7 +131,6 @@ void					Material::CompileShaders(void)
 	}
 
 	// Retreive set layout of the shader program:
-
 	_setLayouts = _program->GetDescriptorSetLayouts();
 }
 
@@ -158,7 +148,29 @@ void					Material::CreatePipelineLayout(void)
 
 void					Material::CreatePipeline(void)
 {
+	if (_program->IsCompute())
+		CreateComputePipeline();
+	else
+		CreateGraphicPipeline();
+}
 
+void					Material::CreateComputePipeline(void)
+{
+	VkComputePipelineCreateInfo pipelineCreateInfo = {};
+	pipelineCreateInfo.sType = VK_STRUCTURE_TYPE_COMPUTE_PIPELINE_CREATE_INFO;
+	pipelineCreateInfo.stage = _program->GetShaderStages()[0];
+	pipelineCreateInfo.layout = _pipelineLayout;
+
+	std::cout << "Compute shader creation !\n";
+
+	Vk::CheckResult(vkCreateComputePipelines(
+		_device, VK_NULL_HANDLE, 1, &pipelineCreateInfo, NULL, &_pipeline),
+		"Can't create compute pipeline");
+	std::cout << "Compute shader creation end !\n";
+}
+
+void					Material::CreateGraphicPipeline(void)
+{
 	VkPipelineVertexInputStateCreateInfo vertexInputInfo = {};
 	vertexInputInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
 
@@ -286,71 +298,60 @@ void					Material::UpdateUniformBuffer()
 // Create the default graphic descriptor set layout
 void					Material::CreateDescriptorSets(void)
 {
-	// Find the descriptor layout based on the name of an uniform within it
-	VkDescriptorSetLayout		layout = _program->GetDescriptorSetLayout("material");
-	VkDescriptorSetAllocateInfo	allocInfo = {};
-	allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
-	allocInfo.descriptorPool = _instance->GetDescriptorPool();
-	allocInfo.descriptorSetCount = 1u;
-	allocInfo.pSetLayouts = &layout;
+	if (_program->IsCompute())
+	{
+		// auto layouts = _program->GetDescriptorSetLayouts();
+	}
+	else
+	{
+		// Find the descriptor layout based on the name of an uniform within it
+		VkDescriptorSetLayout		layout = _program->GetDescriptorSetLayout("material");
+		VkDescriptorSetAllocateInfo	allocInfo = {};
+		allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
+		allocInfo.descriptorPool = _instance->GetDescriptorPool();
+		allocInfo.descriptorSetCount = 1u;
+		allocInfo.pSetLayouts = &layout;
 
-	if (vkAllocateDescriptorSets(_device, &allocInfo, &_descriptorSet) != VK_SUCCESS)
-		throw std::runtime_error("failed to allocate descriptor sets!");
+		if (vkAllocateDescriptorSets(_device, &allocInfo, &_descriptorSet) != VK_SUCCESS)
+			throw std::runtime_error("failed to allocate descriptor sets!");
 
-	VkDescriptorBufferInfo bufferInfo = {};
-	bufferInfo.buffer = _uniformPerMaterial.buffer;
-	bufferInfo.offset = 0;
-	bufferInfo.range = sizeof(LWGC_PerMaterial);
+		VkDescriptorBufferInfo bufferInfo = {};
+		bufferInfo.buffer = _uniformPerMaterial.buffer;
+		bufferInfo.offset = 0;
+		bufferInfo.range = sizeof(LWGC_PerMaterial);
 
-    VkDescriptorImageInfo samplerInfo = {};
-    samplerInfo.sampler = Vk::Samplers::trilinearClamp;
+		VkDescriptorImageInfo samplerInfo = {};
+		samplerInfo.sampler = Vk::Samplers::trilinearClamp;
 
-	std::array<VkWriteDescriptorSet, 2> descriptorWrites = {};
+		std::array<VkWriteDescriptorSet, 2> descriptorWrites = {};
 
-	SetBuffer("material", _uniformPerMaterial.buffer, sizeof(LWGC_PerMaterial));
-	SetSampler(SamplerBinding::TrilinearClamp, Vk::Samplers::trilinearClamp);
-	SetSampler(SamplerBinding::TrilinearRepeat, Vk::Samplers::trilinearRepeat);
-	SetSampler(SamplerBinding::NearestClamp, Vk::Samplers::nearestClamp);
-	SetSampler(SamplerBinding::NearestRepeat, Vk::Samplers::nearestRepeat);
-	SetSampler(SamplerBinding::AnisotropicTrilinearClamp, Vk::Samplers::anisotropicTrilinearClamp);
-	SetSampler(SamplerBinding::DepthCompare, Vk::Samplers::depthCompare);
+		SetBuffer("material", _uniformPerMaterial.buffer, sizeof(LWGC_PerMaterial));
+		SetSampler(SamplerBinding::TrilinearClamp, Vk::Samplers::trilinearClamp);
+		SetSampler(SamplerBinding::TrilinearRepeat, Vk::Samplers::trilinearRepeat);
+		SetSampler(SamplerBinding::NearestClamp, Vk::Samplers::nearestClamp);
+		SetSampler(SamplerBinding::NearestRepeat, Vk::Samplers::nearestRepeat);
+		SetSampler(SamplerBinding::AnisotropicTrilinearClamp, Vk::Samplers::anisotropicTrilinearClamp);
+		SetSampler(SamplerBinding::DepthCompare, Vk::Samplers::depthCompare);
 
-	descriptorWrites[0].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-	descriptorWrites[0].dstSet = _descriptorSet;
-	descriptorWrites[0].dstBinding = 0;
-	descriptorWrites[0].dstArrayElement = 0;
-	descriptorWrites[0].descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-	descriptorWrites[0].descriptorCount = 1;
-	descriptorWrites[0].pBufferInfo = &bufferInfo;
+		descriptorWrites[0].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+		descriptorWrites[0].dstSet = _descriptorSet;
+		descriptorWrites[0].dstBinding = 0;
+		descriptorWrites[0].dstArrayElement = 0;
+		descriptorWrites[0].descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+		descriptorWrites[0].descriptorCount = 1;
+		descriptorWrites[0].pBufferInfo = &bufferInfo;
 
-	descriptorWrites[1].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-	descriptorWrites[1].dstSet = _descriptorSet;
-	descriptorWrites[1].dstBinding = TRILINEAR_CLAMP_BINDING_INDEX;
-	descriptorWrites[1].dstArrayElement = 0;
-	descriptorWrites[1].descriptorType = VK_DESCRIPTOR_TYPE_SAMPLER;
-	descriptorWrites[1].descriptorCount = 1;
-	descriptorWrites[1].pImageInfo = &samplerInfo;
+		descriptorWrites[1].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+		descriptorWrites[1].dstSet = _descriptorSet;
+		descriptorWrites[1].dstBinding = TRILINEAR_CLAMP_BINDING_INDEX;
+		descriptorWrites[1].dstArrayElement = 0;
+		descriptorWrites[1].descriptorType = VK_DESCRIPTOR_TYPE_SAMPLER;
+		descriptorWrites[1].descriptorCount = 1;
+		descriptorWrites[1].pImageInfo = &samplerInfo;
 
-	vkUpdateDescriptorSets(_device, static_cast<uint32_t>(descriptorWrites.size()), descriptorWrites.data(), 0, nullptr);
+		vkUpdateDescriptorSets(_device, static_cast<uint32_t>(descriptorWrites.size()), descriptorWrites.data(), 0, nullptr);
+	}
 }
-
-// vkDescriptorSet			Material::GetDescriptorSet(void) const
-// {
-// 	return _descriptorSet;
-// }
-
-// VkDescriptorSetLayout	Material::GetDescriptorSetLayout(const std::string & setName) const
-// {
-// 	return _descriptorSetLayout;
-// }
-
-// void					Material::SetDescriptorSetLayout(uint32_t index, VkDescriptorSetLayout layout)
-// {
-// 	if (_setLayouts.size() <= index)
-// 		_setLayouts.resize(index + 1);
-	
-// 	_setLayouts[index] = layout;
-// }
 
 VkPipelineLayout	Material::GetPipelineLayout(void) const
 {
@@ -369,7 +370,17 @@ VkPipeline			Material::GetPipeline(void) const
 
 uint32_t			Material::GetDescriptorSetBinding(const std::string & setName) const
 {
+	// For compute we ignore nonexistent bindings such as material, object or camera
+	if (_program->IsCompute() && !_program->HasBinding(setName))
+		return -1;
+	
 	return _program->GetDescriptorSetBinding(setName);
+}
+
+// Tmp stuff, waiting for RenderPass to handle descriptor allocation
+void				Material::SetDescriptorSet(VkDescriptorSet set)
+{
+	_descriptorSet = set;
 }
 
 void				Material::SetBuffer(const std::string & bindingName, VkBuffer buffer, size_t size)
@@ -388,10 +399,9 @@ void				Material::SetBuffer(const std::string & bindingName, VkBuffer buffer, si
 	descriptorWrites[0].descriptorCount = 1;
 	descriptorWrites[0].pBufferInfo = &bufferInfo;
 
-	vkUpdateDescriptorSets(_device, static_cast<uint32_t>(descriptorWrites.size()), descriptorWrites.data(), 0, nullptr);
+	vkUpdateDescriptorSets(_device, static_cast< uint32_t >(descriptorWrites.size()), descriptorWrites.data(), 0, nullptr);
 }
 
-// TODO: do not pass the indices but the binding name
 void				Material::SetTexture(const std::string & bindingName, const Texture & texture, VkImageLayout imageLayout, VkDescriptorType descriptorType)
 {
 	std::array<VkWriteDescriptorSet, 1> descriptorWrites = {};

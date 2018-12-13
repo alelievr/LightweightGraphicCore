@@ -33,8 +33,10 @@ void					ShaderBindingTable::GenerateSetLayouts()
 	std::unordered_map< int, std::vector< VkDescriptorSetLayoutBinding > >	layoutBindings;
 	int		maxDescriptorSet = 0;
 	
+	std::cout << "Generate bindings: " << std::endl;
 	for (const auto & binding : _bindings)
 	{
+		std::cout << "Binding: " << binding.first << std::endl;
 		auto b = Vk::CreateDescriptorSetLayoutBinding(binding.second.bindingIndex, binding.second.descriptorType, _stageFlags);
 		layoutBindings[binding.second.descriptorSet].push_back(b);
 		maxDescriptorSet = fmax(maxDescriptorSet, binding.second.descriptorSet);
@@ -69,6 +71,11 @@ VkDescriptorSetLayout	ShaderBindingTable::GetDescriptorSetLayout(const std::stri
 		throw std::runtime_error("Can't find descriptor set layout with a field named '" + setElementName + "'");
 
 	return layout->second;
+}
+
+bool					ShaderBindingTable::HasBinding(const std::string & bindingName) const
+{
+	return _bindings.find(bindingName) != _bindings.end();
 }
 
 uint32_t				ShaderBindingTable::GetDescriptorSetBinding(const std::string & bindingName) const
