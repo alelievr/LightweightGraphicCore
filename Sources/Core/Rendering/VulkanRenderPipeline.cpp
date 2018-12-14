@@ -44,8 +44,7 @@ void                VulkanRenderPipeline::Initialize(SwapChain * swapChain)
 	CreateRenderPass();
 
 	// Allocate primary command buffers
-	instance->GetGraphicCommandBufferPool()->Allocate(VK_COMMAND_BUFFER_LEVEL_PRIMARY, swapChainCommandBuffers, swapChain->GetImageCount());
-	computeCommandBuffer = instance->GetComputeCommandBufferPool()->Allocate(VK_COMMAND_BUFFER_LEVEL_PRIMARY);
+	instance->GetCommandBufferPool()->Allocate(VK_COMMAND_BUFFER_LEVEL_PRIMARY, swapChainCommandBuffers, swapChain->GetImageCount());
 
 	// Allocate LWGC_PerFrame uniform buffer
 	Vk::CreateBuffer(sizeof(LWGC_PerFrame), VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, uniformPerFrame.buffer, uniformPerFrame.memory);
@@ -116,7 +115,7 @@ void			VulkanRenderPipeline::BeginRenderPass(void)
 	beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
 	beginInfo.flags = VK_COMMAND_BUFFER_USAGE_SIMULTANEOUS_USE_BIT;
 
-	if (vkBeginCommandBuffer(graphicCommandBuffer, &beginInfo) != VK_SUCCESS)
+	if (vkBeginCommandBuffer(commandBuffer, &beginInfo) != VK_SUCCESS)
 	{
 		throw std::runtime_error("failed to begin recording command buffer!");
 	}
@@ -135,16 +134,16 @@ void			VulkanRenderPipeline::BeginRenderPass(void)
 	renderPassInfo.clearValueCount = static_cast<uint32_t>(clearValues.size());
 	renderPassInfo.pClearValues = clearValues.data();
 
-	renderPass.SetCurrentCommandBuffers(graphicCommandBuffer, computeCommandBuffer); // TODO: pass the compute command buffer
+	renderPass.SetCurrentCommandBuffers(commandBuffer);
 
-	vkCmdBeginRenderPass(graphicCommandBuffer, &renderPassInfo, VK_SUBPASS_CONTENTS_SECONDARY_COMMAND_BUFFERS);
+	vkCmdBeginRenderPass(commandBuffer, &renderPassInfo, VK_SUBPASS_CONTENTS_SECONDARY_COMMAND_BUFFERS);
 }
 
 void			VulkanRenderPipeline::EndRenderPass(void)
 {
-	vkCmdEndRenderPass(graphicCommandBuffer);
+	vkCmdEndRenderPass(commandBuffer);
 
-	if (vkEndCommandBuffer(graphicCommandBuffer) != VK_SUCCESS)
+	if (vkEndCommandBuffer(commandBuffer) != VK_SUCCESS)
 	{
 		throw std::runtime_error("failed to record command buffer!");
 	}
@@ -272,7 +271,7 @@ void			VulkanRenderPipeline::RenderInternal(const std::vector< Camera * > & came
 		throw std::runtime_error("failed to acquire swap chain image!");
 	}
 
-	graphicCommandBuffer = swapChainCommandBuffers[imageIndex];
+	commandBuffer = swapChainCommandBuffers[imageIndex];
 
 	Render(cameras, context);
 
@@ -286,7 +285,7 @@ void			VulkanRenderPipeline::RenderInternal(const std::vector< Camera * > & came
 	submitInfo.pWaitDstStageMask = waitStages;
 
 	submitInfo.commandBufferCount = 1;
-	submitInfo.pCommandBuffers = &graphicCommandBuffer;
+	submitInfo.pCommandBuffers = &commandBuffer;
 
 	VkSemaphore signalSemaphores[] = {renderFinishedSemaphores[currentFrame]};
 	submitInfo.signalSemaphoreCount = 1;
@@ -294,21 +293,7 @@ void			VulkanRenderPipeline::RenderInternal(const std::vector< Camera * > & came
 
 	Vk::CheckResult(vkResetFences(device, 1, &inFlightFences[currentFrame]), "Reset fence failed");
 
-	VkSubmitInfo computeSubmit = {
-      VK_STRUCTURE_TYPE_SUBMIT_INFO,
-      0,
-      0,
-      0,
-      0,
-      1,
-      &computeCommandBuffer,
-      0,
-      0
-    };
-
-	Vk::CheckResult(vkQueueSubmit(instance->GetComputeQueue(), 1, &computeSubmit, 0), "Failed to submit compute queue");
-
-	Vk::CheckResult(vkQueueSubmit(instance->GetGraphicQueue(), 1, &submitInfo, inFlightFences[currentFrame]), "Failed to submit graphic queue");
+	Vk::CheckResult(vkQueueSubmit(instance->GetQueue(), 1, &submitInfo, inFlightFences[currentFrame]), "Failed to submit queue");
 
 	VkPresentInfoKHR presentInfo = {};
 	presentInfo.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
@@ -322,7 +307,7 @@ void			VulkanRenderPipeline::RenderInternal(const std::vector< Camera * > & came
 
 	presentInfo.pImageIndices = &imageIndex;
 
-	result = vkQueuePresentKHR(instance->GetPresentQueue(), &presentInfo);
+	result = vkQueuePresentKHR(instance->GetQueue(), &presentInfo);
 
 	if (result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR || framebufferResized)
 	{
@@ -344,7 +329,7 @@ void	VulkanRenderPipeline::Render(const std::vector< Camera * > & cameras, Rende
 
 	BeginRenderPass();
 	
-	renderPass.BindDescriptorSet("frame", perFrameDescriptorSet);
+	renderPass.BindDescriptorSet(LWGCBinding::Frame, perFrameDescriptorSet);
 
 	// Run compute pass as it does not depends on any cameras
 	std::unordered_set< ComputeDispatcher * >	computeDispatchers;
@@ -355,27 +340,20 @@ void	VulkanRenderPipeline::Render(const std::vector< Camera * > & cameras, Rende
 	beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
 	beginInfo.flags = VK_COMMAND_BUFFER_USAGE_SIMULTANEOUS_USE_BIT;
 
-	if (vkBeginCommandBuffer(computeCommandBuffer, &beginInfo) != VK_SUCCESS)
-	{
-		throw std::runtime_error("failed to begin recording command buffer!");
-	}
-
 	for (auto & compute : computeDispatchers)
 	{
 		auto m = compute->GetMaterial();
 
 		renderPass.BindMaterial(m);
 
-		renderPass.EnqueueComputeCommand(compute->GetCommandBuffer());
+		renderPass.EnqueueCommand(compute->GetCommandBuffer());
 	}
-
-	vkCmdEndRenderPass(computeCommandBuffer);
 
 	for (const auto camera : cameras)
 	{
 		std::unordered_set< MeshRenderer * >	meshRenderers;
 		
-		renderPass.BindDescriptorSet("camera", camera->GetDescriptorSet());
+		renderPass.BindDescriptorSet(LWGCBinding::Camera, camera->GetDescriptorSet());
 
 		context.GetMeshRenderers(meshRenderers);
 
@@ -387,7 +365,7 @@ void	VulkanRenderPipeline::Render(const std::vector< Camera * > & cameras, Rende
 			// TODO: put an event listener in MeshRenderer and update uniforms from there
 			m->UpdateUniformBuffer();
 			
-			renderPass.EnqueueDrawCommand(meshRenderer->GetDrawCommandBuffer());
+			renderPass.EnqueueCommand(meshRenderer->GetDrawCommandBuffer());
 		}
 
 		renderPass.ExecuteCommands();

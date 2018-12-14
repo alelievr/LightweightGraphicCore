@@ -13,7 +13,6 @@
 #include "Vk.hpp"
 #include "Core/Shaders/ShaderProgram.hpp"
 
-#define PER_MATERIAL_BINDING_INDEX		3
 #define TRILINEAR_CLAMP_BINDING_INDEX	1
 
 namespace LWGC
@@ -36,6 +35,15 @@ namespace LWGC
 			static const std::string	NearestRepeat;
 			static const std::string	AnisotropicTrilinearClamp;
 			static const std::string	DepthCompare;
+	};
+
+	class		LWGCBinding
+	{
+		public:
+			static const std::string	Frame;
+			static const std::string	Camera;
+			static const std::string	Material;
+			static const std::string	Object;
 	};
 
 	class SwapChain;
@@ -90,7 +98,7 @@ namespace LWGC
 			uint32_t			GetDescriptorSetBinding(const std::string & setName) const;
 			VkDescriptorSet		GetDescriptorSet(void) const;
 
-			void				SetBuffer(const std::string & bindingName, VkBuffer buffer, size_t size);
+			void				SetBuffer(const std::string & bindingName, VkBuffer buffer, size_t size, VkDescriptorType descriptorType);
 			void				SetTexture(const std::string & bindingName, const Texture & texture, VkImageLayout imageLayout, VkDescriptorType descriptorType);
 			void				SetSampler(const std::string & bindingName, VkSampler sampler);
 

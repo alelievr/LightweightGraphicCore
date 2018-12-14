@@ -26,12 +26,14 @@ namespace LWGC
 			VkDebugUtilsMessengerEXT	_callback;
 			VkDescriptorPool			_descriptorPool;
 	
-			uint32_t					_graphicQueueIndex;
-			VkQueue						_graphicQueue;
-			uint32_t					_presentQueueIndex;
-			VkQueue						_presentQueue;
-			uint32_t					_computeQueueIndex;
-			VkQueue						_computeQueue;
+			// uint32_t					_graphicQueueIndex;
+			// VkQueue						_graphicQueue;
+			// uint32_t					_presentQueueIndex;
+			// VkQueue						_presentQueue;
+			// uint32_t					_computeQueueIndex;
+			// VkQueue						_computeQueue;
+			uint32_t					_queueIndex;
+			VkQueue						_queue;
 	
 			VkSurfaceKHR				_surface;
 			VkSurfaceCapabilitiesKHR	_surfaceCapabilities;
@@ -41,8 +43,9 @@ namespace LWGC
 			std::vector< const char * >	_validationLayers;
 			std::vector< const char * >	_deviceExtensions;
 	
-			CommandBufferPool			_graphicCommandBufferPool;
-			CommandBufferPool			_computeCommandBufferPool;
+			CommandBufferPool			_commandBufferPool;
+			// CommandBufferPool			_graphicCommandBufferPool;
+			// CommandBufferPool			_computeCommandBufferPool;
 	
 			static VulkanInstance *		_instanceSingleton;
 	
@@ -81,16 +84,19 @@ namespace LWGC
 	
 			VkInstance	GetInstance(void) const noexcept;
 			
-			VkQueue		GetGraphicQueue(void) const noexcept;
-			VkQueue		GetPresentQueue(void) const noexcept;
-			VkQueue		GetComputeQueue(void) const noexcept;
+			VkQueue		GetQueue(void) const noexcept;
+			// VkQueue		GetGraphicQueue(void) const noexcept;
+			// VkQueue		GetPresentQueue(void) const noexcept;
+			// VkQueue		GetComputeQueue(void) const noexcept;
 	
-			uint32_t	GetGraphicQueueIndex(void) const noexcept;
-			uint32_t	GetPresentQueueIndex(void) const noexcept;
-			uint32_t	GetComputeQueueIndex(void) const noexcept;
+			uint32_t	GetQueueIndex(void) const noexcept;
+			// uint32_t	GetGraphicQueueIndex(void) const noexcept;
+			// uint32_t	GetPresentQueueIndex(void) const noexcept;
+			// uint32_t	GetComputeQueueIndex(void) const noexcept;
 	
-			CommandBufferPool *	GetGraphicCommandBufferPool(void) noexcept;
-			CommandBufferPool *	GetComputeCommandBufferPool(void) noexcept;
+			CommandBufferPool *	GetCommandBufferPool(void) noexcept;
+			// CommandBufferPool *	GetGraphicCommandBufferPool(void) noexcept;
+			// CommandBufferPool *	GetComputeCommandBufferPool(void) noexcept;
 	
 			const std::vector< VkSurfaceFormatKHR >	GetSupportedSurfaceFormats(void) const noexcept;
 			const std::vector< VkPresentModeKHR >	GetSupportedPresentModes(void) const noexcept;

@@ -71,20 +71,7 @@ void		SwapChain::CreateSwapChain(void)
 	createInfo.imageExtent = extent;
 	createInfo.imageArrayLayers = 1;
 	createInfo.imageUsage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
-
-	uint32_t queueFamilyIndices[] = {_instance->GetGraphicQueueIndex(), _instance->GetPresentQueueIndex()};
-
-	if (_instance->GetGraphicQueueIndex() != _instance->GetPresentQueueIndex())
-	{
-	    createInfo.imageSharingMode = VK_SHARING_MODE_CONCURRENT;
-	    createInfo.queueFamilyIndexCount = 2;
-	    createInfo.pQueueFamilyIndices = queueFamilyIndices;
-	}
-	else
-	{
-	    createInfo.imageSharingMode = VK_SHARING_MODE_EXCLUSIVE;
-	}
-
+	createInfo.imageSharingMode = VK_SHARING_MODE_EXCLUSIVE;
 	createInfo.preTransform = capabilities.currentTransform;
 	createInfo.compositeAlpha = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR;
 	createInfo.presentMode = presentMode;
@@ -112,7 +99,7 @@ void				SwapChain::CreateImageViews(void) noexcept
 // TODO: this may not be in this class
 void				SwapChain::TransitionDepthImageLayout(VkImage image, VkFormat format, VkImageLayout oldLayout, VkImageLayout newLayout)
 {
-	VkCommandBuffer commandBuffer = _instance->GetGraphicCommandBufferPool()->BeginSingle();
+	VkCommandBuffer commandBuffer = _instance->GetCommandBufferPool()->BeginSingle();
 
 	VkImageMemoryBarrier barrier = {};
 	barrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
@@ -171,7 +158,7 @@ void				SwapChain::TransitionDepthImageLayout(VkImage image, VkFormat format, Vk
 		    1, &barrier
 		    );
 
-	_instance->GetGraphicCommandBufferPool()->EndSingle(commandBuffer);
+	_instance->GetCommandBufferPool()->EndSingle(commandBuffer);
 }
 
 void				SwapChain::CreateDepthResources(void)

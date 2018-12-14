@@ -37,7 +37,7 @@ void		ImGUIWrapper::InitImGUI(void)
 	VkPhysicalDevice	physicalDevice = _instance->GetPhysicalDevice();
 	const auto &		extent = _swapChain->GetExtent();
 
-	ImGui_ImplVulkanH_CreateWindowDataCommandBuffers(physicalDevice, _device, _instance->GetGraphicQueueIndex(), &_wd, VK_NULL_HANDLE);
+	ImGui_ImplVulkanH_CreateWindowDataCommandBuffers(physicalDevice, _device, _instance->GetQueueIndex(), &_wd, VK_NULL_HANDLE);
 	_wd.Surface = _surface->GetSurface();
 	printf("physicalDevice: %p\n", physicalDevice);
 	printf("surface: %p\n", _wd.Surface);
@@ -53,13 +53,13 @@ void		ImGUIWrapper::InitImGUI(void)
     ImGuiIO& io = ImGui::GetIO(); (void)io;
 	//io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;  // Enable Keyboard Controls
 
-	_queue = _instance->GetGraphicQueue();
+	_queue = _instance->GetQueue();
 
 	ImGui_ImplVulkan_InitInfo initInfo = {};
 	initInfo.Instance = _instance->GetInstance();
 	initInfo.PhysicalDevice = physicalDevice;
 	initInfo.Device = _instance->GetDevice();
-	initInfo.QueueFamily = _instance->GetGraphicQueueIndex();
+	initInfo.QueueFamily = _instance->GetQueueIndex();
 	initInfo.Queue = _queue;
 	initInfo.PipelineCache = VK_NULL_HANDLE;
 	initInfo.DescriptorPool = _descriptorPool;

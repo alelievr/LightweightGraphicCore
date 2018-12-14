@@ -31,11 +31,9 @@ namespace LWGC
 			std::vector< VkSubpassDependency >		_dependencies;
 			VkAttachmentReference					_depthAttachmentRef;
 			uint32_t								_attachmentCount;
-			VkCommandBuffer							_graphicCommandBuffer;
-			VkCommandBuffer							_computeCommandBuffer;
+			VkCommandBuffer							_commandBuffer;
 			DescriptorBindings						_currentBindings;
-			std::vector< VkCommandBuffer >			_drawBuffers;
-			std::vector< VkCommandBuffer >			_computeBuffers;
+			std::vector< VkCommandBuffer >			_secondaryBuffers;
 			std::shared_ptr< Material > 			_currentMaterial;
 
 			void	UpdateDescriptorBindings(void);
@@ -53,9 +51,8 @@ namespace LWGC
 			void	AddDependency(const VkSubpassDependency & dependency) noexcept;
 			bool	BindDescriptorSet(const std::string & name, VkDescriptorSet set);
 			void	BindMaterial(std::shared_ptr< Material > material);
-			void	SetCurrentCommandBuffers(const VkCommandBuffer graphicCommandBuffer, const VkCommandBuffer computeCommandBuffer);
-			void	EnqueueDrawCommand(VkCommandBuffer drawCommandBuffer);
-			void	EnqueueComputeCommand(VkCommandBuffer computeCommandBuffer);
+			void	SetCurrentCommandBuffers(const VkCommandBuffer commandBuffer);
+			void	EnqueueCommand(VkCommandBuffer drawCommandBuffer);
 			void	Cleanup(void) noexcept;
 			void	Create(void);
 			void	ExecuteCommands(void);
