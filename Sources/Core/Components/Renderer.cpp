@@ -116,7 +116,6 @@ void		Renderer::RecordDrawCommandBuffer(void)
 		throw std::runtime_error("failed to begin recording command buffer!");
 	}
 
-	// TODO: is this working with compute shaders ?
 	vkCmdBindPipeline(_drawCommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, _material->GetPipeline());
 
 	// TODO: remove
@@ -138,7 +137,7 @@ void		Renderer::BindDescriptorSet(VkCommandBuffer cmd, VkPipelineBindPoint bindP
 
 Bounds		Renderer::GetBounds(void)
 {
-	std::cout << "GetBouds(): TODO" << std::endl;
+	std::cout << "GetBounds(): TODO" << std::endl;
 	return Bounds();
 }
 

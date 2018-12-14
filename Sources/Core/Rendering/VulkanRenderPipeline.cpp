@@ -1,5 +1,6 @@
 #include "VulkanRenderPipeline.hpp"
 #include "Core/Components/MeshRenderer.hpp"
+#include "Core/Components/ComputeDispatcher.hpp"
 
 #include "Core/PrimitiveMeshFactory.hpp"
 
@@ -44,6 +45,7 @@ void                VulkanRenderPipeline::Initialize(SwapChain * swapChain)
 
 	// Allocate primary command buffers
 	instance->GetGraphicCommandBufferPool()->Allocate(VK_COMMAND_BUFFER_LEVEL_PRIMARY, swapChainCommandBuffers, swapChain->GetImageCount());
+	computeCommandBuffer = instance->GetComputeCommandBufferPool()->Allocate(VK_COMMAND_BUFFER_LEVEL_PRIMARY);
 
 	// Allocate LWGC_PerFrame uniform buffer
 	Vk::CreateBuffer(sizeof(LWGC_PerFrame), VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, uniformPerFrame.buffer, uniformPerFrame.memory);
@@ -133,7 +135,7 @@ void			VulkanRenderPipeline::BeginRenderPass(void)
 	renderPassInfo.clearValueCount = static_cast<uint32_t>(clearValues.size());
 	renderPassInfo.pClearValues = clearValues.data();
 
-	renderPass.SetCurrentCommandBuffers(graphicCommandBuffer, VK_NULL_HANDLE); // TODO: pass the compute command buffer
+	renderPass.SetCurrentCommandBuffers(graphicCommandBuffer, computeCommandBuffer); // TODO: pass the compute command buffer
 
 	vkCmdBeginRenderPass(graphicCommandBuffer, &renderPassInfo, VK_SUBPASS_CONTENTS_SECONDARY_COMMAND_BUFFERS);
 }
@@ -292,6 +294,20 @@ void			VulkanRenderPipeline::RenderInternal(const std::vector< Camera * > & came
 
 	Vk::CheckResult(vkResetFences(device, 1, &inFlightFences[currentFrame]), "Reset fence failed");
 
+	VkSubmitInfo computeSubmit = {
+      VK_STRUCTURE_TYPE_SUBMIT_INFO,
+      0,
+      0,
+      0,
+      0,
+      1,
+      &computeCommandBuffer,
+      0,
+      0
+    };
+
+	Vk::CheckResult(vkQueueSubmit(instance->GetComputeQueue(), 1, &computeSubmit, 0), "Failed to submit compute queue");
+
 	Vk::CheckResult(vkQueueSubmit(instance->GetGraphicQueue(), 1, &submitInfo, inFlightFences[currentFrame]), "Failed to submit graphic queue");
 
 	VkPresentInfoKHR presentInfo = {};
@@ -327,9 +343,34 @@ void	VulkanRenderPipeline::Render(const std::vector< Camera * > & cameras, Rende
 		throw std::runtime_error("No camera for rendering !");
 
 	BeginRenderPass();
-		
-	renderPass.BindDescriptorSet("frame", perFrameDescriptorSet);
 	
+	renderPass.BindDescriptorSet("frame", perFrameDescriptorSet);
+
+	// Run compute pass as it does not depends on any cameras
+	std::unordered_set< ComputeDispatcher * >	computeDispatchers;
+
+	context.GetComputeDispatchers(computeDispatchers);
+
+	VkCommandBufferBeginInfo beginInfo = {};
+	beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+	beginInfo.flags = VK_COMMAND_BUFFER_USAGE_SIMULTANEOUS_USE_BIT;
+
+	if (vkBeginCommandBuffer(computeCommandBuffer, &beginInfo) != VK_SUCCESS)
+	{
+		throw std::runtime_error("failed to begin recording command buffer!");
+	}
+
+	for (auto & compute : computeDispatchers)
+	{
+		auto m = compute->GetMaterial();
+
+		renderPass.BindMaterial(m);
+
+		renderPass.EnqueueComputeCommand(compute->GetCommandBuffer());
+	}
+
+	vkCmdEndRenderPass(computeCommandBuffer);
+
 	for (const auto camera : cameras)
 	{
 		std::unordered_set< MeshRenderer * >	meshRenderers;

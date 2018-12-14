@@ -8,6 +8,7 @@ namespace LWGC
     class Light;
     class MeshRenderer;
     class Component;
+    class ComputeDispatcher;
 
     class RenderContext
     {
@@ -24,5 +25,6 @@ namespace LWGC
             void    GetComponentSet(uint32_t componentType, std::unordered_set< T * > & components);
             void    GetLights(std::unordered_set< Light * > & lights);
             void    GetMeshRenderers(std::unordered_set< MeshRenderer * > & meshRenderers);
+            void    GetComputeDispatchers(std::unordered_set< ComputeDispatcher * > & computeDispatchers);
     };
 }

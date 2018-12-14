@@ -2,6 +2,7 @@
 
 #include "Core/Components/Light.hpp"
 #include "Core/Components/MeshRenderer.hpp"
+#include "Core/Components/ComputeDispatcher.hpp"
 #include "Core/Components/Component.hpp"
 
 using namespace LWGC;
@@ -37,4 +38,9 @@ void    RenderContext::GetLights(std::unordered_set< Light * > & lights)
 void    RenderContext::GetMeshRenderers(std::unordered_set< MeshRenderer * > & meshRenderers) 
 {
     GetComponentSet< MeshRenderer >(static_cast< uint32_t >(ComponentType::MeshRenderer), meshRenderers);
+}
+
+void    RenderContext::GetComputeDispatchers(std::unordered_set< ComputeDispatcher * > & computeDispatchers)
+{
+    GetComponentSet< ComputeDispatcher >(static_cast< uint32_t >(ComponentType::ComputeDispatcher), computeDispatchers);
 }

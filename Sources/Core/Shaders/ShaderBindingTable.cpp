@@ -20,6 +20,7 @@ void					ShaderBindingTable::SetStage(VkShaderStageFlagBits stage)
 
 ShaderBinding &			ShaderBindingTable::AddBinding(const std::string & name, int descriptorSet, int bindingIndex, VkDescriptorType descriptorType)
 {
+	std::cout << "Add binding: " << descriptorSet << ":" << bindingIndex << std::endl;
 	return (_bindings.insert({name, ShaderBinding{
 		descriptorSet,
 		bindingIndex,
@@ -33,10 +34,8 @@ void					ShaderBindingTable::GenerateSetLayouts()
 	std::unordered_map< int, std::vector< VkDescriptorSetLayoutBinding > >	layoutBindings;
 	int		maxDescriptorSet = 0;
 	
-	std::cout << "Generate bindings: " << std::endl;
 	for (const auto & binding : _bindings)
 	{
-		std::cout << "Binding: " << binding.first << std::endl;
 		auto b = Vk::CreateDescriptorSetLayoutBinding(binding.second.bindingIndex, binding.second.descriptorType, _stageFlags);
 		layoutBindings[binding.second.descriptorSet].push_back(b);
 		maxDescriptorSet = fmax(maxDescriptorSet, binding.second.descriptorSet);
