@@ -35,6 +35,7 @@ namespace LWGC
 			VkCommandBuffer							_computeCommandBuffer;
 			DescriptorBindings						_currentBindings;
 			std::vector< VkCommandBuffer >			_drawBuffers;
+			std::vector< VkCommandBuffer >			_computeBuffers;
 			std::shared_ptr< Material > 			_currentMaterial;
 
 			void	UpdateDescriptorBindings(void);

@@ -18,8 +18,11 @@ namespace LWGC
 			int							_height;
 			int							_depth;
 			VkCommandBuffer				_computeCommandBuffer;
+			ComponentIndex				_renderContextIndex;
 
 			virtual void	Initialize(void) noexcept override;
+			void			OnEnable(void) noexcept override;
+			void			OnDisable(void) noexcept override;
 			void			RecordComputeCommand(VkCommandBuffer cmd) noexcept;
 			void			CreateDescriptorSet(void);
 
@@ -30,6 +33,9 @@ namespace LWGC
 			virtual ~ComputeDispatcher(void);
 
 			ComputeDispatcher &	operator=(ComputeDispatcher const & src) = delete;
+
+			std::shared_ptr< Material >	GetMaterial(void);
+			VkCommandBuffer				GetCommandBuffer(void);
 
 			virtual uint32_t	GetType(void) const noexcept override;
 	};

@@ -138,6 +138,8 @@ void					Material::CreatePipelineLayout(void)
 {
 	VkPipelineLayoutCreateInfo pipelineLayoutInfo = {};
 	pipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
+
+	std::cout << "Create pipeline with layout size: " << _setLayouts.size() << std::endl;
 	
 	pipelineLayoutInfo.setLayoutCount = _setLayouts.size();
 	pipelineLayoutInfo.pSetLayouts = _setLayouts.data();
@@ -161,12 +163,9 @@ void					Material::CreateComputePipeline(void)
 	pipelineCreateInfo.stage = _program->GetShaderStages()[0];
 	pipelineCreateInfo.layout = _pipelineLayout;
 
-	std::cout << "Compute shader creation !\n";
-
 	Vk::CheckResult(vkCreateComputePipelines(
 		_device, VK_NULL_HANDLE, 1, &pipelineCreateInfo, NULL, &_pipeline),
 		"Can't create compute pipeline");
-	std::cout << "Compute shader creation end !\n";
 }
 
 void					Material::CreateGraphicPipeline(void)
@@ -410,6 +409,8 @@ void				Material::SetTexture(const std::string & bindingName, const Texture & te
 	imageInfo.imageLayout = imageLayout;
 	imageInfo.imageView = texture.GetView();
 	imageInfo.sampler = 0;
+
+	std::cout << "Bind texture: " << bindingName << ": " << _program->GetDescriptorIndex(bindingName) << std::endl;;
 
 	descriptorWrites[0].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
 	descriptorWrites[0].dstSet = _descriptorSet;

@@ -143,14 +143,19 @@ void	RenderPass::EnqueueDrawCommand(VkCommandBuffer drawCommandBuffer)
 
 void	RenderPass::EnqueueComputeCommand(VkCommandBuffer computeCommandBuffer)
 {
+	UpdateDescriptorBindings();
 
+	_computeBuffers.push_back(computeCommandBuffer);
 }
 
 void	RenderPass::ExecuteCommands(void)
 {
+	vkCmdExecuteCommands(_computeCommandBuffer, _computeBuffers.size(), _computeBuffers.data());
+
 	vkCmdExecuteCommands(_graphicCommandBuffer, _drawBuffers.size(), _drawBuffers.data());
 
 	_drawBuffers.clear();
+	_computeBuffers.clear();
 }
 
 void	RenderPass::ClearBindings(void)
