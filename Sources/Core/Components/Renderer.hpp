@@ -9,6 +9,7 @@
 #include "Core/Vulkan/UniformBuffer.hpp"
 #include "Component.hpp"
 
+// TODO: remove
 #define PER_OBJECT_BINDING_INDEX	2
 
 namespace LWGC

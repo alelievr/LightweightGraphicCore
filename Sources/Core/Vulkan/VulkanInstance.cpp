@@ -35,8 +35,9 @@ VulkanInstance::~VulkanInstance(void)
 {
 	std::cout << "desctroyed instance !\n";
 	// Manually destroy command buffers so we don't use a freed device
-	_graphicCommandBufferPool.~CommandBufferPool();
-	_computeCommandBufferPool.~CommandBufferPool();
+	_commandBufferPool.~CommandBufferPool();
+	// _graphicCommandBufferPool.~CommandBufferPool();
+	// _computeCommandBufferPool.~CommandBufferPool();
 
 	if (_device != VK_NULL_HANDLE)
 		vkDestroyDevice(_device, nullptr);
@@ -179,9 +180,7 @@ std::vector<const char *>	VulkanInstance::GetRequiredExtensions(void) noexcept
 
 void			VulkanInstance::InitQueueIndicesForPhysicalDevice(VkPhysicalDevice physicalDevice) noexcept
 {
-	_graphicQueueIndex = -1;
-	_presentQueueIndex = -1;
-	_computeQueueIndex = -1;
+	_queueIndex = -1;
 
 	uint32_t queueFamilyCount = 0;
 	vkGetPhysicalDeviceQueueFamilyProperties(physicalDevice, &queueFamilyCount, nullptr);
@@ -192,18 +191,13 @@ void			VulkanInstance::InitQueueIndicesForPhysicalDevice(VkPhysicalDevice physic
 	int i = 0;
 	for (const auto& queueFamily : queueFamilies)
 	{
-		if (queueFamily.queueCount > 0 && queueFamily.queueFlags & VK_QUEUE_GRAPHICS_BIT)
-			_graphicQueueIndex = i;
-		if (queueFamily.queueCount > 0 && queueFamily.queueFlags & VK_QUEUE_COMPUTE_BIT)
-			_computeQueueIndex = i;
-
 		VkBool32 presentSupport = false;
 		vkGetPhysicalDeviceSurfaceSupportKHR(physicalDevice, i, _surface, &presentSupport);
+		
+		if (queueFamily.queueCount > 0 && queueFamily.queueFlags & (VK_QUEUE_GRAPHICS_BIT | VK_QUEUE_COMPUTE_BIT))
+			_queueIndex = i;
 
-		if (queueFamily.queueCount > 0 && presentSupport)
-		    _presentQueueIndex = i;
-
-		if (_graphicQueueIndex != -1u && _presentQueueIndex != -1u && _computeQueueIndex != -1u)
+		if (_queueIndex != -1u && presentSupport)
 		    break;
 
 		i++;
@@ -237,7 +231,7 @@ bool			VulkanInstance::IsPhysicalDeviceSuitable(VkPhysicalDevice physicalDevice)
 {
 	InitQueueIndicesForPhysicalDevice(physicalDevice);
 
-	if (_graphicQueueIndex == -1u || _presentQueueIndex == -1u || _computeQueueIndex == -1u)
+	if (_queueIndex == -1u)
 		return false;
 
 	if (!AreExtensionsSupportedForPhysicalDevice(physicalDevice))
@@ -288,7 +282,7 @@ void			VulkanInstance::ChoosePhysicalDevice(void)
 void			VulkanInstance::CreateLogicalDevice(void)
 {
 	std::vector<VkDeviceQueueCreateInfo> queueCreateInfos;
-	std::set<uint32_t> uniqueQueueFamilies = {_graphicQueueIndex, _presentQueueIndex};
+	std::set<uint32_t> uniqueQueueFamilies = {_queueIndex};
 
 	float queuePriority = 1.0f;
 	for (uint32_t queueFamily : uniqueQueueFamilies)
@@ -323,20 +317,20 @@ void			VulkanInstance::CreateLogicalDevice(void)
 	}
 
 	if (vkCreateDevice(_physicalDevice, &createInfo, nullptr, &_device) != VK_SUCCESS) {
-	    throw std::runtime_error("failed to create logical _device!");
+	    throw std::runtime_error("failed to create logical device!");
 	}
 
-	vkGetDeviceQueue(_device, _graphicQueueIndex, 0, &_graphicQueue);
-	vkGetDeviceQueue(_device, _presentQueueIndex, 0, &_presentQueue);
-	vkGetDeviceQueue(_device, _computeQueueIndex, 0, &_computeQueue);
+	vkGetDeviceQueue(_device, _queueIndex, 0, &_queue);
+	// vkGetDeviceQueue(_device, _graphicQueueIndex, 0, &_graphicQueue);
+	// vkGetDeviceQueue(_device, _presentQueueIndex, 0, &_presentQueue);
+	// vkGetDeviceQueue(_device, _computeQueueIndex, 0, &_computeQueue);
 
 	printf("Create logical device !\n");
 }
 
 void			VulkanInstance::CreateCommandBufferPools(void) noexcept
 {
-	_graphicCommandBufferPool.Initialize(CommandBufferQueue::Graphic);
-	_computeCommandBufferPool.Initialize(CommandBufferQueue::Compute);
+	_commandBufferPool.Initialize();
 }
 
 bool			VulkanInstance::AreExtensionsSupportedForPhysicalDevice(VkPhysicalDevice physicalDevice) noexcept
@@ -412,13 +406,17 @@ void		VulkanInstance::SetApplicationName(const std::string & applicationName) no
 
 VkInstance	VulkanInstance::GetInstance(void) const noexcept { return (this->_instance); }
 
-VkQueue		VulkanInstance::GetGraphicQueue(void) const noexcept { return (this->_graphicQueue); }
-VkQueue		VulkanInstance::GetPresentQueue(void) const noexcept { return (this->_presentQueue); }
-VkQueue		VulkanInstance::GetComputeQueue(void) const noexcept { return (this->_computeQueue); }
+VkQueue		VulkanInstance::GetQueue(void) const noexcept { return (this->_queue); }
+// Only one GPU supported
+// VkQueue		VulkanInstance::GetGraphicQueue(void) const noexcept { return (this->_graphicQueue); }
+// VkQueue		VulkanInstance::GetPresentQueue(void) const noexcept { return (this->_presentQueue); }
+// VkQueue		VulkanInstance::GetComputeQueue(void) const noexcept { return (this->_computeQueue); }
 
-uint32_t	VulkanInstance::GetGraphicQueueIndex(void) const noexcept { return (this->_graphicQueueIndex); }
-uint32_t	VulkanInstance::GetPresentQueueIndex(void) const noexcept { return (this->_presentQueueIndex); }
-uint32_t	VulkanInstance::GetComputeQueueIndex(void) const noexcept { return (this->_computeQueueIndex); }
+uint32_t	VulkanInstance::GetQueueIndex(void) const noexcept { return (this->_queueIndex); }
+// Only one GPU supported
+// uint32_t	VulkanInstance::GetGraphicQueueIndex(void) const noexcept { return (this->_graphicQueueIndex); }
+// uint32_t	VulkanInstance::GetPresentQueueIndex(void) const noexcept { return (this->_presentQueueIndex); }
+// uint32_t	VulkanInstance::GetComputeQueueIndex(void) const noexcept { return (this->_computeQueueIndex); }
 
 const std::vector< VkSurfaceFormatKHR >	VulkanInstance::GetSupportedSurfaceFormats(void) const noexcept { return (this->_surfaceFormats); }
 const std::vector< VkPresentModeKHR >	VulkanInstance::GetSupportedPresentModes(void) const noexcept { return (this->_surfacePresentModes); }
@@ -427,8 +425,9 @@ const VkSurfaceCapabilitiesKHR			VulkanInstance::GetSurfaceCapabilities(void) co
 VkPhysicalDevice	VulkanInstance::GetPhysicalDevice(void) const noexcept { return (this->_physicalDevice); }
 VkDevice			VulkanInstance::GetDevice(void) const noexcept { return (this->_device); }
 
-CommandBufferPool *	VulkanInstance::GetGraphicCommandBufferPool(void) noexcept { return &this->_graphicCommandBufferPool; }
-CommandBufferPool *	VulkanInstance::GetComputeCommandBufferPool(void) noexcept { return &this->_computeCommandBufferPool; }
+CommandBufferPool *	VulkanInstance::GetCommandBufferPool(void) noexcept { return &this->_commandBufferPool; }
+// CommandBufferPool *	VulkanInstance::GetGraphicCommandBufferPool(void) noexcept { return &this->_graphicCommandBufferPool; }
+// CommandBufferPool *	VulkanInstance::GetComputeCommandBufferPool(void) noexcept { return &this->_computeCommandBufferPool; }
 
 VkDescriptorPool	VulkanInstance::GetDescriptorPool(void) const noexcept
 {

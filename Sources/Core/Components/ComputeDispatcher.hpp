@@ -3,6 +3,7 @@
 #include "IncludeDeps.hpp"
 #include "Core/Components/Component.hpp"
 #include "Core/Vulkan/Material.hpp"
+#include "Core/Texture2D.hpp"
 
 #include <iostream>
 #include <string>
@@ -19,6 +20,9 @@ namespace LWGC
 			int							_depth;
 			VkCommandBuffer				_computeCommandBuffer;
 			ComponentIndex				_renderContextIndex;
+			
+			//TMP:
+			Texture2D *					_texture;
 
 			virtual void	Initialize(void) noexcept override;
 			void			OnEnable(void) noexcept override;
@@ -28,7 +32,7 @@ namespace LWGC
 
 		public:
 			ComputeDispatcher(void) = delete;
-			ComputeDispatcher(std::shared_ptr< Material > material, int width, int height, int depth = 0);
+			ComputeDispatcher(std::shared_ptr< Material > material, int width, int height, Texture2D * texture, int depth = 1);
 			ComputeDispatcher(const ComputeDispatcher &) = delete;
 			virtual ~ComputeDispatcher(void);
 

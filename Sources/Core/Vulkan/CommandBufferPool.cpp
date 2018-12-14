@@ -20,21 +20,11 @@ CommandBufferPool::~CommandBufferPool(void)
 	}
 }
 
-void				CommandBufferPool::Initialize(CommandBufferQueue queueType)
+void				CommandBufferPool::Initialize(void)
 {
 	_instance = VulkanInstance::Get();
-
-	switch (queueType)
-	{
-		case CommandBufferQueue::Graphic:
-			_queue = _instance->GetGraphicQueue();
-			_queueIndex = _instance->GetGraphicQueueIndex();
-			break ;
-		default:
-			_queue = _instance->GetComputeQueue();
-			_queueIndex = _instance->GetComputeQueueIndex();
-			break ;
-	}
+	_queue = _instance->GetQueue();
+	_queueIndex = _instance->GetQueueIndex();
 
 	VkCommandPoolCreateInfo poolInfo = {};
 	poolInfo.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;

@@ -95,17 +95,16 @@ void	RenderPass::BindMaterial(std::shared_ptr< Material > material)
 {
 	_currentMaterial = material;
 
-	BindDescriptorSet("material", material->GetDescriptorSet());
+	BindDescriptorSet(LWGCBinding::Material, material->GetDescriptorSet());
 
 	// mark all bindings to changed set they're all rebinded to the new material
 	for (auto & b : _currentBindings)
 		b.second.hasChanged = true;
 }
 
-void	RenderPass::SetCurrentCommandBuffers(const VkCommandBuffer graphicCommandBuffer, const VkCommandBuffer computeCommandBuffer)
+void	RenderPass::SetCurrentCommandBuffers(const VkCommandBuffer commandBuffer)
 {
-	_graphicCommandBuffer = graphicCommandBuffer;
-	_computeCommandBuffer = computeCommandBuffer;
+	_commandBuffer = commandBuffer;
 }
 
 void	RenderPass::UpdateDescriptorBindings(void)
@@ -120,7 +119,7 @@ void	RenderPass::UpdateDescriptorBindings(void)
 			if (firstSet != -1u)
 			{
 				vkCmdBindDescriptorSets(
-					_graphicCommandBuffer,
+					_commandBuffer,
 					VK_PIPELINE_BIND_POINT_GRAPHICS, 
 					_currentMaterial->GetPipelineLayout(),
 					firstSet,
@@ -132,30 +131,22 @@ void	RenderPass::UpdateDescriptorBindings(void)
 	}
 }
 
-void	RenderPass::EnqueueDrawCommand(VkCommandBuffer drawCommandBuffer)
+void	RenderPass::EnqueueCommand(VkCommandBuffer drawCommandBuffer)
 {
 	UpdateDescriptorBindings();
 
 	// The bind pipeline command is inside this command buffer, it 
 	// should be sorted to avoid unnecessary pipeline switch
-	_drawBuffers.push_back(drawCommandBuffer);
-}
-
-void	RenderPass::EnqueueComputeCommand(VkCommandBuffer computeCommandBuffer)
-{
-	UpdateDescriptorBindings();
-
-	_computeBuffers.push_back(computeCommandBuffer);
+	_secondaryBuffers.push_back(drawCommandBuffer);
 }
 
 void	RenderPass::ExecuteCommands(void)
 {
-	vkCmdExecuteCommands(_computeCommandBuffer, _computeBuffers.size(), _computeBuffers.data());
+	vkCmdExecuteCommands(_commandBuffer, _secondaryBuffers.size(), _secondaryBuffers.data());
 
-	vkCmdExecuteCommands(_graphicCommandBuffer, _drawBuffers.size(), _drawBuffers.data());
+	vkCmdExecuteCommands(_commandBuffer, _secondaryBuffers.size(), _secondaryBuffers.data());
 
-	_drawBuffers.clear();
-	_computeBuffers.clear();
+	_secondaryBuffers.clear();
 }
 
 void	RenderPass::ClearBindings(void)

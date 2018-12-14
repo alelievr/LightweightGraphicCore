@@ -10,12 +10,6 @@ namespace LWGC
 {
 	class	VulkanInstance;
 	
-	enum class CommandBufferQueue
-	{
-		Graphic,
-		Compute,
-	};
-	
 	class		CommandBufferPool
 	{
 		private:
@@ -31,7 +25,7 @@ namespace LWGC
 	
 			CommandBufferPool &	operator=(CommandBufferPool const & src) = delete;
 	
-			void			Initialize(CommandBufferQueue queueType);
+			void			Initialize(void);
 			VkCommandBuffer	Allocate(VkCommandBufferLevel level);
 			void			Allocate(VkCommandBufferLevel level, std::vector< VkCommandBuffer > & commandBuffers, size_t count);
 			void			FreeCommandBuffers(std::vector< VkCommandBuffer > commandBuffers) noexcept;

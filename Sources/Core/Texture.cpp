@@ -9,7 +9,7 @@ Texture::Texture(void) : width(0), height(0), depth(1), arraySize(1), autoGenera
 {
 	instance = VulkanInstance::Get();
 	device = instance->GetDevice();
-	graphicCommandBufferPool = instance->GetGraphicCommandBufferPool();
+	graphicCommandBufferPool = instance->GetCommandBufferPool();
 }
 
 Texture::Texture(Texture const & src)

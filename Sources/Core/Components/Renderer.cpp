@@ -37,7 +37,7 @@ void		Renderer::Initialize(void) noexcept
 
 	_material->Initialize(renderPipeline->GetSwapChain(), renderPipeline->GetRenderPass());
 
-	_drawCommandBuffer = VulkanInstance::Get()->GetGraphicCommandBufferPool()->Allocate(VK_COMMAND_BUFFER_LEVEL_SECONDARY);
+	_drawCommandBuffer = VulkanInstance::Get()->GetCommandBufferPool()->Allocate(VK_COMMAND_BUFFER_LEVEL_SECONDARY);
 
 	if (_descriptorSetLayout == VK_NULL_HANDLE)
 		CreateGraphicDescriptorSetLayout();

@@ -29,6 +29,11 @@ const std::string	SamplerBinding::NearestRepeat = "nearestRepeat";
 const std::string	SamplerBinding::AnisotropicTrilinearClamp = "anisotropicTrilinearClamp";
 const std::string	SamplerBinding::DepthCompare = "depthCompare";
 
+const std::string	LWGCBinding::Frame = "frame";
+const std::string	LWGCBinding::Camera = "camera";
+const std::string	LWGCBinding::Material = "material";
+const std::string	LWGCBinding::Object = "object";
+
 Material::Material(void)
 {
 	this->_pipelineLayout = VK_NULL_HANDLE;
@@ -73,7 +78,8 @@ Material::~Material(void)
 
 	CleanupPipeline();
 
-	vkDestroySampler(_device, _samplers[0], nullptr);
+	// TODO: destroy samplers from Vk::Samplers
+	// vkDestroySampler(_device, _samplers[0], nullptr);
 
 	vkDestroyBuffer(_device, _uniformPerMaterial.buffer, nullptr);
 	vkFreeMemory(_device, _uniformPerMaterial.memory, nullptr);
@@ -304,7 +310,7 @@ void					Material::CreateDescriptorSets(void)
 	else
 	{
 		// Find the descriptor layout based on the name of an uniform within it
-		VkDescriptorSetLayout		layout = _program->GetDescriptorSetLayout("material");
+		VkDescriptorSetLayout		layout = _program->GetDescriptorSetLayout(LWGCBinding::Material);
 		VkDescriptorSetAllocateInfo	allocInfo = {};
 		allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
 		allocInfo.descriptorPool = _instance->GetDescriptorPool();
@@ -324,7 +330,7 @@ void					Material::CreateDescriptorSets(void)
 
 		std::array<VkWriteDescriptorSet, 2> descriptorWrites = {};
 
-		SetBuffer("material", _uniformPerMaterial.buffer, sizeof(LWGC_PerMaterial));
+		SetBuffer(LWGCBinding::Material, _uniformPerMaterial.buffer, sizeof(LWGC_PerMaterial), VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER);
 		SetSampler(SamplerBinding::TrilinearClamp, Vk::Samplers::trilinearClamp);
 		SetSampler(SamplerBinding::TrilinearRepeat, Vk::Samplers::trilinearRepeat);
 		SetSampler(SamplerBinding::NearestClamp, Vk::Samplers::nearestClamp);
@@ -332,6 +338,7 @@ void					Material::CreateDescriptorSets(void)
 		SetSampler(SamplerBinding::AnisotropicTrilinearClamp, Vk::Samplers::anisotropicTrilinearClamp);
 		SetSampler(SamplerBinding::DepthCompare, Vk::Samplers::depthCompare);
 
+		// TODO: use SetBuffer instead
 		descriptorWrites[0].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
 		descriptorWrites[0].dstSet = _descriptorSet;
 		descriptorWrites[0].dstBinding = 0;
@@ -340,6 +347,7 @@ void					Material::CreateDescriptorSets(void)
 		descriptorWrites[0].descriptorCount = 1;
 		descriptorWrites[0].pBufferInfo = &bufferInfo;
 
+		// Use SetSampler instead
 		descriptorWrites[1].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
 		descriptorWrites[1].dstSet = _descriptorSet;
 		descriptorWrites[1].dstBinding = TRILINEAR_CLAMP_BINDING_INDEX;
@@ -382,7 +390,7 @@ void				Material::SetDescriptorSet(VkDescriptorSet set)
 	_descriptorSet = set;
 }
 
-void				Material::SetBuffer(const std::string & bindingName, VkBuffer buffer, size_t size)
+void				Material::SetBuffer(const std::string & bindingName, VkBuffer buffer, size_t size, VkDescriptorType descriptorType)
 {
 	std::array<VkWriteDescriptorSet, 1> descriptorWrites = {};
 	VkDescriptorBufferInfo bufferInfo = {};
@@ -394,7 +402,7 @@ void				Material::SetBuffer(const std::string & bindingName, VkBuffer buffer, si
 	descriptorWrites[0].dstSet = _descriptorSet;
 	descriptorWrites[0].dstBinding = _program->GetDescriptorIndex(bindingName);
 	descriptorWrites[0].dstArrayElement = 0;
-	descriptorWrites[0].descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+	descriptorWrites[0].descriptorType = descriptorType;
 	descriptorWrites[0].descriptorCount = 1;
 	descriptorWrites[0].pBufferInfo = &bufferInfo;
 

@@ -52,7 +52,7 @@ void			Vk::CreateImage(uint32_t width, uint32_t height, uint32_t depth, int arra
 	imageInfo.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
 	imageInfo.usage = usage;
 	imageInfo.samples = VK_SAMPLE_COUNT_1_BIT;
-	imageInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
+	imageInfo.sharingMode = VK_SHARING_MODE_CONCURRENT;
 
 	auto device = instance->GetDevice();
 	if (vkCreateImage(device, &imageInfo, nullptr, &image) != VK_SUCCESS)
@@ -107,7 +107,7 @@ void			Vk::CreateBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPro
 
 void			Vk::CopyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size)
 {
-	const auto & graphicCommandBufferPool = VulkanInstance::Get()->GetGraphicCommandBufferPool();
+	const auto & graphicCommandBufferPool = VulkanInstance::Get()->GetCommandBufferPool();
 	VkCommandBuffer commandBuffer = graphicCommandBufferPool->BeginSingle();
 
 	VkBufferCopy copyRegion = {};
@@ -119,7 +119,7 @@ void			Vk::CopyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size)
 
 void			Vk::CopyBufferToImage(VkBuffer buffer, VkImage image, uint32_t width, uint32_t height, uint32_t depth)
 {
-	const auto & graphicCommandBufferPool = VulkanInstance::Get()->GetGraphicCommandBufferPool();
+	const auto & graphicCommandBufferPool = VulkanInstance::Get()->GetCommandBufferPool();
 	VkCommandBuffer commandBuffer = graphicCommandBufferPool->BeginSingle();
 
 	VkBufferImageCopy region = {};

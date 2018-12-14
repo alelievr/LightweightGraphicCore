@@ -10,8 +10,6 @@
 #include "Core/GameObject.hpp"
 #include "Core/Vulkan/SwapChain.hpp"
 
-#define PER_CAMERA_BINDING_INDEX	1
-
 namespace LWGC
 {
 	class		Camera : public Object, public Component

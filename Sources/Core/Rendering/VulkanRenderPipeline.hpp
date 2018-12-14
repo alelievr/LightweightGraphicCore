@@ -34,7 +34,6 @@ namespace LWGC
 			UniformBuffer					uniformPerFrame;
 			VkDescriptorSet					perFrameDescriptorSet;
 			VkDescriptorSetLayout			perFrameDescriptorSetLayout;
-			VkCommandBuffer					computeCommandBuffer;
 			
 			void				RenderInternal(const std::vector< Camera * > & cameras, RenderContext & context);
 			void				UpdatePerframeUnformBuffer(void) noexcept;
@@ -49,7 +48,7 @@ namespace LWGC
 			size_t					currentFrame = 0;
 			RenderPass				renderPass;
 			SwapChain *				swapChain;
-			VkCommandBuffer			graphicCommandBuffer;
+			VkCommandBuffer			commandBuffer;
 			bool					framebufferResized;
 			
 			virtual void		CreateRenderPass(void);
