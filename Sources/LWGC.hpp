@@ -44,6 +44,7 @@
 // Components
 #include "Core/Components/Component.hpp"
 #include "Core/Components/MeshRenderer.hpp"
+#include "Core/Components/ProceduralRenderer.hpp"
 #include "Core/Components/Camera.hpp"
 #include "Core/Components/FreeCameraControls.hpp"
 #include "Core/Components/ComputeDispatcher.hpp"

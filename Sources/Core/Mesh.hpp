@@ -58,7 +58,7 @@ namespace LWGC
 			void						SetVertexAttributes(const std::vector< VertexAttributes > & tmp);
 			
 			static std::array< VkVertexInputAttributeDescription, 5 >	GetAttributeDescriptions(void);
-			static VkVertexInputBindingDescription						GetBindingDescription(void);
+			static std::array< VkVertexInputBindingDescription, 1 >		GetBindingDescription(void);
 			
 		private:
 			std::vector< int >			_indices;

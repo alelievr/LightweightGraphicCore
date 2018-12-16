@@ -127,7 +127,7 @@ void			EventSystem::BindWindow(GLFWwindow * window)
 
 	Application::update.AddListener([&](){
 			// Per-frame event system internal update
-			_current.type = EventType::Ignore;
+			// _current.type = EventType::Ignore;
 			_current.delta = _current.mousePosition - oldMousePosition;
 			oldMousePosition = _current.mousePosition;
 		}

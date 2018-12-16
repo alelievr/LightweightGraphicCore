@@ -8,6 +8,7 @@
 #include "IncludeDeps.hpp"
 #include "Core/Shaders/ShaderBindingTable.hpp"
 #include "Core/Vulkan/RenderPass.hpp"
+#include "Core/Shaders/BuiltinShaders.hpp"
 
 #include VULKAN_INCLUDE
 #include GLM_INCLUDE
@@ -80,6 +81,10 @@ namespace LWGC
 			std::vector< VkDescriptorSetLayout >	_setLayouts;
 			const ShaderBindingTable *				_bindingTable;
 			SetTable								_setTable;
+			VkPipelineVertexInputStateCreateInfo	_vertexInputState;
+			VkPipelineInputAssemblyStateCreateInfo	_inputAssemblyState;
+			VkPipelineDepthStencilStateCreateInfo	_depthStencilState;
+			VkPipelineRasterizationStateCreateInfo	_rasterizationState;
 	
 			void		CreateTextureSampler(void);
 			void		CreateUniformBuffer(void);
@@ -88,12 +93,13 @@ namespace LWGC
 			void		CreateGraphicPipeline(void);
 			void		CreateComputePipeline(void);
 			void		BindDescriptorSets(RenderPass * renderPass);
+			void		SetupDefaultSettings(void);
 	
 		public:
 			Material(void);
 			Material(const Material &);
 			Material(const std::string & shader, VkShaderStageFlagBits stage);
-			Material(const std::string & fragmentShader);
+			Material(const std::string & fragmentShader, const std::string & vertexShader = BuiltinShaders::DefaultVertex);
 			Material(ShaderProgram * program);
 			virtual ~Material(void);
 	
@@ -113,6 +119,11 @@ namespace LWGC
 			void				SetBuffer(const std::string & bindingName, VkBuffer buffer, size_t size, VkDescriptorType descriptorType);
 			void				SetTexture(const std::string & bindingName, const Texture & texture, VkImageLayout imageLayout, VkDescriptorType descriptorType);
 			void				SetSampler(const std::string & bindingName, VkSampler sampler);
+
+			void				SetVertexInputState(VkPipelineVertexInputStateCreateInfo info);
+			void				SetInputAssemblyState(VkPipelineInputAssemblyStateCreateInfo info);
+			void				SetDepthStencilState(VkPipelineDepthStencilStateCreateInfo info);
+			void				SetRasterizationState(VkPipelineRasterizationStateCreateInfo info);
 	};
 	
 	std::ostream &	operator<<(std::ostream & o, Material const & r);

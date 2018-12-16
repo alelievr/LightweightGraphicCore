@@ -48,7 +48,7 @@ void			ComputeDispatcher::Initialize(void) noexcept
 	vkCmdBindPipeline(_computeCommandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, _material->GetPipeline());
 
 	std::cout << "Dispatch: " << _width << ", " << _height << ", " << _depth << std::endl;
-	// vkCmdDispatch(_computeCommandBuffer, _width, _height, _depth);
+	vkCmdDispatch(_computeCommandBuffer, _width, _height, _depth);
 
 	VkImageMemoryBarrier barrier = {};
 	barrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;

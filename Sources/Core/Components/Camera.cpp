@@ -18,7 +18,7 @@ Camera::Camera(void) : _initDescriptorSetLayout(false)
 	this->_target = new RenderTarget();
 	this->_cameraType = CameraType::Perspective;
 	this->_fov = 60;
-	this->_nearPlane = 0.001f;
+	this->_nearPlane = 0.1f;
 	this->_farPlane = 1e10;
 
 	if (_perCameraDescriptorSetLayout != VK_NULL_HANDLE)

@@ -6,12 +6,16 @@
 
 using namespace LWGC;
 
-ProceduralRenderer::ProceduralRenderer(void)
+ProceduralRenderer::ProceduralRenderer(std::shared_ptr< Material > material, int verticeCount, int elementCount)
+	: Renderer(material), _verticeCount(verticeCount), _elementCount(elementCount)
 {
-}
+	// For procedural materials we don't need vertex input datas
+	VkPipelineVertexInputStateCreateInfo	vertexInputInfo = {};
+	vertexInputInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
+	vertexInputInfo.vertexBindingDescriptionCount = 0;
+	vertexInputInfo.vertexAttributeDescriptionCount = 0;
 
-ProceduralRenderer::ProceduralRenderer(std::shared_ptr< Material > material)
-{
+	material->SetVertexInputState(vertexInputInfo);
 }
 
 ProceduralRenderer::~ProceduralRenderer(void)

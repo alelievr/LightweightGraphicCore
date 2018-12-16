@@ -42,6 +42,7 @@ Material::Material(void)
 	_program = new ShaderProgram();
 	_program->SetSourceFile("Shaders/Error/Pink.hlsl", VK_SHADER_STAGE_FRAGMENT_BIT);
 	_program->SetSourceFile(BuiltinShaders::DefaultVertex, VK_SHADER_STAGE_VERTEX_BIT);
+	SetupDefaultSettings();
 }
 
 Material::Material(const std::string & shader, VkShaderStageFlagBits stage)
@@ -49,19 +50,22 @@ Material::Material(const std::string & shader, VkShaderStageFlagBits stage)
 	_program = new ShaderProgram();
 	_program->SetSourceFile(shader, stage);
 	this->_bindingTable = nullptr;
+	SetupDefaultSettings();
 }
 
-Material::Material(const std::string & fragmentShader)
+Material::Material(const std::string & fragmentShader, const std::string & vertexShader)
 {
 	_program = new ShaderProgram();
 	_program->SetSourceFile(fragmentShader, VK_SHADER_STAGE_FRAGMENT_BIT);
-	_program->SetSourceFile(BuiltinShaders::DefaultVertex, VK_SHADER_STAGE_VERTEX_BIT);
+	_program->SetSourceFile(vertexShader, VK_SHADER_STAGE_VERTEX_BIT);
 	this->_bindingTable = nullptr;
+	SetupDefaultSettings();
 }
 
 Material::Material(ShaderProgram * program)
 {
 	_program = program;
+	SetupDefaultSettings();
 }
 
 Material::Material(Material const & src)
@@ -101,6 +105,46 @@ Material &	Material::operator=(Material const & src)
 		this->_swapChain = src._swapChain;
 	}
 	return (*this);
+}
+
+void					Material::SetupDefaultSettings(void)
+{
+	static auto bindingDescription = Mesh::GetBindingDescription();
+	static auto attributeDescriptions = Mesh::GetAttributeDescriptions();
+
+	_vertexInputState = {};
+	_vertexInputState.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
+	_vertexInputState.vertexBindingDescriptionCount = bindingDescription.size();
+	_vertexInputState.vertexAttributeDescriptionCount = static_cast<uint32_t>(attributeDescriptions.size());
+	_vertexInputState.pVertexBindingDescriptions = bindingDescription.data();
+	_vertexInputState.pVertexAttributeDescriptions = attributeDescriptions.data();
+
+	_inputAssemblyState = {};
+	_inputAssemblyState.sType = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO;
+	_inputAssemblyState.topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST;
+	_inputAssemblyState.primitiveRestartEnable = VK_FALSE;
+
+	_depthStencilState = {};
+	_depthStencilState.sType = VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO;
+	_depthStencilState.depthTestEnable = VK_TRUE;
+	_depthStencilState.depthWriteEnable = VK_TRUE;
+	_depthStencilState.depthCompareOp = VK_COMPARE_OP_LESS;
+	_depthStencilState.depthBoundsTestEnable = VK_FALSE;
+	_depthStencilState.minDepthBounds = 0.0f; // Optional
+	_depthStencilState.maxDepthBounds = 1.0f; // Optional
+	_depthStencilState.stencilTestEnable = VK_FALSE;
+	_depthStencilState.front = {}; // Optional
+	_depthStencilState.back = {}; // Optional
+
+	_rasterizationState = {};
+	_rasterizationState.sType = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO;
+	_rasterizationState.depthClampEnable = VK_FALSE;
+	_rasterizationState.rasterizerDiscardEnable = VK_FALSE;
+	_rasterizationState.polygonMode = VK_POLYGON_MODE_FILL;
+	_rasterizationState.lineWidth = 1.0f;
+	_rasterizationState.cullMode = VK_CULL_MODE_BACK_BIT;
+	_rasterizationState.frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE;
+	_rasterizationState.depthBiasEnable = VK_FALSE;
 }
 
 void					Material::Initialize(SwapChain * swapChain, RenderPass * renderPass)
@@ -192,22 +236,6 @@ void					Material::CreateComputePipeline(void)
 
 void					Material::CreateGraphicPipeline(void)
 {
-	VkPipelineVertexInputStateCreateInfo vertexInputInfo = {};
-	vertexInputInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
-
-	auto bindingDescription = Mesh::GetBindingDescription();
-	auto attributeDescriptions = Mesh::GetAttributeDescriptions();
-
-	vertexInputInfo.vertexBindingDescriptionCount = 1;
-	vertexInputInfo.vertexAttributeDescriptionCount = static_cast<uint32_t>(attributeDescriptions.size());
-	vertexInputInfo.pVertexBindingDescriptions = &bindingDescription;
-	vertexInputInfo.pVertexAttributeDescriptions = attributeDescriptions.data();
-
-	VkPipelineInputAssemblyStateCreateInfo inputAssembly = {};
-	inputAssembly.sType = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO;
-	inputAssembly.topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST;
-	inputAssembly.primitiveRestartEnable = VK_FALSE;
-
 	const auto & extent = _swapChain->GetExtent();
 	VkViewport viewport = {};
 	viewport.x = 0.0f;
@@ -227,16 +255,6 @@ void					Material::CreateGraphicPipeline(void)
 	viewportState.pViewports = &viewport;
 	viewportState.scissorCount = 1;
 	viewportState.pScissors = &scissor;
-
-	VkPipelineRasterizationStateCreateInfo rasterizer = {};
-	rasterizer.sType = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO;
-	rasterizer.depthClampEnable = VK_FALSE;
-	rasterizer.rasterizerDiscardEnable = VK_FALSE;
-	rasterizer.polygonMode = VK_POLYGON_MODE_FILL;
-	rasterizer.lineWidth = 1.0f;
-	rasterizer.cullMode = VK_CULL_MODE_BACK_BIT;
-	rasterizer.frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE;
-	rasterizer.depthBiasEnable = VK_FALSE;
 
 	VkPipelineMultisampleStateCreateInfo multisampling = {};
 	multisampling.sType = VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO;
@@ -258,33 +276,21 @@ void					Material::CreateGraphicPipeline(void)
 	colorBlending.blendConstants[2] = 0.0f;
 	colorBlending.blendConstants[3] = 0.0f;
 
-	VkPipelineDepthStencilStateCreateInfo depthStencil = {};
-	depthStencil.sType = VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO;
-	depthStencil.depthTestEnable = VK_TRUE;
-	depthStencil.depthWriteEnable = VK_TRUE;
-	depthStencil.depthCompareOp = VK_COMPARE_OP_LESS;
-	depthStencil.depthBoundsTestEnable = VK_FALSE;
-	depthStencil.minDepthBounds = 0.0f; // Optional
-	depthStencil.maxDepthBounds = 1.0f; // Optional
-	depthStencil.stencilTestEnable = VK_FALSE;
-	depthStencil.front = {}; // Optional
-	depthStencil.back = {}; // Optional
-
 	VkGraphicsPipelineCreateInfo pipelineInfo = {};
 	pipelineInfo.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
 	pipelineInfo.stageCount = 2;
 	pipelineInfo.pStages = _program->GetShaderStages();
-	pipelineInfo.pVertexInputState = &vertexInputInfo;
-	pipelineInfo.pInputAssemblyState = &inputAssembly;
+	pipelineInfo.pVertexInputState = &_vertexInputState;
+	pipelineInfo.pInputAssemblyState = &_inputAssemblyState;
 	pipelineInfo.pViewportState = &viewportState;
-	pipelineInfo.pRasterizationState = &rasterizer;
+	pipelineInfo.pRasterizationState = &_rasterizationState;
 	pipelineInfo.pMultisampleState = &multisampling;
 	pipelineInfo.pColorBlendState = &colorBlending;
 	pipelineInfo.layout = _pipelineLayout;
 	pipelineInfo.renderPass = _renderPass->GetRenderPass();
 	pipelineInfo.subpass = 0;
 	pipelineInfo.basePipelineHandle = VK_NULL_HANDLE;
-	pipelineInfo.pDepthStencilState = &depthStencil;
+	pipelineInfo.pDepthStencilState = &_depthStencilState;
 
 	if (vkCreateGraphicsPipelines(_device, VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &_pipeline) != VK_SUCCESS)
 		throw std::runtime_error("failed to create graphics pipeline!");
@@ -432,6 +438,11 @@ void				Material::BindDescriptorSets(RenderPass * renderPass)
 	for (const auto & k : _setTable)
 		renderPass->BindDescriptorSet(k.second.name, k.second.set);
 }
+
+void				Material::SetVertexInputState(VkPipelineVertexInputStateCreateInfo info) { _vertexInputState = info; }
+void				Material::SetInputAssemblyState(VkPipelineInputAssemblyStateCreateInfo info) { _inputAssemblyState = info; }
+void				Material::SetDepthStencilState(VkPipelineDepthStencilStateCreateInfo info) { _depthStencilState = info; }
+void				Material::SetRasterizationState(VkPipelineRasterizationStateCreateInfo info) { _rasterizationState = info; }
 
 std::ostream &	operator<<(std::ostream & o, Material const & r)
 {

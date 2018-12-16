@@ -6,11 +6,6 @@
 
 using namespace LWGC;
 
-MeshRenderer::MeshRenderer(void)
-{
-	_mesh = std::make_shared< Mesh >();
-}
-
 MeshRenderer::MeshRenderer(const PrimitiveType prim, std::shared_ptr< Material > material) : Renderer(material)
 {
 	_mesh = PrimitiveMeshFactory::CreateMesh(prim);
