@@ -38,13 +38,10 @@ namespace LWGC
 			bool		IsCompute(void) const noexcept;
 
 			void								SetSourceFile(const std::string & file, VkShaderStageFlagBits stage);
-			uint32_t							GetDescriptorSetBinding(const std::string & bindingName) const;
-			uint32_t							GetDescriptorIndex(const std::string & setElementName) const;
-			std::vector< VkDescriptorSetLayout >GetDescriptorSetLayouts(void) const;
 			VkPipelineShaderStageCreateInfo *	GetShaderStages();
-			VkDescriptorSetLayout				GetDescriptorSetLayout(const std::string & setElementName) const;
 			void								GetWorkingThreadSize(uint32_t & width, uint32_t & height, uint32_t & depth);
 			bool								HasBinding(const std::string & bindingName) const;
+			const ShaderBindingTable *			GetShaderBindingTable(void) const;
 	};
 
 	std::ostream &	operator<<(std::ostream & o, ShaderProgram const & r);

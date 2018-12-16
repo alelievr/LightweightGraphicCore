@@ -23,10 +23,7 @@ namespace LWGC
 		public:
 			ProceduralRenderer(void);
 			ProceduralRenderer(const ProceduralRenderer &) = delete;
-			ProceduralRenderer(const PrimitiveType prim, std::shared_ptr< Material > material);
-			// TODO: the primitiveType constructor must be into Mesh.cpp
-			// TODO: Add a constructor with a mesh and a material
-			ProceduralRenderer(const PrimitiveType primitiveType);
+			ProceduralRenderer(std::shared_ptr< Material > material);
 			virtual ~ProceduralRenderer(void);
 
 			ProceduralRenderer &	operator=(ProceduralRenderer const & src) = delete;

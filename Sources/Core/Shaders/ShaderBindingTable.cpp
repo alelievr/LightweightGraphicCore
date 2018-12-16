@@ -20,7 +20,6 @@ void					ShaderBindingTable::SetStage(VkShaderStageFlagBits stage)
 
 ShaderBinding &			ShaderBindingTable::AddBinding(const std::string & name, int descriptorSet, int bindingIndex, VkDescriptorType descriptorType)
 {
-	std::cout << "Add binding: " << descriptorSet << ":" << bindingIndex << std::endl;
 	return (_bindings.insert({name, ShaderBinding{
 		descriptorSet,
 		bindingIndex,
@@ -47,7 +46,7 @@ void					ShaderBindingTable::GenerateSetLayouts()
 	_descriptorSetLayout.resize(maxDescriptorSet);
 	for (int i = 0; i < maxDescriptorSet; i++)
 	{
-		// Fill empty descriptor sets with so they're all contiguous
+		// Fill gaps with empty descriptor sets so they're all contiguous
 		if (layoutBindings.find(i) == layoutBindings.end())
 			Vk::CreateDescriptorSetLayout({}, _descriptorSetLayout[i]);
 		else
@@ -95,6 +94,16 @@ uint32_t				ShaderBindingTable::GetDescriptorIndex(const std::string & bindingNa
 		throw std::runtime_error("Can't find descriptor index for binding name: '" + bindingName + "'");
 	
 	return set->second.bindingIndex;
+}
+
+std::vector< std::string >	ShaderBindingTable::GetBindingNames()
+{
+	std::vector< std::string > bindings;
+
+	for (const auto & k : _bindings)
+		bindings.push_back(k.first);
+
+	return bindings;
 }
 
 const std::vector< VkDescriptorSetLayout > &	ShaderBindingTable::GetDescriptorSetLayouts(void) const { return _descriptorSetLayout; }

@@ -68,6 +68,12 @@ void		FreeCameraControls::Update(void) noexcept
 		case KeyCode::Q:
 			_up = (keyDown) ? -1 : 0;
 			break ;
+		case KeyCode::KP_ADD:
+			_speed *= 1.1f;
+			break ;
+		case KeyCode::KP_SUBTRACT:
+			_speed /= 1.1f;
+			break ;
 		default:
 		break;
 	}

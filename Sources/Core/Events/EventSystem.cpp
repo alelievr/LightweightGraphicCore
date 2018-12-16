@@ -107,7 +107,7 @@ void			EventSystem::BindWindow(GLFWwindow * window)
 				self->_onMouseUp(pos.x, pos.y, button);
 
 			(void)mods;
-		}		
+		}
 	);
 	glfwSetCursorPosCallback(window, [](GLFWwindow * window, double posX, double posY)
 		{
@@ -127,6 +127,7 @@ void			EventSystem::BindWindow(GLFWwindow * window)
 
 	Application::update.AddListener([&](){
 			// Per-frame event system internal update
+			_current.type = EventType::Ignore;
 			_current.delta = _current.mousePosition - oldMousePosition;
 			oldMousePosition = _current.mousePosition;
 		}

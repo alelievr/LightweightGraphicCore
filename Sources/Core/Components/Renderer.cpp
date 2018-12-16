@@ -116,23 +116,12 @@ void		Renderer::RecordDrawCommandBuffer(void)
 		throw std::runtime_error("failed to begin recording command buffer!");
 	}
 
-	vkCmdBindPipeline(_drawCommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, _material->GetPipeline());
-
-	// TODO: remove
-	BindDescriptorSet(_drawCommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS);
-	
 	RecordDrawCommand(_drawCommandBuffer);
 
 	if (vkEndCommandBuffer(_drawCommandBuffer) != VK_SUCCESS)
 	{
 		throw std::runtime_error("failed to record command buffer!");
 	}
-}
-
-void		Renderer::BindDescriptorSet(VkCommandBuffer cmd, VkPipelineBindPoint bindPoint)
-{
-	// TODO: use renderpass binding
-	vkCmdBindDescriptorSets(cmd, bindPoint, _material->GetPipelineLayout(), PER_OBJECT_BINDING_INDEX, 1, &_descriptorSet, 0, nullptr);
 }
 
 Bounds		Renderer::GetBounds(void)
@@ -167,13 +156,7 @@ std::shared_ptr< Material >	Renderer::GetMaterial(void) const { return (this->_m
 void						Renderer::SetMaterial(std::shared_ptr< Material > tmp) { this->_material = tmp; }
 
 VkCommandBuffer				Renderer::GetDrawCommandBuffer(void) const { return _drawCommandBuffer; }
-
-VkDescriptorSetLayout		Renderer::GetGraphicDescriptorSetLayout(void) noexcept
-{
-	if (_descriptorSetLayout == VK_NULL_HANDLE)
-		CreateGraphicDescriptorSetLayout();
-	return _descriptorSetLayout;
-}
+VkDescriptorSet				Renderer::GetDescriptorSet(void) const { return _descriptorSet; }
 
 std::ostream &	operator<<(std::ostream & o, Renderer const & r)
 {

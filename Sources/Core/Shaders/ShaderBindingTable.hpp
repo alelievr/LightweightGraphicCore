@@ -35,12 +35,13 @@ namespace LWGC
 			void			SetStage(VkShaderStageFlagBits stage);
 			ShaderBinding &	AddBinding(const std::string & name, int descriptorSet, int bindingIndex, VkDescriptorType descriptorType);
 			void			GenerateSetLayouts(void);
-			uint32_t		GetDescriptorSetBinding(const std::string & bindingName) const;
-			uint32_t		GetDescriptorIndex(const std::string & bindingName) const;
 			bool			HasBinding(const std::string & bindingName) const;
 
 			const std::vector< VkDescriptorSetLayout > &	GetDescriptorSetLayouts(void) const;
 			VkDescriptorSetLayout							GetDescriptorSetLayout(const std::string & setElementName) const;
+			std::vector< std::string >						GetBindingNames();
+			uint32_t										GetDescriptorSetBinding(const std::string & bindingName) const;
+			uint32_t										GetDescriptorIndex(const std::string & bindingName) const;
 
 			ShaderBindingTable &	operator=(ShaderBindingTable const & src) = delete;
 	};

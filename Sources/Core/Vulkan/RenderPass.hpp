@@ -5,14 +5,17 @@
 #include <unordered_map>
 
 #include "VulkanInstance.hpp"
-#include "Core/Vulkan/Material.hpp"
 
 namespace LWGC
 {
 	class SwapChain;
+	class Material;
+	class Texture;
 	
 	class		RenderPass
 	{
+		friend class Material; // For binding
+
 		private:
 			struct DescriptorSet
 			{
@@ -33,10 +36,10 @@ namespace LWGC
 			uint32_t								_attachmentCount;
 			VkCommandBuffer							_commandBuffer;
 			DescriptorBindings						_currentBindings;
-			std::vector< VkCommandBuffer >			_secondaryBuffers;
 			std::shared_ptr< Material > 			_currentMaterial;
 
 			void	UpdateDescriptorBindings(void);
+			bool	BindDescriptorSet(const uint32_t binding, VkDescriptorSet set);
 	
 		public:
 			RenderPass(void);
@@ -51,11 +54,13 @@ namespace LWGC
 			void	AddDependency(const VkSubpassDependency & dependency) noexcept;
 			bool	BindDescriptorSet(const std::string & name, VkDescriptorSet set);
 			void	BindMaterial(std::shared_ptr< Material > material);
+			void	BindBuffer(const std::string & bindingName, VkBuffer buffer, size_t size, VkDescriptorType descriptorType);
+			void	BindTexture(const std::string & bindingName, const Texture & texture, VkImageLayout imageLayout, VkDescriptorType descriptorType);
+			void	BindSampler(const std::string & bindingName, VkSampler sampler);
 			void	SetCurrentCommandBuffers(const VkCommandBuffer commandBuffer);
-			void	EnqueueCommand(VkCommandBuffer drawCommandBuffer);
+			void	EnqueueCommand(VkCommandBuffer secondaryCommandBuffer);
 			void	Cleanup(void) noexcept;
 			void	Create(void);
-			void	ExecuteCommands(void);
 			void	ClearBindings(void);
 	
 			VkRenderPass	GetRenderPass(void) const noexcept;
