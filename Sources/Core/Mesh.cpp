@@ -118,12 +118,13 @@ std::array< VkVertexInputAttributeDescription, 5 >	Mesh::GetAttributeDescription
 	return attributeDescriptions;
 }
 
-VkVertexInputBindingDescription						Mesh::GetBindingDescription(void)
+std::array< VkVertexInputBindingDescription, 1 >	Mesh::GetBindingDescription(void)
 {
-	VkVertexInputBindingDescription bindingDescription = {};
-	bindingDescription.binding = 0;
-	bindingDescription.stride = sizeof(VertexAttributes);
-	bindingDescription.inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
+	std::array< VkVertexInputBindingDescription, 1 > bindingDescription = {};
+
+	bindingDescription[0].binding = 0;
+	bindingDescription[0].stride = sizeof(VertexAttributes);
+	bindingDescription[0].inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
 
 	return bindingDescription;
 }

@@ -21,7 +21,7 @@ namespace LWGC
 			void		RecordDrawCommand(VkCommandBuffer cmd) noexcept override;
 
 		public:
-			MeshRenderer(void);
+			MeshRenderer(void) = delete;
 			MeshRenderer(const MeshRenderer &) = delete;
 			MeshRenderer(const PrimitiveType prim, std::shared_ptr< Material > material);
 			// TODO: the primitiveType constructor must be into Mesh.cpp

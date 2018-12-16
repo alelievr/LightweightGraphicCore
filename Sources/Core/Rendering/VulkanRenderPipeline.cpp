@@ -217,23 +217,24 @@ void			VulkanRenderPipeline::CreateSyncObjects(void)
 
 void			VulkanRenderPipeline::RecreateSwapChain(RenderContext & renderContext)
 {
-	std::unordered_set< MeshRenderer * >	meshRenderers;
+	std::unordered_set< Renderer * >	renderers;
 	vkDeviceWaitIdle(device);
 
 	swapChain->Cleanup();
 	renderPass.Cleanup();
 
 	// Rebuild all Material graphic pipelines
-	renderContext.GetMeshRenderers(meshRenderers);
+	// TODO: do not work with compute dispatchers
+	renderContext.GetRenderers(renderers);
 	
-	for (auto & meshRenderer : meshRenderers)
+	for (auto & meshRenderer : renderers)
 		meshRenderer->CleanupPipeline();
 
 	instance->UpdateSurface();
 	swapChain->Create();
 	CreateRenderPass();
 
-	for (auto & meshRenderer : meshRenderers)
+	for (auto & meshRenderer : renderers)
 		meshRenderer->CreatePipeline();
 }
 
@@ -347,13 +348,13 @@ void	VulkanRenderPipeline::Render(const std::vector< Camera * > & cameras, Rende
 
 	for (const auto camera : cameras)
 	{
-		std::unordered_set< MeshRenderer * >	meshRenderers;
+		std::unordered_set< Renderer * >	renderers;
 		
 		renderPass.BindDescriptorSet(LWGCBinding::Camera, camera->GetDescriptorSet());
 
-		context.GetMeshRenderers(meshRenderers);
+		context.GetRenderers(renderers);
 
-		for (const auto & meshRenderer : meshRenderers)
+		for (const auto & meshRenderer : renderers)
 		{
 			auto m = meshRenderer->GetMaterial();
 			renderPass.BindDescriptorSet(LWGCBinding::Object, meshRenderer->GetDescriptorSet());

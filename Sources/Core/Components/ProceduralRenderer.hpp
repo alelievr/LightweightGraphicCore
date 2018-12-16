@@ -21,9 +21,9 @@ namespace LWGC
 			void		RecordDrawCommand(VkCommandBuffer cmd) noexcept override;
 
 		public:
-			ProceduralRenderer(void);
+			ProceduralRenderer(void) = delete;
 			ProceduralRenderer(const ProceduralRenderer &) = delete;
-			ProceduralRenderer(std::shared_ptr< Material > material);
+			ProceduralRenderer(std::shared_ptr< Material > material, int verticeCout = 1, int elementCount = 1);
 			virtual ~ProceduralRenderer(void);
 
 			ProceduralRenderer &	operator=(ProceduralRenderer const & src) = delete;

@@ -6,7 +6,7 @@
 namespace LWGC
 {
     class Light;
-    class MeshRenderer;
+    class Renderer;
     class Component;
     class ComputeDispatcher;
 
@@ -23,8 +23,10 @@ namespace LWGC
 
             template< class T >
             void    GetComponentSet(uint32_t componentType, std::unordered_set< T * > & components);
+            template< class T >
+            void    GetComponentSet(std::unordered_set< T * > & components);
             void    GetLights(std::unordered_set< Light * > & lights);
-            void    GetMeshRenderers(std::unordered_set< MeshRenderer * > & meshRenderers);
+            void    GetRenderers(std::unordered_set< Renderer * > & meshRenderers);
             void    GetComputeDispatchers(std::unordered_set< ComputeDispatcher * > & computeDispatchers);
     };
 }
