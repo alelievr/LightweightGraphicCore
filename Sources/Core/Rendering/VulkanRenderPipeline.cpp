@@ -336,10 +336,6 @@ void	VulkanRenderPipeline::Render(const std::vector< Camera * > & cameras, Rende
 
 	context.GetComputeDispatchers(computeDispatchers);
 
-	VkCommandBufferBeginInfo beginInfo = {};
-	beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
-	beginInfo.flags = VK_COMMAND_BUFFER_USAGE_SIMULTANEOUS_USE_BIT;
-
 	for (auto & compute : computeDispatchers)
 	{
 		auto m = compute->GetMaterial();
@@ -360,6 +356,7 @@ void	VulkanRenderPipeline::Render(const std::vector< Camera * > & cameras, Rende
 		for (const auto & meshRenderer : meshRenderers)
 		{
 			auto m = meshRenderer->GetMaterial();
+			renderPass.BindDescriptorSet(LWGCBinding::Object, meshRenderer->GetDescriptorSet());
 			renderPass.BindMaterial(m);
 
 			// TODO: put an event listener in MeshRenderer and update uniforms from there
@@ -367,8 +364,6 @@ void	VulkanRenderPipeline::Render(const std::vector< Camera * > & cameras, Rende
 			
 			renderPass.EnqueueCommand(meshRenderer->GetDrawCommandBuffer());
 		}
-
-		renderPass.ExecuteCommands();
 	}
 
 	EndRenderPass();

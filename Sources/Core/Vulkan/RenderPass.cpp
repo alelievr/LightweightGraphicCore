@@ -1,5 +1,7 @@
 #include "RenderPass.hpp"
 
+#include "Core/Vulkan/Material.hpp"
+
 using namespace LWGC;
 
 RenderPass::RenderPass(void)
@@ -95,11 +97,17 @@ void	RenderPass::BindMaterial(std::shared_ptr< Material > material)
 {
 	_currentMaterial = material;
 
-	BindDescriptorSet(LWGCBinding::Material, material->GetDescriptorSet());
+	material->BindDescriptorSets(this);
 
 	// mark all bindings to changed set they're all rebinded to the new material
 	for (auto & b : _currentBindings)
 		b.second.hasChanged = true;
+
+	vkCmdBindPipeline(
+		_commandBuffer,
+		_currentMaterial->IsCompute() ?	VK_PIPELINE_BIND_POINT_COMPUTE : VK_PIPELINE_BIND_POINT_GRAPHICS,
+		material->GetPipeline()
+	);
 }
 
 void	RenderPass::SetCurrentCommandBuffers(const VkCommandBuffer commandBuffer)
@@ -120,7 +128,7 @@ void	RenderPass::UpdateDescriptorBindings(void)
 			{
 				vkCmdBindDescriptorSets(
 					_commandBuffer,
-					VK_PIPELINE_BIND_POINT_GRAPHICS, 
+					_currentMaterial->IsCompute() ?	VK_PIPELINE_BIND_POINT_COMPUTE : VK_PIPELINE_BIND_POINT_GRAPHICS, 
 					_currentMaterial->GetPipelineLayout(),
 					firstSet,
 					1, &b.second.set,
@@ -131,22 +139,13 @@ void	RenderPass::UpdateDescriptorBindings(void)
 	}
 }
 
-void	RenderPass::EnqueueCommand(VkCommandBuffer drawCommandBuffer)
+void	RenderPass::EnqueueCommand(VkCommandBuffer secondaryCommandBuffer)
 {
 	UpdateDescriptorBindings();
 
 	// The bind pipeline command is inside this command buffer, it 
 	// should be sorted to avoid unnecessary pipeline switch
-	_secondaryBuffers.push_back(drawCommandBuffer);
-}
-
-void	RenderPass::ExecuteCommands(void)
-{
-	vkCmdExecuteCommands(_commandBuffer, _secondaryBuffers.size(), _secondaryBuffers.data());
-
-	vkCmdExecuteCommands(_commandBuffer, _secondaryBuffers.size(), _secondaryBuffers.data());
-
-	_secondaryBuffers.clear();
+	vkCmdExecuteCommands(_commandBuffer, 1, &secondaryCommandBuffer);
 }
 
 void	RenderPass::ClearBindings(void)

@@ -6,14 +6,14 @@
 #include "Core/Texture.hpp"
 #include "Core/Vulkan/UniformBuffer.hpp"
 #include "IncludeDeps.hpp"
+#include "Core/Shaders/ShaderBindingTable.hpp"
+#include "Core/Vulkan/RenderPass.hpp"
 
 #include VULKAN_INCLUDE
 #include GLM_INCLUDE
 #include "VulkanInstance.hpp"
 #include "Vk.hpp"
 #include "Core/Shaders/ShaderProgram.hpp"
-
-#define TRILINEAR_CLAMP_BINDING_INDEX	1
 
 namespace LWGC
 {
@@ -51,13 +51,22 @@ namespace LWGC
 
 	class		Material
 	{
+		friend class RenderPass; // For binding descriptor sets
+
 		private:
 			struct LWGC_PerMaterial
 			{
 				glm::vec4		albedo;
 			};
 
-			VkDescriptorSet							_descriptorSet;
+			struct	DescriptorSet
+			{
+				VkDescriptorSet	set;
+				std::string		name;
+			};
+
+			using SetTable = std::unordered_map< uint32_t, DescriptorSet >;
+
 			VkPipelineLayout						_pipelineLayout;
 			VkPipeline								_pipeline;
 			LWGC_PerMaterial						_perMaterial;
@@ -69,14 +78,16 @@ namespace LWGC
 			RenderPass *							_renderPass;
 			ShaderProgram *							_program;
 			std::vector< VkDescriptorSetLayout >	_setLayouts;
+			const ShaderBindingTable *				_bindingTable;
+			SetTable								_setTable;
 	
 			void		CreateTextureSampler(void);
 			void		CreateUniformBuffer(void);
-			void		CreateDescriptorSets(void);
 			void		CreatePipelineLayout(void);
 			void		CompileShaders(void);
 			void		CreateGraphicPipeline(void);
 			void		CreateComputePipeline(void);
+			void		BindDescriptorSets(RenderPass * renderPass);
 	
 		public:
 			Material(void);
@@ -92,19 +103,16 @@ namespace LWGC
 			void	CleanupPipeline(void) noexcept;
 			void	CreatePipeline(void);
 			void	UpdateUniformBuffer(void);
+			void	AllocateDescriptorSet(const std::string & bindingName);
 
 			VkPipeline			GetPipeline(void) const;
 			VkPipelineLayout	GetPipelineLayout(void) const;
 			uint32_t			GetDescriptorSetBinding(const std::string & setName) const;
-			VkDescriptorSet		GetDescriptorSet(void) const;
+			bool				IsCompute(void) const;
 
 			void				SetBuffer(const std::string & bindingName, VkBuffer buffer, size_t size, VkDescriptorType descriptorType);
 			void				SetTexture(const std::string & bindingName, const Texture & texture, VkImageLayout imageLayout, VkDescriptorType descriptorType);
 			void				SetSampler(const std::string & bindingName, VkSampler sampler);
-
-
-			// TMP:
-			void				SetDescriptorSet(VkDescriptorSet set);
 	};
 	
 	std::ostream &	operator<<(std::ostream & o, Material const & r);

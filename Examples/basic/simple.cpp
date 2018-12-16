@@ -43,25 +43,7 @@ int			main(void)
 	VkBuffer buffer;
 	VkDeviceMemory mem;
 	{
-		auto binding1 = Vk::CreateDescriptorSetLayoutBinding(0, VK_DESCRIPTOR_TYPE_STORAGE_IMAGE, VK_SHADER_STAGE_ALL);
-		// auto binding2 = Vk::CreateDescriptorSetLayoutBinding(1, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_ALL);
-		VkDescriptorSetLayout layout;
-		Vk::CreateDescriptorSetLayout({binding1}, layout);
-
-		VkDescriptorSetAllocateInfo allocInfo = {};
-		allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
-		allocInfo.descriptorPool = VulkanInstance::Get()->GetDescriptorPool();
-		allocInfo.descriptorSetCount = 1u;
-		allocInfo.pSetLayouts = &layout;
 		Vk::CreateBuffer(sizeof(test), VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, buffer, mem);
-
-		auto device = VulkanInstance::Get()->GetDevice();
-
-		VkDescriptorSet set;
-		if (vkAllocateDescriptorSets(device, &allocInfo, &set) != VK_SUCCESS)
-			throw std::runtime_error("failed to allocate descriptor sets!");
-
-		// writeProceduralTexture->SetDescriptorSet(set);
 	}
 	// End Temporary stuff
 
@@ -69,17 +51,29 @@ int			main(void)
 
 	// auto testMat = std::make_shared< Material >(BuiltinShaders::Standard);
 	// auto cube = new GameObject(new MeshRenderer(PrimitiveType::Cube, testMat));
-	auto cube = new GameObject(new MeshRenderer(PrimitiveType::Cube, displayProceduralTexture));
+	auto cube1 = new GameObject(new MeshRenderer(PrimitiveType::Cube, displayProceduralTexture));
 	auto cam = new GameObject(new Camera());
 	const int workGroupSize = 8; // Work group size in the compute shader
-	// cube->AddComponent(new ComputeDispatcher(writeProceduralTexture, 512 / workGroupSize, 512 / workGroupSize, &jibril));
-	cube->GetTransform()->Translate(glm::vec3(0, 1, 0));
+	// cube1->AddComponent(new ComputeDispatcher(writeProceduralTexture, 512 / workGroupSize, 512 / workGroupSize, &jibril));
+	cube1->GetTransform()->Translate(glm::vec3(0, 1, 0));
+
+	srand(time(NULL) + clock());
+	for (int i = 0; i < 100; i++)
+	{
+		auto cube = new GameObject(new MeshRenderer(PrimitiveType::Cube, displayProceduralTexture));
+		cube->GetTransform()->Translate(glm::vec3(rand() % 100, rand() % 100, rand() % 100));
+		hierarchy->AddGameObject(cube);
+	}
+
 	cam->AddComponent(new FreeCameraControls());
-	hierarchy->AddGameObject(cube);
+	hierarchy->AddGameObject(cube1);
 	hierarchy->AddGameObject(cam);
 	// testMat->SetTexture(TextureBinding::Albedo, jibril, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE);
 
+	// Reserve memory so we don't have to allocate and bind the descriptor set
+	// writeProceduralTexture->AllocateDescriptorSet("proceduralTexture");
 	// writeProceduralTexture->SetTexture("proceduralTexture", jibril, VK_IMAGE_LAYOUT_GENERAL, VK_DESCRIPTOR_TYPE_STORAGE_IMAGE);
+	// "f" is inside the same descriptor set than procedural texture so we don't need to allocate his descriptor set
 	// writeProceduralTexture->SetBuffer("f", buffer, sizeof(test), VK_DESCRIPTOR_TYPE_STORAGE_BUFFER);
 	displayProceduralTexture->SetTexture(TextureBinding::Albedo, jibril, VK_IMAGE_LAYOUT_GENERAL, VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE);
 

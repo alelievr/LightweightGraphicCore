@@ -92,29 +92,9 @@ bool		ShaderProgram::Update(void)
 	return hasReloaded;
 }
 
-std::vector< VkDescriptorSetLayout >	ShaderProgram::GetDescriptorSetLayouts(void) const
-{
-	return _bindingTable.GetDescriptorSetLayouts();
-}
-
-VkDescriptorSetLayout					ShaderProgram::GetDescriptorSetLayout(const std::string & setElementName) const
-{
-	return _bindingTable.GetDescriptorSetLayout(setElementName);
-}
-
 VkPipelineShaderStageCreateInfo *		ShaderProgram::GetShaderStages(void)
 {
 	return _shaderStages.data();
-}
-
-uint32_t		ShaderProgram::GetDescriptorSetBinding(const std::string & bindingName) const
-{
-	return _bindingTable.GetDescriptorSetBinding(bindingName);
-}
-
-uint32_t		ShaderProgram::GetDescriptorIndex(const std::string & bindingName) const
-{
-	return _bindingTable.GetDescriptorIndex(bindingName);
 }
 
 void			ShaderProgram::GetWorkingThreadSize(uint32_t & width, uint32_t & height, uint32_t & depth)
@@ -127,6 +107,11 @@ void			ShaderProgram::GetWorkingThreadSize(uint32_t & width, uint32_t & height, 
 bool			ShaderProgram::HasBinding(const std::string & bindingName) const
 {
 	return _bindingTable.HasBinding(bindingName);
+}
+
+const ShaderBindingTable *	ShaderProgram::GetShaderBindingTable(void) const
+{
+	return &_bindingTable;
 }
 
 std::ostream &	operator<<(std::ostream & o, ShaderProgram const & r)

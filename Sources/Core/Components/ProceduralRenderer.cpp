@@ -10,6 +10,10 @@ ProceduralRenderer::ProceduralRenderer(void)
 {
 }
 
+ProceduralRenderer::ProceduralRenderer(std::shared_ptr< Material > material)
+{
+}
+
 ProceduralRenderer::~ProceduralRenderer(void)
 {
 }

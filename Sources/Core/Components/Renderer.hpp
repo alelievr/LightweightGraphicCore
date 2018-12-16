@@ -9,9 +9,6 @@
 #include "Core/Vulkan/UniformBuffer.hpp"
 #include "Component.hpp"
 
-// TODO: remove
-#define PER_OBJECT_BINDING_INDEX	2
-
 namespace LWGC
 {
 	class		Renderer : public Object, public Component
@@ -33,7 +30,6 @@ namespace LWGC
 
 			void			RecordDrawCommandBuffer(void);
 			virtual void	CreateDescriptorSet(void);
-			void			BindDescriptorSet(VkCommandBuffer cmd, VkPipelineBindPoint bindPoint);
 
 		protected:
 			std::shared_ptr< Material >	_material;
@@ -65,8 +61,7 @@ namespace LWGC
 			void	SetMaterial(std::shared_ptr< Material > tmp);
 
 			VkCommandBuffer		GetDrawCommandBuffer(void) const;
-
-			static VkDescriptorSetLayout	GetGraphicDescriptorSetLayout(void) noexcept;
+			VkDescriptorSet		GetDescriptorSet(void) const;
 
 			virtual uint32_t	GetType(void) const noexcept override = 0;
 	};

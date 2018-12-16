@@ -7,12 +7,12 @@ ConstantBuffer< LWGC_PerFrame > frame;
 [vk::binding(0, 1)]
 uniform RWTexture2D< half4 > proceduralTexture;
 
-// [vk::binding(1, 1)]
-// uniform RWStructuredBuffer< float >	f;
+[vk::binding(1, 1)]
+uniform RWStructuredBuffer< float >	f;
 
 [numthreads(8, 8, 1)]
 void        main(ComputeInput i)
 {
-	// f[i.groupThreadId.x] = 42;
+	f[i.groupThreadId.x] = 42;
 	proceduralTexture[uint2(i.groupThreadId)] = half4(1, 1, 0, 1);
 }
