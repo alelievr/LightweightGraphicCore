@@ -45,5 +45,6 @@ namespace LWGC
 			static VkDescriptorSetLayoutBinding	CreateDescriptorSetLayoutBinding(uint32_t binding, VkDescriptorType descriptorType, VkShaderStageFlagBits stageFlags);
 			static VkDescriptorSetLayoutBinding	CreateDescriptorSetLayoutBinding(TextureBinding binding, VkDescriptorType descriptorType, VkShaderStageFlagBits stageFlags);
 			static void			CreateDescriptorSetLayout(std::vector< VkDescriptorSetLayoutBinding > bindings, VkDescriptorSetLayout & layout);
+			static void			UploadToMemory(VkDeviceMemory memory, void * data, size_t size);
 	};
 }
