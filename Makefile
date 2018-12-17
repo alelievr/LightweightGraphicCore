@@ -80,14 +80,14 @@ CPPVERSION	=	c++1z
 INCDIRS		=	sources/ Deps/vulkansdk-macos-1.1.85.0/macOS/include/
 
 #	Libraries
-LIBDIRS		=	deps/glfw/src deps/glslang/install/lib deps/glm
+LIBDIRS		=	Deps/glfw/src Deps/glslang/install/lib Deps/glm
 LDLIBS		=	-lglfw3 -lglslang -lglm
 
-GLFWLIB     =   deps/glfw/src/libglfw3.a
-STBLIB      =   deps/stb/stb.h
-GLMLIB      =   deps/glm/glm
-GLSLANGLIB	=	deps/glslang/build/StandAlone/glslangValidator
-IMGUILIB    =   deps/imgui/libImGUI.a
+GLFWLIB     =   Deps/glfw/src/libglfw3.a
+STBLIB      =   Deps/stb/stb.h
+GLMLIB      =   Deps/glm/glm
+GLSLANGLIB	=	Deps/glslang/build/StandAlone/glslangValidator
+IMGUILIB    =   Deps/imgui/libImGUI.a
 
 #	Output
 NAME		=	libLWGC.a
@@ -142,9 +142,9 @@ endif
 ifeq "$(OS)" "Darwin"
 	CFLAGS			+= "-ferror-limit=999"
 	MoltenTar		= moltenVK.tar.gz
-	MoltentUrl		= https://sdk.lunarg.com/sdk/download/1.1.85.0/mac/vulkansdk-macos-1.1.85.0.tar.gz?u=
-	DOWNLAOD_VULKAN = curl -o $(MoltenTar) $(MoltentUrl) && tar -xf $(MoltenTar) -C deps/
-	VULKAN_SDK		= $(shell pwd)/deps/vulkansdk-macos-1.1.85.0/macOS
+	MoltentUrl		= https://sdk.lunarg.com/sdk/download/1.1.85.0/mac/vulkansdk-macos-1.1.85.0.tar.gz?Human=true
+	DOWNLAOD_VULKAN = curl -o $(MoltenTar) $(MoltentUrl) && tar -xf $(MoltenTar) -C Deps/
+	VULKAN_SDK		= $(shell pwd)/Deps/vulkansdk-macos-1.1.85.0/macOS
 	LD_LIBRARY_PATH	= $(VULKAN_SDK)/lib
 	VK_ICD_FILENAMES= $(VULKAN_SDK)/etc/vulkan/icd.d/MoltenVK_icd.json
 	INCDIRS			+= $(VULKAN_SDK)/include
@@ -226,20 +226,20 @@ $(STBLIB):
 	@git submodule update
 
 $(GLFWLIB):
-	env
 	@git submodule init
 	@git submodule update
-	@cd deps/glfw && VULKAN_SDK=$(VULKAN_SDK) cmake -DGLFW_VULKAN_STATIC=0 . && $(MAKE) -j
+	#@cd Deps/glfw && VULKAN_SDK=$(VULKAN_SDK) cmake -DVULKAN_STATIC_LIBRARY=0 -DCMAKE_FIND_FRAMEWORK=${VULKAN_SDK}/../ -DVULKAN_INCLUDE_DIR=$VULKAN_SDK/include -DVULKAN_LIBRARY=${VULKAN_SDK}/lib/libvulkan.dylib -DGLFW_BUILD_EXAMPLES=OFF . && $(MAKE) -j 4
+	@cd Deps/glfw && VULKAN_SDK=$(VULKAN_SDK) cmake -DVULKAN_STATIC_LIBRARY=0 . && $(MAKE) -j 4
 
 $(GLSLANGLIB):
 	@git submodule init
 	@git submodule update
-	@cd deps/glslang && mkdir -p build && cd build && cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX="$(pwd)/../install" .. && $(MAKE)
+	@cd Deps/glslang && mkdir -p build && cd build && cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX="$(pwd)/../install" .. && $(MAKE) -j 4
 
 $(IMGUILIB):
 	@git submodule init
 	@git submodule update
-	@$(MAKE) -f ImGUI.Makefile
+	@$(MAKE) -f ImGUI.Makefile -j 4
 
 $(VULKAN):
 	$(DOWNLAOD_VULKAN)
