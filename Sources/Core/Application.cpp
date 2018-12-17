@@ -9,9 +9,13 @@ using namespace LWGC;
 
 Delegate	Application::update;
 
-Application::Application(void) : _window(NULL), _hierarchy(std::make_shared< Hierarchy >()), _shouldNotQuit(true)
+Application::Application(void) : _renderPipeline(nullptr), _window(nullptr), _hierarchy(std::make_shared< Hierarchy >()), _shouldNotQuit(true)
 {
-	this->_renderPipeline = new ForwardRenderPipeline();
+}
+
+Application::Application(VulkanRenderPipeline * renderPipeline) : Application()
+{
+	this->_renderPipeline = renderPipeline;
 }
 
 Application::~Application(void)
@@ -34,6 +38,9 @@ void			Application::Init(void) noexcept
 {
 	glfwSetErrorCallback(ErrorCallback);
 	glfwInit();
+
+	if (_renderPipeline == nullptr)
+		this->_renderPipeline = new ForwardRenderPipeline();
 
 	_instance.SetValidationLayers({});
 	_instance.SetDeviceExtensions({VK_KHR_SWAPCHAIN_EXTENSION_NAME});

@@ -40,6 +40,7 @@ namespace LWGC
 
 		public:
 			Application(void);
+			Application(VulkanRenderPipeline * renderPipeline);
 			Application(const Application&) = delete;
 			virtual ~Application(void);
 
