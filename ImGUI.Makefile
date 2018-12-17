@@ -6,7 +6,7 @@
 #    By: alelievr <marvin@42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2014/07/15 15:13:38 by alelievr          #+#    #+#              #
-#    Updated: 2018/11/30 23:13:50 by alelievr         ###   ########.fr        #
+#    Updated: 2018/12/16 18:09:54 by alelievr         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -95,7 +95,11 @@ ifeq "$(OS)" "Linux"
 	DEBUGFLAGS	+= -fsanitize=memory -fsanitize-memory-use-after-dtor -fsanitize=thread
 endif
 ifeq "$(OS)" "Darwin"
-	FRAMEWORK	=	
+	VULKAN_SDK		= $(shell pwd)/deps/vulkansdk-macos-1.1.85.0/macOS
+	LD_LIBRARY_PATH	= $(VULKAN_SDK)/lib
+	VK_ICD_FILENAMES= $(VULKAN_SDK)/etc/vulkan/icd.d/MoltenVK_icd.json
+	INCDIRS			+= $(VULKAN_SDK)/include
+	VULKAN			= $(VULKAN_SDK)/lib/libvulkan.dylib
 endif
 
 COMPILER	=	$(shell readlink $(which cc))

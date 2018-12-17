@@ -7,7 +7,8 @@ namespace LWGC
 	class BuiltinShaders
 	{
 		public:
-			static const std::string Standard;
-			static const std::string DefaultVertex;
+			static const std::string	Standard;
+			static const std::string	DefaultVertex;
+			static const std::string	FullScreenQuad;
 	};
 }
