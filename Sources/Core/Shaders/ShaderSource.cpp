@@ -75,8 +75,28 @@ std::string	ShaderSource::StageToText(const VkShaderStageFlagBits stage)
 
 void		ShaderSource::SetSourceFile(const std::string & file, const VkShaderStageFlagBits stage)
 {
+	struct stat buffer;
+	std::string	filePath = file;
 	_stage = stage;
-	_sourceFile = ShaderFileInfo{file, GetFileModificationTime(file)};
+
+	// If the file don't exists, check inside include paths
+	if (stat(file.c_str(), &buffer) != 0)
+	{
+		std::cout << "File " << file << "dont exists" << std::endl;
+		for (const auto includePath : shaderIncludePaths)
+		{
+			std::string newPath = includePath + file;
+			std::cout << "Check File " << newPath << std::endl;
+			if (stat(newPath.c_str(), &buffer) == 0)
+			{
+				std::cout << "Exists !\n";
+				filePath = newPath;
+				break ;
+			}
+		}
+	}
+
+	_sourceFile = ShaderFileInfo{filePath, GetFileModificationTime(file)};
 }
 
 void		ShaderSource::Compile(void)
