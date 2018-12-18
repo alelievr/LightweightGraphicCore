@@ -147,18 +147,14 @@ glm::vec3		Transform::GetScale(void) const { return (this->_scale); }
 void			Transform::SetScale(glm::vec3 tmp) { this->_scale = tmp; }
 
 glm::vec3		Transform::GetUp(void) const { return glm::vec3(0, 1, 0) * _rotation; }
-
 glm::vec3		Transform::GetDown(void) const { return glm::vec3(0, -1, 0) * _rotation; }
-
 glm::vec3		Transform::GetRight(void) const { return glm::vec3(1, 0, 0) * _rotation; }
-
 glm::vec3		Transform::GetLeft(void) const { return glm::vec3(-1, 0, 0) * _rotation; }
-
 glm::vec3		Transform::GetForward(void) const { return glm::vec3(0, 0, 1) * _rotation;; }
-
 glm::vec3		Transform::GetBack(void) const { return glm::vec3(0, 0, -1) * _rotation; }
 
 glm::vec3		Transform::GetEulerAngles(void) const { return glm::eulerAngles(_rotation); }
+glm::mat4x4		Transform::GetLocalToWorldMatrix(void) const { return _localToWorld; }
 
 std::ostream &	operator<<(std::ostream & o, Transform const & r)
 {

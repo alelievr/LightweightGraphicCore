@@ -20,6 +20,14 @@ void					ShaderBindingTable::SetStage(VkShaderStageFlagBits stage)
 
 ShaderBinding &			ShaderBindingTable::AddBinding(const std::string & name, int descriptorSet, int bindingIndex, VkDescriptorType descriptorType)
 {
+	// Check for same-location bindings:
+
+	for (const auto & binding : _bindings)
+	{
+		if (binding.second.bindingIndex == bindingIndex && binding.second.descriptorSet == descriptorSet && binding.first != name)
+			std::cerr << "WARNING: resource " << name << " and " << binding.first << " are bound to the same location: " << bindingIndex << ":" << descriptorSet << std::endl;
+	}
+
 	return (_bindings.insert({name, ShaderBinding{
 		descriptorSet,
 		bindingIndex,

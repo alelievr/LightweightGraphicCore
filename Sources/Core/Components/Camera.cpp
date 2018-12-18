@@ -141,6 +141,10 @@ void					Camera::UpdateUniformData(void) noexcept
 
 	// Invert y because Opengl
 	_perCamera.projection[1][1] *= -1;
+
+	// Transpose for HLSL
+	_perCamera.projection = glm::transpose(_perCamera.projection);
+	_perCamera.view = glm::transpose(_perCamera.view);
  
 	void* data;
 	vkMapMemory(device, _uniformCameraBuffer.memory, 0, sizeof(LWGC_PerCamera), 0, &data);

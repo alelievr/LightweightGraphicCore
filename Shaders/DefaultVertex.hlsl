@@ -6,8 +6,9 @@ FragmentInput main(VertexInput i, int id : SV_VertexID, int elementID : SV_Insta
 	FragmentInput	o;
 
     o.uv = i.uv;
-	float4x4 mvp = transpose(camera.projection) * transpose(camera.view) * transpose(object.model);
+	float4x4 mvp = camera.projection * camera.view * object.model;
 	o.positionWS = mul(float4(i.position.xyz, 1), mvp);
+	o.normalOS = i.normal;
 
 	return o;
 }

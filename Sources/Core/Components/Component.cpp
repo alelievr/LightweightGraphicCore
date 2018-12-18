@@ -79,6 +79,11 @@ bool            Component::IsEnabled() noexcept
     return enabled && gameObject->IsActive();
 }
 
+Transform *		Component::GetTransform() const noexcept
+{
+	return transform;
+}
+
 uint32_t		Component::GetType() const noexcept
 {
 	return -1;

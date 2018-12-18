@@ -61,3 +61,8 @@ void    RenderContext::GetComputeDispatchers(std::unordered_set< ComputeDispatch
 {
     GetComponentSet< ComputeDispatcher >(static_cast< uint32_t >(ComponentType::ComputeDispatcher), computeDispatchers);
 }
+
+std::vector< IUpdatePerCamera * > &		RenderContext::GetUpdatePerCameras(void)
+{
+    return _updatePerCamera;
+}

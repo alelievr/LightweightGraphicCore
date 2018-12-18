@@ -40,7 +40,7 @@ Material::Material(void)
 	this->_pipeline = VK_NULL_HANDLE;
 	this->_bindingTable = nullptr;
 	_program = new ShaderProgram();
-	_program->SetSourceFile("Shaders/Error/Pink.hlsl", VK_SHADER_STAGE_FRAGMENT_BIT);
+	_program->SetSourceFile(BuiltinShaders::Pink, VK_SHADER_STAGE_FRAGMENT_BIT);
 	_program->SetSourceFile(BuiltinShaders::DefaultVertex, VK_SHADER_STAGE_VERTEX_BIT);
 	SetupDefaultSettings();
 }
@@ -190,8 +190,8 @@ void					Material::CompileShaders(void)
 		if (IsCompute())
 			throw std::runtime_error("Failed to compile compute shader");
 		
-		_program->SetSourceFile("Shaders/Error/Pink.hlsl", VK_SHADER_STAGE_FRAGMENT_BIT);
-		_program->SetSourceFile("Shaders/DefaultVertex.hlsl", VK_SHADER_STAGE_VERTEX_BIT);
+		_program->SetSourceFile(BuiltinShaders::Pink, VK_SHADER_STAGE_FRAGMENT_BIT);
+		_program->SetSourceFile(BuiltinShaders::DefaultVertex, VK_SHADER_STAGE_VERTEX_BIT);
 		_program->CompileAndLink();
 	}
 
@@ -204,8 +204,6 @@ void					Material::CreatePipelineLayout(void)
 {
 	VkPipelineLayoutCreateInfo pipelineLayoutInfo = {};
 	pipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
-
-	std::cout << "Create pipeline with layout size: " << _setLayouts.size() << std::endl;
 	
 	pipelineLayoutInfo.setLayoutCount = _setLayouts.size();
 	pipelineLayoutInfo.pSetLayouts = _setLayouts.data();

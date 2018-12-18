@@ -51,11 +51,25 @@ const ComponentIndex	Hierarchy::RegisterComponent(uint32_t componentType, Compon
 		_cameras.push_back(dynamic_cast< Camera * >(component));
 	}
 
+	// Not the best design but works
+	IUpdatePerCamera *	updatePerCamera;
+	if ((updatePerCamera = dynamic_cast< IUpdatePerCamera * >(component)) != nullptr)
+		_renderContext._updatePerCamera.push_back(updatePerCamera);
+
 	return _components.insert(component).first;
 }
 
 void					Hierarchy::UnregisterComponent(const ComponentIndex & index) noexcept
 {
+	const auto comp = *index;
+
+	IUpdatePerCamera *	updatePerCamera;
+	if ((updatePerCamera = dynamic_cast< IUpdatePerCamera * >(comp)) != nullptr)
+		std::remove(_renderContext._updatePerCamera.begin(), _renderContext._updatePerCamera.end(), updatePerCamera);
+
+	if (comp->GetType() == static_cast< uint32_t >(ComponentType::Camera))
+		std::remove(_cameras.begin(), _cameras.end(), comp);
+	
 	_components.erase(index);
 }
 

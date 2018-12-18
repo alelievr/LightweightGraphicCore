@@ -348,6 +348,9 @@ void	VulkanRenderPipeline::Render(const std::vector< Camera * > & cameras, Rende
 
 	for (const auto camera : cameras)
 	{
+		for (auto & updatePerCamera : context.GetUpdatePerCameras())
+			updatePerCamera->UpdatePerCamera(camera);
+		
 		std::unordered_set< Renderer * >	renderers;
 		
 		renderPass.BindDescriptorSet(LWGCBinding::Camera, camera->GetDescriptorSet());

@@ -99,6 +99,9 @@ void		Renderer::UpdateUniformData(void)
 {
 	_perObject.model = glm::scale(glm::translate(glm::toMat4(transform->GetRotation()), transform->GetPosition()), transform->GetScale());
 
+	// Transpose for HLSL
+	_perObject.model = glm::transpose(_perObject.model);
+
 	void* data;
 	vkMapMemory(device, _uniformModelBuffer.memory, 0, sizeof(LWGC_PerObject), 0, &data);
 	memcpy(data, &_perObject, sizeof(_perObject));

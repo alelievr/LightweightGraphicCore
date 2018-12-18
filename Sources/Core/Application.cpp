@@ -1,8 +1,8 @@
 #include <memory>
 
-#include "Application.hpp"
-#include "Rendering/ForwardRenderPipeline.hpp"
-#include "Vulkan/VulkanInstance.hpp"
+#include "Core/Application.hpp"
+#include "Core/Rendering/ForwardRenderPipeline.hpp"
+#include "Core/Vulkan/VulkanInstance.hpp"
 #include "Core/Components/MeshRenderer.hpp"
 
 using namespace LWGC;

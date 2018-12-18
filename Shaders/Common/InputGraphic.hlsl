@@ -13,7 +13,8 @@ struct	VertexInput
 struct	FragmentInput
 {
 	[[vk::location(0)]] float4	positionWS : SV_Position;
-	[[vk::location(1)]] float2	uv : TEXCOORD0;
+	[[vk::location(1)]] float3	normalOS : NORMAL;
+	[[vk::location(2)]] float2	uv : TEXCOORD0;
 };
 
 #endif
