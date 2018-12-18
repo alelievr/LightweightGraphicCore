@@ -16,6 +16,8 @@ namespace LWGC
 			float			_up;
 			float			_speed;
 			float			_mouseSpeed;
+			float			_rotationX;
+			float			_rotationY;
 
 			virtual void	Update(void) noexcept override;
 

@@ -1,6 +1,7 @@
 #include "Transform.hpp"
 
 #include <algorithm>
+#include "Utils/Math.hpp"
 
 Transform::Transform(void)
 {
@@ -138,13 +139,13 @@ void			Transform::UpdateLocalToWorldMatrix(void) noexcept
 void			Transform::SetParent(std::shared_ptr< Transform > tmp) { this->_parent = tmp; }
 
 glm::vec3		Transform::GetPosition(void) const { return (this->_position); }
-void			Transform::SetPosition(glm::vec3 tmp) { this->_position = tmp; }
+void			Transform::SetPosition(glm::vec3 tmp) { this->_position = tmp; UpdateLocalToWorldMatrix(); }
 
 glm::quat		Transform::GetRotation(void) const { return (this->_rotation); }
-void			Transform::SetRotation(glm::quat tmp) { this->_rotation = tmp; }
+void			Transform::SetRotation(glm::quat tmp) { this->_rotation = tmp; UpdateLocalToWorldMatrix(); }
 
 glm::vec3		Transform::GetScale(void) const { return (this->_scale); }
-void			Transform::SetScale(glm::vec3 tmp) { this->_scale = tmp; }
+void			Transform::SetScale(glm::vec3 tmp) { this->_scale = tmp; UpdateLocalToWorldMatrix(); }
 
 glm::vec3		Transform::GetUp(void) const { return glm::vec3(0, 1, 0) * _rotation; }
 glm::vec3		Transform::GetDown(void) const { return glm::vec3(0, -1, 0) * _rotation; }
@@ -153,7 +154,7 @@ glm::vec3		Transform::GetLeft(void) const { return glm::vec3(-1, 0, 0) * _rotati
 glm::vec3		Transform::GetForward(void) const { return glm::vec3(0, 0, 1) * _rotation;; }
 glm::vec3		Transform::GetBack(void) const { return glm::vec3(0, 0, -1) * _rotation; }
 
-glm::vec3		Transform::GetEulerAngles(void) const { return glm::eulerAngles(_rotation); }
+glm::vec3		Transform::GetEulerAngles(void) const { return glm::eulerAngles(_rotation) * Math::DegToRad; }
 glm::mat4x4		Transform::GetLocalToWorldMatrix(void) const { return _localToWorld; }
 
 std::ostream &	operator<<(std::ostream & o, Transform const & r)

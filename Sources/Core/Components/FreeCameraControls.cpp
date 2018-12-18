@@ -2,10 +2,11 @@
 
 #include "Core/Events/EventSystem.hpp"
 #include "Core/Application.hpp"
+#include "Utils/Math.hpp"
 
 using namespace LWGC;
 
-FreeCameraControls::FreeCameraControls(void) : _forward(0), _right(0), _up(0), _speed(0.05f), _mouseSpeed(1)
+FreeCameraControls::FreeCameraControls(void) : _forward(0), _right(0), _up(0), _speed(0.05f), _mouseSpeed(0.5f), _rotationX(0), _rotationY(0)
 {
 }
 
@@ -78,11 +79,15 @@ void		FreeCameraControls::Update(void) noexcept
 		break;
 	}
 
-	transform->Rotate(glm::vec3(
-		event.delta.x,
-		event.delta.y,
-		0
-	) * _mouseSpeed * 0.01f);
+	_rotationX += event.delta.x * _mouseSpeed;
+	_rotationY += event.delta.y * _mouseSpeed;
+
+	_rotationY = std::clamp(_rotationY, -90.0f, 90.0f);
+
+	const auto & eulerAngles = transform->GetEulerAngles();
+
+	transform->SetRotation(glm::quat(-_rotationX * Math::DegToRad, glm::vec3(0, 1, 0)));
+	transform->RotateAxis(_rotationY * Math::DegToRad, glm::vec3(-1, 0, 0));
 
 	transform->Translate((
 		transform->GetRight() * _right

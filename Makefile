@@ -62,6 +62,7 @@ SRC			=	Core/Application.cpp \
 				Utils/Color.cpp \
 				Utils/Random.cpp \
 				Utils/Rect.cpp \
+				Utils/Math.cpp \
 
 #	Objects
 OBJDIR		=	Objects
