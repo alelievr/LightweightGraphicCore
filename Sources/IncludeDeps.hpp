@@ -2,11 +2,14 @@
 # define INCLUDEDEPS_HPP
 
 # define GLM_ENABLE_EXPERIMENTAL
+# define GLM_FORCE_RADIANS
+# define GLM_FORCE_DEPTH_ZERO_TO_ONE
 
 # define GLM_INCLUDE "../Deps/glm/glm/glm.hpp"
 # define GLM_INCLUDE_QUATERNION "../Deps/glm/glm/gtx/quaternion.hpp"
 # define GLM_INCLUDE_QUATERNION2 "../Deps/glm/glm/gtc/quaternion.hpp"
 # define GLM_INCLUDE_MATRIX_TRANSFORM "../Deps/glm/glm/gtc/matrix_transform.hpp"
+# define GLM_INCLUDE_STRING_CAST "../Deps/glm/glm/gtx/string_cast.hpp"
 # define GLFW_INCLUDE "../Deps/glfw/include/GLFW/glfw3.h"
 # define IMGUI_INCLUDE "../Deps/imgui/imgui.h"
 # define IMGUI_GLFW_INCLUDE "../Deps/imgui/examples/imgui_impl_glfw.h"

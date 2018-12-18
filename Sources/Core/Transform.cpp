@@ -2,6 +2,9 @@
 
 #include <algorithm>
 #include "Utils/Math.hpp"
+#include "Utils/Vector.hpp"
+
+using namespace LWGC;
 
 Transform::Transform(void)
 {
@@ -18,11 +21,11 @@ Transform::~Transform(void)
 {
 }
 
-void		Transform::Rotate(const glm::vec3 & eulerAngles)
+void		Transform::Rotate(const glm::vec3 & angleInradians)
 {
-	_yaw += eulerAngles.x;
-	_pitch += eulerAngles.y;
-	_roll += eulerAngles.z;
+	_yaw += angleInradians.x;
+	_pitch += angleInradians.y;
+	_roll += angleInradians.z;
 
 	//FPS camera:  RotationX(pitch) * RotationY(yaw)
 	glm::quat qPitch = glm::angleAxis(_pitch, glm::vec3(1, 0, 0));
@@ -42,11 +45,13 @@ void		Transform::RotateAxis(float angle, const glm::vec3 & axis)
 {
 	_rotation = glm::rotate(_rotation, angle, axis);
 	_rotation = glm::normalize(_rotation);
+
+	UpdateRotationDatas();
 }
 
 void		Transform::Rotate(const float xAngle, const float yAngle, const float zAngle)
 {
-	Rotate(glm::vec3(xAngle, yAngle, zAngle));
+	Rotate(glm::vec3(xAngle, yAngle, zAngle) * Math::DegToRad);
 }
 
 void		Transform::RotateAround(const glm::vec3 & point, const glm::vec3 & axis, const float angle)
@@ -54,6 +59,8 @@ void		Transform::RotateAround(const glm::vec3 & point, const glm::vec3 & axis, c
 	(void)point, (void)axis, (void)angle;
 	
 	std::cout << "RotateAround: TODO" << std::endl;
+
+	UpdateRotationDatas();
 }
 
 size_t		Transform::GetChildCount(void)
@@ -73,7 +80,7 @@ std::shared_ptr< Transform >		Transform::GetChildAt(const int index) const
 
 void		Transform::LookAt(const int index)
 {
-	
+	// TODO: change the lookat parameter, it make no sence right now
 }
 
 glm::vec3		Transform::TransformDirection(const glm::vec3 & direction)
@@ -96,10 +103,16 @@ glm::vec3		Transform::TransformPoint(const float x, const float y, const float z
 	return TransformPoint(glm::vec3(x, y, z));
 }
 
-void		Transform::Translate(const glm::vec3 & translation)
+void			Transform::Translate(const glm::vec3 & translation)
 {
 	_position += translation;
 	UpdatePositionDatas();
+}
+
+void			Transform::Scale(const glm::vec3 & scaleFactor)
+{
+	_scale *= scaleFactor;
+	UpdateScaleDatas();
 }
 
 std::shared_ptr< Transform >	Transform::GetRoot(void)
@@ -133,7 +146,9 @@ void			Transform::UpdateScaleDatas(void) noexcept
 
 void			Transform::UpdateLocalToWorldMatrix(void) noexcept
 {
-	_localToWorld = glm::toMat4(_rotation) * glm::translate(glm::mat4(1.0f), _position);
+	_localToWorld = glm::translate(glm::mat4(1.0f), _position) * glm::toMat4(_rotation) * glm::scale(glm::mat4(1), _scale);
+
+	std::cout << "Rotation: " << (_rotation) << std::endl;
 }
 
 void			Transform::SetParent(std::shared_ptr< Transform > tmp) { this->_parent = tmp; }
@@ -159,8 +174,7 @@ glm::mat4x4		Transform::GetLocalToWorldMatrix(void) const { return _localToWorld
 
 std::ostream &	operator<<(std::ostream & o, Transform const & r)
 {
-	glm::vec3	pos = r.GetPosition();
-	o << "(" << pos.x << ", " << pos.y << ", " << pos.z << ")" << std::endl;
+	o << "Pos: " << r.GetPosition() << ", Rot: " << r.GetRotation() << ", Scale: " << r.GetScale() << std::endl;
 	(void)r;
 	return (o);
 }

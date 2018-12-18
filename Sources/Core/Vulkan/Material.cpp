@@ -3,8 +3,6 @@
 #include <fstream>
 #include <array>
 
-#define GLM_FORCE_RADIANS
-#define GLM_FORCE_DEPTH_ZERO_TO_ONE
 #include GLM_INCLUDE
 #include GLM_INCLUDE_MATRIX_TRANSFORM
 

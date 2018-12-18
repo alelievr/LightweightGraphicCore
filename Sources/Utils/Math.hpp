@@ -4,18 +4,21 @@
 #include <string>
 #include <cmath>
 
-class		Math
+namespace LWGC
 {
-	private:
+	class		Math
+	{
+		private:
 
 
-	public:
-		Math(void) = delete;
-		Math(const Math &) = delete;
-		virtual ~Math(void);
+		public:
+			Math(void) = delete;
+			Math(const Math &) = delete;
+			virtual ~Math(void);
 
-		static float		DegToRad;
-		static float		RadToDeg;
+			static float		DegToRad;
+			static float		RadToDeg;
 
-		Math &	operator=(Math const & src) = delete;
-};
+			Math &	operator=(Math const & src) = delete;
+	};
+}

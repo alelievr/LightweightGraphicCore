@@ -97,7 +97,7 @@ void		Renderer::Update(void) noexcept
 
 void		Renderer::UpdateUniformData(void)
 {
-	_perObject.model = glm::scale(glm::translate(glm::toMat4(transform->GetRotation()), transform->GetPosition()), transform->GetScale());
+	_perObject.model = transform->GetLocalToWorldMatrix();
 
 	// Transpose for HLSL
 	_perObject.model = glm::transpose(_perObject.model);

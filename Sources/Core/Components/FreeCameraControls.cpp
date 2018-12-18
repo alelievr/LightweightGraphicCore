@@ -86,8 +86,8 @@ void		FreeCameraControls::Update(void) noexcept
 
 	const auto & eulerAngles = transform->GetEulerAngles();
 
-	transform->SetRotation(glm::quat(-_rotationX * Math::DegToRad, glm::vec3(0, 1, 0)));
-	transform->RotateAxis(_rotationY * Math::DegToRad, glm::vec3(-1, 0, 0));
+	transform->SetRotation(glm::angleAxis(_rotationX * Math::DegToRad, glm::vec3(0, 1, 0)));
+	transform->RotateAxis(_rotationY * Math::DegToRad, glm::vec3(1, 0, 0));
 
 	transform->Translate((
 		transform->GetRight() * _right

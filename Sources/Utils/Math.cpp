@@ -1,5 +1,7 @@
 #include "Math.hpp"
 
+using namespace LWGC;
+
 Math::~Math(void)
 {
 }

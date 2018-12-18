@@ -23,6 +23,7 @@ namespace LWGC
 		Camera,
 		FreeCameraControls,
 		ComputeDispatcher,
+		Rotator,
 		Count, // Note: this MUST be the last element of the enum
 	};
 

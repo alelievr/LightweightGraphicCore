@@ -48,6 +48,7 @@
 #include "Core/Components/Camera.hpp"
 #include "Core/Components/FreeCameraControls.hpp"
 #include "Core/Components/ComputeDispatcher.hpp"
+#include "Core/Components/Rotator.hpp"
 
 // Utils
 #include "Utils/Bounds.hpp"

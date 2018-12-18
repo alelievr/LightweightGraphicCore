@@ -27,6 +27,7 @@ SRC			=	Core/Application.cpp \
 				Core/Components/MeshRenderer.cpp \
 				Core/Components/FreeCameraControls.cpp \
 				Core/Components/Light.cpp \
+				Core/Components/Rotator.cpp \
 				Core/ComputeDispatcher.cpp \
 				Core/Events/Event.cpp \
 				Core/Events/EventSystem.cpp \
@@ -63,6 +64,7 @@ SRC			=	Core/Application.cpp \
 				Utils/Random.cpp \
 				Utils/Rect.cpp \
 				Utils/Math.cpp \
+				Utils/Vector.cpp \
 
 #	Objects
 OBJDIR		=	Objects

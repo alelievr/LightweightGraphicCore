@@ -21,6 +21,7 @@ VulkanInstance::VulkanInstance(const std::string & applicationName) : _applicati
 {
 	_instance = VK_NULL_HANDLE;
 	_physicalDevice = VK_NULL_HANDLE;
+	_descriptorPool = VK_NULL_HANDLE;
 	_device = VK_NULL_HANDLE;
 	_applicationName = applicationName;
 }
