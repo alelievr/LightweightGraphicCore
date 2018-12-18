@@ -21,7 +21,8 @@ namespace LWGC
 			Vector &	operator=(Vector const & src) = delete;
 	};
 
-	std::ostream &	operator<<(std::ostream & o, glm::vec3 const & r);
+	std::ostream &	operator<<(std::ostream & o, const glm::vec2 & r);
+	std::ostream &	operator<<(std::ostream & o, const glm::vec3 & r);
 	std::ostream &	operator<<(std::ostream & o, const glm::vec4 & r);
 	std::ostream &	operator<<(std::ostream & o, const glm::mat4 & r);
 	std::ostream &	operator<<(std::ostream & o, const glm::mat3 & r);

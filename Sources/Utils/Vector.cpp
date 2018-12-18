@@ -9,6 +9,12 @@ Vector::~Vector(void)
 {
 }
 
+std::ostream &	LWGC::operator<<(std::ostream & o, const glm::vec2 & r)
+{
+	o << glm::to_string(r);
+	return (o);
+}
+
 std::ostream &	LWGC::operator<<(std::ostream & o, const glm::vec3 & r)
 {
 	o << glm::to_string(r);

@@ -141,7 +141,7 @@ void					Material::SetupDefaultSettings(void)
 	_rasterizationState.polygonMode = VK_POLYGON_MODE_FILL;
 	_rasterizationState.lineWidth = 1.0f;
 	_rasterizationState.cullMode = VK_CULL_MODE_BACK_BIT;
-	_rasterizationState.frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE;
+	_rasterizationState.frontFace = VK_FRONT_FACE_CLOCKWISE;
 	_rasterizationState.depthBiasEnable = VK_FALSE;
 }
 

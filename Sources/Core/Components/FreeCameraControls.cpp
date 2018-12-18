@@ -3,10 +3,11 @@
 #include "Core/Events/EventSystem.hpp"
 #include "Core/Application.hpp"
 #include "Utils/Math.hpp"
+#include "Utils/Vector.hpp"
 
 using namespace LWGC;
 
-FreeCameraControls::FreeCameraControls(void) : _forward(0), _right(0), _up(0), _speed(0.05f), _mouseSpeed(0.5f), _rotationX(0), _rotationY(0)
+FreeCameraControls::FreeCameraControls(void) : _forward(0), _right(0), _up(0), _speed(0.05f), _mouseSpeed(0.2f), _rotationX(0), _rotationY(0)
 {
 }
 
@@ -27,6 +28,8 @@ void			FreeCameraControls::OnRemoved(const GameObject & go) noexcept
 void		FreeCameraControls::Initialize(void) noexcept
 {
 	Component::Initialize();
+
+	EventSystem::Get()->LockCursor();
 }
 
 void		FreeCameraControls::OnEnable(void) noexcept
@@ -54,20 +57,19 @@ void		FreeCameraControls::Update(void) noexcept
 		case KeyCode::RIGHT:
 			_right = (keyDown) ? 1 : 0;
 			break ;
-		// Warning: weird thing x and y are swapped but not z, will figure out when i have good debug tools
 		case KeyCode::W:
 		case KeyCode::UP:
-			_forward = (keyDown) ? -1 : 0;
+			_forward = (keyDown) ? 1 : 0;
 			break ;
 		case KeyCode::S:
 		case KeyCode::DOWN:
-			_forward = (keyDown) ? 1 : 0;
+			_forward = (keyDown) ? -1 : 0;
 			break ;
 		case KeyCode::E:
-			_up = (keyDown) ? 1 : 0;
+			_up = (keyDown) ? -1 : 0;
 			break ;
 		case KeyCode::Q:
-			_up = (keyDown) ? -1 : 0;
+			_up = (keyDown) ? 1 : 0;
 			break ;
 		case KeyCode::KP_ADD:
 			_speed *= 1.1f;
@@ -75,6 +77,8 @@ void		FreeCameraControls::Update(void) noexcept
 		case KeyCode::KP_SUBTRACT:
 			_speed /= 1.1f;
 			break ;
+		case KeyCode::SPACE:
+			EventSystem::Get()->ToggleLockCursor();
 		default:
 		break;
 	}
@@ -83,8 +87,6 @@ void		FreeCameraControls::Update(void) noexcept
 	_rotationY += event.delta.y * _mouseSpeed;
 
 	_rotationY = std::clamp(_rotationY, -90.0f, 90.0f);
-
-	const auto & eulerAngles = transform->GetEulerAngles();
 
 	transform->SetRotation(glm::angleAxis(_rotationX * Math::DegToRad, glm::vec3(0, 1, 0)));
 	transform->RotateAxis(_rotationY * Math::DegToRad, glm::vec3(1, 0, 0));

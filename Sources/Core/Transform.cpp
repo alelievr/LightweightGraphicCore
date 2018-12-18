@@ -70,7 +70,7 @@ size_t		Transform::GetChildCount(void)
 
 bool		Transform::IsChildOf(std::shared_ptr< Transform > t)
 {
-	std::find(t->_childs.begin(), t->_childs.end(), t);
+	return std::find(t->_childs.begin(), t->_childs.end(), t) != t->_childs.end();
 }
 
 std::shared_ptr< Transform >		Transform::GetChildAt(const int index) const
@@ -147,8 +147,6 @@ void			Transform::UpdateScaleDatas(void) noexcept
 void			Transform::UpdateLocalToWorldMatrix(void) noexcept
 {
 	_localToWorld = glm::translate(glm::mat4(1.0f), _position) * glm::toMat4(_rotation) * glm::scale(glm::mat4(1), _scale);
-
-	std::cout << "Rotation: " << (_rotation) << std::endl;
 }
 
 void			Transform::SetParent(std::shared_ptr< Transform > tmp) { this->_parent = tmp; }
@@ -162,12 +160,13 @@ void			Transform::SetRotation(glm::quat tmp) { this->_rotation = tmp; UpdateLoca
 glm::vec3		Transform::GetScale(void) const { return (this->_scale); }
 void			Transform::SetScale(glm::vec3 tmp) { this->_scale = tmp; UpdateLocalToWorldMatrix(); }
 
-glm::vec3		Transform::GetUp(void) const { return glm::vec3(0, 1, 0) * _rotation; }
-glm::vec3		Transform::GetDown(void) const { return glm::vec3(0, -1, 0) * _rotation; }
-glm::vec3		Transform::GetRight(void) const { return glm::vec3(1, 0, 0) * _rotation; }
-glm::vec3		Transform::GetLeft(void) const { return glm::vec3(-1, 0, 0) * _rotation; }
-glm::vec3		Transform::GetForward(void) const { return glm::vec3(0, 0, 1) * _rotation;; }
-glm::vec3		Transform::GetBack(void) const { return glm::vec3(0, 0, -1) * _rotation; }
+// homogenous coords for directions
+glm::vec3		Transform::GetUp(void) const { return _rotation *  glm::vec4(0, 1, 0, 0); }
+glm::vec3		Transform::GetDown(void) const { return  _rotation * glm::vec4(0, -1, 0, 0); }
+glm::vec3		Transform::GetRight(void) const { return _rotation *  glm::vec4(1, 0, 0, 0); }
+glm::vec3		Transform::GetLeft(void) const { return  _rotation * glm::vec4(-1, 0, 0, 0); }
+glm::vec3		Transform::GetForward(void) const { return _rotation *  glm::vec4(0, 0, 1, 0);; }
+glm::vec3		Transform::GetBack(void) const { return  _rotation * glm::vec4(0, 0, -1, 0); }
 
 glm::vec3		Transform::GetEulerAngles(void) const { return glm::eulerAngles(_rotation) * Math::DegToRad; }
 glm::mat4x4		Transform::GetLocalToWorldMatrix(void) const { return _localToWorld; }

@@ -4,6 +4,7 @@
 # define GLM_ENABLE_EXPERIMENTAL
 # define GLM_FORCE_RADIANS
 # define GLM_FORCE_DEPTH_ZERO_TO_ONE
+# define GLM_FORCE_LEFT_HANDED // Vulkan uses left handed coordinate system in world space
 
 # define GLM_INCLUDE "../Deps/glm/glm/glm.hpp"
 # define GLM_INCLUDE_QUATERNION "../Deps/glm/glm/gtx/quaternion.hpp"

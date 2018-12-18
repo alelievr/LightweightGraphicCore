@@ -41,6 +41,7 @@ namespace LWGC
 			OnKeyStayCallback		_onKeyStay;
 
 			Event					_current;
+			GLFWwindow *			_window;
 
 			static std::map< GLFWwindow *, EventSystem * > eventSystems;
 			static EventSystem *	eventSystemInstance;
@@ -60,6 +61,10 @@ namespace LWGC
 			EventSystem &	operator=(EventSystem const & src) = delete;
 
 			void			BindWindow(GLFWwindow *window);
+
+			void	LockCursor(void);
+			void	ReleaseCursor(void);
+			void	ToggleLockCursor(void);
 
 			OnQuitCallback	GetOnQuit(void) const;
 			void	SetOnQuit(OnQuitCallback tmp);

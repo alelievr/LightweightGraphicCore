@@ -86,11 +86,11 @@ int			main(void)
 	auto cube1 = new GameObject(new MeshRenderer(PrimitiveType::Cube, anime));
 	auto fullScreen = new GameObject(new ProceduralRenderer(fullScreenTest, 4));
 	auto cam = new GameObject(new Camera());
-	const int workGroupSize = 8; // Work group size in the compute shader
+	cam->GetTransform()->SetPosition(glm::vec3(0, 0, -5));
+	// const int workGroupSize = 8; // Work group size in the compute shader
 	// cube1->AddComponent(new ComputeDispatcher(writeProceduralTexture, 512 / workGroupSize, 512 / workGroupSize, &jibril));
-	cube1->GetTransform()->Translate(glm::vec3(0, 1, 0));
 	cube1->GetTransform()->Scale(glm::vec3(.2, .2, 1));
-	cube1->AddComponent(new FreeCameraControls());
+	// cube1->AddComponent(new FreeCameraControls());
 
 	// srand(time(NULL) + clock());
 	// for (int i = 0; i < 100; i++)
@@ -100,7 +100,7 @@ int			main(void)
 	// 	hierarchy->AddGameObject(cube);
 	// }
 
-	// cam->AddComponent(new FreeCameraControls());
+	cam->AddComponent(new FreeCameraControls());
 	hierarchy->AddGameObject(cube1);
 	hierarchy->AddGameObject(fullScreen);
 	hierarchy->AddGameObject(cam);

@@ -69,6 +69,7 @@ EventSystem::~EventSystem(void)
 
 void			EventSystem::BindWindow(GLFWwindow * window)
 {
+	_window = window;
 	eventSystems[window] = this;
 
 	glfwSetCursorEnterCallback(window, [](GLFWwindow * window, int entered)
@@ -125,6 +126,7 @@ void			EventSystem::BindWindow(GLFWwindow * window)
 	
 	static glm::vec2 oldMousePosition = _current.mousePosition;
 
+	// TODO: maybe another function that habdles the event logic
 	Application::update.AddListener([&](){
 			// Per-frame event system internal update
 			// _current.type = EventType::Ignore;
@@ -132,6 +134,24 @@ void			EventSystem::BindWindow(GLFWwindow * window)
 			oldMousePosition = _current.mousePosition;
 		}
 	);
+}
+
+void				EventSystem::LockCursor(void)
+{
+	glfwSetInputMode(_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+}
+
+void				EventSystem::ReleaseCursor(void)
+{
+	glfwSetInputMode(_window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+}
+
+void				EventSystem::ToggleLockCursor(void)
+{
+	if (glfwGetInputMode(_window, GLFW_CURSOR) == GLFW_CURSOR_DISABLED)
+		ReleaseCursor();
+	else
+		LockCursor();
 }
 
 EventSystem *		EventSystem::Get(void)
