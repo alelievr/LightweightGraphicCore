@@ -92,13 +92,13 @@ int			main(void)
 	cube1->GetTransform()->Scale(glm::vec3(.2, .2, 1));
 	// cube1->AddComponent(new FreeCameraControls());
 
-	// srand(time(NULL) + clock());
-	// for (int i = 0; i < 100; i++)
-	// {
-	// 	auto cube = new GameObject(new MeshRenderer(PrimitiveType::Cube, displayProceduralTexture));
-	// 	cube->GetTransform()->Translate(glm::vec3(rand() % 100, rand() % 100, rand() % 100));
-	// 	hierarchy->AddGameObject(cube);
-	// }
+	srand(time(NULL) + clock());
+	for (int i = 0; i < 100; i++)
+	{
+		auto cube = new GameObject(new MeshRenderer(PrimitiveType::Cube, anime));
+		cube->GetTransform()->Translate(glm::vec3(rand() % 100, rand() % 100, rand() % 100));
+		hierarchy->AddGameObject(cube);
+	}
 
 	cam->AddComponent(new FreeCameraControls());
 	hierarchy->AddGameObject(cube1);

@@ -131,8 +131,8 @@ void					Camera::UpdateUniformData(void) noexcept
 {
 	_perCamera.positionWS = glm::vec4(transform->GetPosition(), 1.0f);
 
-	// view from position and rotation
-	_perCamera.view = glm::translate(glm::toMat4(transform->GetRotation()), -transform->GetPosition());
+	// World to camera is the inverse of local (camera) to world
+	_perCamera.view = glm::inverse(transform->GetLocalToWorldMatrix());
 
 	float ratio = (float)_swapChain->GetExtent().width / (float)_swapChain->GetExtent().height;
 	_perCamera.projection = glm::perspective(glm::radians(_fov), ratio, _nearPlane, _farPlane);

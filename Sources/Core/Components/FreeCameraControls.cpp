@@ -66,10 +66,10 @@ void		FreeCameraControls::Update(void) noexcept
 			_forward = (keyDown) ? -1 : 0;
 			break ;
 		case KeyCode::E:
-			_up = (keyDown) ? -1 : 0;
+			_up = (keyDown) ? 1 : 0;
 			break ;
 		case KeyCode::Q:
-			_up = (keyDown) ? 1 : 0;
+			_up = (keyDown) ? -1 : 0;
 			break ;
 		case KeyCode::KP_ADD:
 			_speed *= 1.1f;
