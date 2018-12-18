@@ -47,7 +47,6 @@ void			ComputeDispatcher::Initialize(void) noexcept
 
 	vkCmdBindPipeline(_computeCommandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, _material->GetPipeline());
 
-	std::cout << "Dispatch: " << _width << ", " << _height << ", " << _depth << std::endl;
 	vkCmdDispatch(_computeCommandBuffer, _width, _height, _depth);
 
 	// No memory barriers for now
@@ -78,8 +77,6 @@ void			ComputeDispatcher::Initialize(void) noexcept
 	{
 		throw std::runtime_error("failed to record command buffer!");
 	}
-
-	std::cout << "Completed !\n";
 }
 
 void			ComputeDispatcher::OnEnable() noexcept
