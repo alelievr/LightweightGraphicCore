@@ -35,7 +35,7 @@ int			main(void)
 	app.Open("Test Window", 1920, 1080, WindowFlag::Resizable | WindowFlag::Decorated | WindowFlag::Focused);
 
 	Texture2D	proceduralTexture(512, 512, VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_USAGE_STORAGE_BIT | VK_IMAGE_USAGE_SAMPLED_BIT);
-	// auto	writeProceduralTexture = std::make_shared< Material >("Shaders/Compute/ProceduralTexture.hlsl", VK_SHADER_STAGE_COMPUTE_BIT);
+	auto	writeProceduralTexture = std::make_shared< Material >("Shaders/Compute/ProceduralTexture.hlsl", VK_SHADER_STAGE_COMPUTE_BIT);
 	// auto	displayProceduralTexture = std::make_shared< Material >(BuiltinShaders::Standard); // Copy of the standard material
 	auto	fullScreenTest = std::make_shared< Material >(BuiltinShaders::Standard, BuiltinShaders::FullScreenQuad);
 	auto	anime = std::make_shared< Material >(BuiltinShaders::Standard);
@@ -80,6 +80,7 @@ int			main(void)
 
 	Texture2D jibril("images/656218.jpg", VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_USAGE_STORAGE_BIT | VK_IMAGE_USAGE_SAMPLED_BIT, true);
 	Texture2D animeTexture("images/846317.png", VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_USAGE_SAMPLED_BIT, true);
+	Texture2D possiblyYelloTexture(512, 512, VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_USAGE_STORAGE_BIT | VK_IMAGE_USAGE_SAMPLED_BIT, false);
 
 	// auto testMat = std::make_shared< Material >(BuiltinShaders::Standard);
 	// auto cube = new GameObject(new MeshRenderer(PrimitiveType::Cube, testMat));
@@ -87,8 +88,8 @@ int			main(void)
 	auto fullScreen = new GameObject(new ProceduralRenderer(fullScreenTest, 4));
 	auto cam = new GameObject(new Camera());
 	cam->GetTransform()->SetPosition(glm::vec3(0, 0, -5));
-	// const int workGroupSize = 8; // Work group size in the compute shader
-	// cube1->AddComponent(new ComputeDispatcher(writeProceduralTexture, 512 / workGroupSize, 512 / workGroupSize, &jibril));
+	const int workGroupSize = 8; // Work group size in the compute shader
+	cube1->AddComponent(new ComputeDispatcher(writeProceduralTexture, 512 / workGroupSize, 512 / workGroupSize, &possiblyYelloTexture));
 	cube1->GetTransform()->Scale(glm::vec3(.2, .2, 1));
 	// cube1->AddComponent(new FreeCameraControls());
 
@@ -107,13 +108,13 @@ int			main(void)
 	// testMat->SetTexture(TextureBinding::Albedo, jibril, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE);
 
 	// Reserve memory so we don't have to allocate and bind the descriptor set
-	// writeProceduralTexture->AllocateDescriptorSet("proceduralTexture");
-	// writeProceduralTexture->SetTexture("proceduralTexture", jibril, VK_IMAGE_LAYOUT_GENERAL, VK_DESCRIPTOR_TYPE_STORAGE_IMAGE);
+	writeProceduralTexture->AllocateDescriptorSet("proceduralTexture");
+	writeProceduralTexture->SetTexture("proceduralTexture", possiblyYelloTexture, VK_IMAGE_LAYOUT_GENERAL, VK_DESCRIPTOR_TYPE_STORAGE_IMAGE);
 	// "f" is inside the same descriptor set than procedural texture so we don't need to allocate his descriptor set
-	// writeProceduralTexture->SetBuffer("f", buffer, sizeof(test), VK_DESCRIPTOR_TYPE_STORAGE_BUFFER);
+	writeProceduralTexture->SetBuffer("f", buffer, sizeof(test), VK_DESCRIPTOR_TYPE_STORAGE_BUFFER);
 	// displayProceduralTexture->SetTexture(TextureBinding::Albedo, jibril, VK_IMAGE_LAYOUT_GENERAL, VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE);
 	anime->SetTexture(TextureBinding::Albedo, animeTexture, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE);
-	fullScreenTest->SetTexture(TextureBinding::Albedo, jibril, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE);
+	fullScreenTest->SetTexture(TextureBinding::Albedo, possiblyYelloTexture, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE);
 
 	while (app.ShouldNotQuit())
 	{

@@ -52,7 +52,7 @@ namespace LWGC
 			bool					framebufferResized;
 			
 			virtual void		CreateRenderPass(void);
-			void				BeginRenderPass(void);
+			void				BeginRenderPass(RenderContext & context);
 			void				EndRenderPass(void);
 			virtual void		RecreateSwapChain(RenderContext & renderContext);
 			virtual void		Render(const std::vector< Camera * > & cameras, RenderContext & context) = 0;

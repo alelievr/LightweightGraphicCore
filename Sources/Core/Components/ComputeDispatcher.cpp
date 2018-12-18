@@ -50,28 +50,29 @@ void			ComputeDispatcher::Initialize(void) noexcept
 	std::cout << "Dispatch: " << _width << ", " << _height << ", " << _depth << std::endl;
 	vkCmdDispatch(_computeCommandBuffer, _width, _height, _depth);
 
-	VkImageMemoryBarrier barrier = {};
-	barrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
-	barrier.image = _texture->GetImage();
-	barrier.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
-	barrier.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
-	barrier.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
-	barrier.subresourceRange.baseArrayLayer = 0;
-	barrier.subresourceRange.layerCount = 1;
-	barrier.subresourceRange.levelCount = 1;
-	barrier.subresourceRange.baseMipLevel = 0;
+	// No memory barriers for now
+	// VkImageMemoryBarrier barrier = {};
+	// barrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
+	// barrier.image = _texture->GetImage();
+	// barrier.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+	// barrier.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+	// barrier.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+	// barrier.subresourceRange.baseArrayLayer = 0;
+	// barrier.subresourceRange.layerCount = 1;
+	// barrier.subresourceRange.levelCount = 1;
+	// barrier.subresourceRange.baseMipLevel = 0;
 
-	barrier.srcAccessMask = VK_ACCESS_SHADER_WRITE_BIT;
-	barrier.dstAccessMask = VK_ACCESS_SHADER_READ_BIT;
-	barrier.oldLayout = VK_IMAGE_LAYOUT_GENERAL;
-	barrier.newLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+	// barrier.srcAccessMask = VK_ACCESS_SHADER_WRITE_BIT;
+	// barrier.dstAccessMask = VK_ACCESS_SHADER_READ_BIT;
+	// barrier.oldLayout = VK_IMAGE_LAYOUT_GENERAL;
+	// barrier.newLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
 
-	vkCmdPipelineBarrier(_computeCommandBuffer,
-		VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT, 0,
-		0, nullptr,
-		0, nullptr,
-		1, &barrier
-	);
+	// vkCmdPipelineBarrier(_computeCommandBuffer,
+	// 	VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT, 0,
+	// 	0, nullptr,
+	// 	0, nullptr,
+	// 	1, &barrier
+	// );
 
 	if (vkEndCommandBuffer(_computeCommandBuffer) != VK_SUCCESS)
 	{

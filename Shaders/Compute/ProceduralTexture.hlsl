@@ -13,6 +13,6 @@ uniform RWStructuredBuffer< float >	f;
 [numthreads(8, 8, 1)]
 void        main(ComputeInput i)
 {
-	f[i.groupThreadId.x] = 42;
-	proceduralTexture[uint2(i.groupThreadId)] = half4(1, 1, 0, 1);
+	// f[i.groupThreadId.x] = 42;
+	proceduralTexture[i.dispatchThreadId.xy] = half4(1, .25, 0, 1);
 }

@@ -109,7 +109,7 @@ void				VulkanRenderPipeline::CreateRenderPass(void)
 	renderPass.Create();
 }
 
-void			VulkanRenderPipeline::BeginRenderPass(void)
+void			VulkanRenderPipeline::BeginRenderPass(RenderContext & context)
 {
 	VkCommandBufferBeginInfo beginInfo = {};
 	beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
@@ -119,6 +119,26 @@ void			VulkanRenderPipeline::BeginRenderPass(void)
 	{
 		throw std::runtime_error("failed to begin recording command buffer!");
 	}
+	
+	renderPass.SetCurrentCommandBuffers(commandBuffer);
+	
+	// Run all compute shaders before begin render pass:
+	
+	// Run compute pass as it does not depends on any cameras
+	std::unordered_set< ComputeDispatcher * >	computeDispatchers;
+
+	context.GetComputeDispatchers(computeDispatchers);
+
+	for (auto & compute : computeDispatchers)
+	{
+		auto m = compute->GetMaterial();
+
+		renderPass.BindMaterial(m);
+
+		renderPass.EnqueueCommand(compute->GetCommandBuffer());
+	}
+
+	renderPass.ClearBindings();
 
 	VkRenderPassBeginInfo renderPassInfo = {};
 	renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
@@ -133,8 +153,6 @@ void			VulkanRenderPipeline::BeginRenderPass(void)
 
 	renderPassInfo.clearValueCount = static_cast<uint32_t>(clearValues.size());
 	renderPassInfo.pClearValues = clearValues.data();
-
-	renderPass.SetCurrentCommandBuffers(commandBuffer);
 
 	vkCmdBeginRenderPass(commandBuffer, &renderPassInfo, VK_SUBPASS_CONTENTS_SECONDARY_COMMAND_BUFFERS);
 }
@@ -328,23 +346,9 @@ void	VulkanRenderPipeline::Render(const std::vector< Camera * > & cameras, Rende
 	if (cameras.empty())
 		throw std::runtime_error("No camera for rendering !");
 
-	BeginRenderPass();
+	BeginRenderPass(context);
 	
 	renderPass.BindDescriptorSet(LWGCBinding::Frame, perFrameDescriptorSet);
-
-	// Run compute pass as it does not depends on any cameras
-	std::unordered_set< ComputeDispatcher * >	computeDispatchers;
-
-	context.GetComputeDispatchers(computeDispatchers);
-
-	for (auto & compute : computeDispatchers)
-	{
-		auto m = compute->GetMaterial();
-
-		renderPass.BindMaterial(m);
-
-		renderPass.EnqueueCommand(compute->GetCommandBuffer());
-	}
 
 	for (const auto camera : cameras)
 	{
