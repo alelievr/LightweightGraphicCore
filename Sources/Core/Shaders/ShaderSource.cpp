@@ -75,6 +75,7 @@ std::string	ShaderSource::StageToText(const VkShaderStageFlagBits stage)
 
 void		ShaderSource::SetSourceFile(const std::string & file, const VkShaderStageFlagBits stage)
 {
+	std::cout << "Set shader source\n";
 	struct stat buffer;
 	std::string	filePath = file;
 	_stage = stage;
@@ -100,7 +101,8 @@ void		ShaderSource::Compile(void)
 {
 	char path[2048];
 	getcwd(path, sizeof(path));
-
+	
+	std::cout << "Compiling shader !\n";
 	
 	// I gave up using the c++ api of glslang, it's totally unusable
 	std::string cmd = "glslangValidator -e main -V -D -S " + StageToText(_stage) + " -I" + path;

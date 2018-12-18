@@ -79,7 +79,7 @@ int			main(void)
 	// End Temporary stuff
 
 	Texture2D jibril("images/656218.jpg", VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_USAGE_STORAGE_BIT | VK_IMAGE_USAGE_SAMPLED_BIT, true);
-	Texture2D animeTexture("images/846317.png", VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_USAGE_SAMPLED_BIT, true);
+	Texture2D animeTexture("images/567634.jpg", VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_USAGE_SAMPLED_BIT, true);
 	Texture2D possiblyYelloTexture(512, 512, VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_USAGE_STORAGE_BIT | VK_IMAGE_USAGE_SAMPLED_BIT, false);
 
 	// auto testMat = std::make_shared< Material >(BuiltinShaders::Standard);
