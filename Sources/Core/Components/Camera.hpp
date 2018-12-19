@@ -34,7 +34,7 @@ namespace LWGC
 			SwapChain *				_swapChain;
 			bool					_initDescriptorSetLayout;
 			LWGC_PerCamera			_perCamera;
-			
+
 			static VkDescriptorSetLayout	_perCameraDescriptorSetLayout;
 
 			static void						CreateCameraDescriptorSetLayout(void) noexcept;
@@ -61,21 +61,23 @@ namespace LWGC
 
 			RenderTarget *	GetTarget(void) const;
 			void			SetTarget(RenderTarget * tmp);
-			
+
 			glm::vec2	GetSize(void) const;
 			void		SetSize(glm::vec2 tmp);
-			
+
 			CameraType	GetCameraType(void) const;
 			void		SetCameraType(CameraType tmp);
-			
+
 			float		GetFov(void) const;
 			void		SetFov(float tmp);
-			
+
 			float		GetNearPlane(void) const;
 			void		SetNearPlane(float tmp);
-			
+
 			float		GetFarPlane(void) const;
 			void		SetFarPlane(float tmp);
+
+			glm::mat4	GetViewMatrix(void) const;
 
 			VkDescriptorSet		GetDescriptorSet(void) const;
 

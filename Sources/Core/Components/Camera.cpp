@@ -79,12 +79,14 @@ void		Camera::SetNearPlane(float tmp) { this->_nearPlane = tmp; }
 float		Camera::GetFarPlane(void) const { return (this->_farPlane); }
 void		Camera::SetFarPlane(float tmp) { this->_farPlane = tmp; }
 
+glm::mat4	Camera::GetViewMatrix(void) const { return _perCamera.view; }
+
 void		Camera::Initialize(void) noexcept
 {
 	Component::Initialize();
 
 	_swapChain = VulkanRenderPipeline::Get()->GetSwapChain();
-	
+
 	if (_initDescriptorSetLayout == false)
 		CreateCameraDescriptorSetLayout();
 
@@ -143,7 +145,7 @@ void					Camera::UpdateUniformData(void) noexcept
 	// Transpose for HLSL
 	_perCamera.projection = glm::transpose(_perCamera.projection);
 	_perCamera.view = glm::transpose(_perCamera.view);
- 
+
 	void* data;
 	vkMapMemory(device, _uniformCameraBuffer.memory, 0, sizeof(LWGC_PerCamera), 0, &data);
 	memcpy(data, &_perCamera, sizeof(_perCamera));
