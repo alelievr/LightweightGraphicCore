@@ -71,6 +71,7 @@ void			EventSystem::BindWindow(GLFWwindow * window)
 {
 	_window = window;
 	eventSystems[window] = this;
+	_current = {};
 
 	glfwSetCursorEnterCallback(window, [](GLFWwindow * window, int entered)
 		{
