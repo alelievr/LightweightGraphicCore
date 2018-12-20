@@ -78,7 +78,7 @@ Material::~Material(void)
 	// Don't delete if the material have not been initialized
 	if (_instance == nullptr)
 		return ;
-	
+
 	vkDeviceWaitIdle(_instance->GetDevice());
 
 	CleanupPipeline();
@@ -157,7 +157,7 @@ void					Material::Initialize(SwapChain * swapChain, RenderPass * renderPass)
 	CreatePipeline();
 	CreateTextureSampler();
 	CreateUniformBuffer();
-	
+
 	// For graphic shaders, we bind default resources
 	if (!IsCompute())
 	{
@@ -187,7 +187,7 @@ void					Material::CompileShaders(void)
 		std::cout << e.what() << std::endl;
 		if (IsCompute())
 			throw std::runtime_error("Failed to compile compute shader");
-		
+
 		_program->SetSourceFile(BuiltinShaders::Pink, VK_SHADER_STAGE_FRAGMENT_BIT);
 		_program->SetSourceFile(BuiltinShaders::DefaultVertex, VK_SHADER_STAGE_VERTEX_BIT);
 		_program->CompileAndLink();
@@ -202,7 +202,7 @@ void					Material::CreatePipelineLayout(void)
 {
 	VkPipelineLayoutCreateInfo pipelineLayoutInfo = {};
 	pipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
-	
+
 	pipelineLayoutInfo.setLayoutCount = _setLayouts.size();
 	pipelineLayoutInfo.pSetLayouts = _setLayouts.data();
 
@@ -323,7 +323,7 @@ void					Material::AllocateDescriptorSet(const std::string & bindingName)
 {
 	if (!_program->IsCompiled())
 		throw std::runtime_error("Material needs to be compiled before allocating descriptor sets");
-	
+
 	// Generate all descriptor sets from the binding table
 	uint32_t setBinding = _bindingTable->GetDescriptorSetBinding(bindingName);
 
@@ -361,7 +361,7 @@ uint32_t			Material::GetDescriptorSetBinding(const std::string & setName) const
 	// We ignore nonexistent bindings
 	if (!_program->HasBinding(setName))
 		return -1;
-	
+
 	return _bindingTable->GetDescriptorSetBinding(setName);
 }
 

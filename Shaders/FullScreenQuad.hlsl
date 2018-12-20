@@ -2,10 +2,10 @@
 #include "Shaders/Common/InputGraphic.hlsl"
 
 // Vulkan NDC coordinates
-const float2	screenPositions[6] = {
+const float2	screenPositions[4] = {
 	float2(1, -1),
-	float2(-1, -1),
 	float2(1, 1),
+	float2(-1, -1),
 	float2(-1, 1),
 };
 

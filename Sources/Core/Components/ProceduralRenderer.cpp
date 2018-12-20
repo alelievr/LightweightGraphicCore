@@ -14,7 +14,7 @@ ProceduralRenderer::ProceduralRenderer(std::shared_ptr< Material > material, int
 	vertexInputInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
 	vertexInputInfo.vertexBindingDescriptionCount = 0;
 	vertexInputInfo.vertexAttributeDescriptionCount = 0;
-	
+
 	material->SetVertexInputState(vertexInputInfo);
 }
 

@@ -57,18 +57,6 @@ int			main(void)
 
 	fullScreenTest->SetDepthStencilState(depthStencilInfo);
 
-	VkPipelineRasterizationStateCreateInfo rasterizationInfo = {};
-	rasterizationInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO;
-	rasterizationInfo.depthClampEnable = VK_FALSE;
-	rasterizationInfo.rasterizerDiscardEnable = VK_FALSE;
-	rasterizationInfo.polygonMode = VK_POLYGON_MODE_FILL;
-	rasterizationInfo.lineWidth = 1.0f;
-	rasterizationInfo.cullMode = VK_CULL_MODE_BACK_BIT;
-	rasterizationInfo.frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE;
-	rasterizationInfo.depthBiasEnable = VK_FALSE;
-
-	fullScreenTest->SetRasterizationState(rasterizationInfo);
-	
 	// Temporary stuff, must be handled by the material and the render pass
 	static float test[10];
 	VkBuffer buffer;
