@@ -13,7 +13,7 @@ ComputeDispatcher::ComputeDispatcher(std::shared_ptr< Material > material, int w
 
 ComputeDispatcher::~ComputeDispatcher(void)
 {
-	_material.reset();
+	
 }
 
 void	ComputeDispatcher::RecordComputeCommand(VkCommandBuffer cmd) noexcept

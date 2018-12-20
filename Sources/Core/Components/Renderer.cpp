@@ -24,7 +24,6 @@ Renderer::Renderer(std::shared_ptr< Material > material)
 
 Renderer::~Renderer(void)
 {
-	_material.reset();
 	vkDestroyBuffer(device, _uniformModelBuffer.buffer, nullptr);
 	vkFreeMemory(device, _uniformModelBuffer.memory, nullptr);
 }

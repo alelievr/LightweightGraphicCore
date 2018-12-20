@@ -7,10 +7,13 @@
 
 using namespace LWGC;
 
+// Application *	Application::_app = nullptr;
+
 Delegate	Application::update;
 
 Application::Application(void) : _renderPipeline(nullptr), _window(nullptr), _hierarchy(std::make_shared< Hierarchy >()), _shouldNotQuit(true)
 {
+	_app = this;
 }
 
 Application::Application(VulkanRenderPipeline * renderPipeline) : Application()
@@ -20,6 +23,7 @@ Application::Application(VulkanRenderPipeline * renderPipeline) : Application()
 
 Application::~Application(void)
 {
+	_materialTable.DestroyMaterials();
 	delete _renderPipeline;
 	
 	if (_window != NULL)
@@ -139,6 +143,8 @@ void				Application::Update(void) noexcept
 
 EventSystem *		Application::GetEventSystem(void) noexcept { return &this->_eventSystem; }
 Hierarchy *			Application::GetHierarchy(void) noexcept { return this->_hierarchy.get(); }
+
+Application *	Application::Get(void) noexcept { return _app; }
 
 std::ostream &	operator<<(std::ostream & o, Application const & r)
 {
