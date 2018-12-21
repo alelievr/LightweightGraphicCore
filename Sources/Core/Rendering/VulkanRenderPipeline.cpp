@@ -119,15 +119,15 @@ void			VulkanRenderPipeline::BeginRenderPass(RenderContext & context)
 	{
 		throw std::runtime_error("failed to begin recording command buffer!");
 	}
-	
-	renderPass.SetCurrentCommandBuffers(commandBuffer);
-	
-	// Run all compute shaders before begin render pass:
-	
-	// Run compute pass as it does not depends on any cameras
-	std::unordered_set< ComputeDispatcher * >	computeDispatchers;
 
+	renderPass.SetCurrentCommandBuffers(commandBuffer);
+
+	// Run all compute shaders before begin render pass:
+	std::unordered_set< ComputeDispatcher * >	computeDispatchers;
 	context.GetComputeDispatchers(computeDispatchers);
+
+	// Bind frame infos for compute shaders
+	renderPass.BindDescriptorSet(LWGCBinding::Frame, perFrameDescriptorSet);
 
 	for (auto & compute : computeDispatchers)
 	{
@@ -244,7 +244,7 @@ void			VulkanRenderPipeline::RecreateSwapChain(RenderContext & renderContext)
 	// Rebuild all Material graphic pipelines
 	// TODO: do not work with compute dispatchers
 	renderContext.GetRenderers(renderers);
-	
+
 	for (auto & meshRenderer : renderers)
 		meshRenderer->CleanupPipeline();
 
@@ -347,16 +347,16 @@ void	VulkanRenderPipeline::Render(const std::vector< Camera * > & cameras, Rende
 		throw std::runtime_error("No camera for rendering !");
 
 	BeginRenderPass(context);
-	
+
 	renderPass.BindDescriptorSet(LWGCBinding::Frame, perFrameDescriptorSet);
 
 	for (const auto camera : cameras)
 	{
 		for (auto & updatePerCamera : context.GetUpdatePerCameras())
 			updatePerCamera->UpdatePerCamera(camera);
-		
+
 		std::unordered_set< Renderer * >	renderers;
-		
+
 		renderPass.BindDescriptorSet(LWGCBinding::Camera, camera->GetDescriptorSet());
 
 		context.GetRenderers(renderers);
@@ -367,9 +367,6 @@ void	VulkanRenderPipeline::Render(const std::vector< Camera * > & cameras, Rende
 			renderPass.BindDescriptorSet(LWGCBinding::Object, meshRenderer->GetDescriptorSet());
 			renderPass.BindMaterial(m);
 
-			// TODO: put an event listener in MeshRenderer and update uniforms from there
-			m->UpdateUniformBuffer();
-			
 			renderPass.EnqueueCommand(meshRenderer->GetDrawCommandBuffer());
 		}
 	}

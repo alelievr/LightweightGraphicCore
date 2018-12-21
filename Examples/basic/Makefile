@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: alelievr <marvin@42.fr>                    +#+  +:+       +#+         #
+#    By: amerelo <amerelo@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
-#    Created: 2014/07/15 15:13:38 by alelievr          #+#    #+#              #
-#    Updated: 2018/12/21 22:47:15 by amerelo          ###   ########.fr        #
+#    Created: 0014/07/15 15:13:38 by alelievr          #+#    #+#              #
+#    Updated: 2018/12/21 23:57:13 by amerelo          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -43,7 +43,7 @@ LDLIBS		=	-lLWGC -lglfw3 -limgui -lvulkan -lglslang -lSPIRV -lHLSL -lSPVRemapper
 NAME		=	simple
 
 #	Compiler
-WERROR		=	-Werror
+WERROR		=	
 CFLAGS		=	-pedantic -ffast-math -ffunction-sections -fdata-sections
 CPPFLAGS	=	-Wno-c++98-compat
 CPROTECTION	=	-z execstack -fno-stack-protector

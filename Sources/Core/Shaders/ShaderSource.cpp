@@ -100,7 +100,7 @@ void		ShaderSource::Compile(void)
 {
 	char path[2048];
 	getcwd(path, sizeof(path));
-	
+
 	// I gave up using the c++ api of glslang, it's totally unusable
 	std::string cmd = "glslangValidator -e main -V -D -S " + StageToText(_stage) + " -I" + path;
 	for (const auto & p : shaderIncludePaths)
@@ -155,27 +155,27 @@ void		ShaderSource::GenerateBindingTable(ShaderBindingTable & bindingTable)
 	// Uniform buffers
 	for (auto & resource : resources.uniform_buffers)
 		addBinding(resource, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER);
-	
+
 	// SRVs
 	for (auto & resource : resources.separate_images)
 		addBinding(resource, VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE);
-	
+
 	// UAVs
 	for (auto & resource : resources.storage_images)
 		addBinding(resource, VK_DESCRIPTOR_TYPE_STORAGE_IMAGE);
-	
+
 	// Samplers
 	for (auto & resource : resources.separate_samplers)
 		addBinding(resource, VK_DESCRIPTOR_TYPE_SAMPLER);
-	
+
 	// StructedBuffers RW and read-only
 	for (auto & resource : resources.storage_buffers)
 		addBinding(resource, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER);
-	
+
 	// delete glsl;
 }
 
-void		ShaderSource::GetWorkingThreadSize(uint32_t & width, uint32_t & height, uint32_t & depth)
+void		ShaderSource::GetWorkingThreadSize(uint32_t & width, uint32_t & height, uint32_t & depth) const
 {
 	width = _threadWidth;
 	height = _threadHeight;

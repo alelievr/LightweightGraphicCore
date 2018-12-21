@@ -20,7 +20,7 @@ namespace LWGC
 	class VulkanRenderPipeline
 	{
 		friend class Application;
-		
+
 		// The private part is only used as internal render-pipeline setup and should be overwritten by a custom render pipeline
 		private:
 			struct LWGC_PerFrame
@@ -34,7 +34,7 @@ namespace LWGC
 			UniformBuffer					uniformPerFrame;
 			VkDescriptorSet					perFrameDescriptorSet;
 			VkDescriptorSetLayout			perFrameDescriptorSetLayout;
-			
+
 			void				RenderInternal(const std::vector< Camera * > & cameras, RenderContext & context);
 			void				UpdatePerframeUnformBuffer(void) noexcept;
 			void				CreatePerFrameDescriptorSet(void) noexcept;
@@ -43,14 +43,14 @@ namespace LWGC
 			std::vector<VkSemaphore>		imageAvailableSemaphores;
 			std::vector<VkSemaphore>		renderFinishedSemaphores;
 			std::vector<VkFence>			inFlightFences;
-			VkDevice				device;
-			VulkanInstance *		instance;
-			size_t					currentFrame = 0;
-			RenderPass				renderPass;
-			SwapChain *				swapChain;
-			VkCommandBuffer			commandBuffer;
-			bool					framebufferResized;
-			
+			VkDevice						device;
+			VulkanInstance *				instance;
+			size_t							currentFrame = 0;
+			RenderPass						renderPass;
+			SwapChain *						swapChain;
+			VkCommandBuffer					commandBuffer;
+			bool							framebufferResized;
+
 			virtual void		CreateRenderPass(void);
 			void				BeginRenderPass(RenderContext & context);
 			void				EndRenderPass(void);

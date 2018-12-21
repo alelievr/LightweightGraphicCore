@@ -103,7 +103,7 @@ namespace LWGC
 		public:
 			Material(const Material &);
 			virtual ~Material(void);
-			
+
 			Material &	operator=(Material const & src);
 
 			static Material	*Create(void);
@@ -120,6 +120,7 @@ namespace LWGC
 			VkPipeline			GetPipeline(void) const;
 			VkPipelineLayout	GetPipelineLayout(void) const;
 			uint32_t			GetDescriptorSetBinding(const std::string & setName) const;
+			void				GetComputeWorkSize(uint32_t & width, uint32_t & height, uint32_t & depth) const;
 			bool				IsCompute(void) const;
 
 			void				SetBuffer(const std::string & bindingName, VkBuffer buffer, size_t size, VkDescriptorType descriptorType);
@@ -131,6 +132,6 @@ namespace LWGC
 			void				SetDepthStencilState(VkPipelineDepthStencilStateCreateInfo info);
 			void				SetRasterizationState(VkPipelineRasterizationStateCreateInfo info);
 	};
-	
+
 	std::ostream &	operator<<(std::ostream & o, Material const & r);
 }

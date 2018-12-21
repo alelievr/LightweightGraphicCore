@@ -79,9 +79,6 @@ Material::~Material(void)
 
 	CleanupPipeline();
 
-	// TODO: destroy samplers from Vk::Samplers
-	// vkDestroySampler(_device, _samplers[0], nullptr);
-
 	vkDestroyBuffer(_device, _uniformPerMaterial.buffer, nullptr);
 	vkFreeMemory(_device, _uniformPerMaterial.memory, nullptr);
 }
@@ -387,6 +384,11 @@ uint32_t			Material::GetDescriptorSetBinding(const std::string & setName) const
 		return -1;
 
 	return _bindingTable->GetDescriptorSetBinding(setName);
+}
+
+void				Material::GetComputeWorkSize(uint32_t & width, uint32_t & height, uint32_t & depth) const
+{
+	_program->GetWorkingThreadSize(width, height, depth);
 }
 
 bool				Material::IsCompute(void) const

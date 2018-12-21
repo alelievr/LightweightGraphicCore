@@ -35,7 +35,7 @@ namespace LWGC
 			std::string				StageToText(const VkShaderStageFlagBits stage);
 
 			const std::string		tmpFilePath = "/tmp/LWGC_spirV.tmp";
-			
+
 			static std::vector< std::string >	shaderIncludePaths;
 
 			friend std::ostream &	operator<<(std::ostream & o, ShaderSource const & r);
@@ -57,7 +57,7 @@ namespace LWGC
 			VkShaderModule			GetModule(void) const;
 			VkShaderStageFlagBits	GetStage(void) const;
 			bool					HasSource(void) const;
-			void					GetWorkingThreadSize(uint32_t & width, uint32_t & height, uint32_t & depth);
+			void					GetWorkingThreadSize(uint32_t & width, uint32_t & height, uint32_t & depth) const;
 
 			static void	AddIncludePath(const std::string & path);
 	};

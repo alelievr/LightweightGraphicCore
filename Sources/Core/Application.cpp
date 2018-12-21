@@ -23,8 +23,9 @@ Application::Application(VulkanRenderPipeline * renderPipeline) : Application()
 Application::~Application(void)
 {
 	_materialTable.DestroyMaterials();
+	Vk::Release();
 	delete _renderPipeline;
-	
+
 	if (_window != NULL)
 	{
 		glfwDestroyWindow(_window);
@@ -98,7 +99,7 @@ void			Application::Open(const std::string & name, const int width, const int he
 	try {
 		_surface.Initialize(_window);
 		_swapChain.Initialize(_surface);
-		
+
 		// Vk needs logical device (which require surface for creation (due to swapchain support checks))
 		Vk::Initialize();
 
@@ -114,7 +115,7 @@ void			Application::Open(const std::string & name, const int width, const int he
 	} catch (...) {
 		std::cout << "Unknown error while initializing the render pipeline !" << std::endl;
 	}
-	
+
 	glfwSetWindowUserPointer(_window, &_renderPipeline);
 	glfwSetFramebufferSizeCallback(_window, FramebufferResizeCallback);
 
