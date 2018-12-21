@@ -36,7 +36,6 @@ int			main(void)
 
 	Texture2D	proceduralTexture(512, 512, VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_USAGE_STORAGE_BIT | VK_IMAGE_USAGE_SAMPLED_BIT);
 	auto	writeProceduralTexture = std::make_shared< Material >("Shaders/Compute/ProceduralTexture.hlsl", VK_SHADER_STAGE_COMPUTE_BIT);
-	// auto	displayProceduralTexture = std::make_shared< Material >(BuiltinShaders::Standard); // Copy of the standard material
 	auto	fullScreenTest = std::make_shared< Material >(BuiltinShaders::Standard, BuiltinShaders::FullScreenQuad);
 	auto	anime = std::make_shared< Material >(BuiltinShaders::Standard);
 
@@ -61,13 +60,6 @@ int			main(void)
 	Texture2D animeTexture("images/567634.jpg", VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_USAGE_SAMPLED_BIT, true);
 	Texture2D possiblyYelloTexture(512, 512, VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_USAGE_STORAGE_BIT | VK_IMAGE_USAGE_SAMPLED_BIT, false);
 
-	VkQueue q1 = VulkanInstance::Get()->AllocateDeviceQueue();
-	VkQueue q2 = VulkanInstance::Get()->AllocateDeviceQueue();
-
-	printf("q1: %p - q2: %p\n", q1, q2);
-
-	// auto testMat = std::make_shared< Material >(BuiltinShaders::Standard);
-	// auto cube = new GameObject(new MeshRenderer(PrimitiveType::Cube, testMat));
 	auto cube1 = new GameObject(new MeshRenderer(PrimitiveType::Cube, anime));
 	auto fullScreen = new GameObject(new ProceduralRenderer(fullScreenTest, 4));
 	auto cam = new GameObject(new Camera());
@@ -88,12 +80,10 @@ int			main(void)
 	hierarchy->AddGameObject(cube1);
 	hierarchy->AddGameObject(fullScreen);
 	hierarchy->AddGameObject(cam);
-	// testMat->SetTexture(TextureBinding::Albedo, jibril, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE);
 
 	// Reserve memory so we don't have to allocate and bind the descriptor set
 	writeProceduralTexture->AllocateDescriptorSet("proceduralTexture");
 	writeProceduralTexture->SetTexture("proceduralTexture", possiblyYelloTexture, VK_IMAGE_LAYOUT_GENERAL, VK_DESCRIPTOR_TYPE_STORAGE_IMAGE);
-	// displayProceduralTexture->SetTexture(TextureBinding::Albedo, jibril, VK_IMAGE_LAYOUT_GENERAL, VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE);
 	anime->SetTexture(TextureBinding::Albedo, animeTexture, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE);
 	fullScreenTest->SetTexture(TextureBinding::Albedo, possiblyYelloTexture, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE);
 

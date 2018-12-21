@@ -45,19 +45,12 @@ void                VulkanRenderPipeline::Initialize(SwapChain * swapChain)
 
 	// Allocate primary command buffers
 	instance->GetCommandBufferPool()->Allocate(VK_COMMAND_BUFFER_LEVEL_PRIMARY, swapChainCommandBuffers, swapChain->GetImageCount());
-	computeCommandBuffer = instance->GetCommandBufferPool()->Allocate(VK_COMMAND_BUFFER_LEVEL_PRIMARY);
 
 	// Allocate LWGC_PerFrame uniform buffer
 	Vk::CreateBuffer(sizeof(LWGC_PerFrame), VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, uniformPerFrame.buffer, uniformPerFrame.memory);
 
 	CreateDescriptorSets();
 	CreatePerFrameDescriptorSet();
-
-	VkFenceCreateInfo fenceInfo {};
-	fenceInfo.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
-	fenceInfo.flags = 0;
-
-	vkCreateFence(device, &fenceInfo, nullptr, &computeFence);
 }
 
 void				VulkanRenderPipeline::CreateDescriptorSets(void) {}
@@ -122,18 +115,18 @@ void			VulkanRenderPipeline::BeginRenderPass(RenderContext & context)
 	beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
 	beginInfo.flags = VK_COMMAND_BUFFER_USAGE_SIMULTANEOUS_USE_BIT;
 
-	if (vkBeginCommandBuffer(computeCommandBuffer, &beginInfo) != VK_SUCCESS)
+	if (vkBeginCommandBuffer(commandBuffer, &beginInfo) != VK_SUCCESS)
 	{
 		throw std::runtime_error("failed to begin recording command buffer!");
 	}
 
-	renderPass.SetCurrentCommandBuffers(computeCommandBuffer);
+	renderPass.SetCurrentCommandBuffers(commandBuffer);
 
 	// Run all compute shaders before begin render pass:
 	std::unordered_set< ComputeDispatcher * >	computeDispatchers;
-
 	context.GetComputeDispatchers(computeDispatchers);
 
+	// Bind frame infos for compute shaders
 	renderPass.BindDescriptorSet(LWGCBinding::Frame, perFrameDescriptorSet);
 
 	for (auto & compute : computeDispatchers)
@@ -144,20 +137,6 @@ void			VulkanRenderPipeline::BeginRenderPass(RenderContext & context)
 
 		renderPass.EnqueueCommand(compute->GetCommandBuffer());
 	}
-
-	VkSubmitInfo submitInfo = {};
-	submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
-	submitInfo.commandBufferCount = 1; // submit a single command buffer
-	submitInfo.pCommandBuffers = &computeCommandBuffer; // the command buffer to submit.
-
-	Vk::CheckResult(vkQueueSubmit(instance->GetQueue(), 1, &submitInfo, VK_NULL_HANDLE), "Failed to submit queue");
-
-	if (vkBeginCommandBuffer(commandBuffer, &beginInfo) != VK_SUCCESS)
-	{
-		throw std::runtime_error("failed to begin recording command buffer!");
-	}
-
-	renderPass.SetCurrentCommandBuffers(commandBuffer);
 
 	renderPass.ClearBindings();
 
@@ -387,9 +366,6 @@ void	VulkanRenderPipeline::Render(const std::vector< Camera * > & cameras, Rende
 			auto m = meshRenderer->GetMaterial();
 			renderPass.BindDescriptorSet(LWGCBinding::Object, meshRenderer->GetDescriptorSet());
 			renderPass.BindMaterial(m);
-
-			// TODO: put an event listener in MeshRenderer and update uniforms from there
-			m->UpdateUniformBuffer();
 
 			renderPass.EnqueueCommand(meshRenderer->GetDrawCommandBuffer());
 		}
