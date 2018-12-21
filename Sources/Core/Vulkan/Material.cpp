@@ -70,7 +70,6 @@ Material::Material(Material const & src)
 
 Material::~Material(void)
 {
-	// delete _program;
 	// Don't delete if the material have not been initialized
 	if (_instance == nullptr)
 		return ;
@@ -106,24 +105,16 @@ Material *Material::Create(void)
 Material *Material::Create(const std::string & shader, VkShaderStageFlagBits stage)
 {
 	return new Material(shader, stage);
-	// _program = ShaderCache::GetShader(shader, stage);
-	// this->_bindingTable = nullptr;
-	// SetupDefaultSettings();
 }
 
 Material *Material::Create(const std::string & fragmentShader, const std::string & vertexShader)
 {
 	return new Material(fragmentShader, vertexShader);
-	// _program = ShaderCache::GetShader(fragmentShader, vertexShader);
-	// this->_bindingTable = nullptr;
-	// SetupDefaultSettings();
 }
 
 Material *Material::Create(ShaderProgram * program)
 {
-	return new Material();
-	// _program = program;
-	// SetupDefaultSettings();
+	return new Material(program);
 }
 
 void					Material::SetupDefaultSettings(void)

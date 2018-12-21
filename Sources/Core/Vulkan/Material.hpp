@@ -50,7 +50,7 @@ namespace LWGC
 	class SwapChain;
 	class RenderPass;
 
-	class		Material : public std::enable_shared_from_this< Material >
+	class		Material
 	{
 		friend class RenderPass; // For binding descriptor sets
 
