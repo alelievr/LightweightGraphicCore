@@ -5,14 +5,14 @@
 
 using namespace LWGC;
 
-ComputeDispatcher::ComputeDispatcher(std::shared_ptr< Material > material, int width, int height, int depth) :
+ComputeDispatcher::ComputeDispatcher(Material * material, int width, int height, int depth) : 
 	_material(material), _width(width), _height(height), _depth(depth)
 {
 }
 
 ComputeDispatcher::~ComputeDispatcher(void)
 {
-	_material.reset();
+	
 }
 
 void	ComputeDispatcher::RecordComputeCommand(VkCommandBuffer cmd) noexcept
@@ -70,7 +70,7 @@ void			ComputeDispatcher::OnDisable() noexcept
 	hierarchy->UnregisterComponentInRenderContext(GetType(), _renderContextIndex);
 }
 
-std::shared_ptr< Material >	ComputeDispatcher::GetMaterial(void)
+Material *	ComputeDispatcher::GetMaterial(void)
 {
 	return _material;
 }

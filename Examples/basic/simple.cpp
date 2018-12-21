@@ -35,9 +35,9 @@ int			main(void)
 	app.Open("Test Window", 1920, 1080, WindowFlag::Resizable | WindowFlag::Decorated | WindowFlag::Focused);
 
 	Texture2D	proceduralTexture(512, 512, VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_USAGE_STORAGE_BIT | VK_IMAGE_USAGE_SAMPLED_BIT);
-	auto	writeProceduralTexture = std::make_shared< Material >("Shaders/Compute/ProceduralTexture.hlsl", VK_SHADER_STAGE_COMPUTE_BIT);
-	auto	fullScreenTest = std::make_shared< Material >(BuiltinShaders::Standard, BuiltinShaders::FullScreenQuad);
-	auto	anime = std::make_shared< Material >(BuiltinShaders::Standard);
+	auto	writeProceduralTexture = Material::Create("Shaders/Compute/ProceduralTexture.hlsl", VK_SHADER_STAGE_COMPUTE_BIT);
+	auto	fullScreenTest = Material::Create(BuiltinShaders::Standard, BuiltinShaders::FullScreenQuad);
+	auto	anime = Material::Create(BuiltinShaders::Standard);
 
 	VkPipelineInputAssemblyStateCreateInfo inputAssemblyInfo = {};
 	inputAssemblyInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO;

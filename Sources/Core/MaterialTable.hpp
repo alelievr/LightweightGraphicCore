@@ -1,21 +1,26 @@
-#ifndef MATERIALTABLE_HPP
-# define MATERIALTABLE_HPP
-# include <iostream>
-# include <string>
+#pragma once
 
-class		MaterialTable
+#include <iostream>
+#include <string>
+#include "Core/Vulkan/Material.hpp"
+
+namespace LWGC
 {
-	private:
+	class		MaterialTable
+	{
+		private:
+			std::vector< Material * > _materials;
 
+		public:
+			MaterialTable();
+			MaterialTable(const MaterialTable&) = delete;
 
-	public:
-		MaterialTable();
-		MaterialTable(const MaterialTable&);
-		virtual ~MaterialTable(void);
+			void	RegsiterMaterial(Material * material);
+			void	DestroyMaterials();
+			virtual ~MaterialTable(void);
 
-		MaterialTable &	operator=(MaterialTable const & src);
-};
+			MaterialTable &	operator=(MaterialTable const & src) = delete;
+	};
 
-std::ostream &	operator<<(std::ostream & o, MaterialTable const & r);
-
-#endif
+	std::ostream &	operator<<(std::ostream & o, MaterialTable const & r);
+}

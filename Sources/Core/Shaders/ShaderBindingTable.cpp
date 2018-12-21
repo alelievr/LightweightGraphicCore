@@ -11,6 +11,12 @@ ShaderBindingTable::ShaderBindingTable(void)
 
 ShaderBindingTable::~ShaderBindingTable(void)
 {
+	VkDevice	device = VulkanInstance::Get()->GetDevice();
+
+	for (const auto & layouts : _elementLayouts)
+	{
+		vkDestroyDescriptorSetLayout(device, layouts.second, nullptr);
+	}
 }
 
 void					ShaderBindingTable::SetStage(VkShaderStageFlagBits stage)

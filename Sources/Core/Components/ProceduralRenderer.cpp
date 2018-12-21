@@ -6,7 +6,7 @@
 
 using namespace LWGC;
 
-ProceduralRenderer::ProceduralRenderer(std::shared_ptr< Material > material, int verticeCount, int elementCount)
+ProceduralRenderer::ProceduralRenderer(Material * material, int verticeCount, int elementCount)
 	: Renderer(material), _verticeCount(verticeCount), _elementCount(elementCount)
 {
 	// For procedural materials we don't need vertex input datas

@@ -16,6 +16,7 @@
 #include "Core/Rendering/RenderContext.hpp"
 #include "Core/Delegate.hpp"
 #include "Core/ImGUIWrapper.hpp"
+#include "Core/MaterialTable.hpp"
 
 #include VULKAN_INCLUDE
 #include GLFW_INCLUDE
@@ -24,7 +25,9 @@ namespace LWGC
 {
 	class		Application
 	{
+		friend class Material;
 		private:
+			static Application *				_app;
 			VulkanInstance						_instance;
 			VulkanSurface						_surface;
 			SwapChain							_swapChain;
@@ -33,6 +36,7 @@ namespace LWGC
 			EventSystem							_eventSystem;
 			std::shared_ptr< Hierarchy >		_hierarchy;
 			// ImGUIWrapper						_imGUI;
+			MaterialTable						_materialTable;
 
 			bool		_shouldNotQuit;
 
@@ -54,6 +58,8 @@ namespace LWGC
 
 			EventSystem *		GetEventSystem(void) noexcept;
 			Hierarchy *			GetHierarchy(void) noexcept;
+
+			static Application *		Get(void) noexcept;
 
 			// public events
 			static Delegate		update;

@@ -93,7 +93,7 @@ bool	RenderPass::BindDescriptorSet(const std::string & name, VkDescriptorSet set
 	return true;
 }
 
-void	RenderPass::BindMaterial(std::shared_ptr< Material > material)
+void	RenderPass::BindMaterial(Material * material)
 {
 	_currentMaterial = material;
 

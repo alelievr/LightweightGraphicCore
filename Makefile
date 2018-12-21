@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: alelievr <marvin@42.fr>                    +#+  +:+       +#+         #
+#    By: amerelo <amerelo@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
-#    Created  2014/07/15 15:13:38 by alelievr          #+#    #+#              #
-#    Updated  2018/11/06 21:01:13 by alelievr         ###   ########.fr        #
+#    Created: 2014/07/15 15:13:38 by alelievr          #+#    #+#              #
+#    Updated: 2018/12/21 18:05:50 by amerelo          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -32,8 +32,9 @@ SRC			=	Core/Application.cpp \
 				Core/Events/Event.cpp \
 				Core/Events/EventSystem.cpp \
 				Core/Events/Input.cpp \
-				Core/Material.cpp \
+				Core/MaterialTable.cpp \
 				Core/Mesh.cpp \
+				Core/ShaderCache.cpp \
 				Core/Object.cpp \
 				Core/PrimitiveMeshFactory.cpp \
 				Core/Rendering/ForwardRenderPipeline.cpp \
@@ -51,12 +52,12 @@ SRC			=	Core/Application.cpp \
 				Core/Vulkan/Vk.cpp \
 				Core/Vulkan/VulkanInstance.cpp \
 				Core/Vulkan/VulkanSurface.cpp \
-				Core/Texture.cpp \
-				Core/Texture2D.cpp \
-				Core/Texture2DArray.cpp \
-				Core/TextureCube.cpp \
-				Core/TextureCubeArray.cpp \
-				Core/Texture3D.cpp \
+				Core/Textures/Texture.cpp \
+				Core/Textures/Texture2D.cpp \
+				Core/Textures/Texture2DArray.cpp \
+				Core/Textures/TextureCube.cpp \
+				Core/Textures/TextureCubeArray.cpp \
+				Core/Textures/Texture3D.cpp \
 				Core/Delegate.cpp \
 				Core/ImGUIWrapper.cpp \
 				Utils/Bounds.cpp \

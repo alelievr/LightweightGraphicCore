@@ -3,7 +3,7 @@
 #include "IncludeDeps.hpp"
 #include "Core/Components/Component.hpp"
 #include "Core/Vulkan/Material.hpp"
-#include "Core/Texture2D.hpp"
+#include "Core/Textures/Texture2D.hpp"
 
 #include <iostream>
 #include <string>
@@ -14,7 +14,7 @@ namespace LWGC
 	class		ComputeDispatcher : public Component
 	{
 		private:
-			std::shared_ptr< Material >	_material;
+			Material *	_material;
 			int							_width;
 			int							_height;
 			int							_depth;
@@ -31,13 +31,13 @@ namespace LWGC
 
 		public:
 			ComputeDispatcher(void) = delete;
-			ComputeDispatcher(std::shared_ptr< Material > material, int width, int height, int depth = 1);
+			ComputeDispatcher(Material * material, int width, int height, int depth = 1);
 			ComputeDispatcher(const ComputeDispatcher &) = delete;
 			virtual ~ComputeDispatcher(void);
 
 			ComputeDispatcher &	operator=(ComputeDispatcher const & src) = delete;
 
-			std::shared_ptr< Material >	GetMaterial(void);
+			Material *	GetMaterial(void);
 			VkCommandBuffer				GetCommandBuffer(void);
 
 			virtual uint32_t	GetType(void) const noexcept override;
