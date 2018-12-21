@@ -309,10 +309,7 @@ void					Material::UpdateUniformBuffer()
 {
 	_perMaterial.albedo = glm::vec4(1, 1, 0, 1);
 
-	void* data;
-	vkMapMemory(_device, _uniformPerMaterial.memory, 0, sizeof(_perMaterial), 0, &data);
-	memcpy(data, &_perMaterial, sizeof(_perMaterial));
-	vkUnmapMemory(_device, _uniformPerMaterial.memory);
+	Vk::UploadToMemory(_uniformPerMaterial.memory, &_perMaterial, sizeof(_perMaterial));
 }
 
 // Allocate the descriptor set from the name of one binding inside the layout

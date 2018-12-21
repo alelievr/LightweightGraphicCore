@@ -137,10 +137,7 @@ void				Mesh::CreateVertexBuffer()
 	VkDeviceMemory stagingBufferMemory;
 	Vk::CreateBuffer(bufferSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, stagingBuffer, stagingBufferMemory);
 
-	void *data;
-	vkMapMemory(_device, stagingBufferMemory, 0, bufferSize, 0, &data);
-	memcpy(data, _attributes.data(), (size_t)bufferSize);
-	vkUnmapMemory(_device, stagingBufferMemory);
+	Vk::UploadToMemory(stagingBufferMemory, _attributes.data(), bufferSize);
 
 	Vk::CreateBuffer(bufferSize, VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, _vertexBuffer, _vertexBufferMemory);
 	Vk::CopyBuffer(stagingBuffer, _vertexBuffer, bufferSize);
@@ -157,10 +154,7 @@ void				Mesh::CreateIndexBuffer()
 	VkDeviceMemory stagingBufferMemory;
 	Vk::CreateBuffer(bufferSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, stagingBuffer, stagingBufferMemory);
 
-	void *data;
-	vkMapMemory(_device, stagingBufferMemory, 0, bufferSize, 0, &data);
-	memcpy(data, _indices.data(), (size_t)bufferSize);
-	vkUnmapMemory(_device, stagingBufferMemory);
+	Vk::UploadToMemory(stagingBufferMemory, _indices.data(), bufferSize);
 
 	Vk::CreateBuffer(bufferSize, VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_INDEX_BUFFER_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, _indexBuffer, _indexBufferMemory);
 	Vk::CopyBuffer(stagingBuffer, _indexBuffer, bufferSize);
@@ -205,7 +199,7 @@ void Mesh::VertexAttributes::QuadVertexAttrib(
 	// 1	| \ |
 	// 2    3---2
 	// 3
-	
+
 	(void)p3;
 
 	glm::vec3 normal = glm::cross(p0 - p2, p0 - p1);

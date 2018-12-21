@@ -17,7 +17,6 @@ Texture2DArray::Texture2DArray(int width, int height, int arraySize, VkFormat fo
 	// TODO: hardcoded pixel size
 	VkDeviceSize imageSize = width * height * 4 * arraySize;
 	Vk::CreateBuffer(imageSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, _stagingBuffer, _stagingBufferMemory);
-	vkMapMemory(device, _stagingBufferMemory, 0, imageSize, 0, &_stagingData);
 }
 
 void	Texture2DArray::SetImage(const std::string & fileName, int targetIndex)
@@ -29,7 +28,7 @@ void	Texture2DArray::SetImage(const std::string & fileName, int targetIndex)
 
 	if (imageWidth != width || imageHeight != height)
 		throw std::runtime_error("Mismatching texture size between texture array and assigned texture");
-		
+
 	// TODO: hardcoded pixel size
 	VkDeviceSize imageSize = width * height * 4;
 

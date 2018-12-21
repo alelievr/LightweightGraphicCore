@@ -264,10 +264,7 @@ void			VulkanRenderPipeline::UpdatePerframeUnformBuffer(void) noexcept
 	perFrame.time.w = 0; // TODO: delta time
 
 	// Upload datas to GPU
-	void* data;
-	vkMapMemory(device, uniformPerFrame.memory, 0, sizeof(LWGC_PerFrame), 0, &data);
-	memcpy(data, &perFrame, sizeof(LWGC_PerFrame));
-	vkUnmapMemory(device, uniformPerFrame.memory);
+	Vk::UploadToMemory(uniformPerFrame.memory, &perFrame, sizeof(LWGC_PerFrame));
 }
 
 void			VulkanRenderPipeline::RenderInternal(const std::vector< Camera * > & cameras, RenderContext & context)

@@ -36,7 +36,7 @@ Texture &	Texture::operator=(Texture const & src)
 void			Texture::AllocateImage(VkImageViewType viewType)
 {
 	this->allocated = true;
-	
+
 	Vk::CreateImage(width, height, depth, arraySize, maxMipLevel, format, VK_IMAGE_TILING_OPTIMAL, usage, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT, image, memory);
 	view = Vk::CreateImageView(image, format, maxMipLevel, viewType, VK_IMAGE_ASPECT_COLOR_BIT);
 }
@@ -59,10 +59,7 @@ void			Texture::UploadImage(stbi_uc * pixels, VkDeviceSize imageSize)
 	VkDeviceMemory stagingBufferMemory;
 	Vk::CreateBuffer(imageSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, stagingBuffer, stagingBufferMemory);
 
-	void *data;
-	vkMapMemory(device, stagingBufferMemory, 0, imageSize, 0, &data);
-	memcpy(data, pixels, static_cast<size_t>(imageSize));
-	vkUnmapMemory(device, stagingBufferMemory);
+	Vk::UploadToMemory(stagingBufferMemory, pixels, imageSize);
 
 	TransitionImageLayout(image, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
 	Vk::CopyBufferToImage(stagingBuffer, image, static_cast<uint32_t>(width), static_cast<uint32_t>(height));
@@ -127,10 +124,7 @@ void			Texture::UploadImageWithMips(VkImage image, VkFormat format, stbi_uc * pi
 	VkDeviceMemory stagingBufferMemory;
 	Vk::CreateBuffer(imageSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, stagingBuffer, stagingBufferMemory);
 
-	void *data;
-	vkMapMemory(device, stagingBufferMemory, 0, imageSize, 0, &data);
-	memcpy(data, pixels, static_cast<size_t>(imageSize));
-	vkUnmapMemory(device, stagingBufferMemory);
+	Vk::UploadToMemory(stagingBufferMemory, pixels, imageSize);
 
 	TransitionImageLayout(image, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
     Vk::CopyBufferToImage(stagingBuffer, image, static_cast<uint32_t>(width), static_cast<uint32_t>(height));
@@ -161,7 +155,7 @@ void			Texture::GenerateMipMaps(VkImage image, VkFormat format, int32_t width, i
 	barrier.subresourceRange.baseArrayLayer = 0;
 	barrier.subresourceRange.layerCount = 1;
 	barrier.subresourceRange.levelCount = 1;
-	
+
 	int32_t mipWidth = width;
 	int32_t mipHeight = height;
 
@@ -198,12 +192,12 @@ void			Texture::GenerateMipMaps(VkImage image, VkFormat format, int32_t width, i
 					   image, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
 					   1, &blit,
 					   VK_FILTER_LINEAR);
-		
+
 		barrier.oldLayout = VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL;
 		barrier.newLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
 		barrier.srcAccessMask = VK_ACCESS_TRANSFER_READ_BIT;
 		barrier.dstAccessMask = VK_ACCESS_SHADER_READ_BIT;
-		
+
 		vkCmdPipelineBarrier(commandBuffer,
 							 VK_PIPELINE_STAGE_TRANSFER_BIT, VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT, 0,
 							 0, nullptr,
