@@ -35,18 +35,20 @@ void		FreeCameraControls::Initialize(void) noexcept
 void		FreeCameraControls::OnEnable(void) noexcept
 {
 	Component::OnEnable();
+
+	// save index
+	EventSystem::Get()->onKeyPresssed.AddListener(KeypressedCallback)
 }
 
 void		FreeCameraControls::OnDisable(void) noexcept
 {
 	Component::OnDisable();
+	// index
+	// EventSystem::Get()->onKeyPresssed.RemoveListener
 }
 
-void		FreeCameraControls::Update(void) noexcept
+KeypressedCallback() //keycode key, action
 {
-	const auto & event = EventSystem::Get()->GetCurrentEvent();
-	const bool keyDown = event.GetType() == EventType::KeyDown;
-
 	switch (event.GetKeyCode())
 	{
 		case KeyCode::A:
@@ -82,6 +84,13 @@ void		FreeCameraControls::Update(void) noexcept
 		default:
 		break;
 	}
+}
+
+void		FreeCameraControls::Update(void) noexcept
+{
+	const auto & event = EventSystem::Get()->GetCurrentEvent();
+	const bool keyDown = event.GetType() == EventType::KeyDown;
+
 
 	_rotationX += event.delta.x * _mouseSpeed;
 	_rotationY += event.delta.y * _mouseSpeed;

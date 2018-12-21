@@ -8,11 +8,15 @@
 namespace LWGC
 {
 	// C++ ¯\_(ツ)_/¯
-	using DelegateFunction = std::function<void()>;
+	template< typename T >
+	using DelegateFunction = std::function<T>;
 	using DelegateSet = std::unordered_set< std::shared_ptr< DelegateFunction > >;
 	using DelegateIndex = DelegateSet::iterator;
-	
-	class		Delegate
+
+	using Delegate = Delegate< void(void) >;
+
+	template< typename T >
+	class		Delegate< T >
 	{
 		private:
 			DelegateSet		_functionList;

@@ -36,9 +36,10 @@ namespace LWGC
 			OnMouseEnterCallback	_onMouseEnter;
 			OnMouseExitCallback		_onMouseExit;
 
-			OnKeyDownCallback		_onKeyDown;
-			OnKeyUpCallback			_onKeyUp;
-			OnKeyStayCallback		_onKeyStay;
+			// OnKeyDownCallback		_onKeyDown;
+			// OnKeyUpCallback			_onKeyUp;
+			// OnKeyStayCallback		_onKeyStay;
+
 
 			Event					_current;
 			GLFWwindow *			_window;
@@ -54,6 +55,8 @@ namespace LWGC
 
 
 		public:
+			Delegate				onKeyPresssed;
+
 			EventSystem(void);
 			EventSystem(const EventSystem&) = delete;
 			virtual ~EventSystem(void);

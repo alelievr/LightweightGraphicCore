@@ -2,6 +2,7 @@
 
 #include <memory>
 #include "Core/Application.hpp"
+#include "Core/Delegate.hpp"
 
 using namespace LWGC;
 
@@ -86,6 +87,8 @@ void			EventSystem::BindWindow(GLFWwindow * window)
 	glfwSetKeyCallback(window, [](GLFWwindow * window, int key, int scancode, int action, int mods)
 		{
 			auto & self = eventSystems[window];
+
+			_onKeyPresssed.Invoke();
 
 			if (self->_onKeyDown != nullptr && action == GLFW_PRESS)
 				self->_onKeyDown(static_cast< KeyCode >(key));
