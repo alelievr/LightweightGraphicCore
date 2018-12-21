@@ -22,6 +22,7 @@ ShaderProgram::~ShaderProgram(void)
 
 void		ShaderProgram::CompileAndLink(void)
 {
+	printf("Compile and link !\n");
 	_bindingTable.SetStage(IsCompute() ? VK_SHADER_STAGE_COMPUTE_BIT : VK_SHADER_STAGE_ALL_GRAPHICS);
 
 	for (auto & shaderSource : _shaderSources)

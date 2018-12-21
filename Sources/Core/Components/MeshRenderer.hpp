@@ -23,7 +23,7 @@ namespace LWGC
 		public:
 			MeshRenderer(void) = delete;
 			MeshRenderer(const MeshRenderer &) = delete;
-			MeshRenderer(const PrimitiveType prim, std::shared_ptr< Material > material);
+			MeshRenderer(const PrimitiveType prim, Material * material);
 			// TODO: the primitiveType constructor must be into Mesh.cpp
 			// TODO: Add a constructor with a mesh and a material
 			MeshRenderer(const PrimitiveType primitiveType);
@@ -31,8 +31,8 @@ namespace LWGC
 
 			MeshRenderer &	operator=(MeshRenderer const & src) = delete;
 
-			void	SetModel(const Mesh & mesh, const Material & material);
-			void	SetModel(std::shared_ptr< Mesh > mesh, std::shared_ptr< Material > material);
+			void	SetModel(const Mesh & mesh, Material * material);
+			void	SetModel(std::shared_ptr< Mesh > mesh, Material * material);
 
 			std::shared_ptr< Mesh >		GetMesh(void) const;
 			void						SetMesh(std::shared_ptr< Mesh > tmp);

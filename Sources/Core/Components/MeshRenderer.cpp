@@ -6,7 +6,7 @@
 
 using namespace LWGC;
 
-MeshRenderer::MeshRenderer(const PrimitiveType prim, std::shared_ptr< Material > material) : Renderer(material)
+MeshRenderer::MeshRenderer(const PrimitiveType prim, Material * material) : Renderer(material)
 {
 	_mesh = PrimitiveMeshFactory::CreateMesh(prim);
 }
@@ -29,13 +29,13 @@ void		MeshRenderer::RecordDrawCommand(VkCommandBuffer cmd) noexcept
 	_mesh->Draw(cmd);
 }
 
-void		MeshRenderer::SetModel(const Mesh & mesh, const Material & material)
+void		MeshRenderer::SetModel(const Mesh & mesh, Material * material)
 {
 	this->_mesh = std::make_shared< Mesh >(mesh);
-	this->_material = std::make_shared< Material >(material);
+	this->_material = material;
 }
 
-void		MeshRenderer::SetModel(std::shared_ptr< Mesh > mesh, std::shared_ptr< Material > material)
+void		MeshRenderer::SetModel(std::shared_ptr< Mesh > mesh, Material * material)
 {
 	this->_mesh = mesh;
 	this->_material = material;

@@ -1,5 +1,7 @@
 #include "MaterialTable.hpp"
 
+using namespace LWGC;
+
 MaterialTable::MaterialTable(void)
 {
 	std::cout << "Default constructor of MaterialTable called" << std::endl;
@@ -17,14 +19,14 @@ std::ostream &	operator<<(std::ostream & o, MaterialTable const & r)
 	return (o);
 }
 
-void	MaterialTable::RegsiterMaterial(std::shared_ptr< LWGC::Material > material)
+void	MaterialTable::RegsiterMaterial(Material * material)
 {
 	_materials.push_back(material);
 }
 
 void	MaterialTable::DestroyMaterials()
 {
-	for(auto& material: _materials) {
-		material.reset();
+	for (auto material: _materials) {
+		delete material;
 	}
 }

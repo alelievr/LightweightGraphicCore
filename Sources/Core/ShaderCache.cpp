@@ -6,27 +6,35 @@ std::unordered_map<std::string, ShaderProgram *> ShaderCache::_shaders;
 
 ShaderProgram		*ShaderCache::GetShader(const std::string & shader, const std::string & elem)
 {
-	if (_shaders.find(shader) != _shaders.end())
+	std::string key = shader + elem;
+
+	if (_shaders.find(key) == _shaders.end())
 	{
 		ShaderProgram	 *program = new ShaderProgram();
-		_shaders[shader + elem] = program;
 		program->SetSourceFile(shader, VK_SHADER_STAGE_FRAGMENT_BIT);
 		program->SetSourceFile(elem, VK_SHADER_STAGE_VERTEX_BIT);
+
+		_shaders[key] = program;
+
 		return (program);
 	}
-	return (_shaders[shader + elem]);
+
+	return (_shaders[key]);
 }
 
-ShaderProgram		*ShaderCache::GetShader(const std::string & shader, int elem)
+ShaderProgram		*ShaderCache::GetShader(const std::string & shader, VkShaderStageFlagBits stage)
 {
-	if (_shaders.find(shader) != _shaders.end())
+	std::string key = shader + std::to_string(stage);
+
+	if (_shaders.find(key) == _shaders.end())
 	{
 		ShaderProgram	 *program = new ShaderProgram();
-		_shaders[shader + std::to_string(elem)] = program;
-		program->SetSourceFile(shader, VK_SHADER_STAGE_FRAGMENT_BIT);
-		program->SetSourceFile(std::to_string(elem), VK_SHADER_STAGE_VERTEX_BIT);
+		program->SetSourceFile(shader, stage);
+		_shaders[key] = program;
+
 		return (program);
 	}
-	return (_shaders[shader + std::to_string(elem)]);
+
+	return (_shaders[key]);
 }
 

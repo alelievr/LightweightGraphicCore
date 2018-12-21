@@ -4,20 +4,23 @@
 #include <string>
 #include "Core/Vulkan/Material.hpp"
 
-class		MaterialTable
+namespace LWGC
 {
-	private:
-		std::vector< std::shared_ptr< LWGC::Material > > _materials;
+	class		MaterialTable
+	{
+		private:
+			std::vector< Material * > _materials;
 
-	public:
-		MaterialTable();
-		MaterialTable(const MaterialTable&) = delete;
+		public:
+			MaterialTable();
+			MaterialTable(const MaterialTable&) = delete;
 
-		void	RegsiterMaterial(std::shared_ptr< LWGC::Material > material);
-		void	DestroyMaterials();
-		virtual ~MaterialTable(void);
+			void	RegsiterMaterial(Material * material);
+			void	DestroyMaterials();
+			virtual ~MaterialTable(void);
 
-		MaterialTable &	operator=(MaterialTable const & src) = delete;
-};
+			MaterialTable &	operator=(MaterialTable const & src) = delete;
+	};
 
-std::ostream &	operator<<(std::ostream & o, MaterialTable const & r);
+	std::ostream &	operator<<(std::ostream & o, MaterialTable const & r);
+}

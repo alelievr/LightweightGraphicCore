@@ -106,6 +106,7 @@ void		ShaderSource::Compile(void)
 	for (const auto & p : shaderIncludePaths)
 		cmd += " -I" + p;
 	cmd += " " + _sourceFile.path + " -o " + tmpFilePath;
+	printf("cmd: %s\n", cmd.c_str());
 	if (system(cmd.c_str()) != 0)
 		throw std::runtime_error("Shader compilation error");
 

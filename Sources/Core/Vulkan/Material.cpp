@@ -40,17 +40,12 @@ Material::Material(void)
 	this->_pipeline = VK_NULL_HANDLE;
 	this->_bindingTable = nullptr;
 	_program = ShaderCache::GetShader(BuiltinShaders::Pink, BuiltinShaders::DefaultVertex);
-	// _program = new ShaderProgram();
-	// _program->SetSourceFile(BuiltinShaders::Pink, VK_SHADER_STAGE_FRAGMENT_BIT);
-	// _program->SetSourceFile(BuiltinShaders::DefaultVertex, VK_SHADER_STAGE_VERTEX_BIT);
 	SetupDefaultSettings();
 }
 
 Material::Material(const std::string & shader, VkShaderStageFlagBits stage)
 {
 	_program = ShaderCache::GetShader(shader, stage);
-	// _program = new ShaderProgram();
-	// _program->SetSourceFile(shader, stage);
 	this->_bindingTable = nullptr;
 	SetupDefaultSettings();
 }
@@ -58,9 +53,6 @@ Material::Material(const std::string & shader, VkShaderStageFlagBits stage)
 Material::Material(const std::string & fragmentShader, const std::string & vertexShader)
 {
 	_program = ShaderCache::GetShader(fragmentShader, vertexShader);
-	// _program = new ShaderProgram();
-	// _program->SetSourceFile(fragmentShader, VK_SHADER_STAGE_FRAGMENT_BIT);
-	// _program->SetSourceFile(vertexShader, VK_SHADER_STAGE_VERTEX_BIT);
 	this->_bindingTable = nullptr;
 	SetupDefaultSettings();
 }
@@ -109,6 +101,34 @@ Material &	Material::operator=(Material const & src)
 	return (*this);
 }
 
+Material *Material::Create(void)
+{
+	return new Material();
+}
+
+Material *Material::Create(const std::string & shader, VkShaderStageFlagBits stage)
+{
+	return new Material(shader, stage);
+	// _program = ShaderCache::GetShader(shader, stage);
+	// this->_bindingTable = nullptr;
+	// SetupDefaultSettings();
+}
+
+Material *Material::Create(const std::string & fragmentShader, const std::string & vertexShader)
+{
+	return new Material(fragmentShader, vertexShader);
+	// _program = ShaderCache::GetShader(fragmentShader, vertexShader);
+	// this->_bindingTable = nullptr;
+	// SetupDefaultSettings();
+}
+
+Material *Material::Create(ShaderProgram * program)
+{
+	return new Material();
+	// _program = program;
+	// SetupDefaultSettings();
+}
+
 void					Material::SetupDefaultSettings(void)
 {
 	static auto bindingDescription = Mesh::GetBindingDescription();
@@ -147,7 +167,7 @@ void					Material::SetupDefaultSettings(void)
 	_rasterizationState.cullMode = VK_CULL_MODE_BACK_BIT;
 	_rasterizationState.frontFace = VK_FRONT_FACE_CLOCKWISE;
 	_rasterizationState.depthBiasEnable = VK_FALSE;
-	Application::Get()->_materialTable.RegsiterMaterial( std::shared_ptr< LWGC::Material >(this) );
+	Application::Get()->_materialTable.RegsiterMaterial(this);
 }
 
 void					Material::Initialize(SwapChain * swapChain, RenderPass * renderPass)
@@ -193,8 +213,7 @@ void					Material::CompileShaders(void)
 		if (IsCompute())
 			throw std::runtime_error("Failed to compile compute shader");
 
-		_program->SetSourceFile(BuiltinShaders::Pink, VK_SHADER_STAGE_FRAGMENT_BIT);
-		_program->SetSourceFile(BuiltinShaders::DefaultVertex, VK_SHADER_STAGE_VERTEX_BIT);
+		_program = ShaderCache::GetShader(BuiltinShaders::Pink, BuiltinShaders::DefaultVertex);
 		_program->CompileAndLink();
 	}
 

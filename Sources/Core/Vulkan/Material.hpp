@@ -50,7 +50,7 @@ namespace LWGC
 	class SwapChain;
 	class RenderPass;
 
-	class		Material
+	class		Material : public std::enable_shared_from_this< Material >
 	{
 		friend class RenderPass; // For binding descriptor sets
 
@@ -85,7 +85,12 @@ namespace LWGC
 			VkPipelineInputAssemblyStateCreateInfo	_inputAssemblyState;
 			VkPipelineDepthStencilStateCreateInfo	_depthStencilState;
 			VkPipelineRasterizationStateCreateInfo	_rasterizationState;
-	
+
+			Material(void);
+			Material(const std::string & shader, VkShaderStageFlagBits stage);
+			Material(const std::string & fragmentShader, const std::string & vertexShader = BuiltinShaders::DefaultVertex);
+			Material(ShaderProgram * program);
+
 			void		CreateTextureSampler(void);
 			void		CreateUniformBuffer(void);
 			void		CreatePipelineLayout(void);
@@ -94,16 +99,17 @@ namespace LWGC
 			void		CreateComputePipeline(void);
 			void		BindDescriptorSets(RenderPass * renderPass);
 			void		SetupDefaultSettings(void);
-	
+
 		public:
-			Material(void);
 			Material(const Material &);
-			Material(const std::string & shader, VkShaderStageFlagBits stage);
-			Material(const std::string & fragmentShader, const std::string & vertexShader = BuiltinShaders::DefaultVertex);
-			Material(ShaderProgram * program);
 			virtual ~Material(void);
-	
+			
 			Material &	operator=(Material const & src);
+
+			static Material	*Create(void);
+			static Material	*Create(const std::string & shader, VkShaderStageFlagBits stage);
+			static Material	*Create(const std::string & fragmentShader, const std::string & vertexShader = BuiltinShaders::DefaultVertex);
+			static Material	*Create(ShaderProgram * program);
 	
 			void	Initialize(SwapChain * swapchain, RenderPass * renderPass);
 			void	CleanupPipeline(void) noexcept;

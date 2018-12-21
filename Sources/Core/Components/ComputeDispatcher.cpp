@@ -5,7 +5,7 @@
 
 using namespace LWGC;
 
-ComputeDispatcher::ComputeDispatcher(std::shared_ptr< Material > material, int width, int height, Texture2D * texture, int depth) : 
+ComputeDispatcher::ComputeDispatcher(Material * material, int width, int height, Texture2D * texture, int depth) : 
 	_material(material), _width(width), _height(height), _depth(depth)
 {
 	_texture = texture;
@@ -91,7 +91,7 @@ void			ComputeDispatcher::OnDisable() noexcept
 	hierarchy->UnregisterComponentInRenderContext(GetType(), _renderContextIndex);
 }
 
-std::shared_ptr< Material >	ComputeDispatcher::GetMaterial(void)
+Material *	ComputeDispatcher::GetMaterial(void)
 {
 	return _material;
 }

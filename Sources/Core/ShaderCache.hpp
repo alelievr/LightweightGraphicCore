@@ -10,7 +10,7 @@ namespace LWGC
 	class		ShaderCache
 	{
 		private:
-			static std::unordered_map<std::string, ShaderProgram	 *> _shaders;
+			static std::unordered_map<std::string, ShaderProgram *> _shaders;
 
 		public:
 
@@ -19,7 +19,7 @@ namespace LWGC
 			virtual ~ShaderCache(void) = delete;
 
 			static ShaderProgram	*GetShader(const std::string & shader, const std::string & elem);
-			static ShaderProgram	*GetShader(const std::string & shader, int elem);
+			static ShaderProgram	*GetShader(const std::string & shader, VkShaderStageFlagBits stage);
 
 			ShaderCache &	operator=(ShaderCache const & src) = delete;
 	};
