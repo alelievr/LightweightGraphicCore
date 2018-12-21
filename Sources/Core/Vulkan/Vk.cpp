@@ -154,9 +154,9 @@ void			Vk::CheckResult(VkResult result, const std::string & errorMessage)
 {
 	if (result == 0)
 		return;
-	
+
 	std::cout << "Vulkan error [" << result << "]: " << errorMessage << std::endl;
-	
+
     if (result < 0)
 		abort();
 }
@@ -185,13 +185,13 @@ VkSampler		Vk::CreateSampler(VkFilter filter, VkSamplerAddressMode addressMode, 
 
 	if (vkCreateSampler(VulkanInstance::Get()->GetDevice(), &samplerInfo, nullptr, &sampler) != VK_SUCCESS)
 		throw std::runtime_error("failed to create texture sampler!");
-	
+
 	return sampler;
 }
 
 VkSampler	Vk::CreateCompSampler(VkFilter filter, VkSamplerAddressMode addressMode, VkCompareOp compareOp)
 {
-	
+
 	VkSampler			sampler;
 	VkSamplerCreateInfo	samplerInfo = {};
 
@@ -214,7 +214,7 @@ VkSampler	Vk::CreateCompSampler(VkFilter filter, VkSamplerAddressMode addressMod
 
 	if (vkCreateSampler(VulkanInstance::Get()->GetDevice(), &samplerInfo, nullptr, &sampler) != VK_SUCCESS)
 		throw std::runtime_error("failed to create texture sampler!");
-		
+
 	return sampler;
 }
 
@@ -226,6 +226,18 @@ void			Vk::Initialize(void)
 	Samplers::nearestRepeat = CreateSampler(VK_FILTER_NEAREST, VK_SAMPLER_ADDRESS_MODE_REPEAT, 0);
 	Samplers::anisotropicTrilinearClamp = CreateSampler(VK_FILTER_LINEAR, VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_BORDER, 16);
 	Samplers::depthCompare = CreateCompSampler(VK_FILTER_LINEAR, VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_BORDER, VK_COMPARE_OP_LESS);
+}
+
+void			Vk::Release(void)
+{
+	VkDevice	device = VulkanInstance::Get()->GetDevice();
+
+	vkDestroySampler(device, Samplers::trilinearClamp, nullptr);
+	vkDestroySampler(device, Samplers::trilinearRepeat, nullptr);
+	vkDestroySampler(device, Samplers::nearestClamp, nullptr);
+	vkDestroySampler(device, Samplers::nearestRepeat, nullptr);
+	vkDestroySampler(device, Samplers::anisotropicTrilinearClamp, nullptr);
+	vkDestroySampler(device, Samplers::depthCompare, nullptr);
 }
 
 VkDescriptorSetLayoutBinding	Vk::CreateDescriptorSetLayoutBinding(uint32_t binding, VkDescriptorType descriptorType, VkShaderStageFlagBits stageFlags)

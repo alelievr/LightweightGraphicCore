@@ -83,9 +83,6 @@ Material::~Material(void)
 
 	CleanupPipeline();
 
-	// TODO: destroy samplers from Vk::Samplers
-	// vkDestroySampler(_device, _samplers[0], nullptr);
-
 	vkDestroyBuffer(_device, _uniformPerMaterial.buffer, nullptr);
 	vkFreeMemory(_device, _uniformPerMaterial.memory, nullptr);
 }

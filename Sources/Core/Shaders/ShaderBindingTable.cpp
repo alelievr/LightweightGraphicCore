@@ -40,7 +40,7 @@ void					ShaderBindingTable::GenerateSetLayouts()
 {
 	std::unordered_map< int, std::vector< VkDescriptorSetLayoutBinding > >	layoutBindings;
 	int		maxDescriptorSet = 0;
-	
+
 	for (const auto & binding : _bindings)
 	{
 		auto b = Vk::CreateDescriptorSetLayoutBinding(binding.second.bindingIndex, binding.second.descriptorType, _stageFlags);
@@ -90,7 +90,7 @@ uint32_t				ShaderBindingTable::GetDescriptorSetBinding(const std::string & bind
 
 	if (set == _bindings.end())
 		throw std::runtime_error("Can't find descriptor set for binding name: '" + bindingName + "'");
-	
+
 	return set->second.descriptorSet;
 }
 
@@ -100,7 +100,7 @@ uint32_t				ShaderBindingTable::GetDescriptorIndex(const std::string & bindingNa
 
 	if (set == _bindings.end())
 		throw std::runtime_error("Can't find descriptor index for binding name: '" + bindingName + "'");
-	
+
 	return set->second.bindingIndex;
 }
 

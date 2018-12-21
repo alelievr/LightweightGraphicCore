@@ -57,7 +57,7 @@ void		Transform::Rotate(const float xAngle, const float yAngle, const float zAng
 void		Transform::RotateAround(const glm::vec3 & point, const glm::vec3 & axis, const float angle)
 {
 	(void)point, (void)axis, (void)angle;
-	
+
 	std::cout << "RotateAround: TODO" << std::endl;
 
 	UpdateRotationDatas();
@@ -85,7 +85,7 @@ void		Transform::LookAt(const int index)
 
 glm::vec3		Transform::TransformDirection(const glm::vec3 & direction)
 {
-	
+
 }
 
 glm::vec3		Transform::TransformDirection(const float x, const float y, const float z)
@@ -95,7 +95,7 @@ glm::vec3		Transform::TransformDirection(const float x, const float y, const flo
 
 glm::vec3		Transform::TransformPoint(const glm::vec3 & position)
 {
-	
+
 }
 
 glm::vec3		Transform::TransformPoint(const float x, const float y, const float z)
@@ -117,7 +117,7 @@ void			Transform::Scale(const glm::vec3 & scaleFactor)
 
 std::shared_ptr< Transform >	Transform::GetRoot(void)
 {
-	
+
 }
 
 void			Transform::UpdatePositionDatas(void) noexcept
@@ -131,7 +131,7 @@ void			Transform::UpdatePositionDatas(void) noexcept
 void			Transform::UpdateRotationDatas(void) noexcept
 {
 	UpdateLocalToWorldMatrix();
-	
+
 	for (const auto & child : _childs)
 		child->UpdateRotationDatas();
 }
@@ -139,7 +139,7 @@ void			Transform::UpdateRotationDatas(void) noexcept
 void			Transform::UpdateScaleDatas(void) noexcept
 {
 	UpdateLocalToWorldMatrix();
-	
+
 	for (const auto & child : _childs)
 		child->UpdateScaleDatas();
 }
