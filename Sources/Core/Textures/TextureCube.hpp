@@ -3,7 +3,7 @@
 #include <iostream>
 #include <string>
 
-#include "Core/Texture.hpp"
+#include "Core/Textures/Texture.hpp"
 
 namespace LWGC
 {

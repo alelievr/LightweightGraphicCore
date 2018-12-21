@@ -3,7 +3,7 @@
 #include <iostream>
 #include <string>
 
-#include "Core/Texture.hpp"
+#include "Core/Textures/Texture.hpp"
 #include "Core/Vulkan/UniformBuffer.hpp"
 #include "IncludeDeps.hpp"
 #include "Core/Shaders/ShaderBindingTable.hpp"
@@ -86,6 +86,11 @@ namespace LWGC
 			VkPipelineDepthStencilStateCreateInfo	_depthStencilState;
 			VkPipelineRasterizationStateCreateInfo	_rasterizationState;
 
+			Material(void);
+			Material(const std::string & shader, VkShaderStageFlagBits stage);
+			Material(const std::string & fragmentShader, const std::string & vertexShader = BuiltinShaders::DefaultVertex);
+			Material(ShaderProgram * program);
+
 			void		CreateTextureSampler(void);
 			void		CreateUniformBuffer(void);
 			void		CreatePipelineLayout(void);
@@ -96,15 +101,16 @@ namespace LWGC
 			void		SetupDefaultSettings(void);
 
 		public:
-			Material(void);
 			Material(const Material &);
-			Material(const std::string & shader, VkShaderStageFlagBits stage);
-			Material(const std::string & fragmentShader, const std::string & vertexShader = BuiltinShaders::DefaultVertex);
-			Material(ShaderProgram * program);
 			virtual ~Material(void);
 
 			Material &	operator=(Material const & src);
 
+			static Material	*Create(void);
+			static Material	*Create(const std::string & shader, VkShaderStageFlagBits stage);
+			static Material	*Create(const std::string & fragmentShader, const std::string & vertexShader = BuiltinShaders::DefaultVertex);
+			static Material	*Create(ShaderProgram * program);
+	
 			void	Initialize(SwapChain * swapchain, RenderPass * renderPass);
 			void	CleanupPipeline(void) noexcept;
 			void	CreatePipeline(void);

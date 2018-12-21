@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   LWGC.hpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: alelievr <alelievr@student.42.fr>          +#+  +:+       +#+        */
+/*   By: amerelo <amerelo@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/08/27 21:37:58 by alelievr          #+#    #+#             */
-/*   Updated: 2018/11/13 22:54:06 by alelievr         ###   ########.fr       */
+/*   Updated: 2018/12/21 17:42:44 by amerelo          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,8 +24,8 @@
 #include "Core/Mesh.hpp"
 #include "Core/PrimitiveType.hpp"
 #include "Core/PrimitiveMeshFactory.hpp"
-#include "Core/Texture2D.hpp"
-#include "Core/Texture3D.hpp"
+#include "Core/Textures/Texture2D.hpp"
+#include "Core/Textures/Texture3D.hpp"
 #include "Core/Vulkan/Material.hpp"
 #include "Core/Shaders/BuiltinShaders.hpp"
 

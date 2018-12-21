@@ -6,12 +6,14 @@
 #include GLM_INCLUDE
 #include GLM_INCLUDE_MATRIX_TRANSFORM
 
-#include "Core/Texture2DArray.hpp"
+#include "Core/Textures/Texture2DArray.hpp"
 #include "Core/Rendering/VulkanRenderPipeline.hpp"
 #include "Core/Mesh.hpp"
 #include "Core/Shaders/BuiltinShaders.hpp"
 #include "Core/Vulkan/SwapChain.hpp"
 #include "Core/Vulkan/RenderPass.hpp"
+#include "Core/Application.hpp"
+#include "Core/ShaderCache.hpp"
 
 using namespace LWGC;
 
@@ -37,25 +39,20 @@ Material::Material(void)
 	this->_pipelineLayout = VK_NULL_HANDLE;
 	this->_pipeline = VK_NULL_HANDLE;
 	this->_bindingTable = nullptr;
-	_program = new ShaderProgram();
-	_program->SetSourceFile(BuiltinShaders::Pink, VK_SHADER_STAGE_FRAGMENT_BIT);
-	_program->SetSourceFile(BuiltinShaders::DefaultVertex, VK_SHADER_STAGE_VERTEX_BIT);
+	_program = ShaderCache::GetShader(BuiltinShaders::Pink, BuiltinShaders::DefaultVertex);
 	SetupDefaultSettings();
 }
 
 Material::Material(const std::string & shader, VkShaderStageFlagBits stage)
 {
-	_program = new ShaderProgram();
-	_program->SetSourceFile(shader, stage);
+	_program = ShaderCache::GetShader(shader, stage);
 	this->_bindingTable = nullptr;
 	SetupDefaultSettings();
 }
 
 Material::Material(const std::string & fragmentShader, const std::string & vertexShader)
 {
-	_program = new ShaderProgram();
-	_program->SetSourceFile(fragmentShader, VK_SHADER_STAGE_FRAGMENT_BIT);
-	_program->SetSourceFile(vertexShader, VK_SHADER_STAGE_VERTEX_BIT);
+	_program = ShaderCache::GetShader(fragmentShader, vertexShader);
 	this->_bindingTable = nullptr;
 	SetupDefaultSettings();
 }
@@ -73,8 +70,6 @@ Material::Material(Material const & src)
 
 Material::~Material(void)
 {
-	delete _program;
-
 	// Don't delete if the material have not been initialized
 	if (_instance == nullptr)
 		return ;
@@ -100,6 +95,26 @@ Material &	Material::operator=(Material const & src)
 		this->_swapChain = src._swapChain;
 	}
 	return (*this);
+}
+
+Material *Material::Create(void)
+{
+	return new Material();
+}
+
+Material *Material::Create(const std::string & shader, VkShaderStageFlagBits stage)
+{
+	return new Material(shader, stage);
+}
+
+Material *Material::Create(const std::string & fragmentShader, const std::string & vertexShader)
+{
+	return new Material(fragmentShader, vertexShader);
+}
+
+Material *Material::Create(ShaderProgram * program)
+{
+	return new Material(program);
 }
 
 void					Material::SetupDefaultSettings(void)
@@ -140,6 +155,7 @@ void					Material::SetupDefaultSettings(void)
 	_rasterizationState.cullMode = VK_CULL_MODE_BACK_BIT;
 	_rasterizationState.frontFace = VK_FRONT_FACE_CLOCKWISE;
 	_rasterizationState.depthBiasEnable = VK_FALSE;
+	Application::Get()->_materialTable.RegsiterMaterial(this);
 }
 
 void					Material::Initialize(SwapChain * swapChain, RenderPass * renderPass)
@@ -185,8 +201,7 @@ void					Material::CompileShaders(void)
 		if (IsCompute())
 			throw std::runtime_error("Failed to compile compute shader");
 
-		_program->SetSourceFile(BuiltinShaders::Pink, VK_SHADER_STAGE_FRAGMENT_BIT);
-		_program->SetSourceFile(BuiltinShaders::DefaultVertex, VK_SHADER_STAGE_VERTEX_BIT);
+		_program = ShaderCache::GetShader(BuiltinShaders::Pink, BuiltinShaders::DefaultVertex);
 		_program->CompileAndLink();
 	}
 

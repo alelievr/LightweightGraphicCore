@@ -32,7 +32,7 @@ namespace LWGC
 			virtual void	CreateDescriptorSet(void);
 
 		protected:
-			std::shared_ptr< Material >	_material;
+			Material *	_material;
 			VkCommandBuffer				_drawCommandBuffer;
 
 			virtual void	Initialize(void) noexcept override;
@@ -42,7 +42,7 @@ namespace LWGC
 
 		public:
 			Renderer(void);
-			Renderer(std::shared_ptr< Material > material);
+			Renderer(Material * material);
 			Renderer(const Renderer &) = delete;
 
 			virtual ~Renderer(void);
@@ -57,8 +57,8 @@ namespace LWGC
 			void	CleanupPipeline(void) noexcept;
 			void	CreatePipeline(void) noexcept;
 
-			std::shared_ptr< Material >	GetMaterial(void) const;
-			void	SetMaterial(std::shared_ptr< Material > tmp);
+			Material *	GetMaterial(void) const;
+			void	SetMaterial(Material * tmp);
 
 			VkCommandBuffer		GetDrawCommandBuffer(void) const;
 			VkDescriptorSet		GetDescriptorSet(void) const;

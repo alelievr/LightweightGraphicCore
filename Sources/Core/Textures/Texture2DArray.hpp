@@ -5,7 +5,7 @@
 #include <vector>
 
 #include "IncludeDeps.hpp"
-#include "Core/Texture.hpp"
+#include "Core/Textures/Texture.hpp"
 
 #include VULKAN_INCLUDE
 

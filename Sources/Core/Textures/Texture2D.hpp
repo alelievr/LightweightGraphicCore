@@ -4,7 +4,7 @@
 #include <string>
 
 #include "IncludeDeps.hpp"
-#include "Core/Texture.hpp"
+#include "Core/Textures/Texture.hpp"
 #include "Core/Vulkan/Vk.hpp"
 
 #include VULKAN_INCLUDE

@@ -14,17 +14,16 @@ VkDescriptorSetLayout	Renderer::_descriptorSetLayout = VK_NULL_HANDLE;
 
 Renderer::Renderer(void)
 {
-	_material = std::make_shared< Material >();
+	_material = Material::Create();
 }
 
-Renderer::Renderer(std::shared_ptr< Material > material)
+Renderer::Renderer(Material * material)
 {
 	_material = material;
 }
 
 Renderer::~Renderer(void)
 {
-	_material.reset();
 	vkDestroyBuffer(device, _uniformModelBuffer.buffer, nullptr);
 	vkFreeMemory(device, _uniformModelBuffer.memory, nullptr);
 }
@@ -152,8 +151,8 @@ void Renderer::CreatePipeline(void) noexcept
 	_material->CreatePipeline();
 }
 
-std::shared_ptr< Material >	Renderer::GetMaterial(void) const { return (this->_material); }
-void						Renderer::SetMaterial(std::shared_ptr< Material > tmp) { this->_material = tmp; }
+Material *	Renderer::GetMaterial(void) const { return (this->_material); }
+void						Renderer::SetMaterial(Material * tmp) { this->_material = tmp; }
 
 VkCommandBuffer				Renderer::GetDrawCommandBuffer(void) const { return _drawCommandBuffer; }
 VkDescriptorSet				Renderer::GetDescriptorSet(void) const { return _descriptorSet; }

@@ -36,7 +36,7 @@ namespace LWGC
 			uint32_t								_attachmentCount;
 			VkCommandBuffer							_commandBuffer;
 			DescriptorBindings						_currentBindings;
-			std::shared_ptr< Material > 			_currentMaterial;
+			Material * 			_currentMaterial;
 
 			void	UpdateDescriptorBindings(void);
 			bool	BindDescriptorSet(const uint32_t binding, VkDescriptorSet set);
@@ -53,7 +53,7 @@ namespace LWGC
 			void	SetDepthAttachment(const VkAttachmentDescription & attachment, VkImageLayout layout) noexcept;
 			void	AddDependency(const VkSubpassDependency & dependency) noexcept;
 			bool	BindDescriptorSet(const std::string & name, VkDescriptorSet set);
-			void	BindMaterial(std::shared_ptr< Material > material);
+			void	BindMaterial(Material * material);
 			void	BindBuffer(const std::string & bindingName, VkBuffer buffer, size_t size, VkDescriptorType descriptorType);
 			void	BindTexture(const std::string & bindingName, const Texture & texture, VkImageLayout imageLayout, VkDescriptorType descriptorType);
 			void	BindSampler(const std::string & bindingName, VkSampler sampler);

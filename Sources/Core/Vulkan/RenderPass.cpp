@@ -93,7 +93,7 @@ bool	RenderPass::BindDescriptorSet(const std::string & name, VkDescriptorSet set
 	return true;
 }
 
-void	RenderPass::BindMaterial(std::shared_ptr< Material > material)
+void	RenderPass::BindMaterial(Material * material)
 {
 	_currentMaterial = material;
 
@@ -128,7 +128,7 @@ void	RenderPass::UpdateDescriptorBindings(void)
 			{
 				vkCmdBindDescriptorSets(
 					_commandBuffer,
-					_currentMaterial->IsCompute() ?	VK_PIPELINE_BIND_POINT_COMPUTE : VK_PIPELINE_BIND_POINT_GRAPHICS, 
+					_currentMaterial->IsCompute() ?	VK_PIPELINE_BIND_POINT_COMPUTE : VK_PIPELINE_BIND_POINT_GRAPHICS,
 					_currentMaterial->GetPipelineLayout(),
 					firstSet,
 					1, &b.second.set,
@@ -143,7 +143,7 @@ void	RenderPass::EnqueueCommand(VkCommandBuffer secondaryCommandBuffer)
 {
 	UpdateDescriptorBindings();
 
-	// The bind pipeline command is inside this command buffer, it 
+	// The bind pipeline command is inside this command buffer, it
 	// should be sorted to avoid unnecessary pipeline switch
 	vkCmdExecuteCommands(_commandBuffer, 1, &secondaryCommandBuffer);
 }
