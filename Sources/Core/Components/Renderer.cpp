@@ -91,8 +91,7 @@ void		Renderer::CreateDescriptorSet(void)
 
 void		Renderer::Update(void) noexcept
 {
-	std::cout << "UDA TE!\n"
-;	// TODO: check for transform changes before to reupload the uniform datas
+	// TODO: check for transform changes before to reupload the uniform datas
 	UpdateUniformData();
 }
 
