@@ -362,6 +362,11 @@ uint32_t			Material::GetDescriptorSetBinding(const std::string & setName) const
 	return _bindingTable->GetDescriptorSetBinding(setName);
 }
 
+void				Material::GetComputeWorkSize(uint32_t & width, uint32_t & height, uint32_t & depth) const
+{
+	_program->GetWorkingThreadSize(width, height, depth);
+}
+
 bool				Material::IsCompute(void) const
 {
 	return _program->IsCompute();

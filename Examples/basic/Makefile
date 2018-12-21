@@ -6,7 +6,7 @@
 #    By: alelievr <marvin@42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2014/07/15 15:13:38 by alelievr          #+#    #+#              #
-#    Updated: 2018/12/06 16:38:24 by alelievr         ###   ########.fr        #
+#    Updated: 2018/12/21 17:47:21 by alelievr         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -43,7 +43,7 @@ LDLIBS		=	-lLWGC -lglfw3 -limgui -lvulkan -lglslang -lSPIRV -lHLSL -lSPVRemapper
 NAME		=	simple
 
 #	Compiler
-WERROR		=	-Werror
+WERROR		=	
 CFLAGS		=	-pedantic -ffast-math -ffunction-sections -fdata-sections
 CPPFLAGS	=	-Wno-c++98-compat
 CPROTECTION	=	-z execstack -fno-stack-protector

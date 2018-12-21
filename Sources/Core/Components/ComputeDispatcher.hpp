@@ -18,21 +18,20 @@ namespace LWGC
 			int							_width;
 			int							_height;
 			int							_depth;
+			uint32_t					_workGroupWidth;
+			uint32_t					_workGroupHeight;
+			uint32_t					_workGroupDepth;
 			VkCommandBuffer				_computeCommandBuffer;
 			ComponentIndex				_renderContextIndex;
-			
-			//TMP:
-			Texture2D *					_texture;
 
 			virtual void	Initialize(void) noexcept override;
 			void			OnEnable(void) noexcept override;
 			void			OnDisable(void) noexcept override;
 			void			RecordComputeCommand(VkCommandBuffer cmd) noexcept;
-			void			CreateDescriptorSet(void);
 
 		public:
 			ComputeDispatcher(void) = delete;
-			ComputeDispatcher(std::shared_ptr< Material > material, int width, int height, Texture2D * texture, int depth = 1);
+			ComputeDispatcher(std::shared_ptr< Material > material, int width, int height, int depth = 1);
 			ComputeDispatcher(const ComputeDispatcher &) = delete;
 			virtual ~ComputeDispatcher(void);
 

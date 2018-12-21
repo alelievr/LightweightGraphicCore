@@ -85,7 +85,7 @@ namespace LWGC
 			VkPipelineInputAssemblyStateCreateInfo	_inputAssemblyState;
 			VkPipelineDepthStencilStateCreateInfo	_depthStencilState;
 			VkPipelineRasterizationStateCreateInfo	_rasterizationState;
-	
+
 			void		CreateTextureSampler(void);
 			void		CreateUniformBuffer(void);
 			void		CreatePipelineLayout(void);
@@ -94,7 +94,7 @@ namespace LWGC
 			void		CreateComputePipeline(void);
 			void		BindDescriptorSets(RenderPass * renderPass);
 			void		SetupDefaultSettings(void);
-	
+
 		public:
 			Material(void);
 			Material(const Material &);
@@ -102,9 +102,9 @@ namespace LWGC
 			Material(const std::string & fragmentShader, const std::string & vertexShader = BuiltinShaders::DefaultVertex);
 			Material(ShaderProgram * program);
 			virtual ~Material(void);
-	
+
 			Material &	operator=(Material const & src);
-	
+
 			void	Initialize(SwapChain * swapchain, RenderPass * renderPass);
 			void	CleanupPipeline(void) noexcept;
 			void	CreatePipeline(void);
@@ -114,6 +114,7 @@ namespace LWGC
 			VkPipeline			GetPipeline(void) const;
 			VkPipelineLayout	GetPipelineLayout(void) const;
 			uint32_t			GetDescriptorSetBinding(const std::string & setName) const;
+			void				GetComputeWorkSize(uint32_t & width, uint32_t & height, uint32_t & depth) const;
 			bool				IsCompute(void) const;
 
 			void				SetBuffer(const std::string & bindingName, VkBuffer buffer, size_t size, VkDescriptorType descriptorType);
@@ -125,6 +126,6 @@ namespace LWGC
 			void				SetDepthStencilState(VkPipelineDepthStencilStateCreateInfo info);
 			void				SetRasterizationState(VkPipelineRasterizationStateCreateInfo info);
 	};
-	
+
 	std::ostream &	operator<<(std::ostream & o, Material const & r);
 }

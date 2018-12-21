@@ -78,7 +78,7 @@ void			VulkanInstance::CreateDescriptorPool(void) noexcept
 {
 	if (_descriptorPool != VK_NULL_HANDLE)
 		return ;
-	
+
 	std::array<VkDescriptorPoolSize, 4> poolSizes = {};
 	poolSizes[0].type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
 	poolSizes[0].descriptorCount = 110u;
@@ -189,12 +189,20 @@ void			VulkanInstance::InitQueueIndicesForPhysicalDevice(VkPhysicalDevice physic
 	std::vector<VkQueueFamilyProperties> queueFamilies(queueFamilyCount);
 	vkGetPhysicalDeviceQueueFamilyProperties(physicalDevice, &queueFamilyCount, queueFamilies.data());
 
+	for (const auto& queueFamily : queueFamilies)
+	{
+		auto g = queueFamily.minImageTransferGranularity;
+		std::cout << "queue family: " << queueFamily.queueCount << ", "
+			<< queueFamily.queueFlags << ", memory granularity: "
+			<< g.width << "/" << g.height << "/" << g.depth << std::endl;
+	}
+
 	int i = 0;
 	for (const auto& queueFamily : queueFamilies)
 	{
 		VkBool32 presentSupport = false;
 		vkGetPhysicalDeviceSurfaceSupportKHR(physicalDevice, i, _surface, &presentSupport);
-		
+
 		if (queueFamily.queueCount > 0 && queueFamily.queueFlags & (VK_QUEUE_GRAPHICS_BIT | VK_QUEUE_COMPUTE_BIT))
 			_queueIndex = i;
 
@@ -263,10 +271,10 @@ void			VulkanInstance::ChoosePhysicalDevice(void)
 
 	std::vector<VkPhysicalDevice> devices(deviceCount);
 	vkEnumeratePhysicalDevices(_instance, &deviceCount, devices.data());
-	
+
 	if (deviceCount == 0)
 		throw std::runtime_error("No GPU detected");
-	
+
 	for (const auto & device : devices)
 	{
 		if (IsPhysicalDeviceSuitable(device))
@@ -327,6 +335,15 @@ void			VulkanInstance::CreateLogicalDevice(void)
 	// vkGetDeviceQueue(_device, _computeQueueIndex, 0, &_computeQueue);
 
 	printf("Create logical device !\n");
+}
+
+VkQueue			VulkanInstance::AllocateDeviceQueue(void)
+{
+	VkQueue queue;
+
+	vkGetDeviceQueue(_device, _queueIndex, 0, &queue);
+
+	return queue;
 }
 
 void			VulkanInstance::CreateCommandBufferPools(void) noexcept
