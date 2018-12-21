@@ -43,14 +43,13 @@ namespace LWGC
 			std::vector<VkSemaphore>		imageAvailableSemaphores;
 			std::vector<VkSemaphore>		renderFinishedSemaphores;
 			std::vector<VkFence>			inFlightFences;
-			VkDevice				device;
-			VulkanInstance *		instance;
-			size_t					currentFrame = 0;
-			RenderPass				renderPass;
-			SwapChain *				swapChain;
-			VkCommandBuffer			commandBuffer;
-			VkCommandBuffer			computeCommandBuffer;
-			bool					framebufferResized;
+			VkDevice						device;
+			VulkanInstance *				instance;
+			size_t							currentFrame = 0;
+			RenderPass						renderPass;
+			SwapChain *						swapChain;
+			VkCommandBuffer					commandBuffer;
+			bool							framebufferResized;
 
 			virtual void		CreateRenderPass(void);
 			void				BeginRenderPass(RenderContext & context);
