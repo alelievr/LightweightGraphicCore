@@ -52,6 +52,12 @@ void                VulkanRenderPipeline::Initialize(SwapChain * swapChain)
 
 	CreateDescriptorSets();
 	CreatePerFrameDescriptorSet();
+
+	VkFenceCreateInfo fenceInfo {};
+	fenceInfo.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
+	fenceInfo.flags = 0;
+
+	vkCreateFence(device, &fenceInfo, nullptr, &computeFence);
 }
 
 void				VulkanRenderPipeline::CreateDescriptorSets(void) {}

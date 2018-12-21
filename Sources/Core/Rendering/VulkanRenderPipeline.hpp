@@ -34,6 +34,7 @@ namespace LWGC
 			UniformBuffer					uniformPerFrame;
 			VkDescriptorSet					perFrameDescriptorSet;
 			VkDescriptorSetLayout			perFrameDescriptorSetLayout;
+			VkFence							computeFence;
 
 			void				RenderInternal(const std::vector< Camera * > & cameras, RenderContext & context);
 			void				UpdatePerframeUnformBuffer(void) noexcept;

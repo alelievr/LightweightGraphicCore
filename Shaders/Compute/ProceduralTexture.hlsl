@@ -24,9 +24,8 @@ void        main(ComputeInput i)
 	*/
 	float2 uv = float2(x,y);
 	float n = 0.0;
-	float2 c = float2(-.445, 0.0) +  (uv - 0.5)*(2.0+ 1.7*0.2  );
-	z = float2(0.0);
-	const int M =12800;
+	float2 c = float2(-.445, 0.0) +  (uv - 0.5)*(2.0+ 1.7*0.2  ), z = float2(0.0);
+	const int M = 1280;
 	for (int i = 0; i < M; i++)
 	{
 		z = float2(z.x*z.x - z.y*z.y, 2.*z.x*z.y) + c;
@@ -41,5 +40,6 @@ void        main(ComputeInput i)
 	float3 e = float3(-0.2, -0.3 ,-0.5);
 	float3 f = float3(2.1, 2.0, 3.0);
 	float3 g = float3(0.0, 0.1, 0.0);
-	proceduralTexture[i.dispatchThreadId.xy] = half4( d + e*cos( 6.28318*(f*t+g) + frame.time.x ) ,1.0);
+	int ii = frame.time.x * 600;
+	proceduralTexture[i.dispatchThreadId.xy] = half4( d + e*cos( 6.28318*(f*t+g) + ii) ,1.0);
 }
