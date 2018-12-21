@@ -7,9 +7,8 @@
 
 using namespace LWGC;
 
-// Application *	Application::_app = nullptr;
-
-Delegate	Application::update;
+Application *	Application::_app = nullptr;
+Delegate		Application::update;
 
 Application::Application(void) : _renderPipeline(nullptr), _window(nullptr), _hierarchy(std::make_shared< Hierarchy >()), _shouldNotQuit(true)
 {

@@ -6,13 +6,14 @@
 #include GLM_INCLUDE
 #include GLM_INCLUDE_MATRIX_TRANSFORM
 
-#include "Core/Texture2DArray.hpp"
+#include "Core/Textures/Texture2DArray.hpp"
 #include "Core/Rendering/VulkanRenderPipeline.hpp"
 #include "Core/Mesh.hpp"
 #include "Core/Shaders/BuiltinShaders.hpp"
 #include "Core/Vulkan/SwapChain.hpp"
 #include "Core/Vulkan/RenderPass.hpp"
 #include "Core/Application.hpp"
+#include "Core/ShaderCache.hpp"
 
 using namespace LWGC;
 
@@ -38,25 +39,28 @@ Material::Material(void)
 	this->_pipelineLayout = VK_NULL_HANDLE;
 	this->_pipeline = VK_NULL_HANDLE;
 	this->_bindingTable = nullptr;
-	_program = new ShaderProgram();
-	_program->SetSourceFile(BuiltinShaders::Pink, VK_SHADER_STAGE_FRAGMENT_BIT);
-	_program->SetSourceFile(BuiltinShaders::DefaultVertex, VK_SHADER_STAGE_VERTEX_BIT);
+	_program = ShaderCache::GetShader(BuiltinShaders::Pink, BuiltinShaders::DefaultVertex);
+	// _program = new ShaderProgram();
+	// _program->SetSourceFile(BuiltinShaders::Pink, VK_SHADER_STAGE_FRAGMENT_BIT);
+	// _program->SetSourceFile(BuiltinShaders::DefaultVertex, VK_SHADER_STAGE_VERTEX_BIT);
 	SetupDefaultSettings();
 }
 
 Material::Material(const std::string & shader, VkShaderStageFlagBits stage)
 {
-	_program = new ShaderProgram();
-	_program->SetSourceFile(shader, stage);
+	_program = ShaderCache::GetShader(shader, stage);
+	// _program = new ShaderProgram();
+	// _program->SetSourceFile(shader, stage);
 	this->_bindingTable = nullptr;
 	SetupDefaultSettings();
 }
 
 Material::Material(const std::string & fragmentShader, const std::string & vertexShader)
 {
-	_program = new ShaderProgram();
-	_program->SetSourceFile(fragmentShader, VK_SHADER_STAGE_FRAGMENT_BIT);
-	_program->SetSourceFile(vertexShader, VK_SHADER_STAGE_VERTEX_BIT);
+	_program = ShaderCache::GetShader(fragmentShader, vertexShader);
+	// _program = new ShaderProgram();
+	// _program->SetSourceFile(fragmentShader, VK_SHADER_STAGE_FRAGMENT_BIT);
+	// _program->SetSourceFile(vertexShader, VK_SHADER_STAGE_VERTEX_BIT);
 	this->_bindingTable = nullptr;
 	SetupDefaultSettings();
 }
@@ -74,8 +78,7 @@ Material::Material(Material const & src)
 
 Material::~Material(void)
 {
-	delete _program;
-
+	// delete _program;
 	// Don't delete if the material have not been initialized
 	if (_instance == nullptr)
 		return ;

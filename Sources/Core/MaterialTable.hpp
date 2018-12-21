@@ -1,8 +1,8 @@
-#ifndef MATERIALTABLE_HPP
-# define MATERIALTABLE_HPP
-# include <iostream>
-# include <string>
-# include "Core/Vulkan/Material.hpp"
+#pragma once
+
+#include <iostream>
+#include <string>
+#include "Core/Vulkan/Material.hpp"
 
 class		MaterialTable
 {
@@ -21,5 +21,3 @@ class		MaterialTable
 };
 
 std::ostream &	operator<<(std::ostream & o, MaterialTable const & r);
-
-#endif

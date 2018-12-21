@@ -3,7 +3,7 @@
 #include "IncludeDeps.hpp"
 #include "Core/Components/Component.hpp"
 #include "Core/Vulkan/Material.hpp"
-#include "Core/Texture2D.hpp"
+#include "Core/Textures/Texture2D.hpp"
 
 #include <iostream>
 #include <string>

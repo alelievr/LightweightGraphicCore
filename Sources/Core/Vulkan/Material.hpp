@@ -3,7 +3,7 @@
 #include <iostream>
 #include <string>
 
-#include "Core/Texture.hpp"
+#include "Core/Textures/Texture.hpp"
 #include "Core/Vulkan/UniformBuffer.hpp"
 #include "IncludeDeps.hpp"
 #include "Core/Shaders/ShaderBindingTable.hpp"
