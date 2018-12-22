@@ -37,7 +37,8 @@ void		FreeCameraControls::OnEnable(void) noexcept
 	Component::OnEnable();
 
 	// save index
-	EventSystem::Get()->onKeyPresssed.AddListener(KeypressedCallback)
+	// EventSystem::Get()->onKeyPresssed.AddListener(KeypressedCallback)
+	// EventSystem::Get()->onMouseMove.AddListener(KeypressedCallback)
 }
 
 void		FreeCameraControls::OnDisable(void) noexcept
@@ -45,53 +46,55 @@ void		FreeCameraControls::OnDisable(void) noexcept
 	Component::OnDisable();
 	// index
 	// EventSystem::Get()->onKeyPresssed.RemoveListener
+	// EventSystem::Get()->onMouseMove.RemoveListener
 }
 
-KeypressedCallback() //keycode key, action
+void		FreeCameraControls::KeypressedCallback(void) noexcept //keycode key, action
 {
-	switch (event.GetKeyCode())
-	{
-		case KeyCode::A:
-		case KeyCode::LEFT:
-			_right = (keyDown) ? -1 : 0;
-			break ;
-		case KeyCode::D:
-		case KeyCode::RIGHT:
-			_right = (keyDown) ? 1 : 0;
-			break ;
-		case KeyCode::W:
-		case KeyCode::UP:
-			_forward = (keyDown) ? 1 : 0;
-			break ;
-		case KeyCode::S:
-		case KeyCode::DOWN:
-			_forward = (keyDown) ? -1 : 0;
-			break ;
-		case KeyCode::E:
-			_up = (keyDown) ? 1 : 0;
-			break ;
-		case KeyCode::Q:
-			_up = (keyDown) ? -1 : 0;
-			break ;
-		case KeyCode::KP_ADD:
-			_speed *= 1.1f;
-			break ;
-		case KeyCode::KP_SUBTRACT:
-			_speed /= 1.1f;
-			break ;
-		case KeyCode::SPACE:
-			EventSystem::Get()->ToggleLockCursor();
-		default:
-		break;
-	}
+	// switch (event.GetKeyCode())
+	// {
+	// 	case KeyCode::A:
+	// 	case KeyCode::LEFT:
+	// 		_right = (keyDown) ? -1 : 0;
+	// 		break ;
+	// 	case KeyCode::D:
+	// 	case KeyCode::RIGHT:
+	// 		_right = (keyDown) ? 1 : 0;
+	// 		break ;
+	// 	case KeyCode::W:
+	// 	case KeyCode::UP:
+	// 		_forward = (keyDown) ? 1 : 0;
+	// 		break ;
+	// 	case KeyCode::S:
+	// 	case KeyCode::DOWN:
+	// 		_forward = (keyDown) ? -1 : 0;
+	// 		break ;
+	// 	case KeyCode::E:
+	// 		_up = (keyDown) ? 1 : 0;
+	// 		break ;
+	// 	case KeyCode::Q:
+	// 		_up = (keyDown) ? -1 : 0;
+	// 		break ;
+	// 	case KeyCode::KP_ADD:
+	// 		_speed *= 1.1f;
+	// 		break ;
+	// 	case KeyCode::KP_SUBTRACT:
+	// 		_speed /= 1.1f;
+	// 		break ;
+	// 	case KeyCode::SPACE:
+	// 		EventSystem::Get()->ToggleLockCursor();
+	// 	default:
+	// 	break;
+	// }
 }
 
 void		FreeCameraControls::Update(void) noexcept
 {
-	const auto & event = EventSystem::Get()->GetCurrentEvent();
+	// const auto & event = EventSystem::Get()->GetCurrentEvent();
 	const bool keyDown = event.GetType() == EventType::KeyDown;
 
-
+	//take delta from event and add it to eventsystem
+	//take mouseposition from event and add it to eventsystem
 	_rotationX += event.delta.x * _mouseSpeed;
 	_rotationY += event.delta.y * _mouseSpeed;
 

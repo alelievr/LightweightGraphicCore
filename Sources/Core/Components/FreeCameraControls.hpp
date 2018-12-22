@@ -20,6 +20,7 @@ namespace LWGC
 			float			_rotationY;
 
 			virtual void	Update(void) noexcept override;
+			void			KeypressedCallback(void) noexcept;
 
 		public:
 			FreeCameraControls(void);

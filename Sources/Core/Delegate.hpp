@@ -10,16 +10,16 @@ namespace LWGC
 	// C++ ¯\_(ツ)_/¯
 	template< typename T >
 	using DelegateFunction = std::function<T>;
-	using DelegateSet = std::unordered_set< std::shared_ptr< DelegateFunction > >;
-	using DelegateIndex = DelegateSet::iterator;
+	template< typename T >	
+	using DelegateSet = std::unordered_set< std::shared_ptr< DelegateFunction< T > > >;
+	template< typename T >	
+	using DelegateIndex = typename DelegateSet< T >::iterator;
 
-	using Delegate = Delegate< void(void) >;
-
-	template< typename T >
-	class		Delegate< T >
+	template< typename T = void(void) >
+	class		Delegate
 	{
 		private:
-			DelegateSet		_functionList;
+			DelegateSet<T>		_functionList;
 
 		public:
 			Delegate(void);
@@ -28,11 +28,13 @@ namespace LWGC
 
 			Delegate &	operator=(Delegate const & src) = delete;
 
-			DelegateIndex	AddListener(DelegateFunction function) noexcept;
-			void			RemoveListener(DelegateIndex index) noexcept;
+			DelegateIndex<T>	AddListener(DelegateFunction<T> function) noexcept;
+			void			RemoveListener(DelegateIndex<T> index) noexcept;
 
-			void	Invoke(void) noexcept;
+			template< typename ...Params>
+			void	Invoke(Params && ... params) noexcept;
 	};
 
-	std::ostream &	operator<<(std::ostream & o, Delegate const & r);
+	template< typename T >
+	std::ostream &	operator<<(std::ostream & o, Delegate<T> const & r);
 }

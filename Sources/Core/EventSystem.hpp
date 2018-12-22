@@ -6,8 +6,9 @@
 #include <map>
 
 #include "IncludeDeps.hpp"
+#include "Core/Delegate.hpp"
+#include "Core/KeyCode.hpp"
 
-#include "Event.hpp"
 #include GLFW_INCLUDE
 
 namespace LWGC
@@ -23,39 +24,31 @@ namespace LWGC
 	typedef std::function< void (KeyCode k) > OnKeyUpCallback;
 	typedef std::function< void (KeyCode k) > OnKeyStayCallback;
 
+	enum class KeyAction {PRESS = 1, RELEASE = 0, REPEAT = 2};
+
 	class		EventSystem : std::enable_shared_from_this< EventSystem >
 	{
 		private:
-			OnQuitCallback			_onQuit;
-			OnFocusCallback			_onFocus;
-			
-			OnMouseMoveCallback		_onMouseMove;
-			OnMouseDownCallback		_onMouseDown;
-			OnMouseUpCallback		_onMouseUp;
+			// OnQuitCallback			_onQuit;
+			// OnFocusCallback			_onFocus;
+			// OnMouseMoveCallback		_onMouseMove;
+			// OnMouseDownCallback		_onMouse;
+			// OnMouseUpCallback		_onMouseUp;
+			// OnMouseEnterCallback	_onMouseEnter;
+			// OnMouseExitCallback		_onMouseExit;
 
-			OnMouseEnterCallback	_onMouseEnter;
-			OnMouseExitCallback		_onMouseExit;
-
-			// OnKeyDownCallback		_onKeyDown;
-			// OnKeyUpCallback			_onKeyUp;
-			// OnKeyStayCallback		_onKeyStay;
-
-
-			Event					_current;
 			GLFWwindow *			_window;
 
 			static std::map< GLFWwindow *, EventSystem * > eventSystems;
 			static EventSystem *	eventSystemInstance;
 			
-			void DefaultMouseMoveAction(float x, float y);
-			void DefaultMouseDownAction(float x, float y, int button);
-			void DefaultMouseUpAction(float x, float y, int button);
-			void DefaultKeyDownAction(KeyCode k);
-			void DefaultKeyUpAction(KeyCode k);
-
-
+			// void DefaultMouseMoveAction(float x, float y);
+			// void DefaultMouseDownAction(float x, float y, int button);
+			// void DefaultMouseUpAction(float x, float y, int button);
+			// void DefaultKeyDownAction(KeyCode k);
+			// void DefaultKeyUpAction(KeyCode k);
 		public:
-			Delegate				onKeyPresssed;
+			Delegate< void(KeyCode, KeyAction) >				onKey;
 
 			EventSystem(void);
 			EventSystem(const EventSystem&) = delete;
@@ -69,28 +62,28 @@ namespace LWGC
 			void	ReleaseCursor(void);
 			void	ToggleLockCursor(void);
 
-			OnQuitCallback	GetOnQuit(void) const;
-			void	SetOnQuit(OnQuitCallback tmp);
+			// OnQuitCallback	GetOnQuit(void) const;
+			// void	SetOnQuit(OnQuitCallback tmp);
 			
-			OnFocusCallback	GetOnFocus(void) const;
-			void	SetOnFocus(OnFocusCallback tmp);
+			// OnFocusCallback	GetOnFocus(void) const;
+			// void	SetOnFocus(OnFocusCallback tmp);
 			
-			OnMouseMoveCallback	GetOnMouseMove(void) const;
-			void	SetOnMouseMove(OnMouseMoveCallback tmp);
+			// OnMouseMoveCallback	GetOnMouseMove(void) const;
+			// void	SetOnMouseMove(OnMouseMoveCallback tmp);
 			
-			OnMouseDownCallback	GetOnMouseDown(void) const;
-			void	SetOnMouseDown(OnMouseDownCallback tmp);
+			// OnMouseDownCallback	GetOnMouseDown(void) const;
+			// void	SetOnMouseDown(OnMouseDownCallback tmp);
 			
-			OnMouseEnterCallback	GetOnMouseEnter(void) const;
-			void	SetOnMouseEnter(OnMouseEnterCallback tmp);
+			// OnMouseEnterCallback	GetOnMouseEnter(void) const;
+			// void	SetOnMouseEnter(OnMouseEnterCallback tmp);
 			
-			OnMouseExitCallback	GetOnMouseExit(void) const;
-			void	SetOnMouseExit(OnMouseExitCallback tmp);
+			// OnMouseExitCallback	GetOnMouseExit(void) const;
+			// void	SetOnMouseExit(OnMouseExitCallback tmp);
 			
-			OnMouseUpCallback	GetOnMouseUp(void) const;
-			void	SetOnMouseUp(OnMouseUpCallback tmp);
+			// OnMouseUpCallback	GetOnMouseUp(void) const;
+			// void	SetOnMouseUp(OnMouseUpCallback tmp);
 
-			const Event &	GetCurrentEvent(void) const;
+			// const Event &	GetCurrentEvent(void) const;
 
 			static EventSystem *	Get(void);
 	};

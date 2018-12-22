@@ -4,31 +4,38 @@
 
 using namespace LWGC;
 
-Delegate::Delegate(void)
+template<typename T>
+Delegate<T>::Delegate(void)
 {
 }
 
-Delegate::~Delegate(void)
+template<typename T>
+Delegate<T>::~Delegate(void)
 {
 }
 
-DelegateIndex	Delegate::AddListener(DelegateFunction function) noexcept
+template<typename T>
+DelegateIndex<T>	Delegate<T>::AddListener(DelegateFunction<T> function) noexcept
 {
-	return _functionList.insert(std::make_shared< DelegateFunction >(function)).first;
+	return _functionList.insert(std::make_shared< DelegateFunction<T> >(function)).first;
 }
 
-void		Delegate::RemoveListener(DelegateIndex index) noexcept
+template<typename T>
+void		Delegate<T>::RemoveListener(DelegateIndex<T> index) noexcept
 {
 	_functionList.erase(index);
 }
 
-void		Delegate::Invoke(void) noexcept
+template< typename T >
+template< typename ...Params>
+void		Delegate<T>::Invoke(Params && ... params) noexcept
 {
 	for (const auto & function : _functionList)
-		(*function)();
+		(*function)(std::forward<Params>(params)...);
 }
 
-std::ostream &	operator<<(std::ostream & o, Delegate const & r)
+template<typename T>
+std::ostream &	operator<<(std::ostream & o, Delegate<T> const & r)
 {
 	o << "tostring of the class" << std::endl;
 	(void)r;

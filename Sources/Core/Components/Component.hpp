@@ -32,16 +32,16 @@ namespace LWGC
 		friend class GameObject;
 	
 		private:
-			bool				oldState;
+			bool					oldState;
 		
 		protected:
-			bool				enabled;
-			const GameObject *	gameObject;
-			Transform *			transform;
-			Hierarchy *			hierarchy;
-			ComponentIndex		index;
-			VkDevice			device;
-			DelegateIndex		updateIndex;
+			bool					enabled;
+			const GameObject *		gameObject;
+			Transform *				transform;
+			Hierarchy *				hierarchy;
+			ComponentIndex			index;
+			VkDevice				device;
+			DelegateIndex< void() >	updateIndex;
 
 			// Called when the vulkan is finished to initialize
 			virtual void		Initialize() noexcept;

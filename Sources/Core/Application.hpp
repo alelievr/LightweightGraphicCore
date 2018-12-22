@@ -6,7 +6,7 @@
 
 #include "WindowFlag.hpp"
 #include "Rendering/VulkanRenderPipeline.hpp"
-#include "Events/EventSystem.hpp"
+#include "EventSystem.hpp"
 #include "Hierarchy.hpp"
 #include "Vulkan/VulkanInstance.hpp"
 #include "Vulkan/VulkanSurface.hpp"
@@ -62,7 +62,7 @@ namespace LWGC
 			static Application *		Get(void) noexcept;
 
 			// public events
-			static Delegate		update;
+			static Delegate< void() >	update;
 	};
 
 	std::ostream &	operator<<(std::ostream & o, Application const & r);

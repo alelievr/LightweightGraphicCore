@@ -6,7 +6,7 @@
 #    By: amerelo <amerelo@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2014/07/15 15:13:38 by alelievr          #+#    #+#              #
-#    Updated: 2018/12/21 18:05:50 by amerelo          ###   ########.fr        #
+#    Updated: 2018/12/22 17:33:14 by amerelo          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -20,6 +20,13 @@ SRC			=	Core/Application.cpp \
 				Core/Transform.cpp \
 				Core/GameObject.cpp \
 				Core/Hierarchy.cpp \
+				Core/EventSystem.cpp \
+				Core/MaterialTable.cpp \
+				Core/Mesh.cpp \
+				Core/ShaderCache.cpp \
+				Core/Object.cpp \
+				Core/PrimitiveMeshFactory.cpp \
+				Core/ComputeDispatcher.cpp \
 				Core/Components/Component.cpp \
 				Core/Components/Camera.cpp \
 				Core/Components/Renderer.cpp \
@@ -28,15 +35,6 @@ SRC			=	Core/Application.cpp \
 				Core/Components/FreeCameraControls.cpp \
 				Core/Components/Light.cpp \
 				Core/Components/Rotator.cpp \
-				Core/ComputeDispatcher.cpp \
-				Core/Events/Event.cpp \
-				Core/Events/EventSystem.cpp \
-				Core/Events/Input.cpp \
-				Core/MaterialTable.cpp \
-				Core/Mesh.cpp \
-				Core/ShaderCache.cpp \
-				Core/Object.cpp \
-				Core/PrimitiveMeshFactory.cpp \
 				Core/Rendering/ForwardRenderPipeline.cpp \
 				Core/Rendering/RenderTarget.cpp \
 				Core/Rendering/VulkanRenderPipeline.cpp \
