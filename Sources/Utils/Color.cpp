@@ -2,24 +2,42 @@
 
 using namespace LWGC;
 
-Color::Color(void)
+Color Color::Black      	= {0, 0, 0};
+Color Color::White      	= {1, 1, 1};
+Color Color::Gray       	= {0.5, 0.5, 0.5};
+Color Color::LighGgray  	= {0.75, 0.75, 0.75};
+Color Color::DarkRed    	= {0.5, 0, 0};
+Color Color::Red        	= {1, 0, 0};
+Color Color::DarkYellow 	= {0.5, 0.5, 0};
+Color Color::Yellow     	= {1, 1, 0};
+Color Color::DarkGreen  	= {0, 0.5, 0};
+Color Color::Green      	= {0, 1, 0};
+Color Color::DarkCyan   	= {0, 0.5, 0.5};
+Color Color::Cyan       	= {0, 1, 1};
+Color Color::DarkBlue   	= {0, 0, 0.5};
+Color Color::Blue       	= {0, 0, 1};
+Color Color::DarkMagenta	= {0.5, 0, 0.5};
+Color Color::Magenta    	= {1, 0, 1};
+Color Color::Indigo     	= {0.5, 0, 1};
+Color Color::Violet     	= {1, 1, 0.5};
+Color Color::DarkBrown  	= {0.5, 0.25, 0};
+Color Color::Brown      	= {1, 0.5, 0};
+
+Color::Color(void) : Color(0, 0, 0, 1)
 {
-	std::cout << "Default constructor of Color called" << std::endl;
-	this->_r = 0;
-	this->_g = 0;
-	this->_b = 0;
-	this->_a = 0;
+}
+
+Color::Color(float r, float g, float b, float a) : _r(r), _g(g), _b(b), _a(a)
+{
 }
 
 Color::Color(Color const & src)
 {
 	*this = src;
-	std::cout << "Copy constructor called" << std::endl;
 }
 
 Color::~Color(void)
 {
-	std::cout << "Destructor of Color called" << std::endl;
 }
 
 Color		Color::HSVToRGB(const float H, const float S, const float V)
@@ -42,7 +60,6 @@ Color		Color::Lerp(const Color & a, const Color & b, const float t)
 	// TODO:
 	return Color();
 }
-
 
 Color &	Color::operator=(Color const & src)
 {
