@@ -33,11 +33,11 @@ CPPVERSION	=	c++1z
 
 #	Includes
 #	The only two required inlcude is sources for LWGC.hpp and the path for vulkan include
-INCDIRS		=	../../sources ../../Deps/vulkansdk-macos-1.1.85.0/macOS/include/
+INCDIRS		=	../../Sources ${VULKAN_SDK}/include/
 
 #	Libraries
-LIBDIRS		=	../../ ../../Deps/glfw/src/ ../../Deps/imgui/ ../../Deps/vulkansdk-macos-1.1.85.0/macOS/lib
-LDLIBS		=	-lLWGC -lglfw3 -limgui -lvulkan -lglslang -lSPIRV -lHLSL -lSPVRemapper -lSPIRV-Tools -lSPIRV-Tools-link -lSPIRV-Tools-opt -lspirv-cross -lOSDependent -lOGLCompiler -lspirv-cross
+LIBDIRS		=	../../ ../../Deps/glfw/src/ ../../Deps/imgui/ ../../Deps/glslang/build/SPIRV ../../Deps/glslang/build/hlsl ../../Deps/glslang/build/glslang ${VULKAN_SDK}/lib ../../Deps/SPIRV-Cross
+LDLIBS		=	-lLWGC -lglfw3 -lImGUI -lvulkan -lglslang -lSPIRV -lHLSL -lSPVRemapper -lspirv-cross
 
 #	Output
 NAME		=	simple
@@ -52,6 +52,7 @@ DEBUGFLAGS1	=	-ggdb -fsanitize=address -fno-omit-frame-pointer -fno-optimize-sib
 DEBUGFLAGS2	=	-fsanitize-memory-track-origins=2
 OPTFLAGS1	=	-funroll-loops -O2
 OPTFLAGS2	=	-pipe -funroll-loops -Ofast
+INCDIRS		+=	$(VULKAN_SDK)/include
 
 #################
 ##  COLORS     ##
@@ -88,14 +89,14 @@ OPTFLAGS	=
 ifeq "$(OS)" "Windows_NT"
 endif
 ifeq "$(OS)" "Linux"
-	LDLIBS		+= 
-	DEBUGFLAGS	+= -fsanitize=memory -fsanitize-memory-use-after-dtor -fsanitize=thread
+	LDLIBS		+= -ldl -lpthread -lX11
+	DEBUGFLAGS	+= 
 endif
 ifeq "$(OS)" "Darwin"
 	FRAMEWORK	=	OpenGL AppKit IOKit CoreVideo
 endif
 
-COMPILER	=	$(shell readlink $(which cc))
+COMPILER	=	$(shell readlink $(shell which cc))
 ifneq (,$(findstring clang++,$(COMPILER)))
 	#Clang++ compiler
 	CFLAGS	+= -dead_strip
@@ -194,7 +195,7 @@ $(NAME): $(OBJ)
 	@$(if $(findstring lft,$(LDLIBS)),$(call color_exec_t,$(CCLEAR),$(CCLEAR),\
 		make -j 4 -C libft))
 	@$(call color_exec,$(CLINK_T),$(CLINK),"Link of $(NAME):",\
-		$(LINKER) $(WERROR) $(CFLAGS) $(LDFLAGS) $(LDLIBS) $(OPTFLAGS) $(DEBUGFLAGS) $(LINKDEBUG) $(VFRAME) -o $@ $^)
+		$(LINKER) -std=$(CPPVERSION) $(WERROR) $(CFLAGS) $(LDFLAGS) $(OPTFLAGS) $(DEBUGFLAGS) $(LINKDEBUG) $(VFRAME) -o $@ $^ $(LDLIBS))
 
 $(OBJDIR)/%.o: %.cpp $(INCFILES)
 	@mkdir -p $(OBJDIR)/$(dir $<)

@@ -61,10 +61,12 @@ void			Vk::CreateImage(uint32_t width, uint32_t height, uint32_t depth, int arra
 	VkMemoryRequirements memRequirements;
 	vkGetImageMemoryRequirements(device, image, &memRequirements);
 
+	std::cout << "Create image: " << memRequirements.memoryTypeBits << ", " << properties << std::endl;
 	VkMemoryAllocateInfo allocInfo = {};
 	allocInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
 	allocInfo.allocationSize = memRequirements.size;
 	allocInfo.memoryTypeIndex = instance->FindMemoryType(memRequirements.memoryTypeBits, properties);
+	std::cout << "===========\n";
 
 	if (vkAllocateMemory(device, &allocInfo, nullptr, &imageMemory) != VK_SUCCESS)
 	    throw std::runtime_error("failed to allocate image memory!");
@@ -97,6 +99,7 @@ void			Vk::CreateBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPro
 	VkMemoryAllocateInfo allocInfo = {};
 	allocInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
 	allocInfo.allocationSize = memRequirements.size;
+	std::cout << "Create buffer !\n";
 	allocInfo.memoryTypeIndex = instance->FindMemoryType(memRequirements.memoryTypeBits, properties);
 
 	if (vkAllocateMemory(device, &allocInfo, nullptr, &bufferMemory) != VK_SUCCESS)

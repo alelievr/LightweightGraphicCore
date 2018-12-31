@@ -76,12 +76,12 @@ DEBUGLEVEL	=	0	#can be 0 for no debug 1 for or 2 for harder debug
 					#Warrning: non null debuglevel will disable optlevel
 OPTLEVEL	=	1	#same than debuglevel
 					#Warrning: non null optlevel will disable debuglevel
-CPPVERSION	=	c++1z
+CPPVERSION	=	c++14
 #For simpler and faster use, use commnd line variables DEBUG and OPTI:
 #Example $> make DEBUG=2 will set debuglevel to 2
 
 #	Includes
-INCDIRS		=	sources/ Deps/vulkansdk-macos-1.1.85.0/macOS/include/
+INCDIRS		=	Sources/ Deps/vulkansdk-macos-1.1.85.0/macOS/include/
 
 #	Libraries
 LIBDIRS		=	Deps/glfw/src Deps/glslang/install/lib Deps/glm
@@ -92,12 +92,13 @@ STBLIB      =   Deps/stb/stb.h
 GLMLIB      =   Deps/glm/glm
 GLSLANGLIB	=	Deps/glslang/build/StandAlone/glslangValidator
 IMGUILIB    =   Deps/imgui/libImGUI.a
+VULKAN		= $(VULKAN_SDK)/lib/libvulkan.dylib
 
 #	Output
 NAME		=	libLWGC.a
 
 #	Compiler
-CFLAGS		=	-Wall -Wextra -pedantic
+CFLAGS		=	-Wall -Wextra -pedantic -fPIC
 CPROTECTION	=	-z execstack -fno-stack-protector
 
 DEBUGFLAGS1	=	-ggdb -fsanitize=address -fno-omit-frame-pointer -fno-optimize-sibling-calls -O0
@@ -131,28 +132,30 @@ CNORM_OK	=	"231m"
 
 OS			:=	$(shell uname -s)
 PROC		:=	$(shell uname -p)
-DEBUGFLAGS	=	""
-LINKDEBUG	=	""
-OPTFLAGS	=	""
-#COMPILATION	=	""
+DEBUGFLAGS	=	
+LINKDEBUG	=	
+OPTFLAGS	=	
+#COMPILATION	=	
 
 ifeq "$(OS)" "Windows_NT"
 endif
 ifeq "$(OS)" "Linux"
-	LDLIBS		+= ""
-	DEBUGFLAGS	+= " -fsanitize-memory-use-after-dtor"
-	VULKAN		=
+	LDLIBS		+= 
+	DEBUGFLAGS	+=
+ifndef VULKAN_SDK
+	DOWNLOAD_VULKAN = echo error Vulkan SDK not found, please install it: https://vulkan.lunarg.com/sdk/home\#linux
+endif
+	INCDIRS			+= $(VULKAN_SDK)/include
 endif
 ifeq "$(OS)" "Darwin"
 	CFLAGS			+= "-ferror-limit=999"
 	MoltenTar		= moltenVK.tar.gz
 	MoltentUrl		= https://sdk.lunarg.com/sdk/download/1.1.85.0/mac/vulkansdk-macos-1.1.85.0.tar.gz?Human=true
-	DOWNLAOD_VULKAN = curl -o $(MoltenTar) $(MoltentUrl) && tar -xf $(MoltenTar) -C Deps/
+	DOWNLOAD_VULKAN = curl -o $(MoltenTar) $(MoltentUrl) && tar -xf $(MoltenTar) -C Deps/
 	VULKAN_SDK		= $(shell pwd)/Deps/vulkansdk-macos-1.1.85.0/macOS
 	LD_LIBRARY_PATH	= $(VULKAN_SDK)/lib
 	VK_ICD_FILENAMES= $(VULKAN_SDK)/etc/vulkan/icd.d/MoltenVK_icd.json
 	INCDIRS			+= $(VULKAN_SDK)/include
-	VULKAN			= $(VULKAN_SDK)/lib/libvulkan.dylib
 endif
 
 #################
@@ -232,7 +235,7 @@ $(STBLIB):
 $(GLFWLIB):
 	@git submodule init
 	@git submodule update
-	#@cd Deps/glfw && VULKAN_SDK=$(VULKAN_SDK) cmake -DVULKAN_STATIC_LIBRARY=0 -DCMAKE_FIND_FRAMEWORK=${VULKAN_SDK}/../ -DVULKAN_INCLUDE_DIR=$VULKAN_SDK/include -DVULKAN_LIBRARY=${VULKAN_SDK}/lib/libvulkan.dylib -DGLFW_BUILD_EXAMPLES=OFF . && $(MAKE) -j 4
+	#@cd Deps/glfw && VULKAN_SDK=$(VULKAN_SDK) cmake -DVULKAN_STATIC_LIBRARY=0 -DCMAKE_FIND_FRAMEWORK=${VULKAN_SDK}/../ -DVULKAN_INCLUDE_DIR=${VULKAN_SDK}/include -DVULKAN_LIBRARY=${VULKAN_SDK}/lib/libvulkan.dylib -DGLFW_BUILD_EXAMPLES=OFF . && $(MAKE) -j 4
 	@cd Deps/glfw && VULKAN_SDK=$(VULKAN_SDK) cmake -DVULKAN_STATIC_LIBRARY=0 . && $(MAKE) -j 4
 
 $(GLSLANGLIB):
@@ -246,7 +249,7 @@ $(IMGUILIB):
 	@$(MAKE) -f ImGUI.Makefile -j 4
 
 $(VULKAN):
-	$(DOWNLAOD_VULKAN)
+	@$(DOWNLOAD_VULKAN)
 
 #	Linking
 $(NAME): $(OBJ)

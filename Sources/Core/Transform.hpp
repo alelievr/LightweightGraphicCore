@@ -17,6 +17,7 @@
 #include GLM_INCLUDE_QUATERNION
 #include GLM_INCLUDE_MATRIX_TRANSFORM
 
+#include <memory>
 #include <iostream>
 #include <string>
 #include <vector>

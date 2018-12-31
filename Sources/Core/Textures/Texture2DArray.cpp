@@ -1,5 +1,7 @@
 #include "Texture2DArray.hpp"
 
+#include <string.h>
+
 using namespace LWGC;
 
 #include STB_INCLUDE_IMAGE

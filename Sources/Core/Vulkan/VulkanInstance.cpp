@@ -2,6 +2,7 @@
 
 #include <set>
 #include <array>
+#include <string.h>
 
 #include GLFW_INCLUDE
 #include "Vk.hpp"
@@ -379,7 +380,6 @@ uint32_t		VulkanInstance::FindMemoryType(uint32_t typeFilter, VkMemoryPropertyFl
 	}
 
 	throw std::runtime_error("failed to find suitable memory type!");
-
 }
 
 VkFormat		VulkanInstance::FindSupportedFormat(const std::vector< VkFormat > & candidates, VkImageTiling tiling, VkFormatFeatureFlags features)

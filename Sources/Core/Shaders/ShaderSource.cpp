@@ -55,7 +55,11 @@ long		ShaderSource::GetFileModificationTime(const std::string & file) const
 
 	lstat(file.c_str(), &st);
 
+#if __APPLE__
 	return st.st_mtimespec.tv_sec;
+#else
+	return st.st_mtime;
+#endif
 }
 
 std::string	ShaderSource::StageToText(const VkShaderStageFlagBits stage)
@@ -143,6 +147,7 @@ void		ShaderSource::GenerateBindingTable(ShaderBindingTable & bindingTable)
 
 	// Warning: currently no differenciation between Buffer/Texture2D and RWBuffer/RWTexture2D is done
 	const auto & addBinding = [&](const spirv_cross::Resource & resource, const VkDescriptorType descriptorType) {
+		std::cout << "Add bingin: " << descriptorType << std::endl;
 		unsigned set = glsl->get_decoration(resource.id, spv::DecorationDescriptorSet);
 		unsigned binding = glsl->get_decoration(resource.id, spv::DecorationBinding);
 		const spirv_cross::SPIRType & type = glsl->get_type(resource.type_id);

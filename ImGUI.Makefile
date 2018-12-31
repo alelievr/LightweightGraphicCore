@@ -15,7 +15,7 @@
 #################
 
 #	Sources
-SRCDIR		=	deps/imgui
+SRCDIR		=	Deps/imgui
 SRC			=	imgui.cpp						\
 				imgui_draw.cpp					\
 				imgui_widgets.cpp				\
@@ -23,7 +23,7 @@ SRC			=	imgui.cpp						\
 				examples/imgui_impl_vulkan.cpp	\
 
 #	Objects
-OBJDIR		=	deps/imgui/obj
+OBJDIR		=	Deps/imgui/obj
 
 #	Variables
 LIBFT		=	2	#1 or 0 to include the libft / 2 for autodetct
@@ -36,14 +36,14 @@ CPPVERSION	=	c++1z
 #Example $> make DEBUG=2 will set debuglevel to 2
 
 #	Includes
-INCDIRS		=	deps/imgui deps/glfw/include gl3w/include Deps/vulkansdk-macos-1.1.85.0/macOS/include/
+INCDIRS		=	Deps/imgui Deps/glfw/include gl3w/include Deps/vulkansdk-macos-1.1.85.0/macOS/include/
 
 #	Libraries
 LIBDIRS		=	
 LDLIBS		=	
 
 #	Output
-NAME		=	deps/imgui/libImGUI.a
+NAME		=	Deps/imgui/libImGUI.a
 
 #	Compiler
 WERROR		=	-Werror
@@ -93,16 +93,17 @@ endif
 ifeq "$(OS)" "Linux"
 	LDLIBS		+= 
 	DEBUGFLAGS	+= -fsanitize=memory -fsanitize-memory-use-after-dtor -fsanitize=thread
+	INCDIRS			+= $(VULKAN_SDK)/include
 endif
 ifeq "$(OS)" "Darwin"
-	VULKAN_SDK		= $(shell pwd)/deps/vulkansdk-macos-1.1.85.0/macOS
+	VULKAN_SDK		= $(shell pwd)/Deps/vulkansdk-macos-1.1.85.0/macOS
 	LD_LIBRARY_PATH	= $(VULKAN_SDK)/lib
 	VK_ICD_FILENAMES= $(VULKAN_SDK)/etc/vulkan/icd.d/MoltenVK_icd.json
 	INCDIRS			+= $(VULKAN_SDK)/include
 	VULKAN			= $(VULKAN_SDK)/lib/libvulkan.dylib
 endif
 
-COMPILER	=	$(shell readlink $(which cc))
+COMPILER	=	$(shell readlink $(shell which cc))
 ifneq (,$(findstring clang++,$(COMPILER)))
 	#Clang++ compiler
 	CFLAGS	+= -dead_strip
