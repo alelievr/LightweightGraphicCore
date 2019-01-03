@@ -6,7 +6,7 @@
 #    By: amerelo <amerelo@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 0014/07/15 15:13:38 by alelievr          #+#    #+#              #
-#    Updated: 2018/12/21 23:57:13 by amerelo          ###   ########.fr        #
+#    Updated: 2019/01/03 21:45:45 by alelievr         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -94,21 +94,6 @@ ifeq "$(OS)" "Linux"
 endif
 ifeq "$(OS)" "Darwin"
 	FRAMEWORK	=	OpenGL AppKit IOKit CoreVideo
-endif
-
-COMPILER	=	$(shell readlink $(shell which cc))
-ifneq (,$(findstring clang++,$(COMPILER)))
-	#Clang++ compiler
-	CFLAGS	+= -dead_strip
-else ifneq (,$(findstring clang,$(COMPILER)))
-	#Clang compiler
-	CFLAGS	+= -dead_strip
-else ifneq (,$(findstring gcc,$(COMPILER)))
-	#GCC compiler
-	CFLAGS	+=	--gc-sections
-else ifneq (,$(findstring gcc++,$(COMPILER)))
-	#G++ compiler
-	CFLAGS	+=	--gc-sections
 endif
 
 #################

@@ -6,7 +6,7 @@
 #    By: amerelo <amerelo@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2014/07/15 15:13:38 by alelievr          #+#    #+#              #
-#    Updated: 2018/12/21 18:05:50 by amerelo          ###   ########.fr        #
+#    Updated: 2019/01/03 21:40:24 by alelievr         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -92,7 +92,6 @@ STBLIB      =   Deps/stb/stb.h
 GLMLIB      =   Deps/glm/glm
 GLSLANGLIB	=	Deps/glslang/build/StandAlone/glslangValidator
 IMGUILIB    =   Deps/imgui/libImGUI.a
-VULKAN		= $(VULKAN_SDK)/lib/libvulkan.dylib
 
 #	Output
 NAME		=	libLWGC.a
@@ -145,7 +144,8 @@ ifeq "$(OS)" "Linux"
 ifndef VULKAN_SDK
 	DOWNLOAD_VULKAN = echo error Vulkan SDK not found, please install it: https://vulkan.lunarg.com/sdk/home\#linux
 endif
-	INCDIRS			+= $(VULKAN_SDK)/include
+	INCDIRS		+= $(VULKAN_SDK)/include
+	VULKAN		= $(VULKAN_SDK)/lib/libvulkan.dylib
 endif
 ifeq "$(OS)" "Darwin"
 	CFLAGS			+= "-ferror-limit=999"
@@ -156,6 +156,7 @@ ifeq "$(OS)" "Darwin"
 	LD_LIBRARY_PATH	= $(VULKAN_SDK)/lib
 	VK_ICD_FILENAMES= $(VULKAN_SDK)/etc/vulkan/icd.d/MoltenVK_icd.json
 	INCDIRS			+= $(VULKAN_SDK)/include
+	VULKAN			= $(VULKAN_SDK)/lib/libvulkan.dylib
 endif
 
 #################
