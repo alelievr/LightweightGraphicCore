@@ -16,7 +16,7 @@
 
 #	Sources
 SRCDIR		=	src
-SRC			=	cube.cpp	\
+SRC			=	compute.cpp	\
 
 #	Objects
 OBJDIR		=	obj
@@ -40,7 +40,7 @@ LIBDIRS		=	../../ ../../Deps/glfw/src/ ../../Deps/imgui/ ../../Deps/glslang/buil
 LDLIBS		=	-lLWGC -lglfw3 -lImGUI -lvulkan -lglslang -lSPIRV -lHLSL -lSPVRemapper -lspirv-cross
 
 #	Output
-NAME		=	cube
+NAME		=	compute
 
 #	Compiler
 WERROR		=	

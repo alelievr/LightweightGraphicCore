@@ -1,0 +1,78 @@
+#include "LWGC.hpp"
+
+using namespace LWGC;
+
+void		ProcessEvent(EventSystem * es, Application & app)
+{
+	const Event &	current = es->GetCurrentEvent();
+
+	if (current.GetType() == EventType::KeyDown
+		&& current.GetKeyCode() == KeyCode::ESCAPE)
+		app.Quit();
+}
+
+void		InitFullscreenTarget(Hierarchy * hierarchy)
+{
+	auto		fullScreenMaterial = Material::Create(BuiltinShaders::Standard, BuiltinShaders::FullScreenQuad);
+	Texture2D	computeTarget(512, 512, VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_USAGE_STORAGE_BIT | VK_IMAGE_USAGE_SAMPLED_BIT, false);
+
+	// Setup material to display the procedural texture:
+	VkPipelineInputAssemblyStateCreateInfo inputAssemblyInfo = {};
+	inputAssemblyInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO;
+	inputAssemblyInfo.topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_STRIP;
+	inputAssemblyInfo.primitiveRestartEnable = VK_FALSE;
+
+	fullScreenMaterial->SetInputAssemblyState(inputAssemblyInfo);
+
+	// VkPipelineDepthStencilStateCreateInfo depthStencilInfo = {};
+	// depthStencilInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO;
+	// depthStencilInfo.depthTestEnable = VK_TRUE;
+	// depthStencilInfo.depthWriteEnable = VK_FALSE;
+	// depthStencilInfo.depthCompareOp = VK_COMPARE_OP_LESS;
+	// depthStencilInfo.depthBoundsTestEnable = VK_FALSE;
+	// depthStencilInfo.stencilTestEnable = VK_FALSE;
+
+	// fullScreenMaterial->SetDepthStencilState(depthStencilInfo);
+
+	fullScreenMaterial->SetTexture(TextureBinding::Albedo, computeTarget, VK_IMAGE_LAYOUT_GENERAL, VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE);
+	hierarchy->AddGameObject(new GameObject(new ProceduralRenderer(fullScreenMaterial, 4)));
+	
+	auto	proceduralDispatchMaterial = Material::Create("Shaders/Compute/ProceduralTexture.hlsl", VK_SHADER_STAGE_COMPUTE_BIT);
+	proceduralDispatchMaterial->SetTexture("proceduralTexture", computeTarget, VK_IMAGE_LAYOUT_GENERAL, VK_DESCRIPTOR_TYPE_STORAGE_IMAGE);
+	hierarchy->AddGameObject(new GameObject(new ComputeDispatcher(proceduralDispatchMaterial, 512, 512)));
+}
+
+void		InitCamera(Hierarchy * hierarchy)
+{
+	auto cam = new GameObject(new Camera());
+	cam->GetTransform()->SetPosition(glm::vec3(0, 0, -5));
+	cam->AddComponent(new FreeCameraControls());
+
+	hierarchy->AddGameObject(cam);
+}
+
+int			main(void)
+{
+	Application		app;
+	EventSystem *	es = app.GetEventSystem();
+	Hierarchy *		hierarchy = app.GetHierarchy();
+
+	ShaderSource::AddIncludePath("../../");
+
+	//Initialize application
+	app.Init();
+
+	// We must Open the window before doing anything related to vulkan
+	app.Open("Compute Test", 1920, 1080, WindowFlag::Resizable | WindowFlag::Decorated | WindowFlag::Focused);
+
+	InitCamera(hierarchy);
+	InitFullscreenTarget(hierarchy);
+
+	while (app.ShouldNotQuit())
+	{
+		app.Update();
+		ProcessEvent(es, app);
+	}
+	
+	return (0);
+}

@@ -41,21 +41,22 @@ VulkanInstance::~VulkanInstance(void)
 	// _graphicCommandBufferPool.~CommandBufferPool();
 	// _computeCommandBufferPool.~CommandBufferPool();
 
-	if (_device != VK_NULL_HANDLE)
-		vkDestroyDevice(_device, nullptr);
-	if (_instance != VK_NULL_HANDLE)
-		vkDestroyInstance(_instance, nullptr);
-
-	vkDestroyDescriptorPool(_device, _descriptorPool, nullptr);
-
 	if (_enableValidationLayers)
 	{
 		DestroyDebugUtilsMessengerEXT(_callback, nullptr);
 	}
+
+	vkDestroyDescriptorPool(_device, _descriptorPool, nullptr);
+
+	if (_device != VK_NULL_HANDLE)
+		vkDestroyDevice(_device, nullptr);
+	if (_instance != VK_NULL_HANDLE)
+		vkDestroyInstance(_instance, nullptr);
 }
 
 void			VulkanInstance::Initialize(void)
 {
+	printf("VULKANINSTANCE INIT !\n");
 	_instanceSingleton = this;
 	CreateInstance();
 	SetupDebugCallbacks();
@@ -87,8 +88,8 @@ void			VulkanInstance::CreateDescriptorPool(void) noexcept
 	poolSizes[1].descriptorCount = 2u;
 	poolSizes[2].type = VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE;
 	poolSizes[2].descriptorCount = 6u;
-	poolSizes[2].type = VK_DESCRIPTOR_TYPE_SAMPLER;
-	poolSizes[2].descriptorCount = 4u;
+	poolSizes[3].type = VK_DESCRIPTOR_TYPE_SAMPLER;
+	poolSizes[3].descriptorCount = 4u;
 
 	VkDescriptorPoolCreateInfo poolInfo = {};
 	poolInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
@@ -160,7 +161,10 @@ bool			VulkanInstance::AreValidationLayerSupported(void) noexcept
 	    }
 
 	    if (!layerFound)
+		{
+			std::cerr << "Validation layer " << layerName << " not found !\n";
 	        return false;
+		}
 	}
 
 	return true;
@@ -373,10 +377,10 @@ uint32_t		VulkanInstance::FindMemoryType(uint32_t typeFilter, VkMemoryPropertyFl
 	VkPhysicalDeviceMemoryProperties memProperties;
 	vkGetPhysicalDeviceMemoryProperties(_physicalDevice, &memProperties);
 
-	for (uint32_t i = 0; i < memProperties.memoryTypeCount; i++) {
-		if ((typeFilter & (1 << i)) && (memProperties.memoryTypes[i].propertyFlags & properties) == properties) {
+	for (uint32_t i = 0; i < memProperties.memoryTypeCount; i++)
+	{
+		if ((typeFilter & (1 << i)) && (memProperties.memoryTypes[i].propertyFlags & properties) == properties)
 		    return i;
-		}
 	}
 
 	throw std::runtime_error("failed to find suitable memory type!");

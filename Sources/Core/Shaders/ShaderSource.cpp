@@ -147,13 +147,15 @@ void		ShaderSource::GenerateBindingTable(ShaderBindingTable & bindingTable)
 
 	// Warning: currently no differenciation between Buffer/Texture2D and RWBuffer/RWTexture2D is done
 	const auto & addBinding = [&](const spirv_cross::Resource & resource, const VkDescriptorType descriptorType) {
-		std::cout << "Add bingin: " << descriptorType << std::endl;
 		unsigned set = glsl->get_decoration(resource.id, spv::DecorationDescriptorSet);
 		unsigned binding = glsl->get_decoration(resource.id, spv::DecorationBinding);
 		const spirv_cross::SPIRType & type = glsl->get_type(resource.type_id);
 		auto & shaderBinding = bindingTable.AddBinding(resource.name, set, binding, descriptorType);
 		if (type.basetype == spirv_cross::SPIRType::Struct)
+		{
 			shaderBinding.elementSize = glsl->get_declared_struct_size(type);
+			printf("Add binding %s, size: %i\n", resource.name.c_str(), shaderBinding.elementSize);
+		}
 	};
 
 	// Uniform buffers

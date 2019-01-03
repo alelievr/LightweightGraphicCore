@@ -7,7 +7,7 @@ Texture2D::Texture2D(const std::string fileName, VkFormat format, int usage, boo
 {
 	this->format = format;
 	// Force transfer flag (as the image comes from the RAM)
-    usage |= VK_IMAGE_USAGE_TRANSFER_DST_BIT;
+    usage |= VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT;
 	this->usage = usage;
 
     _pixels = LoadFromFile(fileName, this->width, this->height);
@@ -15,7 +15,6 @@ Texture2D::Texture2D(const std::string fileName, VkFormat format, int usage, boo
 	if (generateMips)
 	{
 		maxMipLevel = static_cast<uint32_t>(std::floor(std::log2(std::max(width, height)))) + 1;
-		usage |= VK_IMAGE_USAGE_TRANSFER_SRC_BIT;
 	}
 
     this->depth = 1;
