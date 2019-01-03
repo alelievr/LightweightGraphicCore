@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include <string>
+#include <vector>
 #include "IncludeDeps.hpp"
 
 #include VULKAN_INCLUDE

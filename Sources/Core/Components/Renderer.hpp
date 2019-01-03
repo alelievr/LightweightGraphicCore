@@ -8,10 +8,11 @@
 #include "Core/Vulkan/Material.hpp"
 #include "Core/Vulkan/UniformBuffer.hpp"
 #include "Component.hpp"
+#include "Core/Rendering/IPipelineCommandBuffer.hpp"
 
 namespace LWGC
 {
-	class		Renderer : public Object, public Component
+	class		Renderer : public Object, public Component, public IPipelineCommandBuffer
 	{
 		private:
 			struct LWGC_PerObject
@@ -28,7 +29,6 @@ namespace LWGC
 			
 			static void		CreateGraphicDescriptorSetLayout(void) noexcept;
 
-			void			RecordDrawCommandBuffer(void);
 			virtual void	CreateDescriptorSet(void);
 
 		protected:
@@ -57,10 +57,12 @@ namespace LWGC
 			void	CleanupPipeline(void) noexcept;
 			void	CreatePipeline(void) noexcept;
 
+			void	RecordCommands(VkCommandBuffer cmd) override;
+            VkCommandBuffer	GetCommandBuffer(void) const override;
+
 			Material *	GetMaterial(void) const;
 			void	SetMaterial(Material * tmp);
 
-			VkCommandBuffer		GetDrawCommandBuffer(void) const;
 			VkDescriptorSet		GetDescriptorSet(void) const;
 
 			virtual uint32_t	GetType(void) const noexcept override = 0;

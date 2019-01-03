@@ -46,7 +46,11 @@ void			Application::Init(void) noexcept
 	if (_renderPipeline == nullptr)
 		this->_renderPipeline = new ForwardRenderPipeline();
 
-	_instance.SetValidationLayers({});
+#ifdef __unix__
+	_instance.SetValidationLayers({
+		"VK_LAYER_LUNARG_standard_validation"
+	});
+#endif
 	_instance.SetDeviceExtensions({VK_KHR_SWAPCHAIN_EXTENSION_NAME});
 	_instance.SetApplicationName("LWGC"); // This should be the application name but for the moment we'll keep it like this
 

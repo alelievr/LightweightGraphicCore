@@ -62,7 +62,10 @@ void					ShaderBindingTable::GenerateSetLayouts()
 	{
 		// Fill gaps with empty descriptor sets so they're all contiguous
 		if (layoutBindings.find(i) == layoutBindings.end())
+		{
+			std::cout << "Empty descriptor set at: " << i << "\n";
 			Vk::CreateDescriptorSetLayout({}, _descriptorSetLayout[i]);
+		}
 		else
 		{
 			Vk::CreateDescriptorSetLayout(layoutBindings[i], _descriptorSetLayout[i]);

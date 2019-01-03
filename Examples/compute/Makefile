@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: alelievr <marvin@42.fr>                    +#+  +:+       +#+         #
+#    By: amerelo <amerelo@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
-#    Created: 2014/07/15 15:13:38 by alelievr          #+#    #+#              #
-#    Updated: 2018/12/16 18:09:54 by alelievr         ###   ########.fr        #
+#    Created: 0014/07/15 15:13:38 by alelievr          #+#    #+#              #
+#    Updated: 2019/01/03 21:46:00 by alelievr         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -15,15 +15,11 @@
 #################
 
 #	Sources
-SRCDIR		=	Deps/imgui
-SRC			=	imgui.cpp						\
-				imgui_draw.cpp					\
-				imgui_widgets.cpp				\
-				examples/imgui_impl_glfw.cpp	\
-				examples/imgui_impl_vulkan.cpp	\
+SRCDIR		=	src
+SRC			=	compute.cpp	\
 
 #	Objects
-OBJDIR		=	Deps/imgui/obj
+OBJDIR		=	obj
 
 #	Variables
 LIBFT		=	2	#1 or 0 to include the libft / 2 for autodetct
@@ -36,18 +32,19 @@ CPPVERSION	=	c++1z
 #Example $> make DEBUG=2 will set debuglevel to 2
 
 #	Includes
-INCDIRS		=	Deps/imgui Deps/glfw/include gl3w/include Deps/vulkansdk-macos-1.1.85.0/macOS/include/
+#	The only two required inlcude is sources for LWGC.hpp and the path for vulkan include
+INCDIRS		=	../../Sources ${VULKAN_SDK}/include/
 
 #	Libraries
-LIBDIRS		=	
-LDLIBS		=	
+LIBDIRS		=	../../ ../../Deps/glfw/src/ ../../Deps/imgui/ ../../Deps/glslang/build/SPIRV ../../Deps/glslang/build/hlsl ../../Deps/glslang/build/glslang ${VULKAN_SDK}/lib ../../Deps/SPIRV-Cross
+LDLIBS		=	-lLWGC -lglfw3 -lImGUI -lvulkan -lglslang -lSPIRV -lHLSL -lSPVRemapper -lspirv-cross
 
 #	Output
-NAME		=	Deps/imgui/libImGUI.a
+NAME		=	compute
 
 #	Compiler
-WERROR		=	-Werror
-CFLAGS		=	-Weverything -pedantic -ffast-math -ffunction-sections -fdata-sections
+WERROR		=	
+CFLAGS		=	-pedantic -ffast-math -ffunction-sections -fdata-sections
 CPPFLAGS	=	-Wno-c++98-compat
 CPROTECTION	=	-z execstack -fno-stack-protector
 
@@ -55,6 +52,7 @@ DEBUGFLAGS1	=	-ggdb -fsanitize=address -fno-omit-frame-pointer -fno-optimize-sib
 DEBUGFLAGS2	=	-fsanitize-memory-track-origins=2
 OPTFLAGS1	=	-funroll-loops -O2
 OPTFLAGS2	=	-pipe -funroll-loops -Ofast
+INCDIRS		+=	$(VULKAN_SDK)/include
 
 #################
 ##  COLORS     ##
@@ -91,31 +89,11 @@ OPTFLAGS	=
 ifeq "$(OS)" "Windows_NT"
 endif
 ifeq "$(OS)" "Linux"
-	LDLIBS		+= 
-	DEBUGFLAGS	+= -fsanitize=memory -fsanitize-memory-use-after-dtor -fsanitize=thread
-	INCDIRS			+= $(VULKAN_SDK)/include
+	LDLIBS		+= -ldl -lpthread -lX11
+	DEBUGFLAGS	+= 
 endif
 ifeq "$(OS)" "Darwin"
-	VULKAN_SDK		= $(shell pwd)/Deps/vulkansdk-macos-1.1.85.0/macOS
-	LD_LIBRARY_PATH	= $(VULKAN_SDK)/lib
-	VK_ICD_FILENAMES= $(VULKAN_SDK)/etc/vulkan/icd.d/MoltenVK_icd.json
-	INCDIRS			+= $(VULKAN_SDK)/include
-	VULKAN			= $(VULKAN_SDK)/lib/libvulkan.dylib
-endif
-
-COMPILER	=	$(shell readlink $(shell which cc))
-ifneq (,$(findstring clang++,$(COMPILER)))
-	#Clang++ compiler
-	CFLAGS	+= -dead_strip
-else ifneq (,$(findstring clang,$(COMPILER)))
-	#Clang compiler
-	CFLAGS	+= -dead_strip
-else ifneq (,$(findstring gcc,$(COMPILER)))
-	#GCC compiler
-	CFLAGS	+=	--gc-sections
-else ifneq (,$(findstring gcc++,$(COMPILER)))
-	#G++ compiler
-	CFLAGS	+=	--gc-sections
+	FRAMEWORK	=	OpenGL AppKit IOKit CoreVideo
 endif
 
 #################
@@ -133,7 +111,7 @@ VFRAME		=	$(addprefix -framework ,$(FRAMEWORK))
 INCFILES	=	$(foreach inc, $(INCDIRS), $(wildcard $(inc)/*.h))
 INCFLAGS	=	$(addprefix -I,$(INCDIRS))
 LDFLAGS		=	$(addprefix -L,$(LIBDIRS))
-LINKER		=	ar
+LINKER		=	$(CC)
 
 disp_indent	=	tabs=""; \
 				for I in `seq 1 $(MAKELEVEL)`; do \
@@ -174,6 +152,10 @@ ifndef $(CXX)
 	CXX = clang++
 endif
 
+ifneq ($(filter %.cpp,$(SRC)),)
+	LINKER = $(CXX)
+endif
+
 ifdef ${NOWERROR}
 	WERROR = 
 endif
@@ -198,18 +180,18 @@ $(NAME): $(OBJ)
 	@$(if $(findstring lft,$(LDLIBS)),$(call color_exec_t,$(CCLEAR),$(CCLEAR),\
 		make -j 4 -C libft))
 	@$(call color_exec,$(CLINK_T),$(CLINK),"Link of $(NAME):",\
-		$(LINKER) rc $@ $^)
+		$(LINKER) -std=$(CPPVERSION) $(WERROR) $(CFLAGS) $(LDFLAGS) $(OPTFLAGS) $(DEBUGFLAGS) $(LINKDEBUG) $(VFRAME) -o $@ $^ $(LDLIBS))
 
 $(OBJDIR)/%.o: %.cpp $(INCFILES)
 	@mkdir -p $(OBJDIR)/$(dir $<)
 	@$(call color_exec,$(COBJ_T),$(COBJ),"Object: $@",\
-		$(CXX) -std=$(CPPVERSION) $(OPTFLAGS) $(DEBUGFLAGS) $(CPPFLAGS) $(INCFLAGS) -o $@ -c $<)
+		$(CXX) -std=$(CPPVERSION) $(WERROR) $(CFLAGS) $(OPTFLAGS) $(DEBUGFLAGS) $(CPPFLAGS) $(INCFLAGS) -o $@ -c $<)
 
 #	Objects compilation
 $(OBJDIR)/%.o: %.c $(INCFILES)
 	@mkdir -p $(OBJDIR)/$(dir $<)
 	@$(call color_exec,$(COBJ_T),$(COBJ),"Object: $@",\
-		$(CXX) $(OPTFLAGS) $(DEBUGFLAGS) $(INCFLAGS) -o $@ -c $<)
+		$(CC) $(WERROR) $(CFLAGS) $(OPTFLAGS) $(DEBUGFLAGS) $(INCFLAGS) -o $@ -c $<)
 
 $(OBJDIR)/%.o: %.s
 	@mkdir -p $(OBJDIR)/$(dir $<)

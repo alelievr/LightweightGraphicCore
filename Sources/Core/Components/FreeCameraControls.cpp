@@ -1,4 +1,6 @@
-#include "FreeCameraControls.hpp"
+#include "Core/Components/FreeCameraControls.hpp"
+
+#include <cmath>
 
 #include "Core/Events/EventSystem.hpp"
 #include "Core/Application.hpp"
@@ -86,7 +88,7 @@ void		FreeCameraControls::Update(void) noexcept
 	_rotationX += event.delta.x * _mouseSpeed;
 	_rotationY += event.delta.y * _mouseSpeed;
 
-	_rotationY = std::clamp(_rotationY, -90.0f, 90.0f);
+	_rotationY = glm::clamp(_rotationY, -90.0f, 90.0f);
 
 	transform->SetRotation(glm::angleAxis(_rotationX * Math::DegToRad, glm::vec3(0, 1, 0)));
 	transform->RotateAxis(_rotationY * Math::DegToRad, glm::vec3(1, 0, 0));

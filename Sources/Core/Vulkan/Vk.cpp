@@ -52,7 +52,9 @@ void			Vk::CreateImage(uint32_t width, uint32_t height, uint32_t depth, int arra
 	imageInfo.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
 	imageInfo.usage = usage;
 	imageInfo.samples = VK_SAMPLE_COUNT_1_BIT;
-	imageInfo.sharingMode = VK_SHARING_MODE_CONCURRENT;
+	// TODO: expose as parameter, currently the resource can only be used by one queue
+	// (otherwise it have to trasfer the ownership of the resource)
+	imageInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
 
 	auto device = instance->GetDevice();
 	if (vkCreateImage(device, &imageInfo, nullptr, &image) != VK_SUCCESS)
