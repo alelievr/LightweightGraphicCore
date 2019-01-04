@@ -4,13 +4,16 @@
 #include <string>
 
 #include "Core/GameObject.hpp"
+#include "Core/Vulkan/Material.hpp"
+#include "Core/Components/MeshRenderer.hpp"
 
 namespace LWGC::Gizmo
 {
 	class		GizmoBase : public GameObject
 	{
-		private:
-
+		protected:
+			Material *		material;
+			MeshRenderer *	renderer;
 
 		public:
 			GizmoBase(void);

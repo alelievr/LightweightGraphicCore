@@ -2,12 +2,15 @@
 
 using namespace LWGC::Gizmo;
 
+static const std::string GizmoShader = "Shaders/Gizmo/Default.hlsl";
+
 GizmoBase::GizmoBase(void)
 {
-	std::cout << "Default constructor of GizmoBase called" << std::endl;
+	material = Material::Create(GizmoShader);
+	renderer = new MeshRenderer(material);
+	AddComponent(renderer);
 }
 
 GizmoBase::~GizmoBase(void)
 {
-	std::cout << "Destructor of GizmoBase called" << std::endl;
 }

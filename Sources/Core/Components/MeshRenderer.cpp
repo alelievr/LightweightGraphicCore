@@ -11,6 +11,10 @@ MeshRenderer::MeshRenderer(const PrimitiveType prim, Material * material) : Rend
 	_mesh = PrimitiveMeshFactory::CreateMesh(prim);
 }
 
+MeshRenderer::MeshRenderer(Material * material) : Renderer(material)
+{
+}
+
 MeshRenderer::~MeshRenderer(void)
 {
 	_mesh.reset();

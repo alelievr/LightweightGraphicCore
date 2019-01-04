@@ -28,7 +28,7 @@ std::shared_ptr< Mesh >		PrimitiveMeshFactory::_CreateCubeMesh(void)
 	glm::vec3 p0 = glm::vec3(-.5f, -.5f,  .5f);
 	glm::vec3 p1 = glm::vec3( .5f, -.5f,  .5f);
 	glm::vec3 p2 = glm::vec3( .5f, -.5f, -.5f);
-	glm::vec3 p3 = glm::vec3(-.5f, -.5f, -.5f);	
+	glm::vec3 p3 = glm::vec3(-.5f, -.5f, -.5f);
 
 	glm::vec3 p4 = glm::vec3(-.5f,  .5f,  .5f);
 	glm::vec3 p5 = glm::vec3( .5f,  .5f,  .5f);
@@ -47,29 +47,29 @@ std::shared_ptr< Mesh >		PrimitiveMeshFactory::_CreateCubeMesh(void)
 	Mesh::VertexAttributes::QuadVertexAttrib(p5, p6, p2, p1, attribs.data() + 16);
 	// Top
 	Mesh::VertexAttributes::QuadVertexAttrib(p7, p6, p5, p4, attribs.data() + 20);
-	
+
 	m->SetVertexAttributes(attribs);
 	m->SetIndices({
 		// Bottom
 		3, 1, 0,
-		3, 2, 1,			
-	
+		3, 2, 1,
+
 		// Left
 		3 + 4 * 1, 1 + 4 * 1, 0 + 4 * 1,
 		3 + 4 * 1, 2 + 4 * 1, 1 + 4 * 1,
-	
+
 		// Front
 		3 + 4 * 2, 1 + 4 * 2, 0 + 4 * 2,
 		3 + 4 * 2, 2 + 4 * 2, 1 + 4 * 2,
-	
+
 		// Back
 		3 + 4 * 3, 1 + 4 * 3, 0 + 4 * 3,
 		3 + 4 * 3, 2 + 4 * 3, 1 + 4 * 3,
-	
+
 		// Right
 		3 + 4 * 4, 1 + 4 * 4, 0 + 4 * 4,
 		3 + 4 * 4, 2 + 4 * 4, 1 + 4 * 4,
-	
+
 		// Top
 		3 + 4 * 5, 1 + 4 * 5, 0 + 4 * 5,
 		3 + 4 * 5, 2 + 4 * 5, 1 + 4 * 5,
@@ -82,7 +82,7 @@ std::shared_ptr< Mesh >		PrimitiveMeshFactory::_CreateQuadMesh(void)
 {
 	std::shared_ptr< Mesh >					m = std::make_shared< Mesh >();
 	std::vector< Mesh::VertexAttributes >	attribs(4);
-	
+
 	Mesh::VertexAttributes::QuadVertexAttrib(1, glm::vec3(0, 1, 0), attribs.data());
 
 	m->SetVertexAttributes(attribs);
