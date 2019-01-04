@@ -4,12 +4,10 @@ using namespace LWGC;
 
 MaterialTable::MaterialTable(void)
 {
-	std::cout << "Default constructor of MaterialTable called" << std::endl;
 }
 
 MaterialTable::~MaterialTable(void)
 {
-	std::cout << "Destructor of MaterialTable called" << std::endl;
 }
 
 std::ostream &	operator<<(std::ostream & o, MaterialTable const & r)

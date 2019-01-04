@@ -5,7 +5,7 @@ using namespace LWGC;
 Color Color::Black      	= {0, 0, 0};
 Color Color::White      	= {1, 1, 1};
 Color Color::Gray       	= {0.5, 0.5, 0.5};
-Color Color::LighGgray  	= {0.75, 0.75, 0.75};
+Color Color::LightGray  	= {0.75, 0.75, 0.75};
 Color Color::DarkRed    	= {0.5, 0, 0};
 Color Color::Red        	= {1, 0, 0};
 Color Color::DarkYellow 	= {0.5, 0.5, 0};
@@ -72,6 +72,11 @@ Color &	Color::operator=(Color const & src)
 		this->_a = src.GetA();
 	}
 	return (*this);
+}
+
+Color::operator glm::vec4() const
+{
+	return glm::vec4(_r, _g, _b, _a);
 }
 
 float		Color::GetR(void) const { return (this->_r); }

@@ -168,12 +168,16 @@ void				Mesh::BindBuffers(VkCommandBuffer cmd)
 	VkBuffer vertexBuffers[] = {_vertexBuffer};
 	VkDeviceSize offsets[] = {0};
 	vkCmdBindVertexBuffers(cmd, 0, 1, vertexBuffers, offsets);
-	vkCmdBindIndexBuffer(cmd, _indexBuffer, 0, VK_INDEX_TYPE_UINT32);
+	if (_indices.size() > 0)
+		vkCmdBindIndexBuffer(cmd, _indexBuffer, 0, VK_INDEX_TYPE_UINT32);
 }
 
 void				Mesh::Draw(VkCommandBuffer cmd)
 {
-	vkCmdDrawIndexed(cmd, static_cast<uint32_t>(_indices.size()), 1, 0, 0, 0);
+	if (_indices.size() > 0)
+		vkCmdDrawIndexed(cmd, static_cast<uint32_t>(_indices.size()), 1, 0, 0, 0);
+	else
+		vkCmdDraw(cmd, _attributes.size(), 1, 0, 0);
 }
 
 std::vector< int >				Mesh::GetIndices(void) const { return _indices; }

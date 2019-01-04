@@ -20,20 +20,12 @@ PrimitiveMeshFactory::~PrimitiveMeshFactory(void)
 	std::cout << "Destructor of PrimitiveMeshFactory called" << std::endl;
 }
 
-std::shared_ptr< Mesh >		PrimitiveMeshFactory::_CreateCubeMesh(void)
+std::shared_ptr< Mesh >		PrimitiveMeshFactory::_CreateCubeMesh(
+	const glm::vec3 p0, const glm::vec3 p1, const glm::vec3 p2, const glm::vec3 p3,
+	const glm::vec3 p4, const glm::vec3 p5, const glm::vec3 p6, const glm::vec3 p7)
 {
 	std::shared_ptr< Mesh >					m = std::make_shared< Mesh >();
 	std::vector< Mesh::VertexAttributes >	attribs(24);
-
-	glm::vec3 p0 = glm::vec3(-.5f, -.5f,  .5f);
-	glm::vec3 p1 = glm::vec3( .5f, -.5f,  .5f);
-	glm::vec3 p2 = glm::vec3( .5f, -.5f, -.5f);
-	glm::vec3 p3 = glm::vec3(-.5f, -.5f, -.5f);
-
-	glm::vec3 p4 = glm::vec3(-.5f,  .5f,  .5f);
-	glm::vec3 p5 = glm::vec3( .5f,  .5f,  .5f);
-	glm::vec3 p6 = glm::vec3( .5f,  .5f, -.5f);
-	glm::vec3 p7 = glm::vec3(-.5f,  .5f, -.5f);
 
 	// Bottom
 	Mesh::VertexAttributes::QuadVertexAttrib(p0, p1, p2, p3, attribs.data() + 0);
@@ -78,7 +70,36 @@ std::shared_ptr< Mesh >		PrimitiveMeshFactory::_CreateCubeMesh(void)
 	return m;
 }
 
+std::shared_ptr< Mesh >		PrimitiveMeshFactory::_CreateCubeMesh(void)
+{
+
+	glm::vec3 p0 = glm::vec3(-.5f, -.5f,  .5f);
+	glm::vec3 p1 = glm::vec3( .5f, -.5f,  .5f);
+	glm::vec3 p2 = glm::vec3( .5f, -.5f, -.5f);
+	glm::vec3 p3 = glm::vec3(-.5f, -.5f, -.5f);
+
+	glm::vec3 p4 = glm::vec3(-.5f,  .5f,  .5f);
+	glm::vec3 p5 = glm::vec3( .5f,  .5f,  .5f);
+	glm::vec3 p6 = glm::vec3( .5f,  .5f, -.5f);
+	glm::vec3 p7 = glm::vec3(-.5f,  .5f, -.5f);
+
+	return _CreateCubeMesh(p0, p1, p2, p3, p4, p5, p6, p7);
+}
+
 std::shared_ptr< Mesh >		PrimitiveMeshFactory::_CreateQuadMesh(void)
+{
+	std::shared_ptr< Mesh >					m = std::make_shared< Mesh >();
+	std::vector< Mesh::VertexAttributes >	attribs(4);
+
+	Mesh::VertexAttributes::QuadVertexAttrib(1, glm::vec3(0, 1, 0), attribs.data());
+
+	m->SetVertexAttributes(attribs);
+	m->SetIndices({0, 1, 2, 2, 3, 0});
+
+	return m;
+}
+
+std::shared_ptr< Mesh >		PrimitiveMeshFactory::_CreateFrustumMesh(void)
 {
 	std::shared_ptr< Mesh >					m = std::make_shared< Mesh >();
 	std::vector< Mesh::VertexAttributes >	attribs(4);
@@ -99,6 +120,8 @@ std::shared_ptr< Mesh >		PrimitiveMeshFactory::CreateMesh(PrimitiveType type)
 			return _CreateCubeMesh();
 		case PrimitiveType::Quad:
 			return _CreateQuadMesh();
+		case PrimitiveType::Frustum:
+			return _CreateFrustumMesh();
 	}
 	throw std::runtime_error("Can't find mesh generator for primitive type: " + std::to_string(static_cast< int >(type)));
 }

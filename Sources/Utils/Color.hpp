@@ -3,6 +3,10 @@
 #include <iostream>
 #include <string>
 
+#include "IncludeDeps.hpp"
+
+#include GLM_INCLUDE
+
 namespace LWGC
 {
 	class		Color
@@ -21,6 +25,8 @@ namespace LWGC
 
 			Color &	operator=(Color const & src);
 			//TODO: operators + - * / glm::vec4
+
+			operator glm::vec4() const;
 
 			Color	Lerp(const Color & b, const float t);
 
@@ -42,7 +48,7 @@ namespace LWGC
 			static Color	Black;
 			static Color	White;
 			static Color	Gray;
-			static Color	LighGgray;
+			static Color	LightGray;
 			static Color	DarkRed;
 			static Color	Red;
 			static Color	DarkYellow;

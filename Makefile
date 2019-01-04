@@ -58,8 +58,9 @@ SRC			=	Core/Application.cpp \
 				Core/Textures/TextureCube.cpp \
 				Core/Textures/TextureCubeArray.cpp \
 				Core/Textures/Texture3D.cpp \
-				Core/Gizmos/Line.cpp \
 				Core/Gizmos/GizmoBase.cpp \
+				Core/Gizmos/Line.cpp \
+				Core/Gizmos/Ray.cpp \
 				Core/Delegate.cpp \
 				Core/ImGUIWrapper.cpp \
 				Utils/Bounds.cpp \

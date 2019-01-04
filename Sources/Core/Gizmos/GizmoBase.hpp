@@ -21,7 +21,6 @@ namespace LWGC::Gizmo
 
 			Material *		material;
 			MeshRenderer *	renderer;
-			Color			color;
 			VkBuffer		gizmoDataBuffer;
 			VkDeviceMemory	gizmoDataMemory;
 			LWGC_GizmoData	gizmoData;
@@ -29,8 +28,8 @@ namespace LWGC::Gizmo
 			virtual void Initialize(void) noexcept override;
 
 		public:
-			GizmoBase(void);
-			GizmoBase(const Color & c);
+			GizmoBase(void) = delete;
+			GizmoBase(const Color & c = Color::White);
 			GizmoBase(const GizmoBase &) = delete;
 			virtual ~GizmoBase(void);
 

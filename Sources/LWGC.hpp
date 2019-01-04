@@ -52,6 +52,8 @@
 
 // Gimos & handles
 #include "Core/Gizmos/Line.hpp"
+#include "Core/Gizmos/Ray.hpp"
+#include "Core/Gizmos/Frustum.hpp"
 
 // Utils
 #include "Utils/Bounds.hpp"

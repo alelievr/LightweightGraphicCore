@@ -20,6 +20,28 @@ void		ProcessEvent(EventSystem * es, Application & app)
 	}
 }
 
+void		InitGizmos(Hierarchy * hierarchy)
+{
+	auto lineGizmo = new Gizmo::Line(glm::vec3(-1, 0, 0), glm::vec3(0, 4, 0), Color::Yellow);
+	lineGizmo->GetTransform()->SetPosition(glm::vec3(0, 0, 0));
+	hierarchy->AddGameObject(lineGizmo);
+
+	auto rayGizmo = new Gizmo::Ray(glm::vec3(1, 0, 0), glm::vec3(0, 1, 0), Color::Red);
+	rayGizmo->GetTransform()->SetPosition(glm::vec3(0, 0, 0));
+	hierarchy->AddGameObject(rayGizmo);
+
+	// auto frustum = new Gizmo::Frustum();
+}
+
+void		InitCamera(Hierarchy * hierarchy)
+{
+	auto cam = new GameObject(new Camera());
+	cam->GetTransform()->SetPosition(glm::vec3(0, 0, -5));
+	cam->AddComponent(new FreeCameraControls());
+	hierarchy->AddGameObject(cam);
+
+}
+
 int			main(void)
 {
 	Application		app;
@@ -34,24 +56,8 @@ int			main(void)
 	// We must Open the window before doing anything related to vulkan
 	app.Open("Test Window", 1920, 1080, WindowFlag::Resizable | WindowFlag::Decorated | WindowFlag::Focused);
 
-	auto	textureMaterial = Material::Create(BuiltinShaders::Standard);
-
-	Texture2D animeTexture("Images/656218.jpg", VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_USAGE_SAMPLED_BIT, true);
-
-	auto gizmo = new Gizmo::Line(glm::vec3(0, 0, 0), glm::vec3(0, 4, 0), Color::Red);
-	gizmo->GetTransform()->SetPosition(glm::vec3(0, 0, 0));
-	hierarchy->AddGameObject(gizmo);
-
-	auto cube = new GameObject(new MeshRenderer(PrimitiveType::Cube, textureMaterial));
-	cube->GetTransform()->SetPosition(glm::vec3(0, 0, 0));
-	auto cam = new GameObject(new Camera());
-	cam->GetTransform()->SetPosition(glm::vec3(0, 0, -5));
-	cam->AddComponent(new FreeCameraControls());
-
-	hierarchy->AddGameObject(cube);
-	hierarchy->AddGameObject(cam);
-
-	textureMaterial->SetTexture(TextureBinding::Albedo, animeTexture, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE);
+	InitGizmos(hierarchy);
+	InitCamera(hierarchy);
 
 	while (app.ShouldNotQuit())
 	{

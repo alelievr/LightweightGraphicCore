@@ -6,5 +6,6 @@ namespace LWGC
 	{
 		Cube,
 		Quad,
+		Frustum,
 	};
 }
