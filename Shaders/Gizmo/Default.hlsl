@@ -1,13 +1,8 @@
 #include "Shaders/Common/UniformGraphic.hlsl"
 #include "Shaders/Common/InputGraphic.hlsl"
 
-struct GizmoData
-{
-	int		colorMode;
-};
-
 [[vk::binding(0, 4)]]
-ConstantBuffer< GizmoData >	gizmo;
+ConstantBuffer< LWGC_GizmoData >	gizmo;
 
 struct FragmentOutput
 {
@@ -19,7 +14,8 @@ FragmentOutput main(FragmentInput i)
 	FragmentOutput	o;
 
 	// TODO: switch using the color mode
-	o.color = float4(i.normalOS * 0.5 + 0.5, 1);
+	// o.color = float4(i.normalOS * 0.5 + 0.5, 1);
+	o.color = gizmo.color;
 
 	return o;
 }

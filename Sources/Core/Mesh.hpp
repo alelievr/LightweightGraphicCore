@@ -56,10 +56,10 @@ namespace LWGC
 			void						SetIndices(const std::vector< int > & tmp);
 			std::vector< VertexAttributes >	GetVertexAttributes(void) const;
 			void						SetVertexAttributes(const std::vector< VertexAttributes > & tmp);
-			
+
 			static std::array< VkVertexInputAttributeDescription, 5 >	GetAttributeDescriptions(void);
 			static std::array< VkVertexInputBindingDescription, 1 >		GetBindingDescription(void);
-			
+
 		private:
 			std::vector< int >			_indices;
 			std::vector< VertexAttributes >	_attributes;

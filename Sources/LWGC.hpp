@@ -50,6 +50,9 @@
 #include "Core/Components/ComputeDispatcher.hpp"
 #include "Core/Components/Rotator.hpp"
 
+// Gimos & handles
+#include "Core/Gizmos/Line.hpp"
+
 // Utils
 #include "Utils/Bounds.hpp"
 #include "Utils/Rect.hpp"

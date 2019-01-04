@@ -23,7 +23,9 @@ namespace LWGC
 			bool			_initialized;
 
 			void SetHierarchy(Hierarchy * hierarchy);
-			void Initialize() noexcept;
+
+		protected:
+			virtual void Initialize(void) noexcept;
 
 		public:
 			GameObject(void);
