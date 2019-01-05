@@ -37,7 +37,7 @@ void		InitFullscreenTarget(Hierarchy * hierarchy)
 
 	hierarchy->AddGameObject(new GameObject(new ProceduralRenderer(fullScreenMaterial, 4)));
 	fullScreenMaterial->SetTexture(TextureBinding::Albedo, computeTarget, VK_IMAGE_LAYOUT_GENERAL, VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE);
-	
+
 	auto	proceduralDispatchMaterial = Material::Create("Shaders/Compute/ProceduralTexture.hlsl", VK_SHADER_STAGE_COMPUTE_BIT);
 	hierarchy->AddGameObject(new GameObject(new ComputeDispatcher(proceduralDispatchMaterial, 512, 512)));
 	proceduralDispatchMaterial->SetTexture("proceduralTexture", computeTarget, VK_IMAGE_LAYOUT_GENERAL, VK_DESCRIPTOR_TYPE_STORAGE_IMAGE);
@@ -72,6 +72,6 @@ int			main(void)
 		ProcessEvent(es, app);
 	while (app.ShouldNotQuit())
 		app.Update();
-	
+
 	return (0);
 }
