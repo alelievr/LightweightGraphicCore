@@ -2,15 +2,16 @@
 
 using namespace LWGC;
 
-void		ProcessEvent(EventSystem * es, Application & app)
+void	ProcessEvent(EventSystem * es, Application & app)
 {
-	const Event &	current = es->GetCurrentEvent();
-
-	if (current.GetType() == EventType::KeyDown
-		&& current.GetKeyCode() == KeyCode::ESCAPE)
-		app.Quit();
+	es->Get()->onKey.AddListener([&](KeyCode key, ButtonAction action)
+		{
+			if (action == ButtonAction::Press
+				&& key == KeyCode::ESCAPE)
+					app.Quit();
+		}
+	);
 }
-
 void		InitFullscreenTarget(Hierarchy * hierarchy)
 {
 	auto		fullScreenMaterial = Material::Create(BuiltinShaders::Standard, BuiltinShaders::FullScreenQuad);
@@ -34,12 +35,12 @@ void		InitFullscreenTarget(Hierarchy * hierarchy)
 
 	// fullScreenMaterial->SetDepthStencilState(depthStencilInfo);
 
-	fullScreenMaterial->SetTexture(TextureBinding::Albedo, computeTarget, VK_IMAGE_LAYOUT_GENERAL, VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE);
 	hierarchy->AddGameObject(new GameObject(new ProceduralRenderer(fullScreenMaterial, 4)));
+	fullScreenMaterial->SetTexture(TextureBinding::Albedo, computeTarget, VK_IMAGE_LAYOUT_GENERAL, VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE);
 	
 	auto	proceduralDispatchMaterial = Material::Create("Shaders/Compute/ProceduralTexture.hlsl", VK_SHADER_STAGE_COMPUTE_BIT);
-	proceduralDispatchMaterial->SetTexture("proceduralTexture", computeTarget, VK_IMAGE_LAYOUT_GENERAL, VK_DESCRIPTOR_TYPE_STORAGE_IMAGE);
 	hierarchy->AddGameObject(new GameObject(new ComputeDispatcher(proceduralDispatchMaterial, 512, 512)));
+	proceduralDispatchMaterial->SetTexture("proceduralTexture", computeTarget, VK_IMAGE_LAYOUT_GENERAL, VK_DESCRIPTOR_TYPE_STORAGE_IMAGE);
 }
 
 void		InitCamera(Hierarchy * hierarchy)
@@ -68,11 +69,9 @@ int			main(void)
 	InitCamera(hierarchy);
 	InitFullscreenTarget(hierarchy);
 
-	while (app.ShouldNotQuit())
-	{
-		app.Update();
 		ProcessEvent(es, app);
-	}
+	while (app.ShouldNotQuit())
+		app.Update();
 	
 	return (0);
 }

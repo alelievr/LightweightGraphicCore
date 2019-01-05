@@ -3,23 +3,34 @@
 #include <iostream>
 #include <string>
 
+#include "Core/EventSystem.hpp"
 #include "Core/Components/Component.hpp"
 #include "Core/Object.hpp"
 
 namespace LWGC
 {
+	using keyDelegateIndex = DelegateIndex<void (LWGC::KeyCode, LWGC::ButtonAction)>;
+	using mouseMoveDelegateIndex = DelegateIndex<void (glm::vec<2, float, glm::qualifier::packed_highp>, LWGC::MouseMoveAction)>;
+	using mouseClickDelegateIndex = DelegateIndex<void (glm::vec<2, float, glm::qualifier::packed_highp>, LWGC::ButtonAction)>;
+
 	class		FreeCameraControls : public Object, public Component
 	{
 		private:
-			float			_forward;
-			float			_right;
-			float			_up;
-			float			_speed;
-			float			_mouseSpeed;
-			float			_rotationX;
-			float			_rotationY;
+			float					_forward;
+			float					_right;
+			float					_up;
+			float					_speed;
+			float					_mouseSpeed;
+			float					_rotationX;
+			float					_rotationY;
+			keyDelegateIndex		_keydi;
+			mouseMoveDelegateIndex 	_mousemdi;
+			mouseClickDelegateIndex _mousecdi;
 
 			virtual void	Update(void) noexcept override;
+			void		KeyPressedCallback(KeyCode, ButtonAction);
+			void		MouseMovedCallback(glm::vec2 pos, MouseMoveAction action);
+			void 		MouseClickCallback(glm::vec2 pos, ButtonAction action);
 
 		public:
 			FreeCameraControls(void);

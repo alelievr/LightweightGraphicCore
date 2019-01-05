@@ -6,11 +6,10 @@
 /*   By: amerelo <amerelo@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/08/27 21:37:58 by alelievr          #+#    #+#             */
-/*   Updated: 2018/12/21 17:42:44 by amerelo          ###   ########.fr       */
+/*   Updated: 2019/01/05 18:42:25 by amerelo          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#pragma once
 
 #define LWGC_GLOBAL_INCLUDE
 
@@ -36,9 +35,7 @@
 #include "Core/GameObject.hpp"
 
 // Event System
-#include "Core/Events/EventSystem.hpp"
-#include "Core/Events/Event.hpp"
-#include "Core/Events/Input.hpp"
+#include "Core/EventSystem.hpp"
 #include "Core/KeyCode.hpp"
 
 // Components

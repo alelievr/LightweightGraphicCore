@@ -2,7 +2,7 @@
 
 #include <cmath>
 
-#include "Core/Events/EventSystem.hpp"
+
 #include "Core/Application.hpp"
 #include "Utils/Math.hpp"
 #include "Utils/Vector.hpp"
@@ -37,41 +37,67 @@ void		FreeCameraControls::Initialize(void) noexcept
 void		FreeCameraControls::OnEnable(void) noexcept
 {
 	Component::OnEnable();
+	_keydi = EventSystem::Get()->onKey.AddListener([&](auto k, auto a){KeyPressedCallback(k, a);});
+	_mousemdi = EventSystem::Get()->onMouseMove.AddListener([&](auto k, auto a){MouseMovedCallback(k, a);});
+	_mousecdi = EventSystem::Get()->onMouseClick.AddListener([&](auto k, auto a){MouseClickCallback(k, a);});
 }
 
 void		FreeCameraControls::OnDisable(void) noexcept
 {
 	Component::OnDisable();
+	EventSystem::Get()->onKey.RemoveListener(_keydi);
+	EventSystem::Get()->onMouseMove.RemoveListener(_mousemdi);
+	EventSystem::Get()->onMouseClick.RemoveListener(_mousecdi);
 }
 
-void		FreeCameraControls::Update(void) noexcept
+void		FreeCameraControls::MouseClickCallback(glm::vec2 pos, ButtonAction action)
 {
-	const auto & event = EventSystem::Get()->GetCurrentEvent();
-	const bool keyDown = event.GetType() == EventType::KeyDown;
+	(void)pos;
+	(void)action;
+}
 
-	switch (event.GetKeyCode())
+void		FreeCameraControls::MouseMovedCallback(glm::vec2 pos, MouseMoveAction action)
+{
+	if (action == MouseMoveAction::Move)
+	{
+		const auto & event = EventSystem::Get();
+
+		_rotationX += event->delta.x * _mouseSpeed;
+		_rotationY += event->delta.y * _mouseSpeed;
+		_rotationY = glm::clamp(_rotationY, -90.0f, 90.0f);
+		
+		transform->SetRotation(glm::angleAxis(_rotationX * Math::DegToRad, glm::vec3(0, 1, 0)));
+		transform->RotateAxis(_rotationY * Math::DegToRad, glm::vec3(1, 0, 0));
+	}
+}
+
+void		FreeCameraControls::KeyPressedCallback(KeyCode key, ButtonAction action)
+{
+	bool buttonPress = action == ButtonAction::Press || action == ButtonAction::Repeat;
+	
+	switch (key)
 	{
 		case KeyCode::A:
 		case KeyCode::LEFT:
-			_right = (keyDown) ? -1 : 0;
+			_right = buttonPress ? -1 : 0;
 			break ;
 		case KeyCode::D:
 		case KeyCode::RIGHT:
-			_right = (keyDown) ? 1 : 0;
+			_right = buttonPress ? 1 : 0;
 			break ;
 		case KeyCode::W:
 		case KeyCode::UP:
-			_forward = (keyDown) ? 1 : 0;
+			_forward = buttonPress ? 1 : 0;
 			break ;
 		case KeyCode::S:
 		case KeyCode::DOWN:
-			_forward = (keyDown) ? -1 : 0;
+			_forward = buttonPress ? -1 : 0;
 			break ;
 		case KeyCode::E:
-			_up = (keyDown) ? 1 : 0;
+			_up = buttonPress ? 1 : 0;
 			break ;
 		case KeyCode::Q:
-			_up = (keyDown) ? -1 : 0;
+			_up = buttonPress ? -1 : 0;
 			break ;
 		case KeyCode::KP_ADD:
 			_speed *= 1.1f;
@@ -84,15 +110,10 @@ void		FreeCameraControls::Update(void) noexcept
 		default:
 		break;
 	}
+}
 
-	_rotationX += event.delta.x * _mouseSpeed;
-	_rotationY += event.delta.y * _mouseSpeed;
-
-	_rotationY = glm::clamp(_rotationY, -90.0f, 90.0f);
-
-	transform->SetRotation(glm::angleAxis(_rotationX * Math::DegToRad, glm::vec3(0, 1, 0)));
-	transform->RotateAxis(_rotationY * Math::DegToRad, glm::vec3(1, 0, 0));
-
+void		FreeCameraControls::Update(void) noexcept
+{
 	transform->Translate((
 		transform->GetRight() * _right
 		+ transform->GetUp() * _up

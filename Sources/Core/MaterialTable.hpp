@@ -9,12 +9,15 @@ namespace LWGC
 	class		MaterialTable
 	{
 		private:
-			std::vector< Material * > _materials;
+			std::vector< Material * >	_materials;
+			LWGC::SwapChain				*_swapChain;
+			LWGC::RenderPass			*_renderPass;
 
 		public:
 			MaterialTable();
 			MaterialTable(const MaterialTable&) = delete;
 
+			void 	Initialize(LWGC::SwapChain *swapChain , LWGC::RenderPass * renderPipeline);
 			void	RegsiterMaterial(Material * material);
 			void	DestroyMaterials();
 			virtual ~MaterialTable(void);

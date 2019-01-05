@@ -56,7 +56,6 @@ namespace LWGC
 
 			void	CleanupPipeline(void) noexcept;
 			void	CreatePipeline(void) noexcept;
-
 			void	RecordCommands(VkCommandBuffer cmd) override;
             VkCommandBuffer	GetCommandBuffer(void) const override;
 

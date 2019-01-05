@@ -401,7 +401,7 @@ bool					Material::DescriptorSetExists(const std::string & bindingName, bool sil
 	if (setBinding == -1u)
 	{
 		if (!silent)
-			std::cerr << "Can't find binding " << bindingName << " in the shader, maybe it was removed at compilation ?" << std::endl;
+			std::cerr << "Can't find binding " << bindingName << " in the shader, maybe it was removed at compilation / the shader is not compiled" << std::endl;
 		return false;
 	}
 
