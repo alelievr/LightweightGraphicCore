@@ -30,7 +30,9 @@ void		InitGizmos(Hierarchy * hierarchy)
 	rayGizmo->GetTransform()->SetPosition(glm::vec3(0, 0, 0));
 	hierarchy->AddGameObject(rayGizmo);
 
-	// auto frustum = new Gizmo::Frustum();
+	auto frustum = new Gizmo::Frustum(Math::DegToRad * 30, 16 / 9.0, 0.1, 10, Color::Blue);
+	frustum->GetTransform()->SetPosition(glm::vec3(0, 0, 0));
+	hierarchy->AddGameObject(frustum);
 }
 
 void		InitCamera(Hierarchy * hierarchy)
@@ -39,7 +41,6 @@ void		InitCamera(Hierarchy * hierarchy)
 	cam->GetTransform()->SetPosition(glm::vec3(0, 0, -5));
 	cam->AddComponent(new FreeCameraControls());
 	hierarchy->AddGameObject(cam);
-
 }
 
 int			main(void)

@@ -61,6 +61,7 @@ SRC			=	Core/Application.cpp \
 				Core/Gizmos/GizmoBase.cpp \
 				Core/Gizmos/Line.cpp \
 				Core/Gizmos/Ray.cpp \
+				Core/Gizmos/Frustum.cpp \
 				Core/Delegate.cpp \
 				Core/ImGUIWrapper.cpp \
 				Utils/Bounds.cpp \

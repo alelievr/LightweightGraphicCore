@@ -2,23 +2,14 @@
 
 #include "Core/PrimitiveMeshFactory.hpp"
 
+#include "Utils/Math.hpp"
+
 using namespace LWGC;
 using namespace Gizmo;
 
-Frustum::Frustum(const glm::vec3 p0, const glm::vec3 p1, const Color & c) : GizmoBase(c), _p0(p0), _p1(p1)
+Frustum::Frustum(float fovY, float aspect, float nearPlane, float farPlane, const Color & c) : GizmoBase(c)
 {
-	std::shared_ptr< Mesh >					lineMesh = std::make_shared< Mesh >();
-	std::vector< Mesh::VertexAttributes >	attribs(2);
-
-	lineMesh->SetVertexAttributes(attribs);
-	lineMesh->SetIndices({0, 1});
-
-	lineMesh->SetVertexAttributes({
-		{p0, glm::vec3(0, 0, 0), glm::vec3(0, 0, 0), glm::vec3(0, 0, 0), glm::vec2(0, 0)},
-		{p1, glm::vec3(0, 0, 0), glm::vec3(0, 0, 0), glm::vec3(0, 0, 0), glm::vec2(0, 0)}
-	});
-
-	renderer->SetMesh(lineMesh);
+	renderer->SetMesh(PrimitiveMeshFactory::CreateFrustum(fovY, aspect, nearPlane, farPlane));
 
 	VkPipelineRasterizationStateCreateInfo rasterState = {};
 	rasterState.sType = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO;
@@ -32,7 +23,7 @@ Frustum::Frustum(const glm::vec3 p0, const glm::vec3 p1, const Color & c) : Gizm
 
 	VkPipelineInputAssemblyStateCreateInfo assemblyState = {};
 	assemblyState.sType = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO;
-	assemblyState.topology = VK_PRIMITIVE_TOPOLOGY_LINE_LIST;
+	assemblyState.topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST;
 	assemblyState.primitiveRestartEnable = VK_FALSE;
 
 	material->SetRasterizationState(rasterState);

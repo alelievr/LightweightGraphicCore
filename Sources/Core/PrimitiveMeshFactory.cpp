@@ -2,6 +2,8 @@
 
 #include "PrimitiveMeshFactory.hpp"
 
+#include "Utils/Math.hpp"
+
 using namespace LWGC;
 
 PrimitiveMeshFactory::PrimitiveMeshFactory(void)
@@ -72,7 +74,6 @@ std::shared_ptr< Mesh >		PrimitiveMeshFactory::_CreateCubeMesh(
 
 std::shared_ptr< Mesh >		PrimitiveMeshFactory::_CreateCubeMesh(void)
 {
-
 	glm::vec3 p0 = glm::vec3(-.5f, -.5f,  .5f);
 	glm::vec3 p1 = glm::vec3( .5f, -.5f,  .5f);
 	glm::vec3 p2 = glm::vec3( .5f, -.5f, -.5f);
@@ -99,17 +100,36 @@ std::shared_ptr< Mesh >		PrimitiveMeshFactory::_CreateQuadMesh(void)
 	return m;
 }
 
-std::shared_ptr< Mesh >		PrimitiveMeshFactory::_CreateFrustumMesh(void)
+std::shared_ptr< Mesh >		PrimitiveMeshFactory::CreateFrustum(float fovY, float aspect, float nearPlane, float farPlane)
 {
-	std::shared_ptr< Mesh >					m = std::make_shared< Mesh >();
-	std::vector< Mesh::VertexAttributes >	attribs(4);
+	// near plane
+	glm::vec3 p6 = glm::vec3( .5f,  .5f, nearPlane); //  3------0
+	glm::vec3 p2 = glm::vec3( .5f, -.5f, nearPlane); //  |      |
+	glm::vec3 p3 = glm::vec3(-.5f, -.5f, nearPlane); //  |      |
+	glm::vec3 p7 = glm::vec3(-.5f,  .5f, nearPlane); //  2------1
 
-	Mesh::VertexAttributes::QuadVertexAttrib(1, glm::vec3(0, 1, 0), attribs.data());
+	// far plane
+	glm::vec3 p5 = glm::vec3( .5f,  .5f, farPlane);
+	glm::vec3 p1 = glm::vec3( .5f, -.5f, farPlane);
+	glm::vec3 p0 = glm::vec3(-.5f, -.5f, farPlane);
+	glm::vec3 p4 = glm::vec3(-.5f,  .5f, farPlane);
 
-	m->SetVertexAttributes(attribs);
-	m->SetIndices({0, 1, 2, 2, 3, 0});
+	float fovX = 2.0f * atan(tan(fovY / 2.0f) * aspect);
 
-	return m;
+	// sine law
+	p6.x = sin(fovX) * (nearPlane / sin(Math::DegToRad * 90.0f - fovX));
+	p6.y = sin(fovY) * (nearPlane / sin(Math::DegToRad * 90.0f - fovY));
+	p2.x =  p6.x; p2.y = -p6.y;
+	p3.x = -p6.x; p3.y = -p6.y;
+	p7.x = -p6.x; p7.y =  p6.y;
+
+	p5.x = sin(fovX) * (farPlane / sin(Math::DegToRad * 90.0f - fovX));
+	p5.y = sin(fovY) * (farPlane / sin(Math::DegToRad * 90.0f - fovY));
+	p1.x =  p5.x; p1.y = -p5.y;
+	p0.x = -p5.x; p0.y = -p5.y;
+	p4.x = -p5.x; p4.y =  p5.y;
+
+	return _CreateCubeMesh(p0, p1, p2, p3, p4, p5, p6, p7);
 }
 
 std::shared_ptr< Mesh >		PrimitiveMeshFactory::CreateMesh(PrimitiveType type)
@@ -120,8 +140,6 @@ std::shared_ptr< Mesh >		PrimitiveMeshFactory::CreateMesh(PrimitiveType type)
 			return _CreateCubeMesh();
 		case PrimitiveType::Quad:
 			return _CreateQuadMesh();
-		case PrimitiveType::Frustum:
-			return _CreateFrustumMesh();
 	}
 	throw std::runtime_error("Can't find mesh generator for primitive type: " + std::to_string(static_cast< int >(type)));
 }

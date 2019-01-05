@@ -18,7 +18,7 @@ namespace LWGC::Gizmo
 			glm::vec3	_p1;
 
 		public:
-			Frustum(const glm::vec3 p0, const glm::vec3 p1, const Color & c = Color::Red);
+			Frustum(float fovY, float aspect, float nearPlane, float farPlane, const Color & c);
 			Frustum(const Frustum &) = delete;
 			virtual ~Frustum(void);
 

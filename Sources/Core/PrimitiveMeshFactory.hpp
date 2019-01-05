@@ -16,7 +16,6 @@ namespace LWGC
 				const glm::vec3 p4, const glm::vec3 p5, const glm::vec3 p6, const glm::vec3 p7);
 			static std::shared_ptr< Mesh >	_CreateCubeMesh(void);
 			static std::shared_ptr< Mesh >	_CreateQuadMesh(void);
-			static std::shared_ptr< Mesh >	_CreateFrustumMesh(void);
 
 		public:
 			PrimitiveMeshFactory(void);
@@ -26,6 +25,7 @@ namespace LWGC
 			PrimitiveMeshFactory &	operator=(PrimitiveMeshFactory const & src);
 
 			static std::shared_ptr< Mesh >	CreateMesh(PrimitiveType type);
+			static std::shared_ptr< Mesh >	CreateFrustum(float fovRad, float aspect, float nearPlane, float farPlane);
 	};
 
 	std::ostream &	operator<<(std::ostream & o, PrimitiveMeshFactory const & r);
