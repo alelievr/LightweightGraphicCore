@@ -14,7 +14,6 @@ namespace LWGC::Gizmo
 	class		Cone : public GizmoBase
 	{
 		private:
-
 		public:
 			Cone(float radius, float height, int vertices, bool wireframe = true, const Color & c = Color::Red);
 			Cone(const Cone &) = delete;

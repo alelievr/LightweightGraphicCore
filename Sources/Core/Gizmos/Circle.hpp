@@ -14,7 +14,6 @@ namespace LWGC::Gizmo
 	class		Circle : public GizmoBase
 	{
 		private:
-
 		public:
 			Circle(float radius, int vertices, bool wireframe = true, const Color & c = Color::Red);
 			Circle(const Circle &) = delete;

@@ -25,7 +25,7 @@ namespace LWGC::Gizmo
 			VkDeviceMemory	gizmoDataMemory;
 			LWGC_GizmoData	gizmoData;
 
-			virtual void Initialize(void) noexcept override;
+			void Initialize(void) noexcept override;
 
 		public:
 			GizmoBase(void) = delete;
