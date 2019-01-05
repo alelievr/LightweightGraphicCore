@@ -31,8 +31,10 @@ namespace LWGC
 				glm::vec3 color;
 				glm::vec2 texCoord;
 
-				static void QuadVertexAttrib(const glm::vec3 & p0, const glm::vec3 & p1, const glm::vec3 & p2,	const glm::vec3 & p3, Mesh::VertexAttributes * targetAttribs) noexcept;
+				static void QuadVertexAttrib(const glm::vec3 & p0, const glm::vec3 & p1, const glm::vec3 & p2, const glm::vec3 & p3, Mesh::VertexAttributes * targetAttribs) noexcept;
 				static void QuadVertexAttrib(float size, const glm::vec3 & normal, Mesh::VertexAttributes * targetAttribs) noexcept;
+				static void TriVertexAttrib(const glm::vec3 & p0, const glm::vec3 & p1, const glm::vec3 & p2, Mesh::VertexAttributes * targetAttribs) noexcept;
+				static void EdgeVertexAttrib(const glm::vec3 & p0, const glm::vec3 & p1, Mesh::VertexAttributes * targetAttribs) noexcept;
 			};
 
 			Mesh(void);

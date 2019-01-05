@@ -248,3 +248,42 @@ void Mesh::VertexAttributes::QuadVertexAttrib(float size, const glm::vec3 & norm
 
 	QuadVertexAttrib(p0, p1, p2, p3, targetAttribs);
 }
+
+void Mesh::VertexAttributes::TriVertexAttrib(
+	const glm::vec3 & p0, const glm::vec3 & p1, const glm::vec3 & p2,
+	Mesh::VertexAttributes * targetAttribs) noexcept
+{
+	// 0	1---0
+	// 1	  \ |
+	// 2        2
+
+	glm::vec3 normal = glm::cross(p0 - p2, p0 - p1);
+	glm::vec3 tangent = glm::cross(normal, p0 - p1);
+	glm::vec2 uvs[] = {{1, 1}, {0, 1}, {0, 0}};
+
+	targetAttribs[0] = Mesh::VertexAttributes{
+		p0, normal, tangent, {0, 0, 0}, uvs[0]
+	};
+	targetAttribs[1] = Mesh::VertexAttributes{
+		p1, normal, tangent, {0, 0, 0}, uvs[1]
+	};
+	targetAttribs[2] = Mesh::VertexAttributes{
+		p2, normal, tangent, {0, 0, 0}, uvs[2]
+	};
+}
+
+void Mesh::VertexAttributes::EdgeVertexAttrib(
+	const glm::vec3 & p0, const glm::vec3 & p1,
+	Mesh::VertexAttributes * targetAttribs) noexcept
+{
+	glm::vec3 normal = glm::vec3(0, 0, 0);
+	glm::vec3 tangent = glm::vec3(0, 0, 0);
+	glm::vec2 uvs[] = {{1, 1}, {0, 1}};
+
+	targetAttribs[0] = Mesh::VertexAttributes{
+		p0, normal, tangent, {0, 0, 0}, uvs[0]
+	};
+	targetAttribs[1] = Mesh::VertexAttributes{
+		p1, normal, tangent, {0, 0, 0}, uvs[1]
+	};
+}

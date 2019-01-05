@@ -30,9 +30,13 @@ void		InitGizmos(Hierarchy * hierarchy)
 	rayGizmo->GetTransform()->SetPosition(glm::vec3(0, 0, 0));
 	hierarchy->AddGameObject(rayGizmo);
 
-	auto frustum = new Gizmo::Frustum(Math::DegToRad * 30, 16 / 9.0, 0.1, 10, Color::Blue);
+	auto frustum = new Gizmo::Frustum(Math::DegToRad * 30, 16 / 9.0, 0.1, 10, true, Color::White);
 	frustum->GetTransform()->SetPosition(glm::vec3(0, 0, 0));
 	hierarchy->AddGameObject(frustum);
+
+	auto circle = new Gizmo::Circle(2, 40, true, Color::Indigo);
+	circle->GetTransform()->SetPosition(glm::vec3(0, -2, 0));
+	hierarchy->AddGameObject(circle);
 }
 
 void		InitCamera(Hierarchy * hierarchy)

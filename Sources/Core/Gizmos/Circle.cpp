@@ -1,22 +1,20 @@
-#include "Frustum.hpp"
+#include "Circle.hpp"
 
 #include "Core/PrimitiveMeshFactory.hpp"
-
-#include "Utils/Math.hpp"
 
 using namespace LWGC;
 using namespace Gizmo;
 
-Frustum::Frustum(float fovY, float aspect, float nearPlane, float farPlane, bool wireframe, const Color & c) : GizmoBase(c)
+Circle::Circle(float radius, int vertices, bool wireframe, const Color & c) : GizmoBase(c)
 {
-	std::shared_ptr< Mesh >	frustumMesh;
+	std::shared_ptr< Mesh >	circleMesh;
 
 	if (wireframe)
-		frustumMesh = PrimitiveMeshFactory::CreateWireframeFrustum(fovY, aspect, nearPlane, farPlane);
+		circleMesh = PrimitiveMeshFactory::CreateWireframeCircle(radius, vertices);
 	else
-		frustumMesh = PrimitiveMeshFactory::CreateFrustum(fovY, aspect, nearPlane, farPlane);
+		circleMesh = PrimitiveMeshFactory::CreateCircle(radius, vertices);
 
-	renderer->SetMesh(frustumMesh);
+	renderer->SetMesh(circleMesh);
 
 	VkPipelineRasterizationStateCreateInfo rasterState = {};
 	rasterState.sType = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO;
@@ -37,15 +35,11 @@ Frustum::Frustum(float fovY, float aspect, float nearPlane, float farPlane, bool
 	material->SetInputAssemblyState(assemblyState);
 }
 
-Frustum::~Frustum(void)
+Circle::~Circle(void)
 {
 }
 
-// TODO: update mesh and upload to device
-void	Frustum::SetPoint0(const glm::vec3 p) { _p0 = p; }
-void	Frustum::SetPoint1(const glm::vec3 p) { _p1 = p; }
-
-std::ostream &	operator<<(std::ostream & o, Frustum const & r)
+std::ostream &	operator<<(std::ostream & o, Circle const & r)
 {
 	o << "tostring of the class" << std::endl;
 	(void)r;

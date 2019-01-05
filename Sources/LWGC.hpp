@@ -54,6 +54,7 @@
 #include "Core/Gizmos/Line.hpp"
 #include "Core/Gizmos/Ray.hpp"
 #include "Core/Gizmos/Frustum.hpp"
+#include "Core/Gizmos/Circle.hpp"
 
 // Utils
 #include "Utils/Bounds.hpp"

@@ -19,7 +19,7 @@ Color Color::Blue       	= {0, 0, 1};
 Color Color::DarkMagenta	= {0.5, 0, 0.5};
 Color Color::Magenta    	= {1, 0, 1};
 Color Color::Indigo     	= {0.5, 0, 1};
-Color Color::Violet     	= {1, 1, 0.5};
+Color Color::Violet     	= {0.5, 0, 1};
 Color Color::DarkBrown  	= {0.5, 0.25, 0};
 Color Color::Brown      	= {1, 0.5, 0};
 

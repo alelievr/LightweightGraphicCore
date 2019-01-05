@@ -3,6 +3,7 @@
 #include "PrimitiveMeshFactory.hpp"
 
 #include "Utils/Math.hpp"
+#include "Utils/Vector.hpp"
 
 using namespace LWGC;
 
@@ -22,25 +23,66 @@ PrimitiveMeshFactory::~PrimitiveMeshFactory(void)
 	std::cout << "Destructor of PrimitiveMeshFactory called" << std::endl;
 }
 
-std::shared_ptr< Mesh >		PrimitiveMeshFactory::_CreateCubeMesh(
-	const glm::vec3 p0, const glm::vec3 p1, const glm::vec3 p2, const glm::vec3 p3,
-	const glm::vec3 p4, const glm::vec3 p5, const glm::vec3 p6, const glm::vec3 p7)
+void						PrimitiveMeshFactory::_ComputeFrustumPoints(float fovY, float aspect, float nearPlane, float farPlane, std::vector< glm::vec3 > & p)
+{
+	// near plane
+	p[6] = glm::vec3( .5f,  .5f, nearPlane); //  3------0
+	p[2] = glm::vec3( .5f, -.5f, nearPlane); //  |      |
+	p[3] = glm::vec3(-.5f, -.5f, nearPlane); //  |      |
+	p[7] = glm::vec3(-.5f,  .5f, nearPlane); //  2------1
+
+	// far plane
+	p[5] = glm::vec3( .5f,  .5f, farPlane);
+	p[1] = glm::vec3( .5f, -.5f, farPlane);
+	p[0] = glm::vec3(-.5f, -.5f, farPlane);
+	p[4] = glm::vec3(-.5f,  .5f, farPlane);
+
+	float fovX = 2.0f * atan(tan(fovY / 2.0f) * aspect);
+
+	// sine law
+	p[6].x = sin(fovX) * (nearPlane / sin(Math::DegToRad * 90.0f - fovX));
+	p[6].y = sin(fovY) * (nearPlane / sin(Math::DegToRad * 90.0f - fovY));
+	p[2].x =  p[6].x; p[2].y = -p[6].y;
+	p[3].x = -p[6].x; p[3].y = -p[6].y;
+	p[7].x = -p[6].x; p[7].y =  p[6].y;
+
+	p[5].x = sin(fovX) * (farPlane / sin(Math::DegToRad * 90.0f - fovX));
+	p[5].y = sin(fovY) * (farPlane / sin(Math::DegToRad * 90.0f - fovY));
+	p[1].x =  p[5].x; p[1].y = -p[5].y;
+	p[0].x = -p[5].x; p[0].y = -p[5].y;
+	p[4].x = -p[5].x; p[4].y =  p[5].y;
+}
+
+void						PrimitiveMeshFactory::_ComputeCubePoints(float size, std::vector< glm::vec3 > & p)
+{
+	p[0] = glm::vec3(-.5f, -.5f,  .5f) * size;
+	p[1] = glm::vec3( .5f, -.5f,  .5f) * size;
+	p[2] = glm::vec3( .5f, -.5f, -.5f) * size;
+	p[3] = glm::vec3(-.5f, -.5f, -.5f) * size;
+
+	p[4] = glm::vec3(-.5f,  .5f,  .5f) * size;
+	p[5] = glm::vec3( .5f,  .5f,  .5f) * size;
+	p[6] = glm::vec3( .5f,  .5f, -.5f) * size;
+	p[7] = glm::vec3(-.5f,  .5f, -.5f) * size;
+}
+
+std::shared_ptr< Mesh >		PrimitiveMeshFactory::_CreateCubeMesh(const std::vector< glm::vec3 > p)
 {
 	std::shared_ptr< Mesh >					m = std::make_shared< Mesh >();
 	std::vector< Mesh::VertexAttributes >	attribs(24);
 
 	// Bottom
-	Mesh::VertexAttributes::QuadVertexAttrib(p0, p1, p2, p3, attribs.data() + 0);
+	Mesh::VertexAttributes::QuadVertexAttrib(p[0], p[1], p[2], p[3], attribs.data() + 0);
 	// Left
-	Mesh::VertexAttributes::QuadVertexAttrib(p7, p4, p0, p3, attribs.data() + 4);
+	Mesh::VertexAttributes::QuadVertexAttrib(p[7], p[4], p[0], p[3], attribs.data() + 4);
 	// Front
-	Mesh::VertexAttributes::QuadVertexAttrib(p4, p5, p1, p0, attribs.data() + 8);
+	Mesh::VertexAttributes::QuadVertexAttrib(p[4], p[5], p[1], p[0], attribs.data() + 8);
 	// Back
-	Mesh::VertexAttributes::QuadVertexAttrib(p6, p7, p3, p2, attribs.data() + 12);
+	Mesh::VertexAttributes::QuadVertexAttrib(p[6], p[7], p[3], p[2], attribs.data() + 12);
 	// Right
-	Mesh::VertexAttributes::QuadVertexAttrib(p5, p6, p2, p1, attribs.data() + 16);
+	Mesh::VertexAttributes::QuadVertexAttrib(p[5], p[6], p[2], p[1], attribs.data() + 16);
 	// Top
-	Mesh::VertexAttributes::QuadVertexAttrib(p7, p6, p5, p4, attribs.data() + 20);
+	Mesh::VertexAttributes::QuadVertexAttrib(p[7], p[6], p[5], p[4], attribs.data() + 20);
 
 	m->SetVertexAttributes(attribs);
 	m->SetIndices({
@@ -72,19 +114,53 @@ std::shared_ptr< Mesh >		PrimitiveMeshFactory::_CreateCubeMesh(
 	return m;
 }
 
+std::shared_ptr< Mesh >		PrimitiveMeshFactory::_CreateWireframeCubeMesh(const std::vector< glm::vec3 > p)
+{
+	std::shared_ptr< Mesh >					m = std::make_shared< Mesh >();
+	std::vector< Mesh::VertexAttributes >	attribs(24);
+
+	// no normals nor tangents for wireframe
+	glm::vec3 normal = glm::vec3(0, 0, 0);
+	glm::vec3 tangent = glm::vec3(0, 0, 0);
+
+	// top quad
+	Mesh::VertexAttributes::EdgeVertexAttrib(p[4], p[5], attribs.data() + 0);
+	Mesh::VertexAttributes::EdgeVertexAttrib(p[5], p[6], attribs.data() + 2);
+	Mesh::VertexAttributes::EdgeVertexAttrib(p[6], p[7], attribs.data() + 4);
+	Mesh::VertexAttributes::EdgeVertexAttrib(p[7], p[4], attribs.data() + 6);
+
+	// bottom quad
+	Mesh::VertexAttributes::EdgeVertexAttrib(p[0], p[1], attribs.data() + 8);
+	Mesh::VertexAttributes::EdgeVertexAttrib(p[1], p[2], attribs.data() + 10);
+	Mesh::VertexAttributes::EdgeVertexAttrib(p[2], p[3], attribs.data() + 12);
+	Mesh::VertexAttributes::EdgeVertexAttrib(p[3], p[0], attribs.data() + 14);
+
+	// middle edges
+	Mesh::VertexAttributes::EdgeVertexAttrib(p[0], p[4], attribs.data() + 16);
+	Mesh::VertexAttributes::EdgeVertexAttrib(p[1], p[5], attribs.data() + 18);
+	Mesh::VertexAttributes::EdgeVertexAttrib(p[2], p[6], attribs.data() + 20);
+	Mesh::VertexAttributes::EdgeVertexAttrib(p[3], p[7], attribs.data() + 22);
+
+	m->SetVertexAttributes(attribs);
+
+	return m;
+}
+
 std::shared_ptr< Mesh >		PrimitiveMeshFactory::_CreateCubeMesh(void)
 {
-	glm::vec3 p0 = glm::vec3(-.5f, -.5f,  .5f);
-	glm::vec3 p1 = glm::vec3( .5f, -.5f,  .5f);
-	glm::vec3 p2 = glm::vec3( .5f, -.5f, -.5f);
-	glm::vec3 p3 = glm::vec3(-.5f, -.5f, -.5f);
+	std::vector< glm::vec3 > cubePoints(8);
 
-	glm::vec3 p4 = glm::vec3(-.5f,  .5f,  .5f);
-	glm::vec3 p5 = glm::vec3( .5f,  .5f,  .5f);
-	glm::vec3 p6 = glm::vec3( .5f,  .5f, -.5f);
-	glm::vec3 p7 = glm::vec3(-.5f,  .5f, -.5f);
+	_ComputeCubePoints(1, cubePoints);
 
-	return _CreateCubeMesh(p0, p1, p2, p3, p4, p5, p6, p7);
+	return _CreateCubeMesh(cubePoints);
+}
+
+std::shared_ptr< Mesh >		PrimitiveMeshFactory::_CreateWireframeCubeMesh(void)
+{
+	std::vector< glm::vec3 >	cubePoints;
+
+	_ComputeCubePoints(1, cubePoints);
+	return _CreateWireframeCubeMesh(cubePoints);
 }
 
 std::shared_ptr< Mesh >		PrimitiveMeshFactory::_CreateQuadMesh(void)
@@ -102,34 +178,65 @@ std::shared_ptr< Mesh >		PrimitiveMeshFactory::_CreateQuadMesh(void)
 
 std::shared_ptr< Mesh >		PrimitiveMeshFactory::CreateFrustum(float fovY, float aspect, float nearPlane, float farPlane)
 {
-	// near plane
-	glm::vec3 p6 = glm::vec3( .5f,  .5f, nearPlane); //  3------0
-	glm::vec3 p2 = glm::vec3( .5f, -.5f, nearPlane); //  |      |
-	glm::vec3 p3 = glm::vec3(-.5f, -.5f, nearPlane); //  |      |
-	glm::vec3 p7 = glm::vec3(-.5f,  .5f, nearPlane); //  2------1
+	std::vector< glm::vec3 >	frustumPoints(8);
 
-	// far plane
-	glm::vec3 p5 = glm::vec3( .5f,  .5f, farPlane);
-	glm::vec3 p1 = glm::vec3( .5f, -.5f, farPlane);
-	glm::vec3 p0 = glm::vec3(-.5f, -.5f, farPlane);
-	glm::vec3 p4 = glm::vec3(-.5f,  .5f, farPlane);
+	_ComputeFrustumPoints(fovY, aspect, nearPlane, farPlane, frustumPoints);
+	return _CreateCubeMesh(frustumPoints);
+}
 
-	float fovX = 2.0f * atan(tan(fovY / 2.0f) * aspect);
+std::shared_ptr< Mesh >		PrimitiveMeshFactory::CreateWireframeFrustum(float fovY, float aspect, float nearPlane, float farPlane)
+{
+	std::vector< glm::vec3 >	frustumPoints(8);
 
-	// sine law
-	p6.x = sin(fovX) * (nearPlane / sin(Math::DegToRad * 90.0f - fovX));
-	p6.y = sin(fovY) * (nearPlane / sin(Math::DegToRad * 90.0f - fovY));
-	p2.x =  p6.x; p2.y = -p6.y;
-	p3.x = -p6.x; p3.y = -p6.y;
-	p7.x = -p6.x; p7.y =  p6.y;
+	_ComputeFrustumPoints(fovY, aspect, nearPlane, farPlane, frustumPoints);
+	return _CreateWireframeCubeMesh(frustumPoints);
+}
 
-	p5.x = sin(fovX) * (farPlane / sin(Math::DegToRad * 90.0f - fovX));
-	p5.y = sin(fovY) * (farPlane / sin(Math::DegToRad * 90.0f - fovY));
-	p1.x =  p5.x; p1.y = -p5.y;
-	p0.x = -p5.x; p0.y = -p5.y;
-	p4.x = -p5.x; p4.y =  p5.y;
+std::shared_ptr< Mesh >		PrimitiveMeshFactory::CreateCircle(float radius, int vertices)
+{
+	std::shared_ptr< Mesh >					m = std::make_shared< Mesh >();
+	std::vector< Mesh::VertexAttributes >	attribs(vertices * 3);
 
-	return _CreateCubeMesh(p0, p1, p2, p3, p4, p5, p6, p7);
+	glm::vec3	center = glm::vec3(0, 0, 0);
+	glm::vec3	p0 = glm::vec3(0, 0, 1) * radius;
+	glm::vec3	p1;
+	float		c = 0;
+
+	for (int i = 0; i < vertices; i++)
+	{
+		c += M_PI * 2 / vertices;
+		p1 = glm::vec3(sin(c), 0, cos(c)) * radius;
+		Mesh::VertexAttributes::TriVertexAttrib(center, p0, p1, attribs.data() + i * 3);
+		p0 = p1;
+	}
+
+	m->SetVertexAttributes(attribs);
+
+	return m;
+}
+
+std::shared_ptr< Mesh >		PrimitiveMeshFactory::CreateWireframeCircle(float radius, int vertices)
+{
+	std::shared_ptr< Mesh >					m = std::make_shared< Mesh >();
+	std::vector< Mesh::VertexAttributes >	attribs(vertices * 2);
+
+	glm::vec3	normal = glm::vec3(0, 1, 0);
+	glm::vec3	p0 = glm::vec3(0, 0, 1) * radius;
+	glm::vec3	p1;
+	float		c = 0;
+
+	for (int i = 0; i < vertices; i++)
+	{
+		c += M_PI * 2 / vertices;
+		p1 = glm::vec3(sin(c), 0, cos(c)) * radius;
+		attribs[i * 2 + 0] = {p0, normal, glm::normalize(p0), {0, 0, 0}, {0, 0}};
+		attribs[i * 2 + 1] = {p1, normal, glm::normalize(p1), {0, 0, 0}, {0, 0}};
+		p0 = p1;
+	}
+
+	m->SetVertexAttributes(attribs);
+
+	return m;
 }
 
 std::shared_ptr< Mesh >		PrimitiveMeshFactory::CreateMesh(PrimitiveType type)
@@ -138,8 +245,14 @@ std::shared_ptr< Mesh >		PrimitiveMeshFactory::CreateMesh(PrimitiveType type)
 	{
 		case PrimitiveType::Cube:
 			return _CreateCubeMesh();
+		case PrimitiveType::WireframeCube:
+			return _CreateWireframeCubeMesh();
 		case PrimitiveType::Quad:
 			return _CreateQuadMesh();
+		case PrimitiveType::Circle:
+			return CreateCircle(1, 100);
+		case PrimitiveType::WireframeCircle:
+			return CreateWireframeCircle(1, 100);
 	}
 	throw std::runtime_error("Can't find mesh generator for primitive type: " + std::to_string(static_cast< int >(type)));
 }
