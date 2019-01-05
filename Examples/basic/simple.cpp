@@ -4,20 +4,19 @@ using namespace LWGC;
 
 void		ProcessEvent(EventSystem * es, Application & app)
 {
-	const Event &	current = es->GetCurrentEvent();
+	// const Event &	current = es->GetCurrentEvent();
+	// auto keyCode = current.GetKeyCode();
 
-	auto keyCode = current.GetKeyCode();
+	// switch (current.GetType())
+	// {
+	// 	case EventType::KeyDown:
+	// 		if (keyCode == KeyCode::ESCAPE)
+	// 			app.Quit();
+	// 		break ;
 
-	switch (current.GetType())
-	{
-		case EventType::KeyDown:
-			if (keyCode == KeyCode::ESCAPE)
-				app.Quit();
-			break ;
-
-		default:
-			break ;
-	}
+	// 	default:
+	// 		break ;
+	// }
 }
 
 int			main(void)
