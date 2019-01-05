@@ -37,6 +37,10 @@ void		InitGizmos(Hierarchy * hierarchy)
 	auto circle = new Gizmo::Circle(2, 40, true, Color::Indigo);
 	circle->GetTransform()->SetPosition(glm::vec3(0, -2, 0));
 	hierarchy->AddGameObject(circle);
+
+	auto cone = new Gizmo::Cone(2, 1, 40, true, Color::DarkGreen);
+	cone->GetTransform()->SetPosition(glm::vec3(-2, 0, 1));
+	hierarchy->AddGameObject(cone);
 }
 
 void		InitCamera(Hierarchy * hierarchy)

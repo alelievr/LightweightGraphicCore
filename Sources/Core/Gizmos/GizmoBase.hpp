@@ -29,7 +29,7 @@ namespace LWGC::Gizmo
 
 		public:
 			GizmoBase(void) = delete;
-			GizmoBase(const Color & c = Color::White);
+			GizmoBase(const Color & c = Color::White, bool wireframe = true);
 			GizmoBase(const GizmoBase &) = delete;
 			virtual ~GizmoBase(void);
 

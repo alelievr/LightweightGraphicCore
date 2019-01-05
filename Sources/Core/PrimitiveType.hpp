@@ -7,7 +7,10 @@ namespace LWGC
 		Cube,
 		WireframeCube,
 		Quad,
+		WireframeQuad,
 		Circle,
 		WireframeCircle,
+		Cone,
+		WireframeCone,
 	};
 }

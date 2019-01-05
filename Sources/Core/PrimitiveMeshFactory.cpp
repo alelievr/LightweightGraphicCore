@@ -66,6 +66,18 @@ void						PrimitiveMeshFactory::_ComputeCubePoints(float size, std::vector< glm:
 	p[7] = glm::vec3(-.5f,  .5f, -.5f) * size;
 }
 
+ void						PrimitiveMeshFactory::_ComputeCirclePoints(float radius, int vertexCount, std::vector< glm::vec3 > & points)
+{
+	glm::vec3	center = glm::vec3(0, 0, 0);
+	float		c = 0;
+
+	for (int i = 0; i < vertexCount; i++)
+	{
+		points[i] = glm::vec3(sin(c), 0, cos(c)) * radius;
+		c += M_PI * 2 / vertexCount;
+	}
+}
+
 std::shared_ptr< Mesh >		PrimitiveMeshFactory::_CreateCubeMesh(const std::vector< glm::vec3 > p)
 {
 	std::shared_ptr< Mesh >					m = std::make_shared< Mesh >();
@@ -176,6 +188,31 @@ std::shared_ptr< Mesh >		PrimitiveMeshFactory::_CreateQuadMesh(void)
 	return m;
 }
 
+std::shared_ptr< Mesh >		PrimitiveMeshFactory::_CreateWireframeQuadMesh(void)
+{
+	std::shared_ptr< Mesh >					m = std::make_shared< Mesh >();
+	std::vector< Mesh::VertexAttributes >	attribs(8);
+
+	//  3------0
+	//  |      |
+	//  |      |
+	//  2------1
+
+	glm::vec3 p0 = glm::vec3( 0.5,  0.5, 0);
+	glm::vec3 p1 = glm::vec3( 0.5, -0.5, 0);
+	glm::vec3 p2 = glm::vec3(-0.5, -0.5, 0);
+	glm::vec3 p3 = glm::vec3(-0.5,  0.5, 0);
+
+	Mesh::VertexAttributes::EdgeVertexAttrib(p0, p1, attribs.data() + 0);
+	Mesh::VertexAttributes::EdgeVertexAttrib(p1, p2, attribs.data() + 1);
+	Mesh::VertexAttributes::EdgeVertexAttrib(p2, p3, attribs.data() + 2);
+	Mesh::VertexAttributes::EdgeVertexAttrib(p3, p0, attribs.data() + 3);
+
+	m->SetVertexAttributes(attribs);
+
+	return m;
+}
+
 std::shared_ptr< Mesh >		PrimitiveMeshFactory::CreateFrustum(float fovY, float aspect, float nearPlane, float farPlane)
 {
 	std::vector< glm::vec3 >	frustumPoints(8);
@@ -192,22 +229,21 @@ std::shared_ptr< Mesh >		PrimitiveMeshFactory::CreateWireframeFrustum(float fovY
 	return _CreateWireframeCubeMesh(frustumPoints);
 }
 
-std::shared_ptr< Mesh >		PrimitiveMeshFactory::CreateCircle(float radius, int vertices)
+std::shared_ptr< Mesh >		PrimitiveMeshFactory::CreateCircle(float radius, int vertexCount)
 {
 	std::shared_ptr< Mesh >					m = std::make_shared< Mesh >();
-	std::vector< Mesh::VertexAttributes >	attribs(vertices * 3);
+	std::vector< Mesh::VertexAttributes >	attribs(vertexCount * 3);
+	std::vector< glm::vec3 >				circlePoints(vertexCount);
 
+	_ComputeCirclePoints(radius, vertexCount, circlePoints);
 	glm::vec3	center = glm::vec3(0, 0, 0);
-	glm::vec3	p0 = glm::vec3(0, 0, 1) * radius;
-	glm::vec3	p1;
-	float		c = 0;
 
-	for (int i = 0; i < vertices; i++)
+	for (int i = 0; i < vertexCount; i++)
 	{
-		c += M_PI * 2 / vertices;
-		p1 = glm::vec3(sin(c), 0, cos(c)) * radius;
-		Mesh::VertexAttributes::TriVertexAttrib(center, p0, p1, attribs.data() + i * 3);
-		p0 = p1;
+		Mesh::VertexAttributes::TriVertexAttrib(
+			center, circlePoints[i], circlePoints[(i + 1) % vertexCount],
+			attribs.data() + i * 3
+		);
 	}
 
 	m->SetVertexAttributes(attribs);
@@ -215,23 +251,77 @@ std::shared_ptr< Mesh >		PrimitiveMeshFactory::CreateCircle(float radius, int ve
 	return m;
 }
 
-std::shared_ptr< Mesh >		PrimitiveMeshFactory::CreateWireframeCircle(float radius, int vertices)
+std::shared_ptr< Mesh >		PrimitiveMeshFactory::CreateWireframeCircle(float radius, int vertexCount)
 {
 	std::shared_ptr< Mesh >					m = std::make_shared< Mesh >();
-	std::vector< Mesh::VertexAttributes >	attribs(vertices * 2);
+	std::vector< Mesh::VertexAttributes >	attribs(vertexCount * 2);
+	std::vector< glm::vec3 >				circlePoints(vertexCount);
 
 	glm::vec3	normal = glm::vec3(0, 1, 0);
-	glm::vec3	p0 = glm::vec3(0, 0, 1) * radius;
-	glm::vec3	p1;
-	float		c = 0;
+	_ComputeCirclePoints(radius, vertexCount, circlePoints);
 
-	for (int i = 0; i < vertices; i++)
+	for (int i = 0; i < vertexCount; i++)
 	{
-		c += M_PI * 2 / vertices;
-		p1 = glm::vec3(sin(c), 0, cos(c)) * radius;
+		glm::vec3 p0 = circlePoints[i];
+		glm::vec3 p1 = circlePoints[(i + 1) % vertexCount];
 		attribs[i * 2 + 0] = {p0, normal, glm::normalize(p0), {0, 0, 0}, {0, 0}};
 		attribs[i * 2 + 1] = {p1, normal, glm::normalize(p1), {0, 0, 0}, {0, 0}};
-		p0 = p1;
+	}
+
+	m->SetVertexAttributes(attribs);
+
+	return m;
+}
+
+std::shared_ptr< Mesh >		PrimitiveMeshFactory::CreateCone(float radius, float height, int vertexCount)
+{
+	std::shared_ptr< Mesh >					m = std::make_shared< Mesh >();
+	std::vector< Mesh::VertexAttributes >	attribs(vertexCount * 6);
+	std::vector< glm::vec3 >				circlePoints(vertexCount);
+
+	_ComputeCirclePoints(radius, vertexCount, circlePoints);
+	glm::vec3	peak = glm::vec3(0, height, 0);
+	glm::vec3	center = glm::vec3(0, 0, 0);
+
+	for (int i = 0; i < vertexCount; i++)
+	{
+		Mesh::VertexAttributes::TriVertexAttrib(
+			peak, circlePoints[i], circlePoints[(i + 1) % vertexCount],
+			attribs.data() + i * 3
+		);
+	}
+
+	for (int i = 0; i < vertexCount; i++)
+	{
+		Mesh::VertexAttributes::TriVertexAttrib(
+			circlePoints[i], center, circlePoints[(i + 1) % vertexCount],
+			attribs.data() + vertexCount * 3 + i * 3
+		);
+	}
+
+	m->SetVertexAttributes(attribs);
+
+	return m;
+}
+
+std::shared_ptr< Mesh >		PrimitiveMeshFactory::CreateWireframeCone(float radius, float height, int vertexCount)
+{
+	std::shared_ptr< Mesh >					m = std::make_shared< Mesh >();
+	std::vector< Mesh::VertexAttributes >	attribs(vertexCount * 4);
+	std::vector< glm::vec3 >				circlePoints(vertexCount);
+
+	glm::vec3	normal = glm::vec3(0, 1, 0);
+	glm::vec3	peak = glm::vec3(0, height, 0);
+	_ComputeCirclePoints(radius, vertexCount, circlePoints);
+
+	for (int i = 0; i < vertexCount; i++)
+	{
+		glm::vec3 p0 = circlePoints[i];
+		glm::vec3 p1 = circlePoints[(i + 1) % vertexCount];
+		attribs[i * 4 + 0] = {p0, normal, glm::normalize(p0), {0, 0, 0}, {0, 0}};
+		attribs[i * 4 + 1] = {p1, normal, glm::normalize(p1), {0, 0, 0}, {0, 0}};
+		attribs[i * 4 + 2] = {p0, normal, glm::normalize(p0), {0, 0, 0}, {0, 0}};
+		attribs[i * 4 + 3] = {peak, normal, glm::normalize(p1), {0, 0, 0}, {0, 0}};
 	}
 
 	m->SetVertexAttributes(attribs);
@@ -249,10 +339,16 @@ std::shared_ptr< Mesh >		PrimitiveMeshFactory::CreateMesh(PrimitiveType type)
 			return _CreateWireframeCubeMesh();
 		case PrimitiveType::Quad:
 			return _CreateQuadMesh();
+		case PrimitiveType::WireframeQuad:
+			return _CreateWireframeQuadMesh();
 		case PrimitiveType::Circle:
 			return CreateCircle(1, 100);
 		case PrimitiveType::WireframeCircle:
 			return CreateWireframeCircle(1, 100);
+		case PrimitiveType::Cone:
+			return CreateCone(1, 1, 100);
+		case PrimitiveType::WireframeCone:
+			return CreateWireframeCone(1, 1, 100);
 	}
 	throw std::runtime_error("Can't find mesh generator for primitive type: " + std::to_string(static_cast< int >(type)));
 }
