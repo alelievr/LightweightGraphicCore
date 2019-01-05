@@ -136,7 +136,7 @@ void	RenderPass::UpdateDescriptorBindings(VkCommandBuffer cmd)
 
 void	RenderPass::BeginSecondaryCommandBuffer(VkCommandBuffer cmd, VkCommandBufferUsageFlagBits commandBufferUsage)
 {
-	VkCommandBufferInheritanceInfo	inheritanceInfo = {};
+	VkCommandBufferInheritanceInfo inheritanceInfo = {};
 	inheritanceInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_INHERITANCE_INFO;
 	inheritanceInfo.renderPass = _renderPass;
 	inheritanceInfo.framebuffer = _framebuffer;
@@ -157,7 +157,7 @@ void	RenderPass::BeginSecondaryCommandBuffer(VkCommandBuffer cmd, VkCommandBuffe
 		_currentMaterial->IsCompute() ? VK_PIPELINE_BIND_POINT_COMPUTE : VK_PIPELINE_BIND_POINT_GRAPHICS,
 		_currentMaterial->GetPipeline()
 	);
-	
+
 	UpdateDescriptorBindings(cmd);
 }
 

@@ -14,16 +14,16 @@ void	ProcessEvent(EventSystem * es, Application & app)
 }
 void		InitFullscreenTarget(Hierarchy * hierarchy)
 {
-	auto		fullScreenMaterial = Material::Create(BuiltinShaders::Standard, BuiltinShaders::FullScreenQuad);
+	// auto		fullScreenMaterial = Material::Create(BuiltinShaders::Standard, BuiltinShaders::FullScreenQuad);
 	Texture2D	computeTarget(512, 512, VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_USAGE_STORAGE_BIT | VK_IMAGE_USAGE_SAMPLED_BIT, false);
 
 	// Setup material to display the procedural texture:
-	VkPipelineInputAssemblyStateCreateInfo inputAssemblyInfo = {};
-	inputAssemblyInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO;
-	inputAssemblyInfo.topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_STRIP;
-	inputAssemblyInfo.primitiveRestartEnable = VK_FALSE;
+	// VkPipelineInputAssemblyStateCreateInfo inputAssemblyInfo = {};
+	// inputAssemblyInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO;
+	// inputAssemblyInfo.topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_STRIP;
+	// inputAssemblyInfo.primitiveRestartEnable = VK_FALSE;
 
-	fullScreenMaterial->SetInputAssemblyState(inputAssemblyInfo);
+	// fullScreenMaterial->SetInputAssemblyState(inputAssemblyInfo);
 
 	// VkPipelineDepthStencilStateCreateInfo depthStencilInfo = {};
 	// depthStencilInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO;
@@ -35,12 +35,14 @@ void		InitFullscreenTarget(Hierarchy * hierarchy)
 
 	// fullScreenMaterial->SetDepthStencilState(depthStencilInfo);
 
-	hierarchy->AddGameObject(new GameObject(new ProceduralRenderer(fullScreenMaterial, 4)));
-	fullScreenMaterial->SetTexture(TextureBinding::Albedo, computeTarget, VK_IMAGE_LAYOUT_GENERAL, VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE);
+	// hierarchy->AddGameObject(new GameObject(new ProceduralRenderer(fullScreenMaterial, 4)));
+	// fullScreenMaterial->SetTexture(TextureBinding::Albedo, computeTarget, VK_IMAGE_LAYOUT_GENERAL, VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE);
 
 	auto	proceduralDispatchMaterial = Material::Create("Shaders/Compute/ProceduralTexture.hlsl", VK_SHADER_STAGE_COMPUTE_BIT);
 	hierarchy->AddGameObject(new GameObject(new ComputeDispatcher(proceduralDispatchMaterial, 512, 512)));
 	proceduralDispatchMaterial->SetTexture("proceduralTexture", computeTarget, VK_IMAGE_LAYOUT_GENERAL, VK_DESCRIPTOR_TYPE_STORAGE_IMAGE);
+
+	// hierarchy->AddGameObject(new GameObject(new MeshRenderer(PrimitiveType::Cube)));
 }
 
 void		InitCamera(Hierarchy * hierarchy)

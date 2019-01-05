@@ -27,7 +27,6 @@ namespace LWGC
 			virtual void	Initialize(void) noexcept override;
 			void			OnEnable(void) noexcept override;
 			void			OnDisable(void) noexcept override;
-			void			RecordComputeCommand(VkCommandBuffer cmd) noexcept;
 
 		public:
 			ComputeDispatcher(void) = delete;
@@ -37,8 +36,10 @@ namespace LWGC
 
 			ComputeDispatcher &	operator=(ComputeDispatcher const & src) = delete;
 
-			Material *	GetMaterial(void);
-			VkCommandBuffer				GetCommandBuffer(void);
+			void				RecordCommands(VkCommandBuffer cmd);
+
+			Material *			GetMaterial(void);
+			VkCommandBuffer		GetCommandBuffer(void);
 
 			virtual uint32_t	GetType(void) const noexcept override;
 	};
