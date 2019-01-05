@@ -167,6 +167,7 @@ void					Material::Initialize(SwapChain * swapChain, RenderPass * renderPass)
 	_device = _instance->GetDevice();
 	_swapChain = swapChain;
 	_renderPass = renderPass;
+	_isReady = false;
 
 	CompileShaders();
 	CreatePipelineLayout();
@@ -219,8 +220,6 @@ void					Material::CreatePipelineLayout(void)
 
 	pipelineLayoutInfo.setLayoutCount = _setLayouts.size();
 	pipelineLayoutInfo.pSetLayouts = _setLayouts.data();
-
-	std::cout << "set layout count: " << _setLayouts.size() << std::endl;
 
 	if (vkCreatePipelineLayout(_device, &pipelineLayoutInfo, nullptr, &_pipelineLayout) != VK_SUCCESS)
 		throw std::runtime_error("failed to create pipeline layout !");
@@ -339,7 +338,7 @@ void					Material::AllocateDescriptorSet(const std::string & bindingName)
 
 	// Generate all descriptor sets from the binding table
 	uint32_t setBinding = GetDescriptorSetBinding(bindingName);
-	
+
 	if (setBinding == -1u)
 	{
 		std::cerr << "Can't allocate descriptor " << bindingName << ": not found in shader" << std::endl;
@@ -396,12 +395,14 @@ bool				Material::IsCompute(void) const
 
 bool					Material::DescriptorSetExists(const std::string & bindingName, bool silent)
 {
+	MarkAsReady();
+
 	uint32_t setBinding = GetDescriptorSetBinding(bindingName);
 
 	if (setBinding == -1u)
 	{
 		if (!silent)
-			std::cerr << "Can't find binding " << bindingName << " in the shader, maybe it was removed at compilation ?" << std::endl;
+			std::cerr << "Can't find binding " << bindingName << " in the shader, maybe it was removed at compilation / the shader is not compiled" << std::endl;
 		return false;
 	}
 
@@ -436,7 +437,7 @@ void				Material::SetTexture(const std::string & bindingName, const Texture & te
 {
 	if (!DescriptorSetExists(bindingName, silent))
 		return ;
-		
+
 	std::array<VkWriteDescriptorSet, 1> descriptorWrites = {};
 	VkDescriptorImageInfo imageInfo = {};
 
@@ -461,7 +462,7 @@ void				Material::SetSampler(const std::string & bindingName, VkSampler sampler,
 {
 	if (!DescriptorSetExists(bindingName, silent))
 		return ;
-	
+
 	std::array<VkWriteDescriptorSet, 1> descriptorWrites = {};
     VkDescriptorImageInfo samplerInfo = {};
 
@@ -488,6 +489,17 @@ void				Material::SetVertexInputState(VkPipelineVertexInputStateCreateInfo info)
 void				Material::SetInputAssemblyState(VkPipelineInputAssemblyStateCreateInfo info) { _inputAssemblyState = info; }
 void				Material::SetDepthStencilState(VkPipelineDepthStencilStateCreateInfo info) { _depthStencilState = info; }
 void				Material::SetRasterizationState(VkPipelineRasterizationStateCreateInfo info) { _rasterizationState = info; }
+
+bool				Material::IsReady(void) const noexcept { return _isReady; }
+
+void				Material::MarkAsReady(void) noexcept
+{
+	if (_instance != nullptr)
+		return ;
+
+	_isReady = true;
+	Application::Get()->GetMaterialTable()->NotifyMaterialReady(this);
+}
 
 std::ostream &	operator<<(std::ostream & o, Material const & r)
 {

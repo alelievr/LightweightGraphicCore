@@ -8,7 +8,8 @@
 using namespace LWGC;
 
 Application *	Application::_app = nullptr;
-Delegate		Application::update;
+Delegate< void(void) >		Application::update;
+Delegate< void(void) >		Application::lateUpdate;
 
 Application::Application(void) : _renderPipeline(nullptr), _window(nullptr), _hierarchy(std::make_shared< Hierarchy >()), _shouldNotQuit(true)
 {
@@ -64,7 +65,7 @@ bool			Application::ShouldNotQuit(void) const noexcept
 
 void			Application::Quit(void) noexcept
 {
-	_shouldNotQuit = false;
+	glfwSetWindowShouldClose(_window, true);
 }
 
 void		Application::FramebufferResizeCallback(GLFWwindow *window, int width, int height)
@@ -109,6 +110,7 @@ void			Application::Open(const std::string & name, const int width, const int he
 
 		_renderPipeline->Initialize(&_swapChain);
 		_renderPipeline->CreateSyncObjects();
+		_materialTable.Initialize(&_swapChain, _renderPipeline->GetRenderPass());
 		_hierarchy->Initialize();
 	} catch (const std::runtime_error & e) {
 		std::cout << "Error while initializing the render pipeline:" << std::endl << e.what() << std::endl;
@@ -131,6 +133,7 @@ void				Application::Update(void) noexcept
 	glfwPollEvents();
 
 	Application::update.Invoke();
+	Application::lateUpdate.Invoke();
 
 	//TODO: hierarchy get cameras
 	const auto cameras =_hierarchy->GetCameras();
@@ -147,6 +150,7 @@ void				Application::Update(void) noexcept
 
 EventSystem *		Application::GetEventSystem(void) noexcept { return &this->_eventSystem; }
 Hierarchy *			Application::GetHierarchy(void) noexcept { return this->_hierarchy.get(); }
+MaterialTable *		Application::GetMaterialTable(void) noexcept { return &this->_materialTable; }
 
 Application *	Application::Get(void) noexcept { return _app; }
 

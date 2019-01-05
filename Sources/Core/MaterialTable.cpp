@@ -2,7 +2,7 @@
 
 using namespace LWGC;
 
-MaterialTable::MaterialTable(void)
+MaterialTable::MaterialTable(void) : _swapChain(nullptr), _renderPass(nullptr)
 {
 }
 
@@ -10,11 +10,15 @@ MaterialTable::~MaterialTable(void)
 {
 }
 
-std::ostream &	operator<<(std::ostream & o, MaterialTable const & r)
+void 	MaterialTable::Initialize(LWGC::SwapChain *swapChain , LWGC::RenderPass *renderPipeline)
 {
-	o << "tostring of the class" << std::endl;
-	(void)r;
-	return (o);
+	_swapChain = swapChain;
+	_renderPass = renderPipeline;
+
+	for (auto material: _materials)
+	{
+		material->Initialize(_swapChain, _renderPass);
+	}
 }
 
 void	MaterialTable::RegsiterMaterial(Material * material)
@@ -24,8 +28,22 @@ void	MaterialTable::RegsiterMaterial(Material * material)
 
 void	MaterialTable::DestroyMaterials()
 {
-	printf("deivice: %p\n", VulkanInstance::Get()->GetDevice());
 	for (auto material: _materials) {
 		delete material;
 	}
+}
+
+void	MaterialTable::NotifyMaterialReady(Material * material)
+{
+	if (_renderPass && _swapChain)
+	{
+		material->Initialize(_swapChain, _renderPass);
+	}
+}
+
+std::ostream &	operator<<(std::ostream & o, MaterialTable const & r)
+{
+	o << "tostring of the class" << std::endl;
+	(void)r;
+	return (o);
 }

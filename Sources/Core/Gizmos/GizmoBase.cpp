@@ -41,7 +41,6 @@ void	GizmoBase::Initialize(void) noexcept
 {
 	GameObject::Initialize();
 
-	material->AllocateDescriptorSet("gizmo");
 	material->SetBuffer("gizmo", gizmoDataBuffer, sizeof(LWGC_GizmoData), VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER);
 }
 

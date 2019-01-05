@@ -46,7 +46,6 @@ Arrow::Arrow(float length, int vertices, bool wireframe, const Color & c) : Cone
 void	Arrow::Initialize(void) noexcept
 {
 	Cone::Initialize();
-	lineMaterial->AllocateDescriptorSet("gizmo");
 	lineMaterial->SetBuffer("gizmo", gizmoDataBuffer, sizeof(LWGC_GizmoData), VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER);
 }
 

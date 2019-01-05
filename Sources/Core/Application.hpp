@@ -6,7 +6,7 @@
 
 #include "WindowFlag.hpp"
 #include "Rendering/VulkanRenderPipeline.hpp"
-#include "Events/EventSystem.hpp"
+#include "EventSystem.hpp"
 #include "Hierarchy.hpp"
 #include "Vulkan/VulkanInstance.hpp"
 #include "Vulkan/VulkanSurface.hpp"
@@ -14,7 +14,7 @@
 #include "Vulkan/RenderPass.hpp"
 #include "Vulkan/Material.hpp"
 #include "Core/Rendering/RenderContext.hpp"
-#include "Core/Delegate.hpp"
+#include "Core/Delegate.tpp"
 #include "Core/ImGUIWrapper.hpp"
 #include "Core/MaterialTable.hpp"
 
@@ -58,11 +58,13 @@ namespace LWGC
 
 			EventSystem *		GetEventSystem(void) noexcept;
 			Hierarchy *			GetHierarchy(void) noexcept;
+			MaterialTable *		GetMaterialTable(void) noexcept;
 
 			static Application *		Get(void) noexcept;
 
 			// public events
-			static Delegate		update;
+			static Delegate< void(void) >	update;
+			static Delegate< void(void) >	lateUpdate;
 	};
 
 	std::ostream &	operator<<(std::ostream & o, Application const & r);

@@ -32,10 +32,6 @@ void		Renderer::Initialize(void) noexcept
 {
 	Component::Initialize();
 
-	VulkanRenderPipeline * renderPipeline = VulkanRenderPipeline::Get();
-
-	_material->Initialize(renderPipeline->GetSwapChain(), renderPipeline->GetRenderPass());
-
 	_drawCommandBuffer = VulkanInstance::Get()->GetCommandBufferPool()->Allocate(VK_COMMAND_BUFFER_LEVEL_SECONDARY);
 
 	if (_descriptorSetLayout == VK_NULL_HANDLE)

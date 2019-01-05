@@ -2,22 +2,15 @@
 
 using namespace LWGC;
 
-void		ProcessEvent(EventSystem * es, Application & app)
+void	ProcessEvent(EventSystem * es, Application & app)
 {
-	const Event &	current = es->GetCurrentEvent();
-
-	auto keyCode = current.GetKeyCode();
-
-	switch (current.GetType())
-	{
-		case EventType::KeyDown:
-			if (keyCode == KeyCode::ESCAPE)
-				app.Quit();
-			break ;
-
-		default:
-			break ;
-	}
+	es->Get()->onKey.AddListener([&](KeyCode key, ButtonAction action)
+		{
+			if (action == ButtonAction::Press
+				&& key == KeyCode::ESCAPE)
+					app.Quit();
+		}
+	);
 }
 
 void		InitGizmos(Hierarchy * hierarchy)

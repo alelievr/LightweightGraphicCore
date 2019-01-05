@@ -6,7 +6,7 @@
 #    By: amerelo <amerelo@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2014/07/15 15:13:38 by alelievr          #+#    #+#              #
-#    Updated: 2019/01/03 21:40:24 by alelievr         ###   ########.fr        #
+#    Updated: 2019/01/05 18:25:30 by amerelo          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -20,6 +20,13 @@ SRC			=	Core/Application.cpp \
 				Core/Transform.cpp \
 				Core/GameObject.cpp \
 				Core/Hierarchy.cpp \
+				Core/EventSystem.cpp \
+				Core/MaterialTable.cpp \
+				Core/Mesh.cpp \
+				Core/ShaderCache.cpp \
+				Core/Object.cpp \
+				Core/PrimitiveMeshFactory.cpp \
+				Core/ComputeDispatcher.cpp \
 				Core/Components/Component.cpp \
 				Core/Components/Camera.cpp \
 				Core/Components/Renderer.cpp \
@@ -29,11 +36,6 @@ SRC			=	Core/Application.cpp \
 				Core/Components/Light.cpp \
 				Core/Components/Rotator.cpp \
 				Core/ComputeDispatcher.cpp \
-				Core/Events/Event.cpp \
-				Core/Events/EventSystem.cpp \
-				Core/Events/Input.cpp \
-				Core/MaterialTable.cpp \
-				Core/Mesh.cpp \
 				Core/ShaderCache.cpp \
 				Core/Object.cpp \
 				Core/PrimitiveMeshFactory.cpp \
@@ -65,7 +67,6 @@ SRC			=	Core/Application.cpp \
 				Core/Gizmos/Circle.cpp \
 				Core/Gizmos/Cone.cpp \
 				Core/Gizmos/Arrow.cpp \
-				Core/Delegate.cpp \
 				Core/ImGUIWrapper.cpp \
 				Utils/Bounds.cpp \
 				Utils/Color.cpp \
