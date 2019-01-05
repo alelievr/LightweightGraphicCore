@@ -10,13 +10,9 @@ Line::Line(const glm::vec3 p0, const glm::vec3 p1, const Color & c) : GizmoBase(
 	std::shared_ptr< Mesh >					lineMesh = std::make_shared< Mesh >();
 	std::vector< Mesh::VertexAttributes >	attribs(2);
 
+	Mesh::VertexAttributes::EdgeVertexAttrib(p0, p1, attribs.data());
+
 	lineMesh->SetVertexAttributes(attribs);
-
-	lineMesh->SetVertexAttributes({
-		{p0, glm::vec3(0, 0, 0), glm::vec3(0, 0, 0), glm::vec3(0, 0, 0), glm::vec2(0, 0)},
-		{p1, glm::vec3(0, 0, 0), glm::vec3(0, 0, 0), glm::vec3(0, 0, 0), glm::vec2(0, 0)}
-	});
-
 	renderer->SetMesh(lineMesh);
 }
 

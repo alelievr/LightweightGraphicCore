@@ -41,6 +41,12 @@ void		InitGizmos(Hierarchy * hierarchy)
 	auto cone = new Gizmo::Cone(2, 1, 40, true, Color::DarkGreen);
 	cone->GetTransform()->SetPosition(glm::vec3(-2, 0, 1));
 	hierarchy->AddGameObject(cone);
+
+	auto arrow = new Gizmo::Arrow(2, 50, false, Color::LightGray);
+	arrow->GetTransform()->SetPosition(glm::vec3(2, 0, -1));
+	arrow->GetTransform()->Rotate(glm::vec3(0, 0, 0));
+	arrow->AddComponent(new Rotator());
+	hierarchy->AddGameObject(arrow);
 }
 
 void		InitCamera(Hierarchy * hierarchy)

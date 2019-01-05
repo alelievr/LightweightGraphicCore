@@ -192,6 +192,12 @@ std::ostream &	operator<<(std::ostream & o, Mesh const & r)
 	return (o);
 }
 
+void				Mesh::Translate(const glm::vec3 & translation)
+{
+	for (size_t i = 0; i < _attributes.size(); i++)
+		_attributes[i].position += translation;
+}
+
 void Mesh::VertexAttributes::QuadVertexAttrib(
 	const glm::vec3 & p0,
 	const glm::vec3 & p1,

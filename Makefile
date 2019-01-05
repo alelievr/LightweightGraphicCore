@@ -64,6 +64,7 @@ SRC			=	Core/Application.cpp \
 				Core/Gizmos/Frustum.cpp \
 				Core/Gizmos/Circle.cpp \
 				Core/Gizmos/Cone.cpp \
+				Core/Gizmos/Arrow.cpp \
 				Core/Delegate.cpp \
 				Core/ImGUIWrapper.cpp \
 				Utils/Bounds.cpp \

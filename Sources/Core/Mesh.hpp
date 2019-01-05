@@ -54,6 +54,9 @@ namespace LWGC
 			void	Draw(VkCommandBuffer cmd);
 			void	Clear(void);
 
+			// transform operation on vertices
+			void	Translate(const glm::vec3 & translation);
+
 			std::vector< int >			GetIndices(void) const;
 			void						SetIndices(const std::vector< int > & tmp);
 			std::vector< VertexAttributes >	GetVertexAttributes(void) const;

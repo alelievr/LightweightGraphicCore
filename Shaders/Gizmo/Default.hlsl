@@ -13,8 +13,6 @@ FragmentOutput main(FragmentInput i)
 {
 	FragmentOutput	o;
 
-	// TODO: switch using the color mode
-	// o.color = float4(i.normalOS * 0.5 + 0.5, 1);
 	o.color = gizmo.color;
 
 	return o;
