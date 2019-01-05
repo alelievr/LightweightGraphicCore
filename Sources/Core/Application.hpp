@@ -14,7 +14,7 @@
 #include "Vulkan/RenderPass.hpp"
 #include "Vulkan/Material.hpp"
 #include "Core/Rendering/RenderContext.hpp"
-#include "Core/Delegate.hpp"
+#include "Core/Delegate.tpp"
 #include "Core/ImGUIWrapper.hpp"
 #include "Core/MaterialTable.hpp"
 
@@ -62,7 +62,8 @@ namespace LWGC
 			static Application *		Get(void) noexcept;
 
 			// public events
-			static Delegate< void() >	update;
+			static Delegate< void(void) >	update;
+			static Delegate< void(void) >	lateUpdate;
 	};
 
 	std::ostream &	operator<<(std::ostream & o, Application const & r);

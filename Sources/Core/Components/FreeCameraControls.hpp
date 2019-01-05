@@ -3,6 +3,7 @@
 #include <iostream>
 #include <string>
 
+#include "Core/EventSystem.hpp"
 #include "Core/Components/Component.hpp"
 #include "Core/Object.hpp"
 
@@ -20,7 +21,8 @@ namespace LWGC
 			float			_rotationY;
 
 			virtual void	Update(void) noexcept override;
-			void			KeypressedCallback(void) noexcept;
+			void		KeyPressedCallback(KeyCode, ButtonAction);
+			void		MouseMoveedCallback(glm::vec2 pos, MouseMoveAction action);
 
 		public:
 			FreeCameraControls(void);

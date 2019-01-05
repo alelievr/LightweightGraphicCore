@@ -4,7 +4,7 @@
 
 #include "Core/Transform.hpp"
 #include "IncludeDeps.hpp"
-#include "Core/Delegate.hpp"
+#include "Core/Delegate.tpp"
 #include VULKAN_INCLUDE
 
 namespace LWGC

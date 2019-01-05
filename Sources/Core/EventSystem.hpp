@@ -6,49 +6,33 @@
 #include <map>
 
 #include "IncludeDeps.hpp"
-#include "Core/Delegate.hpp"
+#include "Core/Delegate.tpp"
 #include "Core/KeyCode.hpp"
 
 #include GLFW_INCLUDE
+#include GLM_INCLUDE
 
 namespace LWGC
 {
-	typedef std::function< void (void) > OnQuitCallback;
-	typedef std::function< void (bool focused) > OnFocusCallback;
-	typedef std::function< void (float x, float y) > OnMouseMoveCallback;
-	typedef std::function< void (float x, float y, int button) > OnMouseDownCallback;
-	typedef std::function< void (float x, float y, int button) > OnMouseUpCallback;
-	typedef std::function< void (void) > OnMouseEnterCallback;
-	typedef std::function< void (void) > OnMouseExitCallback;
-	typedef std::function< void (KeyCode k) > OnKeyDownCallback;
-	typedef std::function< void (KeyCode k) > OnKeyUpCallback;
-	typedef std::function< void (KeyCode k) > OnKeyStayCallback;
+	enum class ButtonAction {Press = GLFW_PRESS, Release = GLFW_RELEASE, Repeat = GLFW_REPEAT};
+	enum class MouseMoveAction {Entered = GLFW_TRUE, Exited = GLFW_FALSE, Move = 2};
 
-	enum class KeyAction {PRESS = 1, RELEASE = 0, REPEAT = 2};
-
-	class		EventSystem : std::enable_shared_from_this< EventSystem >
+	class		EventSystem
 	{
 		private:
-			// OnQuitCallback			_onQuit;
-			// OnFocusCallback			_onFocus;
-			// OnMouseMoveCallback		_onMouseMove;
-			// OnMouseDownCallback		_onMouse;
-			// OnMouseUpCallback		_onMouseUp;
-			// OnMouseEnterCallback	_onMouseEnter;
-			// OnMouseExitCallback		_onMouseExit;
-
 			GLFWwindow *			_window;
 
 			static std::map< GLFWwindow *, EventSystem * > eventSystems;
 			static EventSystem *	eventSystemInstance;
-			
-			// void DefaultMouseMoveAction(float x, float y);
-			// void DefaultMouseDownAction(float x, float y, int button);
-			// void DefaultMouseUpAction(float x, float y, int button);
-			// void DefaultKeyDownAction(KeyCode k);
-			// void DefaultKeyUpAction(KeyCode k);
+
 		public:
-			Delegate< void(KeyCode, KeyAction) >				onKey;
+			Delegate< void(void) >								onQuit;
+			Delegate< void(void) >								onFocus;
+			Delegate< void(KeyCode, ButtonAction) >				onKey;
+			Delegate< void(glm::vec2, ButtonAction) >			onMouseClick;
+			Delegate< void(glm::vec2, MouseMoveAction) >		onMouseMove;
+			glm::vec2											delta;
+			glm::vec2											oldMousePosition;
 
 			EventSystem(void);
 			EventSystem(const EventSystem&) = delete;
@@ -61,29 +45,6 @@ namespace LWGC
 			void	LockCursor(void);
 			void	ReleaseCursor(void);
 			void	ToggleLockCursor(void);
-
-			// OnQuitCallback	GetOnQuit(void) const;
-			// void	SetOnQuit(OnQuitCallback tmp);
-			
-			// OnFocusCallback	GetOnFocus(void) const;
-			// void	SetOnFocus(OnFocusCallback tmp);
-			
-			// OnMouseMoveCallback	GetOnMouseMove(void) const;
-			// void	SetOnMouseMove(OnMouseMoveCallback tmp);
-			
-			// OnMouseDownCallback	GetOnMouseDown(void) const;
-			// void	SetOnMouseDown(OnMouseDownCallback tmp);
-			
-			// OnMouseEnterCallback	GetOnMouseEnter(void) const;
-			// void	SetOnMouseEnter(OnMouseEnterCallback tmp);
-			
-			// OnMouseExitCallback	GetOnMouseExit(void) const;
-			// void	SetOnMouseExit(OnMouseExitCallback tmp);
-			
-			// OnMouseUpCallback	GetOnMouseUp(void) const;
-			// void	SetOnMouseUp(OnMouseUpCallback tmp);
-
-			// const Event &	GetCurrentEvent(void) const;
 
 			static EventSystem *	Get(void);
 	};

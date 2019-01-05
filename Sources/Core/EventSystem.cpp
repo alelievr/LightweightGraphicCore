@@ -2,7 +2,7 @@
 
 #include <memory>
 #include "Core/Application.hpp"
-#include "Core/Delegate.hpp"
+#include "Core/Delegate.tpp"
 
 using namespace LWGC;
 
@@ -18,30 +18,45 @@ EventSystem::~EventSystem(void)
 {
 }
 
-	// self->onKey.Invoke(static_cast< KeyCode >(key), static_cast< KeyAction >(action));
+// self->onKey.Invoke(static_cast< KeyCode >(key), static_cast< KeyAction >(action));
 
 void			EventSystem::BindWindow(GLFWwindow * window)
 {
 	_window = window;
 	eventSystems[window] = this;
-	_current = {};
 
 	glfwSetCursorEnterCallback(window, [](GLFWwindow * window, int entered)
 		{
 			auto & self = eventSystems[window];
+			double posX;
+			double posY;
+			glfwGetCursorPos(window, &posX, &posY);
+			const glm::vec2 & mousePosition = glm::vec2(posX, posY);
 
-			if (self->_onMouseEnter != nullptr && entered == GLFW_TRUE)
-				self->_onMouseEnter();
-			else if (self->_onMouseExit != nullptr && entered == GLFW_FALSE)
-				self->_onMouseExit();
+			self->onMouseMove.Invoke(mousePosition, static_cast< MouseMoveAction >(entered));
 		}
 	);
+	
+		//focus
+	// glfwSetCursorEnterCallback(window, [](GLFWwindow * window, int entered)
+	// 	{
+	// 		auto & self = eventSystems[window];
+	// 		double posX;
+	// 		double posY;
+	// 		glfwGetCursorPos(window, &posX, &posY);
+	// 		const glm::vec2 & mousePosition = glm::vec2(posX, posY);
+			// self->onMouseMove.Invoke(mousePosition, static_cast< MouseMoveAction >(entered));
+	// 	}
+	// );
 	
 	glfwSetKeyCallback(window, [](GLFWwindow * window, int key, int scancode, int action, int mods)
 		{
 			auto & self = eventSystems[window];
+			double posX;
+			double posY;
+			glfwGetCursorPos(window, &posX, &posY);
 
-			self->onKey.Invoke(static_cast< KeyCode >(key), static_cast< KeyAction >(action));
+			self->onKey.Invoke(static_cast< KeyCode >(key), static_cast< ButtonAction >(action));
 
 			(void)mods;
 			(void)scancode;
@@ -50,38 +65,43 @@ void			EventSystem::BindWindow(GLFWwindow * window)
 	glfwSetMouseButtonCallback(window, [](GLFWwindow * window, int button, int action, int mods)
 		{
 			auto & self = eventSystems[window];
-			const auto & pos = self->_current.GetMousePosition();
+			double posX;
+			double posY;
+			glfwGetCursorPos(window, &posX, &posY);
+			const glm::vec2 & mousePosition = glm::vec2(posX, posY);
 
-			if (self->_onMouseDown != nullptr && action == GLFW_PRESS)
-				self->_onMouseDown(pos.x, pos.y, button);
-			if (self->_onMouseUp != nullptr && action == GLFW_RELEASE)
-				self->_onMouseUp(pos.x, pos.y, button);
+			self->onMouseClick.Invoke(mousePosition, static_cast< ButtonAction >(action));
 
 			(void)mods;
 		}
 	);
+	
 	glfwSetCursorPosCallback(window, [](GLFWwindow * window, double posX, double posY)
 		{
 			auto & self = eventSystems[window];
-
-			if (self->_onMouseMove != nullptr)
-				self->_onMouseMove(posX, posY);
+			const glm::vec2 & mousePosition = glm::vec2(posX, posY);
+			
+			self->delta = mousePosition - self->oldMousePosition;
+			self->oldMousePosition = mousePosition;
+			self->onMouseMove.Invoke(mousePosition, MouseMoveAction::Move);
 		}
 	);
 
-	double mouseX, mouseY;
-	glfwGetCursorPos(window, &mouseX, &mouseY);
-	_current.mousePosition.x = mouseX;
-	_current.mousePosition.y = mouseY;
-	
-	static glm::vec2 oldMousePosition = _current.mousePosition;
-
 	// TODO: maybe another function that habdles the event logic
 	Application::update.AddListener([&](){
-			// Per-frame event system internal update
-			// _current.type = EventType::Ignore;
-			_delta = _mousePosition - _oldMousePosition;
-			_oldMousePosition = _mousePosition;
+			// double posX;
+			// double posY;
+			// const glm::vec2 & mousePosition = glm::vec2(posX, posY);
+			
+			// self->oldMousePosition = mousePosition;
+			// delta = mousePosition - oldMousePosition;
+			// oldMousePosition = mousePosition;
+			// std::cout << "delta " << delta.x << " y " << delta.y << std::endl;
+		}
+	);
+	
+	Application::lateUpdate.AddListener([&](){
+			this->delta = glm::vec2(0, 0);
 		}
 	);
 }

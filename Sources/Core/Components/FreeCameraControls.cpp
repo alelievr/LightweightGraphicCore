@@ -1,6 +1,6 @@
 #include "FreeCameraControls.hpp"
 
-#include "Core/Events/EventSystem.hpp"
+
 #include "Core/Application.hpp"
 #include "Utils/Math.hpp"
 #include "Utils/Vector.hpp"
@@ -32,76 +32,90 @@ void		FreeCameraControls::Initialize(void) noexcept
 	EventSystem::Get()->LockCursor();
 }
 
+using keyDelegateIndex = DelegateIndex<void (LWGC::KeyCode, LWGC::ButtonAction)>;
+
 void		FreeCameraControls::OnEnable(void) noexcept
 {
 	Component::OnEnable();
-
 	// save index
-	// EventSystem::Get()->onKeyPresssed.AddListener(KeypressedCallback)
-	// EventSystem::Get()->onMouseMove.AddListener(KeypressedCallback)
+	keyDelegateIndex index = EventSystem::Get()->onKey.AddListener([&](auto k, auto a){KeyPressedCallback(k, a);});
+	EventSystem::Get()->onMouseMove.AddListener([&](auto k, auto a){MouseMoveedCallback(k, a);});
+	// EventSystem::Get()->onMouseClick.AddListener();
 }
 
 void		FreeCameraControls::OnDisable(void) noexcept
 {
 	Component::OnDisable();
 	// index
-	// EventSystem::Get()->onKeyPresssed.RemoveListener
-	// EventSystem::Get()->onMouseMove.RemoveListener
+	// EventSystem::Get()->onKey.RemoveListener(index);
+	// EventSystem::Get()->onMouseClick.RemoveListener();
+	// EventSystem::Get()->onMouseMove.RemoveListener();
 }
 
-void		FreeCameraControls::KeypressedCallback(void) noexcept //keycode key, action
+void		FreeCameraControls::MouseMoveedCallback(glm::vec2 pos, MouseMoveAction action)
 {
-	// switch (event.GetKeyCode())
+	const auto & event = EventSystem::Get();
+	
+	_rotationX += event->delta.x * _mouseSpeed;
+	_rotationY += event->delta.y * _mouseSpeed;
+
+	_rotationY = std::clamp(_rotationY, -90.0f, 90.0f);
+	transform->SetRotation(glm::angleAxis(_rotationX * Math::DegToRad, glm::vec3(0, 1, 0)));
+	transform->RotateAxis(_rotationY * Math::DegToRad, glm::vec3(1, 0, 0));
+
+	// switch (key)
 	// {
 	// 	case KeyCode::A:
-	// 	case KeyCode::LEFT:
-	// 		_right = (keyDown) ? -1 : 0;
-	// 		break ;
-	// 	case KeyCode::D:
-	// 	case KeyCode::RIGHT:
-	// 		_right = (keyDown) ? 1 : 0;
-	// 		break ;
-	// 	case KeyCode::W:
-	// 	case KeyCode::UP:
-	// 		_forward = (keyDown) ? 1 : 0;
-	// 		break ;
-	// 	case KeyCode::S:
-	// 	case KeyCode::DOWN:
-	// 		_forward = (keyDown) ? -1 : 0;
-	// 		break ;
-	// 	case KeyCode::E:
-	// 		_up = (keyDown) ? 1 : 0;
-	// 		break ;
-	// 	case KeyCode::Q:
-	// 		_up = (keyDown) ? -1 : 0;
-	// 		break ;
-	// 	case KeyCode::KP_ADD:
-	// 		_speed *= 1.1f;
-	// 		break ;
-	// 	case KeyCode::KP_SUBTRACT:
-	// 		_speed /= 1.1f;
-	// 		break ;
-	// 	case KeyCode::SPACE:
-	// 		EventSystem::Get()->ToggleLockCursor();
 	// 	default:
 	// 	break;
 	// }
 }
 
+
+void		FreeCameraControls::KeyPressedCallback(KeyCode key, ButtonAction action)
+{
+	bool buttonPress = action == ButtonAction::Press || action == ButtonAction::Repeat;
+	
+	switch (key)
+	{
+		case KeyCode::A:
+		case KeyCode::LEFT:
+			_right = buttonPress ? -1 : 0;
+			break ;
+		case KeyCode::D:
+		case KeyCode::RIGHT:
+			_right = buttonPress ? 1 : 0;
+			break ;
+		case KeyCode::W:
+		case KeyCode::UP:
+			_forward = buttonPress ? 1 : 0;
+			break ;
+		case KeyCode::S:
+		case KeyCode::DOWN:
+			_forward = buttonPress ? -1 : 0;
+			break ;
+		case KeyCode::E:
+			_up = buttonPress ? 1 : 0;
+			break ;
+		case KeyCode::Q:
+			_up = buttonPress ? -1 : 0;
+			break ;
+		case KeyCode::KP_ADD:
+			_speed *= 1.1f;
+			break ;
+		case KeyCode::KP_SUBTRACT:
+			_speed /= 1.1f;
+			break ;
+		case KeyCode::SPACE:
+			EventSystem::Get()->ToggleLockCursor();
+		default:
+		break;
+	}
+}
+
 void		FreeCameraControls::Update(void) noexcept
 {
-	// const auto & event = EventSystem::Get()->GetCurrentEvent();
-	const bool keyDown = event.GetType() == EventType::KeyDown;
-
-	//take delta from event and add it to eventsystem
-	//take mouseposition from event and add it to eventsystem
-	_rotationX += event.delta.x * _mouseSpeed;
-	_rotationY += event.delta.y * _mouseSpeed;
-
-	_rotationY = std::clamp(_rotationY, -90.0f, 90.0f);
-
-	transform->SetRotation(glm::angleAxis(_rotationX * Math::DegToRad, glm::vec3(0, 1, 0)));
-	transform->RotateAxis(_rotationY * Math::DegToRad, glm::vec3(1, 0, 0));
+	const auto & event = EventSystem::Get();
 
 	transform->Translate((
 		transform->GetRight() * _right

@@ -6,7 +6,7 @@
 #    By: amerelo <amerelo@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2014/07/15 15:13:38 by alelievr          #+#    #+#              #
-#    Updated: 2018/12/22 17:33:14 by amerelo          ###   ########.fr        #
+#    Updated: 2019/01/04 22:49:40 by amerelo          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -56,7 +56,7 @@ SRC			=	Core/Application.cpp \
 				Core/Textures/TextureCube.cpp \
 				Core/Textures/TextureCubeArray.cpp \
 				Core/Textures/Texture3D.cpp \
-				Core/Delegate.cpp \
+				Core/Delegate.tpp \
 				Core/ImGUIWrapper.cpp \
 				Utils/Bounds.cpp \
 				Utils/Color.cpp \

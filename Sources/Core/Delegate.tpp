@@ -22,19 +22,35 @@ namespace LWGC
 			DelegateSet<T>		_functionList;
 
 		public:
-			Delegate(void);
+			Delegate(void) {}
 			Delegate(const Delegate &) = delete;
-			virtual ~Delegate(void);
+			virtual ~Delegate(void) {}
 
 			Delegate &	operator=(Delegate const & src) = delete;
 
-			DelegateIndex<T>	AddListener(DelegateFunction<T> function) noexcept;
-			void			RemoveListener(DelegateIndex<T> index) noexcept;
+			DelegateIndex<T>	AddListener(DelegateFunction<T> function) noexcept
+			{
+				return _functionList.insert(std::make_shared< DelegateFunction<T> >(function)).first;				
+			}
+			
+			void			RemoveListener(DelegateIndex<T> index) noexcept
+			{
+				_functionList.erase(index);				
+			}
 
 			template< typename ...Params>
-			void	Invoke(Params && ... params) noexcept;
+			void	Invoke(Params && ... params) noexcept
+			{
+				for (const auto & function : _functionList)
+					(*function)(std::forward<Params>(params)...);
+			}
 	};
 
 	template< typename T >
-	std::ostream &	operator<<(std::ostream & o, Delegate<T> const & r);
+	std::ostream &	operator<<(std::ostream & o, Delegate<T> const & r)
+	{
+		o << "tostring of the class" << std::endl;
+		(void)r;
+		return (o);
+	}
 }

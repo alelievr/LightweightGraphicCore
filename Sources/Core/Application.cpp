@@ -8,7 +8,8 @@
 using namespace LWGC;
 
 Application *	Application::_app = nullptr;
-Delegate		Application::update;
+Delegate< void(void) >		Application::update;
+Delegate< void(void) >		Application::lateUpdate;
 
 Application::Application(void) : _renderPipeline(nullptr), _window(nullptr), _hierarchy(std::make_shared< Hierarchy >()), _shouldNotQuit(true)
 {
@@ -127,6 +128,7 @@ void				Application::Update(void) noexcept
 	glfwPollEvents();
 
 	Application::update.Invoke();
+	Application::lateUpdate.Invoke();
 
 	//TODO: hierarchy get cameras
 	const auto cameras =_hierarchy->GetCameras();
