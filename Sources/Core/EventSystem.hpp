@@ -27,7 +27,7 @@ namespace LWGC
 
 		public:
 			Delegate< void(void) >								onQuit;
-			Delegate< void(void) >								onFocus;
+			Delegate< void(int) >								onFocus;
 			Delegate< void(KeyCode, ButtonAction) >				onKey;
 			Delegate< void(glm::vec2, ButtonAction) >			onMouseClick;
 			Delegate< void(glm::vec2, MouseMoveAction) >		onMouseMove;

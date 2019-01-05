@@ -12,13 +12,13 @@ EventSystem *	EventSystem::eventSystemInstance;
 EventSystem::EventSystem(void)
 {
 	eventSystemInstance = this;
+	delta = glm::vec2(0, 0);
+	oldMousePosition = glm::vec2(0, 0);
 }
 
 EventSystem::~EventSystem(void)
 {
 }
-
-// self->onKey.Invoke(static_cast< KeyCode >(key), static_cast< KeyAction >(action));
 
 void			EventSystem::BindWindow(GLFWwindow * window)
 {
@@ -36,19 +36,12 @@ void			EventSystem::BindWindow(GLFWwindow * window)
 			self->onMouseMove.Invoke(mousePosition, static_cast< MouseMoveAction >(entered));
 		}
 	);
-	
-		//focus
-	// glfwSetCursorEnterCallback(window, [](GLFWwindow * window, int entered)
-	// 	{
-	// 		auto & self = eventSystems[window];
-	// 		double posX;
-	// 		double posY;
-	// 		glfwGetCursorPos(window, &posX, &posY);
-	// 		const glm::vec2 & mousePosition = glm::vec2(posX, posY);
-			// self->onMouseMove.Invoke(mousePosition, static_cast< MouseMoveAction >(entered));
-	// 	}
-	// );
-	
+	glfwSetWindowFocusCallback(window, [](GLFWwindow* window, int focused)
+		{
+			auto & self = eventSystems[window];
+			self->onFocus.Invoke(focused);
+		}
+	);
 	glfwSetKeyCallback(window, [](GLFWwindow * window, int key, int scancode, int action, int mods)
 		{
 			auto & self = eventSystems[window];
@@ -75,7 +68,6 @@ void			EventSystem::BindWindow(GLFWwindow * window)
 			(void)mods;
 		}
 	);
-	
 	glfwSetCursorPosCallback(window, [](GLFWwindow * window, double posX, double posY)
 		{
 			auto & self = eventSystems[window];
@@ -87,16 +79,7 @@ void			EventSystem::BindWindow(GLFWwindow * window)
 		}
 	);
 
-	// TODO: maybe another function that habdles the event logic
 	Application::update.AddListener([&](){
-			// double posX;
-			// double posY;
-			// const glm::vec2 & mousePosition = glm::vec2(posX, posY);
-			
-			// self->oldMousePosition = mousePosition;
-			// delta = mousePosition - oldMousePosition;
-			// oldMousePosition = mousePosition;
-			// std::cout << "delta " << delta.x << " y " << delta.y << std::endl;
 		}
 	);
 	

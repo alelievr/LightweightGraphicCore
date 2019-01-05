@@ -1,6 +1,5 @@
 #include "FreeCameraControls.hpp"
 
-
 #include "Core/Application.hpp"
 #include "Utils/Math.hpp"
 #include "Utils/Vector.hpp"
@@ -32,45 +31,42 @@ void		FreeCameraControls::Initialize(void) noexcept
 	EventSystem::Get()->LockCursor();
 }
 
-using keyDelegateIndex = DelegateIndex<void (LWGC::KeyCode, LWGC::ButtonAction)>;
-
 void		FreeCameraControls::OnEnable(void) noexcept
 {
 	Component::OnEnable();
-	// save index
-	keyDelegateIndex index = EventSystem::Get()->onKey.AddListener([&](auto k, auto a){KeyPressedCallback(k, a);});
-	EventSystem::Get()->onMouseMove.AddListener([&](auto k, auto a){MouseMoveedCallback(k, a);});
-	// EventSystem::Get()->onMouseClick.AddListener();
+	_keydi = EventSystem::Get()->onKey.AddListener([&](auto k, auto a){KeyPressedCallback(k, a);});
+	_mousemdi = EventSystem::Get()->onMouseMove.AddListener([&](auto k, auto a){MouseMovedCallback(k, a);});
+	_mousecdi = EventSystem::Get()->onMouseClick.AddListener([&](auto k, auto a){MouseClickCallback(k, a);});
 }
 
 void		FreeCameraControls::OnDisable(void) noexcept
 {
 	Component::OnDisable();
-	// index
-	// EventSystem::Get()->onKey.RemoveListener(index);
-	// EventSystem::Get()->onMouseClick.RemoveListener();
-	// EventSystem::Get()->onMouseMove.RemoveListener();
+	EventSystem::Get()->onKey.RemoveListener(_keydi);
+	EventSystem::Get()->onMouseMove.RemoveListener(_mousemdi);
+	EventSystem::Get()->onMouseClick.RemoveListener(_mousecdi);
 }
 
-void		FreeCameraControls::MouseMoveedCallback(glm::vec2 pos, MouseMoveAction action)
+void		FreeCameraControls::MouseClickCallback(glm::vec2 pos, ButtonAction action)
 {
-	const auto & event = EventSystem::Get();
-	
-	_rotationX += event->delta.x * _mouseSpeed;
-	_rotationY += event->delta.y * _mouseSpeed;
-
-	_rotationY = std::clamp(_rotationY, -90.0f, 90.0f);
-	transform->SetRotation(glm::angleAxis(_rotationX * Math::DegToRad, glm::vec3(0, 1, 0)));
-	transform->RotateAxis(_rotationY * Math::DegToRad, glm::vec3(1, 0, 0));
-
-	// switch (key)
-	// {
-	// 	case KeyCode::A:
-	// 	default:
-	// 	break;
-	// }
+	(void)pos;
+	(void)action;
 }
 
+void		FreeCameraControls::MouseMovedCallback(glm::vec2 pos, MouseMoveAction action)
+{
+	if (action == MouseMoveAction::Move)
+	{
+		const auto & event = EventSystem::Get();
+
+		_rotationX += event->delta.x * _mouseSpeed;
+		_rotationY += event->delta.y * _mouseSpeed;
+		_rotationY = std::clamp(_rotationY, -90.0f, 90.0f);
+		
+		transform->SetRotation(glm::angleAxis(_rotationX * Math::DegToRad, glm::vec3(0, 1, 0)));
+		transform->RotateAxis(_rotationY * Math::DegToRad, glm::vec3(1, 0, 0));
+	}
+}
 
 void		FreeCameraControls::KeyPressedCallback(KeyCode key, ButtonAction action)
 {
@@ -115,8 +111,6 @@ void		FreeCameraControls::KeyPressedCallback(KeyCode key, ButtonAction action)
 
 void		FreeCameraControls::Update(void) noexcept
 {
-	const auto & event = EventSystem::Get();
-
 	transform->Translate((
 		transform->GetRight() * _right
 		+ transform->GetUp() * _up
