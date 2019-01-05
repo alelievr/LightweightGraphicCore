@@ -39,7 +39,7 @@ void			Rotator::Update(void) noexcept
 
 	r++;
 
-	// transform->Rotate(1, 1, 0);
+	transform->RotateAxis(1 * Math::DegToRad, glm::vec3(1, 0, 0));
 }
 
 void			Rotator::Initialize(void) noexcept

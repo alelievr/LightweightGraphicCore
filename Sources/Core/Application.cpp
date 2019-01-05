@@ -65,7 +65,7 @@ bool			Application::ShouldNotQuit(void) const noexcept
 
 void			Application::Quit(void) noexcept
 {
-	glfwSetWindowShouldClose(_window, true)
+	glfwSetWindowShouldClose(_window, true);
 }
 
 void		Application::FramebufferResizeCallback(GLFWwindow *window, int width, int height)
@@ -150,6 +150,7 @@ void				Application::Update(void) noexcept
 
 EventSystem *		Application::GetEventSystem(void) noexcept { return &this->_eventSystem; }
 Hierarchy *			Application::GetHierarchy(void) noexcept { return this->_hierarchy.get(); }
+MaterialTable *		Application::GetMaterialTable(void) noexcept { return &this->_materialTable; }
 
 Application *	Application::Get(void) noexcept { return _app; }
 

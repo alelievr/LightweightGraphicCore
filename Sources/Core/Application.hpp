@@ -58,6 +58,7 @@ namespace LWGC
 
 			EventSystem *		GetEventSystem(void) noexcept;
 			Hierarchy *			GetHierarchy(void) noexcept;
+			MaterialTable *		GetMaterialTable(void) noexcept;
 
 			static Application *		Get(void) noexcept;
 

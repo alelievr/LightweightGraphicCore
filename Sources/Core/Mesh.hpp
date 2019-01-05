@@ -31,8 +31,10 @@ namespace LWGC
 				glm::vec3 color;
 				glm::vec2 texCoord;
 
-				static void QuadVertexAttrib(const glm::vec3 & p0, const glm::vec3 & p1, const glm::vec3 & p2,	const glm::vec3 & p3, Mesh::VertexAttributes * targetAttribs) noexcept;
+				static void QuadVertexAttrib(const glm::vec3 & p0, const glm::vec3 & p1, const glm::vec3 & p2, const glm::vec3 & p3, Mesh::VertexAttributes * targetAttribs) noexcept;
 				static void QuadVertexAttrib(float size, const glm::vec3 & normal, Mesh::VertexAttributes * targetAttribs) noexcept;
+				static void TriVertexAttrib(const glm::vec3 & p0, const glm::vec3 & p1, const glm::vec3 & p2, Mesh::VertexAttributes * targetAttribs) noexcept;
+				static void EdgeVertexAttrib(const glm::vec3 & p0, const glm::vec3 & p1, Mesh::VertexAttributes * targetAttribs) noexcept;
 			};
 
 			Mesh(void);
@@ -52,14 +54,17 @@ namespace LWGC
 			void	Draw(VkCommandBuffer cmd);
 			void	Clear(void);
 
+			// transform operation on vertices
+			void	Translate(const glm::vec3 & translation);
+
 			std::vector< int >			GetIndices(void) const;
 			void						SetIndices(const std::vector< int > & tmp);
 			std::vector< VertexAttributes >	GetVertexAttributes(void) const;
 			void						SetVertexAttributes(const std::vector< VertexAttributes > & tmp);
-			
+
 			static std::array< VkVertexInputAttributeDescription, 5 >	GetAttributeDescriptions(void);
 			static std::array< VkVertexInputBindingDescription, 1 >		GetBindingDescription(void);
-			
+
 		private:
 			std::vector< int >			_indices;
 			std::vector< VertexAttributes >	_attributes;

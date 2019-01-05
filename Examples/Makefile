@@ -6,16 +6,18 @@
 #    By: alelievr <marvin@42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2014/07/15 15:13:38 by alelievr          #+#    #+#              #
-#    Updated: 2018/11/06 21:03:14 by alelievr         ###   ########.fr        #
+#    Updated: 2018/12/22 18:24:21 by alelievr         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 all:
 	@$(MAKE) -C basic
+	@$(MAKE) -C gizmos
 	@$(MAKE) -C compute
 
 re:
 	@$(MAKE) re -C basic
+	@$(MAKE) re -C gizmos
 	@$(MAKE) re -C compute
 
 coffee:

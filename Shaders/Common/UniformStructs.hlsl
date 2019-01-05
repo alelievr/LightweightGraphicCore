@@ -24,4 +24,10 @@ struct LWGC_PerMaterial
 	float4		albedo;
 };
 
+struct LWGC_GizmoData
+{
+	float4	color;
+	int		colorMode;
+};
+
 #endif

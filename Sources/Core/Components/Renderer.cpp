@@ -32,6 +32,8 @@ void		Renderer::Initialize(void) noexcept
 {
 	Component::Initialize();
 
+	_material->MarkAsReady();
+
 	_drawCommandBuffer = VulkanInstance::Get()->GetCommandBufferPool()->Allocate(VK_COMMAND_BUFFER_LEVEL_SECONDARY);
 
 	if (_descriptorSetLayout == VK_NULL_HANDLE)

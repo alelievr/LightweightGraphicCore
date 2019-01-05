@@ -56,7 +56,6 @@ VulkanInstance::~VulkanInstance(void)
 
 void			VulkanInstance::Initialize(void)
 {
-	printf("VULKANINSTANCE INIT !\n");
 	_instanceSingleton = this;
 	CreateInstance();
 	SetupDebugCallbacks();

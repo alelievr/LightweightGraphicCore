@@ -5,14 +5,14 @@
 
 using namespace LWGC;
 
-ComputeDispatcher::ComputeDispatcher(Material * material, int width, int height, int depth) : 
+ComputeDispatcher::ComputeDispatcher(Material * material, int width, int height, int depth) :
 	_material(material), _width(width), _height(height), _depth(depth)
 {
 }
 
 ComputeDispatcher::~ComputeDispatcher(void)
 {
-	
+
 }
 
 void	ComputeDispatcher::RecordComputeCommand(VkCommandBuffer cmd) noexcept
@@ -23,6 +23,8 @@ void	ComputeDispatcher::RecordComputeCommand(VkCommandBuffer cmd) noexcept
 void			ComputeDispatcher::Initialize(void) noexcept
 {
 	Component::Initialize();
+
+	_material->MarkAsReady();
 
 	_computeCommandBuffer = VulkanInstance::Get()->GetCommandBufferPool()->Allocate(VK_COMMAND_BUFFER_LEVEL_SECONDARY);
 

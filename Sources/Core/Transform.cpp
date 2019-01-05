@@ -12,6 +12,7 @@ Transform::Transform(void)
 	this->_position = glm::vec3(0, 0, 0);
 	this->_rotation = glm::quat(1, 0, 0, 0);
 	this->_scale = glm::vec3(1, 1, 1);
+	// TODO: replace pitch, yaw and roll by quaternions
 	this->_yaw = 0;
 	this->_pitch = 0;
 	this->_roll = 0;

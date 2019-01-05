@@ -8,10 +8,15 @@ namespace LWGC
 {
 	class		MaterialTable
 	{
+		friend class Material;
+
 		private:
 			std::vector< Material * >	_materials;
-			LWGC::SwapChain				*_swapChain;
-			LWGC::RenderPass			*_renderPass;
+			LWGC::SwapChain *			_swapChain;
+			LWGC::RenderPass *			_renderPass;
+			std::vector< Material >		_stagingMaterials;
+
+			void NotifyMaterialReady(Material * material);
 
 		public:
 			MaterialTable();

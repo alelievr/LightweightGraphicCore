@@ -5,8 +5,8 @@
 #                                                     +:+ +:+         +:+      #
 #    By: amerelo <amerelo@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
-#    Created: 2014/07/15 15:13:38 by alelievr          #+#    #+#              #
-#    Updated: 2019/01/05 18:25:30 by amerelo          ###   ########.fr        #
+#    Created: 0014/07/15 15:13:38 by alelievr          #+#    #+#              #
+#    Updated: 2018/12/22 17:14:01 by alelievr         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -15,68 +15,11 @@
 #################
 
 #	Sources
-SRCDIR		=	Sources
-SRC			=	Core/Application.cpp \
-				Core/Transform.cpp \
-				Core/GameObject.cpp \
-				Core/Hierarchy.cpp \
-				Core/EventSystem.cpp \
-				Core/MaterialTable.cpp \
-				Core/Mesh.cpp \
-				Core/ShaderCache.cpp \
-				Core/Object.cpp \
-				Core/PrimitiveMeshFactory.cpp \
-				Core/ComputeDispatcher.cpp \
-				Core/Components/Component.cpp \
-				Core/Components/Camera.cpp \
-				Core/Components/Renderer.cpp \
-				Core/Components/ProceduralRenderer.cpp \
-				Core/Components/MeshRenderer.cpp \
-				Core/Components/FreeCameraControls.cpp \
-				Core/Components/Light.cpp \
-				Core/Components/Rotator.cpp \
-				Core/ComputeDispatcher.cpp \
-				Core/ShaderCache.cpp \
-				Core/Object.cpp \
-				Core/PrimitiveMeshFactory.cpp \
-				Core/Rendering/ForwardRenderPipeline.cpp \
-				Core/Rendering/RenderTarget.cpp \
-				Core/Rendering/VulkanRenderPipeline.cpp \
-				Core/Rendering/RenderContext.cpp \
-				Core/Shaders/ShaderProgram.cpp \
-				Core/Shaders/ShaderSource.cpp \
-				Core/Shaders/BuiltinShaders.cpp \
-				Core/Shaders/ShaderBindingTable.cpp \
-				Core/Vulkan/CommandBufferPool.cpp \
-				Core/Vulkan/Material.cpp \
-				Core/Vulkan/RenderPass.cpp \
-				Core/Vulkan/SwapChain.cpp \
-				Core/Vulkan/Vk.cpp \
-				Core/Vulkan/VulkanInstance.cpp \
-				Core/Vulkan/VulkanSurface.cpp \
-				Core/Textures/Texture.cpp \
-				Core/Textures/Texture2D.cpp \
-				Core/Textures/Texture2DArray.cpp \
-				Core/Textures/TextureCube.cpp \
-				Core/Textures/TextureCubeArray.cpp \
-				Core/Textures/Texture3D.cpp \
-				Core/Gizmos/GizmoBase.cpp \
-				Core/Gizmos/Line.cpp \
-				Core/Gizmos/Ray.cpp \
-				Core/Gizmos/Frustum.cpp \
-				Core/Gizmos/Circle.cpp \
-				Core/Gizmos/Cone.cpp \
-				Core/Gizmos/Arrow.cpp \
-				Core/ImGUIWrapper.cpp \
-				Utils/Bounds.cpp \
-				Utils/Color.cpp \
-				Utils/Random.cpp \
-				Utils/Rect.cpp \
-				Utils/Math.cpp \
-				Utils/Vector.cpp \
+SRCDIR		=	src
+SRC			=	gizmo.cpp	\
 
 #	Objects
-OBJDIR		=	Objects
+OBJDIR		=	obj
 
 #	Variables
 LIBFT		=	2	#1 or 0 to include the libft / 2 for autodetct
@@ -89,30 +32,26 @@ CPPVERSION	=	c++1z
 #Example $> make DEBUG=2 will set debuglevel to 2
 
 #	Includes
-INCDIRS		=	Sources/ Deps/vulkansdk-macos-1.1.85.0/macOS/include/
+#	The only two required inlcude is sources for LWGC.hpp and the path for vulkan include
+INCDIRS		=	../../sources ../../Deps/vulkansdk-macos-1.1.85.0/macOS/include/
 
 #	Libraries
-LIBDIRS		=	Deps/glfw/src Deps/glslang/install/lib Deps/glm
-LDLIBS		=	-lglfw3 -lglslang -lglm
-
-GLFWLIB     =   Deps/glfw/src/libglfw3.a
-STBLIB      =   Deps/stb/stb.h
-GLMLIB      =   Deps/glm/glm
-GLSLANGLIB	=	Deps/glslang/build/StandAlone/glslangValidator
-IMGUILIB    =   Deps/imgui/libImGUI.a
+LIBDIRS		=	../../ ../../Deps/glfw/src/ ../../Deps/imgui/ ../../Deps/vulkansdk-macos-1.1.85.0/macOS/lib
+LDLIBS		=	-lLWGC -lglfw3 -limgui -lvulkan -lglslang -lSPIRV -lHLSL -lSPVRemapper -lSPIRV-Tools -lSPIRV-Tools-link -lSPIRV-Tools-opt -lspirv-cross -lOSDependent -lOGLCompiler -lspirv-cross
 
 #	Output
-NAME		=	libLWGC.a
+NAME		=	gizmo
 
 #	Compiler
-CFLAGS		=	-Wall -Wextra -pedantic -fPIC
+WERROR		=	
+CFLAGS		=	-pedantic -ffast-math -ffunction-sections -fdata-sections
+CPPFLAGS	=	-Wno-c++98-compat
 CPROTECTION	=	-z execstack -fno-stack-protector
 
 DEBUGFLAGS1	=	-ggdb -fsanitize=address -fno-omit-frame-pointer -fno-optimize-sibling-calls -O0
 DEBUGFLAGS2	=	-fsanitize-memory-track-origins=2
 OPTFLAGS1	=	-funroll-loops -O2
 OPTFLAGS2	=	-pipe -funroll-loops -Ofast
-MYCC		=	clang++
 
 #################
 ##  COLORS     ##
@@ -128,6 +67,8 @@ CCLEAN_T	=	$(CPREFIX)"9m"
 CCLEAN		=	$(CPREFIX)"166m"
 CRUN_T		=	$(CPREFIX)"198m"
 CRUN		=	$(CPREFIX)"163m"
+CDEPEND		=	$(CPREFIX)"231m"
+CDEPEND_T	=	$(CPREFIX)"231m"
 CNORM_T		=	"226m"
 CNORM_ERR	=	"196m"
 CNORM_WARN	=	"202m"
@@ -139,32 +80,34 @@ CNORM_OK	=	"231m"
 
 OS			:=	$(shell uname -s)
 PROC		:=	$(shell uname -p)
-DEBUGFLAGS	=
-LINKDEBUG	=
-OPTFLAGS	=
-#COMPILATION	=
+DEBUGFLAGS	=	
+LINKDEBUG	=	
+OPTFLAGS	=	
+#COMPILATION	=	
 
 ifeq "$(OS)" "Windows_NT"
 endif
 ifeq "$(OS)" "Linux"
-	LDLIBS		+=
-	DEBUGFLAGS	+=
-ifndef VULKAN_SDK
-	DOWNLOAD_VULKAN = echo error Vulkan SDK not found, please install it: https://vulkan.lunarg.com/sdk/home\#linux
-endif
-	INCDIRS		+= $(VULKAN_SDK)/include
-	VULKAN		= $(VULKAN_SDK)/lib/libvulkan.dylib
+	LDLIBS		+= 
+	DEBUGFLAGS	+= -fsanitize=memory -fsanitize-memory-use-after-dtor -fsanitize=thread
 endif
 ifeq "$(OS)" "Darwin"
-	CFLAGS			+= "-ferror-limit=999"
-	MoltenTar		= moltenVK.tar.gz
-	MoltentUrl		= https://sdk.lunarg.com/sdk/download/1.1.85.0/mac/vulkansdk-macos-1.1.85.0.tar.gz?Human=true
-	DOWNLOAD_VULKAN = curl -o $(MoltenTar) $(MoltentUrl) && tar -xf $(MoltenTar) -C Deps/
-	VULKAN_SDK		= $(shell pwd)/Deps/vulkansdk-macos-1.1.85.0/macOS
-	LD_LIBRARY_PATH	= $(VULKAN_SDK)/lib
-	VK_ICD_FILENAMES= $(VULKAN_SDK)/etc/vulkan/icd.d/MoltenVK_icd.json
-	INCDIRS			+= $(VULKAN_SDK)/include
-	VULKAN			= $(VULKAN_SDK)/lib/libvulkan.dylib
+	FRAMEWORK	=	OpenGL AppKit IOKit CoreVideo
+endif
+
+COMPILER	=	$(shell readlink $(which cc))
+ifneq (,$(findstring clang++,$(COMPILER)))
+	#Clang++ compiler
+	CFLAGS	+= -dead_strip
+else ifneq (,$(findstring clang,$(COMPILER)))
+	#Clang compiler
+	CFLAGS	+= -dead_strip
+else ifneq (,$(findstring gcc,$(COMPILER)))
+	#GCC compiler
+	CFLAGS	+=	--gc-sections
+else ifneq (,$(findstring gcc++,$(COMPILER)))
+	#G++ compiler
+	CFLAGS	+=	--gc-sections
 endif
 
 #################
@@ -178,19 +121,24 @@ OBJS		=	$(patsubst %.c,%.o, $(filter %.c, $(SRC))) \
 OBJ			=	$(addprefix $(OBJDIR)/,$(notdir $(OBJS)))
 NORME		=	**/*.[ch]
 VPATH		+=	$(dir $(addprefix $(SRCDIR)/,$(SRC)))
+VFRAME		=	$(addprefix -framework ,$(FRAMEWORK))
 INCFILES	=	$(foreach inc, $(INCDIRS), $(wildcard $(inc)/*.h))
-CPPFLAGS	=	$(addprefix -I,$(INCDIRS))
+INCFLAGS	=	$(addprefix -I,$(INCDIRS))
 LDFLAGS		=	$(addprefix -L,$(LIBDIRS))
-LINKER		=	ar
-LINKFLAGS	=	rc
+LINKER		=	$(CC)
 
-disp_indent	=	for I in `seq 1 $(MAKELEVEL)`; do \
-					test "$(MAKELEVEL)" '!=' '0' && printf "\t"; \
+disp_indent	=	tabs=""; \
+				for I in `seq 1 $(MAKELEVEL)`; do \
+					test "$(MAKELEVEL)" '!=' '0' && tabs=$$tabs"\t"; \
 				done
+
 color_exec	=	$(call disp_indent); \
-				echo $(1)➤ $(3)$(2)"\n"$(strip $(4))$(CCLEAR);$(4)
+				echo $$tabs$(1)➤ $(3)$(2); \
+				echo $$tabs '$(strip $(4))' $(CCLEAR); \
+				$(4)
+
 color_exec_t=	$(call disp_indent); \
-				echo $(1)➤ $(strip $(3))$(2)$(CCLEAR);$(3)
+				echo $(1)➤ '$(strip $(3))'$(2);$(3);printf $(CCLEAR)
 
 ifneq ($(filter 1,$(strip $(DEBUGLEVEL)) ${DEBUG}),)
 	OPTLEVEL = 0
@@ -206,11 +154,11 @@ ifneq ($(filter 2,$(strip $(DEBUGLEVEL)) ${DEBUG}),)
 endif
 
 ifneq ($(filter 1,$(strip $(OPTLEVEL)) ${OPTI}),)
-	DEBUGFLAGS = ""
+	DEBUGFLAGS = 
 	OPTFLAGS = $(OPTFLAGS1)
 endif
 ifneq ($(filter 2,$(strip $(OPTLEVEL)) ${OPTI}),)
-	DEBUGFLAGS = ""
+	DEBUGFLAGS = 
 	OPTFLAGS = $(OPTFLAGS1) $(OPTFLAGS2)
 endif
 
@@ -218,11 +166,19 @@ ifndef $(CXX)
 	CXX = clang++
 endif
 
+ifneq ($(filter %.cpp,$(SRC)),)
+	LINKER = $(CXX)
+endif
+
+ifdef ${NOWERROR}
+	WERROR = 
+endif
+
 ifeq "$(strip $(LIBFT))" "2"
 ifneq ($(wildcard ./libft),)
-	LIBDIRS += " -Llibft"
-	LDLIBS += " -lft"
-	INCDIRS += " -Ilibft"
+	LIBDIRS += "libft"
+	LDLIBS += "-lft"
+	INCDIRS += "libft/include"
 endif
 endif
 
@@ -231,55 +187,28 @@ endif
 #################
 
 #	First target
-all: $(VULKAN) $(GLFWLIB) $(OBJLIB) $(GLMLIB) $(IMGUILIB) $(GLSLANGLIB) $(STBLIB) $(NAME)
-
-$(GLMLIB):
-	@git submodule init
-	@git submodule update
-
-$(STBLIB):
-	@git submodule init
-	@git submodule update
-
-$(GLFWLIB):
-	@git submodule init
-	@git submodule update
-	#@cd Deps/glfw && VULKAN_SDK=$(VULKAN_SDK) cmake -DVULKAN_STATIC_LIBRARY=0 -DCMAKE_FIND_FRAMEWORK=${VULKAN_SDK}/../ -DVULKAN_INCLUDE_DIR=${VULKAN_SDK}/include -DVULKAN_LIBRARY=${VULKAN_SDK}/lib/libvulkan.dylib -DGLFW_BUILD_EXAMPLES=OFF . && $(MAKE) -j 4
-	@cd Deps/glfw && VULKAN_SDK=$(VULKAN_SDK) cmake -DVULKAN_STATIC_LIBRARY=0 . && $(MAKE) -j 4
-
-$(GLSLANGLIB):
-	@git submodule init
-	@git submodule update
-	@cd Deps/glslang && mkdir -p build && cd build && cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX="$(pwd)/../install" .. && $(MAKE) -j 4
-
-$(IMGUILIB):
-	@git submodule init
-	@git submodule update
-	@$(MAKE) -f ImGUI.Makefile -j 4
-
-$(VULKAN):
-	@$(DOWNLOAD_VULKAN)
+all: $(NAME)
 
 #	Linking
 $(NAME): $(OBJ)
-	@$(if $(findstring libft,$(LDLIBS)),$(call color_exec_t,$(CCLEAR),$(CCLEAR),\
+	@$(if $(findstring lft,$(LDLIBS)),$(call color_exec_t,$(CCLEAR),$(CCLEAR),\
 		make -j 4 -C libft))
 	@$(call color_exec,$(CLINK_T),$(CLINK),"Link of $(NAME):",\
-		$(LINKER) $(LINKFLAGS) $@ $^)
+		$(LINKER) $(WERROR) $(CFLAGS) $(LDFLAGS) $(LDLIBS) $(OPTFLAGS) $(DEBUGFLAGS) $(LINKDEBUG) $(VFRAME) -o $@ $^)
 
 $(OBJDIR)/%.o: %.cpp $(INCFILES)
-	@mkdir -p $(OBJDIR)
+	@mkdir -p $(OBJDIR)/$(dir $<)
 	@$(call color_exec,$(COBJ_T),$(COBJ),"Object: $@",\
-		$(CXX) -std=$(CPPVERSION) $(CFLAGS) $(OPTFLAGS) $(DEBUGFLAGS) $(CPPFLAGS) -o $@ -c $<)
+		$(CXX) -std=$(CPPVERSION) $(WERROR) $(CFLAGS) $(OPTFLAGS) $(DEBUGFLAGS) $(CPPFLAGS) $(INCFLAGS) -o $@ -c $<)
 
 #	Objects compilation
 $(OBJDIR)/%.o: %.c $(INCFILES)
-	@mkdir -p $(OBJDIR)
+	@mkdir -p $(OBJDIR)/$(dir $<)
 	@$(call color_exec,$(COBJ_T),$(COBJ),"Object: $@",\
-		$(MYCC) $(CFLAGS) $(OPTFLAGS) $(DEBUGFLAGS) $(CPPFLAGS) -o $@ -c $<)
+		$(CC) $(WERROR) $(CFLAGS) $(OPTFLAGS) $(DEBUGFLAGS) $(INCFLAGS) -o $@ -c $<)
 
 $(OBJDIR)/%.o: %.s
-	@mkdir -p $(OBJDIR)
+	@mkdir -p $(OBJDIR)/$(dir $<)
 	@$(call color_exec,$(COBJ_T),$(COBJ),"Object: $@",\
 		$(NASM) -f macho64 -o $@ $<)
 
@@ -294,12 +223,8 @@ fclean: clean
 	@$(call color_exec,$(CCLEAN_T),$(CCLEAN),"Fclean:",\
 		$(RM) $(NAME))
 
-examples:
-	@$(MAKE) -C examples
-
 #	All removing then compiling
-re: fclean
-	@$(MAKE) all
+re: fclean all
 
 f:	all run
 
@@ -418,4 +343,4 @@ coffee:
 	@echo '         ""--..,,_____            _____,,..--"""'''
 	@echo '                      """------"""'
 
-.PHONY: all clean fclean re norme codesize examples
+.PHONY: all clean fclean re norme codesize

@@ -47,6 +47,15 @@
 #include "Core/Components/ComputeDispatcher.hpp"
 #include "Core/Components/Rotator.hpp"
 
+// Gimos & handles
+#include "Core/Gizmos/Line.hpp"
+#include "Core/Gizmos/Ray.hpp"
+#include "Core/Gizmos/Frustum.hpp"
+#include "Core/Gizmos/Circle.hpp"
+#include "Core/Gizmos/Cone.hpp"
+#include "Core/Gizmos/Arrow.hpp"
+
 // Utils
 #include "Utils/Bounds.hpp"
 #include "Utils/Rect.hpp"
+#include "Utils/Math.hpp"
