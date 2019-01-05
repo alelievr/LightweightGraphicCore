@@ -16,6 +16,8 @@ Transform::Transform(void)
 	this->_yaw = 0;
 	this->_pitch = 0;
 	this->_roll = 0;
+
+	UpdateLocalToWorldMatrix();
 }
 
 Transform::~Transform(void)

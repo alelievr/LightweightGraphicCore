@@ -120,7 +120,9 @@ void			VulkanRenderPipeline::BeginRenderPass(RenderContext & context)
 		throw std::runtime_error("failed to begin recording command buffer!");
 	}
 
-	renderPass.SetCurrentCommandBuffers(commandBuffer);
+	framebuffer = swapChain->GetFramebuffers()[currentFrame]; // TODO: simplify this
+
+	renderPass.BeginFrame(commandBuffer, framebuffer);
 
 	// Run all compute shaders before begin render pass:
 	std::unordered_set< ComputeDispatcher * >	computeDispatchers;
@@ -135,7 +137,8 @@ void			VulkanRenderPipeline::BeginRenderPass(RenderContext & context)
 
 		renderPass.BindMaterial(m);
 
-		renderPass.EnqueueCommand(compute->GetCommandBuffer());
+		// TODO: compute
+		// renderPass.ExecuteCommands(compute->GetCommandBuffer());
 	}
 
 	renderPass.ClearBindings();
@@ -143,7 +146,7 @@ void			VulkanRenderPipeline::BeginRenderPass(RenderContext & context)
 	VkRenderPassBeginInfo renderPassInfo = {};
 	renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
 	renderPassInfo.renderPass = renderPass.GetRenderPass();
-	renderPassInfo.framebuffer = swapChain->GetFramebuffers()[currentFrame]; // TODO: simplify this
+	renderPassInfo.framebuffer = framebuffer;
 	renderPassInfo.renderArea.offset = {0, 0};
 	renderPassInfo.renderArea.extent = swapChain->GetExtent();
 
@@ -363,8 +366,12 @@ void	VulkanRenderPipeline::Render(const std::vector< Camera * > & cameras, Rende
 			auto m = meshRenderer->GetMaterial();
 			renderPass.BindDescriptorSet(LWGCBinding::Object, meshRenderer->GetDescriptorSet());
 			renderPass.BindMaterial(m);
-
-			renderPass.EnqueueCommand(meshRenderer->GetDrawCommandBuffer());
+			
+			// Get the command buffer, should be empty at this state
+			VkCommandBuffer drawMeshBuffer = meshRenderer->GetCommandBuffer();
+			renderPass.BeginSecondaryCommandBuffer(drawMeshBuffer, VK_COMMAND_BUFFER_USAGE_RENDER_PASS_CONTINUE_BIT);
+			meshRenderer->RecordCommands(drawMeshBuffer);
+			renderPass.ExecuteCommandBuffer(drawMeshBuffer);
 		}
 	}
 

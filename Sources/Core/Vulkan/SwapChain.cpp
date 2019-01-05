@@ -2,6 +2,7 @@
 #include "Vk.hpp"
 
 #include <array>
+#include <limits>
 
 using namespace LWGC;
 

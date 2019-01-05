@@ -24,6 +24,7 @@ void	MaterialTable::RegsiterMaterial(Material * material)
 
 void	MaterialTable::DestroyMaterials()
 {
+	printf("deivice: %p\n", VulkanInstance::Get()->GetDevice());
 	for (auto material: _materials) {
 		delete material;
 	}

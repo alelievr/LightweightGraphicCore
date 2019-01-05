@@ -37,7 +37,7 @@ void			Texture::AllocateImage(VkImageViewType viewType)
 {
 	this->allocated = true;
 
-	Vk::CreateImage(width, height, depth, arraySize, maxMipLevel, format, VK_IMAGE_TILING_OPTIMAL, usage, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT, image, memory);
+	Vk::CreateImage(width, height, depth, arraySize, maxMipLevel, format, VK_IMAGE_TILING_OPTIMAL, usage, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, image, memory);
 	view = Vk::CreateImageView(image, format, maxMipLevel, viewType, VK_IMAGE_ASPECT_COLOR_BIT);
 }
 

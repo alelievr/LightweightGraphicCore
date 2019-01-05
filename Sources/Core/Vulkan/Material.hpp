@@ -5,16 +5,16 @@
 
 #include "Core/Textures/Texture.hpp"
 #include "Core/Vulkan/UniformBuffer.hpp"
-#include "IncludeDeps.hpp"
 #include "Core/Shaders/ShaderBindingTable.hpp"
 #include "Core/Vulkan/RenderPass.hpp"
 #include "Core/Shaders/BuiltinShaders.hpp"
+#include "Core/Shaders/ShaderProgram.hpp"
+#include "IncludeDeps.hpp"
 
 #include VULKAN_INCLUDE
 #include GLM_INCLUDE
 #include "VulkanInstance.hpp"
 #include "Vk.hpp"
-#include "Core/Shaders/ShaderProgram.hpp"
 
 namespace LWGC
 {
@@ -99,6 +99,7 @@ namespace LWGC
 			void		CreateComputePipeline(void);
 			void		BindDescriptorSets(RenderPass * renderPass);
 			void		SetupDefaultSettings(void);
+			bool		DescriptorSetExists(const std::string & bindingName, bool silent);
 
 		public:
 			Material(const Material &);
@@ -123,9 +124,9 @@ namespace LWGC
 			void				GetComputeWorkSize(uint32_t & width, uint32_t & height, uint32_t & depth) const;
 			bool				IsCompute(void) const;
 
-			void				SetBuffer(const std::string & bindingName, VkBuffer buffer, size_t size, VkDescriptorType descriptorType);
-			void				SetTexture(const std::string & bindingName, const Texture & texture, VkImageLayout imageLayout, VkDescriptorType descriptorType);
-			void				SetSampler(const std::string & bindingName, VkSampler sampler);
+			void				SetBuffer(const std::string & bindingName, VkBuffer buffer, size_t size, VkDescriptorType descriptorType, bool silent = false);
+			void				SetTexture(const std::string & bindingName, const Texture & texture, VkImageLayout imageLayout, VkDescriptorType descriptorType, bool silent = false);
+			void				SetSampler(const std::string & bindingName, VkSampler sampler, bool silent = false);
 
 			void				SetVertexInputState(VkPipelineVertexInputStateCreateInfo info);
 			void				SetInputAssemblyState(VkPipelineInputAssemblyStateCreateInfo info);

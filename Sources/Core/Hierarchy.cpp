@@ -1,4 +1,6 @@
-#include "Hierarchy.hpp"
+#include "Core/Hierarchy.hpp"
+
+#include <algorithm>
 
 #include "Core/GameObject.hpp"
 

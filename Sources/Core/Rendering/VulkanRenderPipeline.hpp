@@ -47,6 +47,7 @@ namespace LWGC
 			VulkanInstance *				instance;
 			size_t							currentFrame = 0;
 			RenderPass						renderPass;
+			VkFramebuffer					framebuffer;
 			SwapChain *						swapChain;
 			VkCommandBuffer					commandBuffer;
 			bool							framebufferResized;
