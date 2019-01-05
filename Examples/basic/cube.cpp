@@ -2,13 +2,15 @@
 
 using namespace LWGC;
 
-void		ProcessEvent(EventSystem * es, Application & app)
+void	ProcessEvent(EventSystem * es, Application & app)
 {
-	// const Event &	current = es->GetCurrentEvent();
-
-	// if (current.GetType() == EventType::KeyDown
-	// 	&& current.GetKeyCode() == KeyCode::ESCAPE)
-	// 	app.Quit();
+	es->Get()->onKey.AddListener([&](KeyCode key, ButtonAction action)
+		{
+			if (action == ButtonAction::Press
+				&& key == KeyCode::ESCAPE)
+					app.Quit();
+		}
+	);
 }
 
 int			main(void)
@@ -39,10 +41,8 @@ int			main(void)
 
 	textureMaterial->SetTexture(TextureBinding::Albedo, animeTexture, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE);
 
+	ProcessEvent(es, app);
 	while (app.ShouldNotQuit())
-	{
 		app.Update();
-		ProcessEvent(es, app);
-	}
 	return (0);
 }

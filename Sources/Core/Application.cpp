@@ -65,7 +65,7 @@ bool			Application::ShouldNotQuit(void) const noexcept
 
 void			Application::Quit(void) noexcept
 {
-	_shouldNotQuit = false;
+	glfwSetWindowShouldClose(_window, true)
 }
 
 void		Application::FramebufferResizeCallback(GLFWwindow *window, int width, int height)

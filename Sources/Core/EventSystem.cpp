@@ -12,8 +12,6 @@ EventSystem *	EventSystem::eventSystemInstance;
 EventSystem::EventSystem(void)
 {
 	eventSystemInstance = this;
-	// delta = glm::vec2(0, 0);
-	// oldMousePosition = glm::vec2(0, 0);
 }
 
 EventSystem::~EventSystem(void)

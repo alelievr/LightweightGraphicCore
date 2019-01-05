@@ -6,7 +6,7 @@
 /*   By: amerelo <amerelo@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/08/27 21:37:58 by alelievr          #+#    #+#             */
-/*   Updated: 2019/01/05 15:50:16 by amerelo          ###   ########.fr       */
+/*   Updated: 2019/01/05 18:42:25 by amerelo          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,8 +36,6 @@
 
 // Event System
 #include "Core/EventSystem.hpp"
-//#include "Core/Events/Event.hpp"
-//#include "Core/Events/Input.hpp"
 #include "Core/KeyCode.hpp"
 
 // Components

@@ -2,15 +2,16 @@
 
 using namespace LWGC;
 
-void		ProcessEvent(EventSystem * es, Application & app)
+void	ProcessEvent(EventSystem * es, Application & app)
 {
-	// const Event &	current = es->GetCurrentEvent();
-
-	// if (current.GetType() == EventType::KeyDown
-	// 	&& current.GetKeyCode() == KeyCode::ESCAPE)
-	// 	app.Quit();
+	es->Get()->onKey.AddListener([&](KeyCode key, ButtonAction action)
+		{
+			if (action == ButtonAction::Press
+				&& key == KeyCode::ESCAPE)
+					app.Quit();
+		}
+	);
 }
-
 void		InitFullscreenTarget(Hierarchy * hierarchy)
 {
 	auto		fullScreenMaterial = Material::Create(BuiltinShaders::Standard, BuiltinShaders::FullScreenQuad);
@@ -68,11 +69,9 @@ int			main(void)
 	InitCamera(hierarchy);
 	InitFullscreenTarget(hierarchy);
 
-	while (app.ShouldNotQuit())
-	{
-		app.Update();
 		ProcessEvent(es, app);
-	}
+	while (app.ShouldNotQuit())
+		app.Update();
 	
 	return (0);
 }
