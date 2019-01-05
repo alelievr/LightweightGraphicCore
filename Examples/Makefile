@@ -12,9 +12,11 @@
 
 all:
 	@$(MAKE) -C basic
+	@$(MAKE) -C compute
 
 re:
 	@$(MAKE) re -C basic
+	@$(MAKE) re -C compute
 
 coffee:
 	@clear

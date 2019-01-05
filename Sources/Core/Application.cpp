@@ -47,7 +47,11 @@ void			Application::Init(void) noexcept
 	if (_renderPipeline == nullptr)
 		this->_renderPipeline = new ForwardRenderPipeline();
 
-	_instance.SetValidationLayers({});
+#ifdef __unix__
+	_instance.SetValidationLayers({
+		"VK_LAYER_LUNARG_standard_validation"
+	});
+#endif
 	_instance.SetDeviceExtensions({VK_KHR_SWAPCHAIN_EXTENSION_NAME});
 	_instance.SetApplicationName("LWGC"); // This should be the application name but for the moment we'll keep it like this
 
@@ -106,6 +110,7 @@ void			Application::Open(const std::string & name, const int width, const int he
 
 		_renderPipeline->Initialize(&_swapChain);
 		_renderPipeline->CreateSyncObjects();
+		_materialTable.Initialize(&_swapChain, _renderPipeline->GetRenderPass());
 		_hierarchy->Initialize();
 	} catch (const std::runtime_error & e) {
 		std::cout << "Error while initializing the render pipeline:" << std::endl << e.what() << std::endl;

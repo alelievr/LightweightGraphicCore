@@ -26,6 +26,7 @@ namespace LWGC
 			using DescriptorBindings = std::unordered_map< std::string, DescriptorSet >;
 
 			VkRenderPass							_renderPass;
+			VkFramebuffer							_framebuffer;
 			VulkanInstance *						_instance;
 			SwapChain *								_swapChain;
 	
@@ -38,7 +39,7 @@ namespace LWGC
 			DescriptorBindings						_currentBindings;
 			Material * 			_currentMaterial;
 
-			void	UpdateDescriptorBindings(void);
+			void	UpdateDescriptorBindings(VkCommandBuffer cmd);
 			bool	BindDescriptorSet(const uint32_t binding, VkDescriptorSet set);
 	
 		public:
@@ -57,8 +58,9 @@ namespace LWGC
 			void	BindBuffer(const std::string & bindingName, VkBuffer buffer, size_t size, VkDescriptorType descriptorType);
 			void	BindTexture(const std::string & bindingName, const Texture & texture, VkImageLayout imageLayout, VkDescriptorType descriptorType);
 			void	BindSampler(const std::string & bindingName, VkSampler sampler);
-			void	SetCurrentCommandBuffers(const VkCommandBuffer commandBuffer);
-			void	EnqueueCommand(VkCommandBuffer secondaryCommandBuffer);
+			void	BeginFrame(VkCommandBuffer commandBuffer, VkFramebuffer framebuffer);
+			void	BeginSecondaryCommandBuffer(VkCommandBuffer cmd, VkCommandBufferUsageFlagBits commandBufferUsage);
+			void	ExecuteCommandBuffer(VkCommandBuffer cmd);
 			void	Cleanup(void) noexcept;
 			void	Create(void);
 			void	ClearBindings(void);

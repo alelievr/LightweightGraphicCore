@@ -102,20 +102,15 @@ void	RenderPass::BindMaterial(Material * material)
 	// mark all bindings to changed set they're all rebinded to the new material
 	for (auto & b : _currentBindings)
 		b.second.hasChanged = true;
-
-	vkCmdBindPipeline(
-		_commandBuffer,
-		_currentMaterial->IsCompute() ?	VK_PIPELINE_BIND_POINT_COMPUTE : VK_PIPELINE_BIND_POINT_GRAPHICS,
-		material->GetPipeline()
-	);
 }
 
-void	RenderPass::SetCurrentCommandBuffers(const VkCommandBuffer commandBuffer)
+void	RenderPass::BeginFrame(VkCommandBuffer commandBuffer, VkFramebuffer framebuffer)
 {
 	_commandBuffer = commandBuffer;
+	_framebuffer = framebuffer;
 }
 
-void	RenderPass::UpdateDescriptorBindings(void)
+void	RenderPass::UpdateDescriptorBindings(VkCommandBuffer cmd)
 {
 	// Bind all descriptor that have changed
 	for (auto & b : _currentBindings)
@@ -127,8 +122,8 @@ void	RenderPass::UpdateDescriptorBindings(void)
 			if (firstSet != -1u)
 			{
 				vkCmdBindDescriptorSets(
-					_commandBuffer,
-					_currentMaterial->IsCompute() ?	VK_PIPELINE_BIND_POINT_COMPUTE : VK_PIPELINE_BIND_POINT_GRAPHICS, 
+					cmd,
+					_currentMaterial->IsCompute() ?	VK_PIPELINE_BIND_POINT_COMPUTE : VK_PIPELINE_BIND_POINT_GRAPHICS,
 					_currentMaterial->GetPipelineLayout(),
 					firstSet,
 					1, &b.second.set,
@@ -139,13 +134,41 @@ void	RenderPass::UpdateDescriptorBindings(void)
 	}
 }
 
-void	RenderPass::EnqueueCommand(VkCommandBuffer secondaryCommandBuffer)
+void	RenderPass::BeginSecondaryCommandBuffer(VkCommandBuffer cmd, VkCommandBufferUsageFlagBits commandBufferUsage)
 {
-	UpdateDescriptorBindings();
+	VkCommandBufferInheritanceInfo	inheritanceInfo = {};
+	inheritanceInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_INHERITANCE_INFO;
+	inheritanceInfo.renderPass = _renderPass;
+	inheritanceInfo.framebuffer = _framebuffer;
 
-	// The bind pipeline command is inside this command buffer, it 
-	// should be sorted to avoid unnecessary pipeline switch
-	vkCmdExecuteCommands(_commandBuffer, 1, &secondaryCommandBuffer);
+	VkCommandBufferBeginInfo beginInfo = {};
+	beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+	beginInfo.flags = commandBufferUsage;
+	beginInfo.pInheritanceInfo = &inheritanceInfo;
+
+	if (vkBeginCommandBuffer(cmd, &beginInfo) != VK_SUCCESS)
+	{
+		throw std::runtime_error("failed to begin recording command buffer!");
+	}
+
+	// The bind pipelines should be sorted to avoid unnecessary pipeline switch
+	vkCmdBindPipeline(
+		cmd,
+		_currentMaterial->IsCompute() ? VK_PIPELINE_BIND_POINT_COMPUTE : VK_PIPELINE_BIND_POINT_GRAPHICS,
+		_currentMaterial->GetPipeline()
+	);
+	
+	UpdateDescriptorBindings(cmd);
+}
+
+void	RenderPass::ExecuteCommandBuffer(VkCommandBuffer cmd)
+{
+	if (vkEndCommandBuffer(cmd) != VK_SUCCESS)
+	{
+		throw std::runtime_error("failed to record command buffer!");
+	}
+
+	vkCmdExecuteCommands(_commandBuffer, 1, &cmd);
 }
 
 void	RenderPass::ClearBindings(void)

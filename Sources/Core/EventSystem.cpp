@@ -12,8 +12,8 @@ EventSystem *	EventSystem::eventSystemInstance;
 EventSystem::EventSystem(void)
 {
 	eventSystemInstance = this;
-	delta = glm::vec2(0, 0);
-	oldMousePosition = glm::vec2(0, 0);
+	// delta = glm::vec2(0, 0);
+	// oldMousePosition = glm::vec2(0, 0);
 }
 
 EventSystem::~EventSystem(void)
@@ -78,6 +78,14 @@ void			EventSystem::BindWindow(GLFWwindow * window)
 			self->onMouseMove.Invoke(mousePosition, MouseMoveAction::Move);
 		}
 	);
+	double posX;
+	double posY;
+	glfwGetCursorPos(window, &posX, &posY);
+	const glm::vec2 & mousePosition = glm::vec2(posX, posY);
+
+	delta = mousePosition - oldMousePosition;
+	oldMousePosition = mousePosition;
+	onMouseMove.Invoke(mousePosition, MouseMoveAction::Move);
 
 	Application::update.AddListener([&](){
 		}

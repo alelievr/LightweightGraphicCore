@@ -1,4 +1,7 @@
-#include "FreeCameraControls.hpp"
+#include "Core/Components/FreeCameraControls.hpp"
+
+#include <cmath>
+
 
 #include "Core/Application.hpp"
 #include "Utils/Math.hpp"
@@ -61,7 +64,7 @@ void		FreeCameraControls::MouseMovedCallback(glm::vec2 pos, MouseMoveAction acti
 
 		_rotationX += event->delta.x * _mouseSpeed;
 		_rotationY += event->delta.y * _mouseSpeed;
-		_rotationY = std::clamp(_rotationY, -90.0f, 90.0f);
+		_rotationY = glm::clamp(_rotationY, -90.0f, 90.0f);
 		
 		transform->SetRotation(glm::angleAxis(_rotationX * Math::DegToRad, glm::vec3(0, 1, 0)));
 		transform->RotateAxis(_rotationY * Math::DegToRad, glm::vec3(1, 0, 0));

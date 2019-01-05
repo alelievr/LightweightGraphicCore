@@ -38,4 +38,4 @@ Examples/basic/simple
 *.tar.gz
 
 # deps
-deps/vulkansdk-macos-1.1.85.0/
+Deps/vulkansdk-macos-1.1.85.0/

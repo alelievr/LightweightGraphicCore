@@ -24,9 +24,6 @@ void			ComputeDispatcher::Initialize(void) noexcept
 {
 	Component::Initialize();
 
-	VulkanRenderPipeline * renderPipeline = VulkanRenderPipeline::Get();
-
-	_material->Initialize(renderPipeline->GetSwapChain(), renderPipeline->GetRenderPass());
 	_computeCommandBuffer = VulkanInstance::Get()->GetCommandBufferPool()->Allocate(VK_COMMAND_BUFFER_LEVEL_SECONDARY);
 
 	// Record command buffer:

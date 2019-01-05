@@ -6,11 +6,10 @@
 /*   By: amerelo <amerelo@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/08/27 21:37:58 by alelievr          #+#    #+#             */
-/*   Updated: 2019/01/04 21:23:26 by amerelo          ###   ########.fr       */
+/*   Updated: 2019/01/05 15:50:16 by amerelo          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#pragma once
 
 #define LWGC_GLOBAL_INCLUDE
 

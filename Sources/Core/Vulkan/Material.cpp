@@ -36,9 +36,6 @@ const std::string	LWGCBinding::Object = "object";
 
 Material::Material(void)
 {
-	this->_pipelineLayout = VK_NULL_HANDLE;
-	this->_pipeline = VK_NULL_HANDLE;
-	this->_bindingTable = nullptr;
 	_program = ShaderCache::GetShader(BuiltinShaders::Pink, BuiltinShaders::DefaultVertex);
 	SetupDefaultSettings();
 }
@@ -46,14 +43,12 @@ Material::Material(void)
 Material::Material(const std::string & shader, VkShaderStageFlagBits stage)
 {
 	_program = ShaderCache::GetShader(shader, stage);
-	this->_bindingTable = nullptr;
 	SetupDefaultSettings();
 }
 
 Material::Material(const std::string & fragmentShader, const std::string & vertexShader)
 {
 	_program = ShaderCache::GetShader(fragmentShader, vertexShader);
-	this->_bindingTable = nullptr;
 	SetupDefaultSettings();
 }
 
@@ -119,6 +114,14 @@ Material *Material::Create(ShaderProgram * program)
 
 void					Material::SetupDefaultSettings(void)
 {
+	this->_pipelineLayout = VK_NULL_HANDLE;
+	this->_pipeline = VK_NULL_HANDLE;
+	this->_bindingTable = nullptr;
+	this->_instance = nullptr;
+	this->_device = VK_NULL_HANDLE;
+	this->_swapChain = nullptr;
+	this->_renderPass = nullptr;
+
 	static auto bindingDescription = Mesh::GetBindingDescription();
 	static auto attributeDescriptions = Mesh::GetAttributeDescriptions();
 
@@ -174,14 +177,13 @@ void					Material::Initialize(SwapChain * swapChain, RenderPass * renderPass)
 	// For graphic shaders, we bind default resources
 	if (!IsCompute())
 	{
-		AllocateDescriptorSet(LWGCBinding::Material);
-		SetBuffer(LWGCBinding::Material, _uniformPerMaterial.buffer, sizeof(LWGC_PerMaterial), VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER);
-		SetSampler(SamplerBinding::TrilinearClamp, Vk::Samplers::trilinearClamp);
-		SetSampler(SamplerBinding::TrilinearRepeat, Vk::Samplers::trilinearRepeat);
-		SetSampler(SamplerBinding::NearestClamp, Vk::Samplers::nearestClamp);
-		SetSampler(SamplerBinding::NearestRepeat, Vk::Samplers::nearestRepeat);
-		SetSampler(SamplerBinding::AnisotropicTrilinearClamp, Vk::Samplers::anisotropicTrilinearClamp);
-		SetSampler(SamplerBinding::DepthCompare, Vk::Samplers::depthCompare);
+		SetBuffer(LWGCBinding::Material, _uniformPerMaterial.buffer, sizeof(LWGC_PerMaterial), VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, true);
+		SetSampler(SamplerBinding::TrilinearClamp, Vk::Samplers::trilinearClamp, true);
+		SetSampler(SamplerBinding::TrilinearRepeat, Vk::Samplers::trilinearRepeat, true);
+		SetSampler(SamplerBinding::NearestClamp, Vk::Samplers::nearestClamp, true);
+		SetSampler(SamplerBinding::NearestRepeat, Vk::Samplers::nearestRepeat, true);
+		SetSampler(SamplerBinding::AnisotropicTrilinearClamp, Vk::Samplers::anisotropicTrilinearClamp, true);
+		SetSampler(SamplerBinding::DepthCompare, Vk::Samplers::depthCompare, true);
 	}
 }
 
@@ -217,6 +219,8 @@ void					Material::CreatePipelineLayout(void)
 
 	pipelineLayoutInfo.setLayoutCount = _setLayouts.size();
 	pipelineLayoutInfo.pSetLayouts = _setLayouts.data();
+
+	std::cout << "set layout count: " << _setLayouts.size() << std::endl;
 
 	if (vkCreatePipelineLayout(_device, &pipelineLayoutInfo, nullptr, &_pipelineLayout) != VK_SUCCESS)
 		throw std::runtime_error("failed to create pipeline layout !");
@@ -324,10 +328,7 @@ void					Material::UpdateUniformBuffer()
 {
 	_perMaterial.albedo = glm::vec4(1, 1, 0, 1);
 
-	void* data;
-	vkMapMemory(_device, _uniformPerMaterial.memory, 0, sizeof(_perMaterial), 0, &data);
-	memcpy(data, &_perMaterial, sizeof(_perMaterial));
-	vkUnmapMemory(_device, _uniformPerMaterial.memory);
+	Vk::UploadToMemory(_uniformPerMaterial.memory, &_perMaterial, sizeof(_perMaterial));
 }
 
 // Allocate the descriptor set from the name of one binding inside the layout
@@ -337,7 +338,13 @@ void					Material::AllocateDescriptorSet(const std::string & bindingName)
 		throw std::runtime_error("Material needs to be compiled before allocating descriptor sets");
 
 	// Generate all descriptor sets from the binding table
-	uint32_t setBinding = _bindingTable->GetDescriptorSetBinding(bindingName);
+	uint32_t setBinding = GetDescriptorSetBinding(bindingName);
+	
+	if (setBinding == -1u)
+	{
+		std::cerr << "Can't allocate descriptor " << bindingName << ": not found in shader" << std::endl;
+		return ;
+	}
 
 	// Allocate the binding if not already allocated
 	if (_setTable.find(setBinding) == _setTable.end())
@@ -387,8 +394,27 @@ bool				Material::IsCompute(void) const
 	return _program->IsCompute();
 }
 
-void				Material::SetBuffer(const std::string & bindingName, VkBuffer buffer, size_t size, VkDescriptorType descriptorType)
+bool					Material::DescriptorSetExists(const std::string & bindingName, bool silent)
 {
+	uint32_t setBinding = GetDescriptorSetBinding(bindingName);
+
+	if (setBinding == -1u)
+	{
+		if (!silent)
+			std::cerr << "Can't find binding " << bindingName << " in the shader, maybe it was removed at compilation / the shader is not compiled" << std::endl;
+		return false;
+	}
+
+	// Do nothing if the descriptor is already allocated, otherwise allocate it
+	AllocateDescriptorSet(bindingName);
+	return true;
+}
+
+void				Material::SetBuffer(const std::string & bindingName, VkBuffer buffer, size_t size, VkDescriptorType descriptorType, bool silent)
+{
+	if (!DescriptorSetExists(bindingName, silent))
+		return ;
+
 	std::array<VkWriteDescriptorSet, 1> descriptorWrites = {};
 	VkDescriptorBufferInfo bufferInfo = {};
 	bufferInfo.buffer = buffer;
@@ -406,8 +432,11 @@ void				Material::SetBuffer(const std::string & bindingName, VkBuffer buffer, si
 	vkUpdateDescriptorSets(_device, static_cast< uint32_t >(descriptorWrites.size()), descriptorWrites.data(), 0, nullptr);
 }
 
-void				Material::SetTexture(const std::string & bindingName, const Texture & texture, VkImageLayout imageLayout, VkDescriptorType descriptorType)
+void				Material::SetTexture(const std::string & bindingName, const Texture & texture, VkImageLayout imageLayout, VkDescriptorType descriptorType, bool silent)
 {
+	if (!DescriptorSetExists(bindingName, silent))
+		return ;
+		
 	std::array<VkWriteDescriptorSet, 1> descriptorWrites = {};
 	VkDescriptorImageInfo imageInfo = {};
 
@@ -428,8 +457,11 @@ void				Material::SetTexture(const std::string & bindingName, const Texture & te
 	vkUpdateDescriptorSets(_device, static_cast<uint32_t>(descriptorWrites.size()), descriptorWrites.data(), 0, nullptr);
 }
 
-void				Material::SetSampler(const std::string & bindingName, VkSampler sampler)
+void				Material::SetSampler(const std::string & bindingName, VkSampler sampler, bool silent)
 {
+	if (!DescriptorSetExists(bindingName, silent))
+		return ;
+	
 	std::array<VkWriteDescriptorSet, 1> descriptorWrites = {};
     VkDescriptorImageInfo samplerInfo = {};
 

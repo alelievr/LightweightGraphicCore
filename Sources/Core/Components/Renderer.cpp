@@ -32,17 +32,12 @@ void		Renderer::Initialize(void) noexcept
 {
 	Component::Initialize();
 
-	VulkanRenderPipeline * renderPipeline = VulkanRenderPipeline::Get();
-
-	_material->Initialize(renderPipeline->GetSwapChain(), renderPipeline->GetRenderPass());
-
 	_drawCommandBuffer = VulkanInstance::Get()->GetCommandBufferPool()->Allocate(VK_COMMAND_BUFFER_LEVEL_SECONDARY);
 
 	if (_descriptorSetLayout == VK_NULL_HANDLE)
 		CreateGraphicDescriptorSetLayout();
 
 	CreateDescriptorSet();
-	RecordDrawCommandBuffer();
 }
 
 void		Renderer::CreateGraphicDescriptorSetLayout(void) noexcept
@@ -101,29 +96,7 @@ void		Renderer::UpdateUniformData(void)
 	// Transpose for HLSL
 	_perObject.model = glm::transpose(_perObject.model);
 
-	void* data;
-	vkMapMemory(device, _uniformModelBuffer.memory, 0, sizeof(LWGC_PerObject), 0, &data);
-	memcpy(data, &_perObject, sizeof(_perObject));
-	vkUnmapMemory(device, _uniformModelBuffer.memory);
-}
-
-void		Renderer::RecordDrawCommandBuffer(void)
-{
-	VkCommandBufferBeginInfo beginInfo = {};
-	beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
-	beginInfo.flags = VK_COMMAND_BUFFER_USAGE_RENDER_PASS_CONTINUE_BIT;
-
-	if (vkBeginCommandBuffer(_drawCommandBuffer, &beginInfo) != VK_SUCCESS)
-	{
-		throw std::runtime_error("failed to begin recording command buffer!");
-	}
-
-	RecordDrawCommand(_drawCommandBuffer);
-
-	if (vkEndCommandBuffer(_drawCommandBuffer) != VK_SUCCESS)
-	{
-		throw std::runtime_error("failed to record command buffer!");
-	}
+	Vk::UploadToMemory(_uniformModelBuffer.memory, &_perObject, sizeof(_perObject));
 }
 
 Bounds		Renderer::GetBounds(void)
@@ -132,32 +105,37 @@ Bounds		Renderer::GetBounds(void)
 	return Bounds();
 }
 
-void Renderer::OnEnable() noexcept
+void		Renderer::OnEnable() noexcept
 {
 	Component::OnEnable();
 	_renderContextIndex = hierarchy->RegisterComponentInRenderContext(GetType(), this);
 }
 
-void Renderer::OnDisable() noexcept
+void		Renderer::OnDisable() noexcept
 {
 	Component::OnDisable();
 	hierarchy->UnregisterComponentInRenderContext(GetType(), _renderContextIndex);
 }
 
-void Renderer::CleanupPipeline(void) noexcept
+void		Renderer::CleanupPipeline(void) noexcept
 {
 	_material->CleanupPipeline();
 }
 
-void Renderer::CreatePipeline(void) noexcept
+void		Renderer::CreatePipeline(void) noexcept
 {
 	_material->CreatePipeline();
+}
+
+void		Renderer::RecordCommands(VkCommandBuffer cmd)
+{
+	RecordDrawCommand(cmd);
 }
 
 Material *	Renderer::GetMaterial(void) const { return (this->_material); }
 void						Renderer::SetMaterial(Material * tmp) { this->_material = tmp; }
 
-VkCommandBuffer				Renderer::GetDrawCommandBuffer(void) const { return _drawCommandBuffer; }
+VkCommandBuffer				Renderer::GetCommandBuffer(void) const { return _drawCommandBuffer; }
 VkDescriptorSet				Renderer::GetDescriptorSet(void) const { return _descriptorSet; }
 
 std::ostream &	operator<<(std::ostream & o, Renderer const & r)

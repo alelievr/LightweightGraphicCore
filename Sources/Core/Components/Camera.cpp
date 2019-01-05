@@ -146,6 +146,7 @@ void					Camera::UpdateUniformData(void) noexcept
 	_perCamera.projection = glm::transpose(_perCamera.projection);
 	_perCamera.view = glm::transpose(_perCamera.view);
 
+	// Vk::UploadToMemory(_uniformCameraBuffer.memory, &_perCamera, sizeof(_perCamera));
 	void* data;
 	vkMapMemory(device, _uniformCameraBuffer.memory, 0, sizeof(LWGC_PerCamera), 0, &data);
 	memcpy(data, &_perCamera, sizeof(_perCamera));

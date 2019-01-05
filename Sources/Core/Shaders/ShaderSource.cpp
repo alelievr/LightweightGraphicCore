@@ -55,7 +55,11 @@ long		ShaderSource::GetFileModificationTime(const std::string & file) const
 
 	lstat(file.c_str(), &st);
 
+#if __APPLE__
 	return st.st_mtimespec.tv_sec;
+#else
+	return st.st_mtime;
+#endif
 }
 
 std::string	ShaderSource::StageToText(const VkShaderStageFlagBits stage)
@@ -148,7 +152,10 @@ void		ShaderSource::GenerateBindingTable(ShaderBindingTable & bindingTable)
 		const spirv_cross::SPIRType & type = glsl->get_type(resource.type_id);
 		auto & shaderBinding = bindingTable.AddBinding(resource.name, set, binding, descriptorType);
 		if (type.basetype == spirv_cross::SPIRType::Struct)
+		{
 			shaderBinding.elementSize = glsl->get_declared_struct_size(type);
+			printf("Add binding %s, size: %i\n", resource.name.c_str(), shaderBinding.elementSize);
+		}
 	};
 
 	// Uniform buffers
