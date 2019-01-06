@@ -9,6 +9,7 @@
 #include "Core/Vulkan/Material.hpp"
 #include "Core/Vulkan/VulkanInstance.hpp"
 #include "Core/Mesh.hpp"
+#include "Core/Handles/Selection.hpp"
 
 #include IMGUI_INCLUDE
 
@@ -28,12 +29,12 @@ namespace LWGC
 				glm::vec4	time;
 			};
 
-			static VulkanRenderPipeline *	pipelineInstance;
-			std::vector< VkCommandBuffer >	swapChainCommandBuffers;
-			LWGC_PerFrame					perFrame;
-			UniformBuffer					uniformPerFrame;
-			VkDescriptorSet					perFrameDescriptorSet;
-			VkDescriptorSetLayout			perFrameDescriptorSetLayout;
+			static VulkanRenderPipeline *	_pipelineInstance;
+			std::vector< VkCommandBuffer >	_swapChainCommandBuffers;
+			LWGC_PerFrame					_perFrame;
+			UniformBuffer					_uniformPerFrame;
+			VkDescriptorSet					_perFrameDescriptorSet;
+			VkDescriptorSetLayout			_perFrameDescriptorSetLayout;
 
 			void				RenderInternal(const std::vector< Camera * > & cameras, RenderContext & context);
 			void				UpdatePerframeUnformBuffer(void) noexcept;
@@ -51,6 +52,7 @@ namespace LWGC
 			SwapChain *						swapChain;
 			VkCommandBuffer					commandBuffer;
 			bool							framebufferResized;
+			Selection						selection;
 
 			virtual void		CreateRenderPass(void);
 			void				BeginRenderPass(RenderContext & context);

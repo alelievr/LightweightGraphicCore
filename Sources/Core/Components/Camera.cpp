@@ -80,6 +80,7 @@ float		Camera::GetFarPlane(void) const { return (this->_farPlane); }
 void		Camera::SetFarPlane(float tmp) { this->_farPlane = tmp; }
 
 glm::mat4	Camera::GetViewMatrix(void) const { return _perCamera.view; }
+glm::mat4	Camera::GetClipToWorldMatrix(void) const { return _clipToWorld; }
 
 void		Camera::Initialize(void) noexcept
 {
@@ -145,6 +146,8 @@ void					Camera::UpdateUniformData(void) noexcept
 	// Transpose for HLSL
 	_perCamera.projection = glm::transpose(_perCamera.projection);
 	_perCamera.view = glm::transpose(_perCamera.view);
+
+	_clipToWorld = glm::inverse(_perCamera.projection) * glm::inverse(_perCamera.view);
 
 	// Vk::UploadToMemory(_uniformCameraBuffer.memory, &_perCamera, sizeof(_perCamera));
 	void* data;
