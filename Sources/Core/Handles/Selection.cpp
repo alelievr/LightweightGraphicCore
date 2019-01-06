@@ -46,6 +46,7 @@ void	Selection::UpdateSelectedObject(Camera * cam) noexcept
 	glm::vec3							origin = cam->GetTransform()->GetPosition();
 
 	_renderContext->GetRenderers(renderers);
+	_hoveredGameObject = nullptr;
 
 	// TODO: multi-object ?
 	for (const auto & renderer : renderers)
@@ -57,7 +58,6 @@ void	Selection::UpdateSelectedObject(Camera * cam) noexcept
 		if (renderer->GetBounds().Intersects(origin, _worldRay))
 		{
 			_hoveredGameObject = renderer->GetGameObject();
-			std::cout << "Hover item: " << _hoveredGameObject->GetTransform()->GetPosition() << std::endl;
 			break ;
 		}
 	}
@@ -89,7 +89,14 @@ void	Selection::UpdateWorldRay(Camera * cam) noexcept
 
 void	Selection::MouseClickCallback(const glm::vec2 mousePos, int button, const ButtonAction action) noexcept
 {
-	_selectedGameObject = _hoveredGameObject;
+	// left click select
+	if (button == 0)
+	{
+		_selectedGameObject = _hoveredGameObject;
+
+		if (_selectedGameObject != nullptr)
+			std::cout << "Selecting object at position: " << _selectedGameObject->GetTransform()->GetPosition() << std::endl;
+	}
 }
 
 GameObject *	Selection::GetSelectedGameObject(void) const noexcept { return _selectedGameObject; }

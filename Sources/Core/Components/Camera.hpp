@@ -34,7 +34,6 @@ namespace LWGC
 			SwapChain *				_swapChain;
 			bool					_initDescriptorSetLayout;
 			LWGC_PerCamera			_perCamera;
-			glm::mat4				_clipToWorld;
 
 			static VkDescriptorSetLayout	_perCameraDescriptorSetLayout;
 
@@ -79,7 +78,6 @@ namespace LWGC
 
 			glm::mat4	GetViewMatrix(void) const;
 			glm::mat4	GetProjectionMatrix(void) const;
-			glm::mat4	GetClipToWorldMatrix(void) const;
 
 			VkDescriptorSet		GetDescriptorSet(void) const;
 
