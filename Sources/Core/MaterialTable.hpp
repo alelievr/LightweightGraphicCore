@@ -3,29 +3,26 @@
 #include <iostream>
 #include <string>
 #include "Core/Vulkan/Material.hpp"
+#include "Core/ObjectTable.tpp"
 
 namespace LWGC
 {
-	class		MaterialTable
+	class		MaterialTable : public ObjectTable<Material>
 	{
 		friend class Material;
 
 		private:
-			std::vector< Material * >	_materials;
 			LWGC::SwapChain *			_swapChain;
 			LWGC::RenderPass *			_renderPass;
-			std::vector< Material >		_stagingMaterials;
 
 			void NotifyMaterialReady(Material * material);
 
 		public:
 			MaterialTable();
 			MaterialTable(const MaterialTable&) = delete;
+			virtual ~MaterialTable(void);
 
 			void 	Initialize(LWGC::SwapChain *swapChain , LWGC::RenderPass * renderPipeline);
-			void	RegsiterMaterial(Material * material);
-			void	DestroyMaterials();
-			virtual ~MaterialTable(void);
 
 			MaterialTable &	operator=(MaterialTable const & src) = delete;
 	};

@@ -23,7 +23,8 @@ Application::Application(VulkanRenderPipeline * renderPipeline) : Application()
 
 Application::~Application(void)
 {
-	_materialTable.DestroyMaterials();
+	_materialTable.DestroyObjects();
+	_textureTable.DestroyObjects();
 	Vk::Release();
 	delete _renderPipeline;
 
@@ -151,6 +152,7 @@ void				Application::Update(void) noexcept
 EventSystem *		Application::GetEventSystem(void) noexcept { return &this->_eventSystem; }
 Hierarchy *			Application::GetHierarchy(void) noexcept { return this->_hierarchy.get(); }
 MaterialTable *		Application::GetMaterialTable(void) noexcept { return &this->_materialTable; }
+TextureTable *		Application::GetTextureTable(void) noexcept { return &this->_textureTable; }
 
 Application *	Application::Get(void) noexcept { return _app; }
 

@@ -80,7 +80,6 @@ Texture2DArray::Texture2DArray(Texture2DArray const & src)
 
 Texture2DArray::~Texture2DArray(void)
 {
-	const auto & device = VulkanInstance::Get()->GetDevice();
 	vkDestroyBuffer(device, _stagingBuffer, nullptr);
 }
 

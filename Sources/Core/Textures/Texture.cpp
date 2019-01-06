@@ -19,6 +19,12 @@ Texture::Texture(Texture const & src)
 
 Texture::~Texture(void)
 {
+	if (allocated)
+	{
+		vkDestroyImage(device, image, nullptr);
+		vkFreeMemory(device, memory, nullptr);
+		vkDestroyImageView(device, view, nullptr);
+	}
 }
 
 Texture &	Texture::operator=(Texture const & src)

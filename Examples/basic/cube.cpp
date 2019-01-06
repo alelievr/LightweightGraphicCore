@@ -29,7 +29,7 @@ int			main(void)
 
 	auto	textureMaterial = Material::Create(BuiltinShaders::Standard);
 
-	Texture2D animeTexture("Images/656218.jpg", VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_USAGE_SAMPLED_BIT, true);
+	auto animeTexture = Texture2D::Create("Images/656218.jpg", VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_USAGE_SAMPLED_BIT, true);
 
 	auto cube = new GameObject(new MeshRenderer(PrimitiveType::Cube, textureMaterial));
 	auto cam = new GameObject(new Camera());
@@ -39,7 +39,7 @@ int			main(void)
 	hierarchy->AddGameObject(cube);
 	hierarchy->AddGameObject(cam);
 
-	textureMaterial->SetTexture(TextureBinding::Albedo, &animeTexture, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE);
+	textureMaterial->SetTexture(TextureBinding::Albedo, animeTexture, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE);
 
 	ProcessEvent(es, app);
 	while (app.ShouldNotQuit())

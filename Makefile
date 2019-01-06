@@ -6,7 +6,7 @@
 #    By: amerelo <amerelo@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2014/07/15 15:13:38 by alelievr          #+#    #+#              #
-#    Updated: 2019/01/05 18:25:30 by amerelo          ###   ########.fr        #
+#    Updated: 2019/01/06 19:25:46 by amerelo          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -27,6 +27,7 @@ SRC			=	Core/Application.cpp \
 				Core/Object.cpp \
 				Core/PrimitiveMeshFactory.cpp \
 				Core/ComputeDispatcher.cpp \
+				Core/TextureTable.cpp \
 				Core/Components/Component.cpp \
 				Core/Components/Camera.cpp \
 				Core/Components/Renderer.cpp \
