@@ -1,6 +1,8 @@
 #include "Texture2D.hpp"
 #include <cmath>
 
+#include "Core/Application.hpp"
+
 using namespace LWGC;
 
 Texture2D::Texture2D(const std::string fileName, VkFormat format, int usage, bool generateMips)
@@ -46,12 +48,23 @@ Texture2D::Texture2D(Texture2D const & src)
 	*this = src;
 }
 
-Texture2D::~Texture2D(void)
+
+Texture2D * Texture2D::Create(const std::string fileName, VkFormat format, int usage, bool generateMips)
 {
-	vkDestroyImageView(device, view, nullptr);
-	vkDestroyImage(device, image, nullptr);
-	vkFreeMemory(device, memory, nullptr);
+	return new Texture2D(fileName, format, usage, generateMips);
 }
+
+Texture2D * Texture2D::Create(std::size_t width, std::size_t height, VkFormat format, int usage, bool allocateMips)
+{
+	return new Texture2D(width, height, format, usage, allocateMips);
+}
+
+Texture2D * Texture2D::Create(Texture2D const & src)
+{
+	return new Texture2D(src);
+}
+
+Texture2D::~Texture2D(void) {}
 
 // void		Texture2D::Apply(void)
 // {

@@ -6,12 +6,13 @@
 class		TextureCubeArray
 {
 	private:
-
+		TextureCubeArray(void) = default;
+		TextureCubeArray(const TextureCubeArray&);
 
 	public:
-		TextureCubeArray();
-		TextureCubeArray(const TextureCubeArray&);
-		virtual ~TextureCubeArray(void);
+		TextureCubeArray* Create();
+		TextureCubeArray* Create(const TextureCubeArray&);
+		virtual ~TextureCubeArray(void) = default;
 
 		TextureCubeArray &	operator=(TextureCubeArray const & src);
 };

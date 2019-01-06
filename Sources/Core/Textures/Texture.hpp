@@ -53,6 +53,7 @@ namespace LWGC
 			VkImageView		GetView(void) const noexcept;
 			VkImage			GetImage(void) const noexcept;
 			bool			GetAutoGenerateMips(void) const noexcept;
+			void			Destroy(void) noexcept;
 	};
 
 	std::ostream &	operator<<(std::ostream & o, Texture const & r);

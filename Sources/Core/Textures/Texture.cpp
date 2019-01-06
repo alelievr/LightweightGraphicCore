@@ -1,5 +1,7 @@
 #include "Texture.hpp"
 
+#include "Core/Application.hpp"
+
 #define STB_IMAGE_IMPLEMENTATION
 #include STB_INCLUDE_IMAGE
 
@@ -10,6 +12,7 @@ Texture::Texture(void) : width(0), height(0), depth(1), arraySize(1), autoGenera
 	instance = VulkanInstance::Get();
 	device = instance->GetDevice();
 	graphicCommandBufferPool = instance->GetCommandBufferPool();
+	Application::Get()->_textureTable.RegsiterObject(this);
 }
 
 Texture::Texture(Texture const & src)
@@ -19,6 +22,18 @@ Texture::Texture(Texture const & src)
 
 Texture::~Texture(void)
 {
+	if (allocated)
+	{
+		vkDestroyImage(device, image, nullptr);
+		vkFreeMemory(device, memory, nullptr);
+		vkDestroyImageView(device, view, nullptr);
+	}
+}
+
+void		Texture::Destroy(void) noexcept
+{
+	Application::Get()->_textureTable.UnregisterObject(this);
+	delete this;
 }
 
 Texture &	Texture::operator=(Texture const & src)

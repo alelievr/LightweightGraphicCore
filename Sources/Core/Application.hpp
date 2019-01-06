@@ -17,6 +17,9 @@
 #include "Core/Delegate.tpp"
 #include "Core/ImGUIWrapper.hpp"
 #include "Core/MaterialTable.hpp"
+#include "Core/TextureTable.hpp"
+#include "Core/Textures/Texture2D.hpp"
+#include "Core/Textures/Texture2DArray.hpp"
 
 #include VULKAN_INCLUDE
 #include GLFW_INCLUDE
@@ -25,6 +28,7 @@ namespace LWGC
 {
 	class		Application
 	{
+		friend class Texture;
 		friend class Material;
 		private:
 			static Application *				_app;
@@ -37,6 +41,7 @@ namespace LWGC
 			std::shared_ptr< Hierarchy >		_hierarchy;
 			// ImGUIWrapper						_imGUI;
 			MaterialTable						_materialTable;
+			TextureTable						_textureTable;
 
 			bool		_shouldNotQuit;
 
@@ -59,6 +64,7 @@ namespace LWGC
 			EventSystem *		GetEventSystem(void) noexcept;
 			Hierarchy *			GetHierarchy(void) noexcept;
 			MaterialTable *		GetMaterialTable(void) noexcept;
+			TextureTable *		GetTextureTable(void) noexcept;
 
 			static Application *		Get(void) noexcept;
 

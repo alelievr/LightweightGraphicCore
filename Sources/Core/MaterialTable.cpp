@@ -15,21 +15,9 @@ void 	MaterialTable::Initialize(LWGC::SwapChain *swapChain , LWGC::RenderPass *r
 	_swapChain = swapChain;
 	_renderPass = renderPipeline;
 
-	for (auto material: _materials)
+	for (auto material: _objects)
 	{
 		material->Initialize(_swapChain, _renderPass);
-	}
-}
-
-void	MaterialTable::RegsiterMaterial(Material * material)
-{
-	_materials.push_back(material);
-}
-
-void	MaterialTable::DestroyMaterials()
-{
-	for (auto material: _materials) {
-		delete material;
 	}
 }
 

@@ -2,19 +2,20 @@
 
 using namespace LWGC;
 
-TextureCube::TextureCube(void)
-{
-}
-
 TextureCube::TextureCube(TextureCube const & src)
 {
 	*this = src;
 }
 
-TextureCube::~TextureCube(void)
+TextureCube*			TextureCube::Create(void)
 {
+	return new TextureCube();
 }
 
+TextureCube*			TextureCube::Create(const TextureCube & t)
+{
+	return new TextureCube(t);
+}
 
 TextureCube &	TextureCube::operator=(TextureCube const & src)
 {
