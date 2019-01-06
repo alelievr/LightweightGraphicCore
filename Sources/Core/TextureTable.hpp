@@ -10,7 +10,6 @@ namespace LWGC
 	class		TextureTable : public ObjectTable<Texture>
 	{
 		private:
-
 		public:
 			TextureTable(void);
 			TextureTable(const TextureTable&) = delete;

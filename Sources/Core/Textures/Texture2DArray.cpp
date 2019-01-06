@@ -1,6 +1,7 @@
 #include "Texture2DArray.hpp"
 
 #include <string.h>
+#include "Core/Application.hpp"
 
 using namespace LWGC;
 
@@ -19,6 +20,21 @@ Texture2DArray::Texture2DArray(int width, int height, int arraySize, VkFormat fo
 	// TODO: hardcoded pixel size
 	VkDeviceSize imageSize = width * height * 4 * arraySize;
 	Vk::CreateBuffer(imageSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, _stagingBuffer, _stagingBufferMemory);
+}
+
+Texture2DArray::Texture2DArray(Texture2DArray const & src)
+{
+	*this = src;
+}
+
+Texture2DArray *Texture2DArray::Create(int width, int height, int arraySize, VkFormat format, int usage)
+{
+	return new Texture2DArray(width, height, arraySize, format, usage);
+}
+
+Texture2DArray *Texture2DArray::Create(Texture2DArray const & src)
+{
+	return new Texture2DArray(src);
 }
 
 void	Texture2DArray::SetImage(const std::string & fileName, int targetIndex)
@@ -71,11 +87,6 @@ void	Texture2DArray::Upload(void)
 	);
 
 	TransitionImageLayout(image, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
-}
-
-Texture2DArray::Texture2DArray(Texture2DArray const & src)
-{
-	*this = src;
 }
 
 Texture2DArray::~Texture2DArray(void)

@@ -19,6 +19,7 @@
 #include "Core/MaterialTable.hpp"
 #include "Core/TextureTable.hpp"
 #include "Core/Textures/Texture2D.hpp"
+#include "Core/Textures/Texture2DArray.hpp"
 
 #include VULKAN_INCLUDE
 #include GLFW_INCLUDE
@@ -27,7 +28,7 @@ namespace LWGC
 {
 	class		Application
 	{
-		friend class Texture2D;
+		friend class Texture;
 		friend class Material;
 		private:
 			static Application *				_app;

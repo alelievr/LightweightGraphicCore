@@ -20,6 +20,11 @@ class		ObjectTable
 		{
 			_objects.insert(object);
 		}
+		
+		void	UnregisterObject(T * object)
+		{
+			_objects.erase(object);
+		}
 
 		void	DestroyObjects(void)
 		{

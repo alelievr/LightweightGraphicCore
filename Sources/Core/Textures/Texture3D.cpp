@@ -1,6 +1,8 @@
 #include "Texture3D.hpp"
 #include <cmath>
 
+#include "Core/Application.hpp"
+
 using namespace LWGC;
 
 Texture3D::Texture3D(std::size_t width, std::size_t height, std::size_t depth, VkFormat format, int usage)
@@ -21,10 +23,15 @@ Texture3D::Texture3D(Texture3D const & src)
 	*this = src;
 }
 
-Texture3D::~Texture3D(void)
+Texture3D * Texture3D::Create(std::size_t width, std::size_t height, std::size_t depth, VkFormat format, int usage)
 {
+	return new Texture3D(width, height, depth, format, usage);
 }
 
+Texture3D * Texture3D::Create(Texture3D const & src)
+{
+	return new Texture3D(src);
+}
 
 Texture3D &	Texture3D::operator=(Texture3D const & src)
 {

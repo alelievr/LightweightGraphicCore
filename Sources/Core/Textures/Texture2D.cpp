@@ -51,26 +51,17 @@ Texture2D::Texture2D(Texture2D const & src)
 
 Texture2D * Texture2D::Create(const std::string fileName, VkFormat format, int usage, bool generateMips)
 {
-	auto newTexture2D = new Texture2D(fileName, format, usage, generateMips);
-
-	Application::Get()->_textureTable.RegsiterObject(newTexture2D);
-	return (newTexture2D);
+	return new Texture2D(fileName, format, usage, generateMips);
 }
 
 Texture2D * Texture2D::Create(std::size_t width, std::size_t height, VkFormat format, int usage, bool allocateMips)
 {
-	auto newTexture2D = new Texture2D(width, height, format, usage, allocateMips);
-
-	Application::Get()->_textureTable.RegsiterObject(newTexture2D);
-	return (newTexture2D);
+	return new Texture2D(width, height, format, usage, allocateMips);
 }
 
 Texture2D * Texture2D::Create(Texture2D const & src)
 {
-	auto newTexture2D = new Texture2D(src);
-
-	Application::Get()->_textureTable.RegsiterObject(newTexture2D);
-	return (newTexture2D);
+	return new Texture2D(src);
 }
 
 Texture2D::~Texture2D(void) {}
