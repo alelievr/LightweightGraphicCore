@@ -6,6 +6,8 @@
 #include "Core/GameObject.hpp"
 #include "Core/EventSystem.hpp"
 #include "IncludeDeps.hpp"
+#include "Core/Rendering/RenderContext.hpp"
+#include "Utils/Bounds.hpp"
 
 #include GLM_INCLUDE
 
@@ -16,13 +18,15 @@ namespace LWGC
 		private:
 			GameObject *		_selectedGameObject;
 			GameObject *		_hoveredGameObject;
+			EventSystem *		_eventSystem;
+			RenderContext *		_renderContext;
 			glm::vec3			_worldRay;
 
 			void		Update(void) noexcept;
-			void		UpdateSelectedObject(void) noexcept;
+			void		UpdateSelectedObject(Camera * cam) noexcept;
 			void		UpdateHandles(void) noexcept;
-			void		MouseMoveCallback(const glm::vec2 mousePos, const MouseMoveAction action) noexcept;
-			void		MouseClickCallback(const glm::vec2 mousePos, const ButtonAction action) noexcept;
+			void		UpdateWorldRay(Camera * cam) noexcept;
+			void		MouseClickCallback(const glm::vec2 mousePos, int button, const ButtonAction action) noexcept;
 
 		public:
 			Selection();

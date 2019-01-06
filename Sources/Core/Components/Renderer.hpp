@@ -24,9 +24,9 @@ namespace LWGC
 			ComponentIndex		_renderContextIndex;
 			UniformBuffer		_uniformModelBuffer;
 			VkDescriptorSet		_descriptorSet;
-			
+
 			static VkDescriptorSetLayout	_descriptorSetLayout;
-			
+
 			static void		CreateGraphicDescriptorSetLayout(void) noexcept;
 
 			virtual void	CreateDescriptorSet(void);
@@ -49,7 +49,7 @@ namespace LWGC
 
 			Renderer &	operator=(Renderer const & src) = delete;
 
-			Bounds	GetBounds(void);
+			virtual Bounds	GetBounds(void) noexcept;
 
 			void	OnEnable(void) noexcept override;
 			void	OnDisable(void) noexcept override;

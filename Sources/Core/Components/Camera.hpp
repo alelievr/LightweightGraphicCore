@@ -24,7 +24,7 @@ namespace LWGC
 			};
 
 			RenderTarget *			_target;
-			glm::vec2				_size;
+			glm::vec2				_viewportSize;
 			CameraType				_cameraType;
 			float					_fov;
 			float					_nearPlane;
@@ -63,8 +63,7 @@ namespace LWGC
 			RenderTarget *	GetTarget(void) const;
 			void			SetTarget(RenderTarget * tmp);
 
-			glm::vec2	GetSize(void) const;
-			void		SetSize(glm::vec2 tmp);
+			glm::vec2	GetViewportSize(void) const;
 
 			CameraType	GetCameraType(void) const;
 			void		SetCameraType(CameraType tmp);
@@ -79,6 +78,7 @@ namespace LWGC
 			void		SetFarPlane(float tmp);
 
 			glm::mat4	GetViewMatrix(void) const;
+			glm::mat4	GetProjectionMatrix(void) const;
 			glm::mat4	GetClipToWorldMatrix(void) const;
 
 			VkDescriptorSet		GetDescriptorSet(void) const;

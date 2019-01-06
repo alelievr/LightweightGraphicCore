@@ -38,7 +38,7 @@ namespace LWGC
 
 			GameObject *			GetGameObject(int index);
 			std::vector< Camera * >	GetCameras(void) noexcept;
-			RenderContext &			GetRenderContext(void);
+			RenderContext *			GetRenderContext(void);
 	};
 
 	std::ostream &	operator<<(std::ostream & o, Hierarchy const & r);

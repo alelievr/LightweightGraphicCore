@@ -86,7 +86,7 @@ void		ShaderSource::SetSourceFile(const std::string & file, const VkShaderStageF
 	// If the file don't exists, check inside include paths
 	if (stat(file.c_str(), &buffer) != 0)
 	{
-		for (const auto includePath : shaderIncludePaths)
+		for (const auto & includePath : shaderIncludePaths)
 		{
 			std::string newPath = includePath + file;
 			if (stat(newPath.c_str(), &buffer) == 0)

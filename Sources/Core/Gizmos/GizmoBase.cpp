@@ -15,9 +15,6 @@ GizmoBase::GizmoBase(const Color & c, bool wireframe)
 	gizmoData.color = c;
 	gizmoData.colorMode = 0; // TODO: implement color mode
 
-	Vk::CreateBuffer(sizeof(LWGC_GizmoData), VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT, gizmoDataBuffer, gizmoDataMemory);
-	Vk::UploadToMemory(gizmoDataMemory, &gizmoData, sizeof(LWGC_GizmoData));
-
 	VkPipelineRasterizationStateCreateInfo rasterState = {};
 	rasterState.sType = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO;
 	rasterState.depthClampEnable = VK_FALSE;
@@ -40,6 +37,9 @@ GizmoBase::GizmoBase(const Color & c, bool wireframe)
 void	GizmoBase::Initialize(void) noexcept
 {
 	GameObject::Initialize();
+
+	Vk::CreateBuffer(sizeof(LWGC_GizmoData), VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT, gizmoDataBuffer, gizmoDataMemory);
+	Vk::UploadToMemory(gizmoDataMemory, &gizmoData, sizeof(LWGC_GizmoData));
 
 	material->SetBuffer("gizmo", gizmoDataBuffer, sizeof(LWGC_GizmoData), VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER);
 }

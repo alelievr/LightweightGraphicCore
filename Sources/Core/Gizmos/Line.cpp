@@ -5,24 +5,32 @@
 using namespace LWGC;
 using namespace Gizmo;
 
-Line::Line(const glm::vec3 p0, const glm::vec3 p1, const Color & c) : GizmoBase(c, true), _p0(p0), _p1(p1)
+Line::Line(const glm::vec3 & p0, const glm::vec3 & p1, const Color & c) : GizmoBase(c, true), _vertexAttributes(2)
 {
-	std::shared_ptr< Mesh >					lineMesh = std::make_shared< Mesh >();
-	std::vector< Mesh::VertexAttributes >	attribs(2);
+	_lineMesh = std::make_shared< Mesh >();
+	Mesh::VertexAttributes::EdgeVertexAttrib(p0, p1, _vertexAttributes.data());
 
-	Mesh::VertexAttributes::EdgeVertexAttrib(p0, p1, attribs.data());
-
-	lineMesh->SetVertexAttributes(attribs);
-	renderer->SetMesh(lineMesh);
+	_lineMesh->SetVertexAttributes(_vertexAttributes);
+	renderer->SetMesh(_lineMesh);
 }
 
 Line::~Line(void)
 {
 }
 
-// TODO: update mesh and upload to device
-void	Line::SetPoint0(const glm::vec3 p) { _p0 = p; }
-void	Line::SetPoint1(const glm::vec3 p) { _p1 = p; }
+// TODO: fix this
+void	Line::SetPoint0(const glm::vec3 p)
+{
+	_vertexAttributes[0].position = p;
+	_lineMesh->SetVertexAttributes(_vertexAttributes);
+	_lineMesh->UploadDatas();
+}
+void	Line::SetPoint1(const glm::vec3 p)
+{
+	_vertexAttributes[1].position = p;
+	_lineMesh->SetVertexAttributes(_vertexAttributes);
+	_lineMesh->UploadDatas();
+}
 
 std::ostream &	operator<<(std::ostream & o, Line const & r)
 {

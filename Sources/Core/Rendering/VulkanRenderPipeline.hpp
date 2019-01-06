@@ -36,7 +36,7 @@ namespace LWGC
 			VkDescriptorSet					_perFrameDescriptorSet;
 			VkDescriptorSetLayout			_perFrameDescriptorSetLayout;
 
-			void				RenderInternal(const std::vector< Camera * > & cameras, RenderContext & context);
+			void				RenderInternal(const std::vector< Camera * > & cameras, RenderContext * context);
 			void				UpdatePerframeUnformBuffer(void) noexcept;
 			void				CreatePerFrameDescriptorSet(void) noexcept;
 
@@ -53,12 +53,13 @@ namespace LWGC
 			VkCommandBuffer					commandBuffer;
 			bool							framebufferResized;
 			Selection						selection;
+			Camera *						currentCamera;
 
 			virtual void		CreateRenderPass(void);
-			void				BeginRenderPass(RenderContext & context);
+			void				BeginRenderPass(RenderContext * context);
 			void				EndRenderPass(void);
-			virtual void		RecreateSwapChain(RenderContext & renderContext);
-			virtual void		Render(const std::vector< Camera * > & cameras, RenderContext & context) = 0;
+			virtual void		RecreateSwapChain(RenderContext * renderContext);
+			virtual void		Render(const std::vector< Camera * > & cameras, RenderContext * context) = 0;
 			virtual void		CreateDescriptorSets(void);
 
 		public:
@@ -74,6 +75,7 @@ namespace LWGC
 
 			SwapChain *		GetSwapChain(void);
 			RenderPass *	GetRenderPass(void);
+			Camera *		GetCurrentCamera(void);
 
 			static VulkanRenderPipeline *	Get();
 	};

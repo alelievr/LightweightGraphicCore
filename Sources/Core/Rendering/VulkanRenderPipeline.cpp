@@ -17,6 +17,7 @@ VulkanRenderPipeline::VulkanRenderPipeline(void) : framebufferResized(false)
 {
 	swapChain = VK_NULL_HANDLE;
 	instance = VK_NULL_HANDLE;
+	currentCamera = nullptr;
 	_pipelineInstance = this;
 }
 
@@ -111,7 +112,7 @@ void				VulkanRenderPipeline::CreateRenderPass(void)
 	renderPass.Create();
 }
 
-void			VulkanRenderPipeline::BeginRenderPass(RenderContext & context)
+void			VulkanRenderPipeline::BeginRenderPass(RenderContext * context)
 {
 	VkCommandBufferBeginInfo beginInfo = {};
 	beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
@@ -128,7 +129,7 @@ void			VulkanRenderPipeline::BeginRenderPass(RenderContext & context)
 
 	// Run all compute shaders before begin render pass:
 	std::unordered_set< ComputeDispatcher * >	computeDispatchers;
-	context.GetComputeDispatchers(computeDispatchers);
+	context->GetComputeDispatchers(computeDispatchers);
 
 	// Bind frame infos for compute shaders
 	renderPass.BindDescriptorSet(LWGCBinding::Frame, _perFrameDescriptorSet);
@@ -239,7 +240,7 @@ void			VulkanRenderPipeline::CreateSyncObjects(void)
 	printf("Semaphores created !\n");
 }
 
-void			VulkanRenderPipeline::RecreateSwapChain(RenderContext & renderContext)
+void			VulkanRenderPipeline::RecreateSwapChain(RenderContext * renderContext)
 {
 	std::unordered_set< Renderer * >	renderers;
 	vkDeviceWaitIdle(device);
@@ -249,7 +250,7 @@ void			VulkanRenderPipeline::RecreateSwapChain(RenderContext & renderContext)
 
 	// Rebuild all Material graphic pipelines
 	// TODO: do not work with compute dispatchers
-	renderContext.GetRenderers(renderers);
+	renderContext->GetRenderers(renderers);
 
 	for (auto & meshRenderer : renderers)
 		meshRenderer->CleanupPipeline();
@@ -273,7 +274,7 @@ void			VulkanRenderPipeline::UpdatePerframeUnformBuffer(void) noexcept
 	Vk::UploadToMemory(_uniformPerFrame.memory, &_perFrame, sizeof(LWGC_PerFrame));
 }
 
-void			VulkanRenderPipeline::RenderInternal(const std::vector< Camera * > & cameras, RenderContext & context)
+void			VulkanRenderPipeline::RenderInternal(const std::vector< Camera * > & cameras, RenderContext * context)
 {
 	UpdatePerframeUnformBuffer();
 
@@ -294,6 +295,8 @@ void			VulkanRenderPipeline::RenderInternal(const std::vector< Camera * > & came
 	}
 
 	commandBuffer = _swapChainCommandBuffers[imageIndex];
+
+	currentCamera = (cameras.size() == 0) ? nullptr : cameras[0];
 
 	Render(cameras, context);
 
@@ -344,7 +347,7 @@ void			VulkanRenderPipeline::RenderInternal(const std::vector< Camera * > & came
 	currentFrame = (currentFrame + 1) % MAX_FRAMES_IN_FLIGHT;
 }
 
-void	VulkanRenderPipeline::Render(const std::vector< Camera * > & cameras, RenderContext & context)
+void	VulkanRenderPipeline::Render(const std::vector< Camera * > & cameras, RenderContext * context)
 {
 	if (cameras.empty())
 		throw std::runtime_error("No camera for rendering !");
@@ -355,14 +358,14 @@ void	VulkanRenderPipeline::Render(const std::vector< Camera * > & cameras, Rende
 
 	for (const auto camera : cameras)
 	{
-		for (auto & updatePerCamera : context.GetUpdatePerCameras())
+		for (auto & updatePerCamera : context->GetUpdatePerCameras())
 			updatePerCamera->UpdatePerCamera(camera);
 
 		std::unordered_set< Renderer * >	renderers;
 
 		renderPass.BindDescriptorSet(LWGCBinding::Camera, camera->GetDescriptorSet());
 
-		context.GetRenderers(renderers);
+		context->GetRenderers(renderers);
 
 		for (const auto & meshRenderer : renderers)
 		{
@@ -385,3 +388,4 @@ void	VulkanRenderPipeline::Render(const std::vector< Camera * > & cameras, Rende
 
 SwapChain *		VulkanRenderPipeline::GetSwapChain(void) { return swapChain; }
 RenderPass *	VulkanRenderPipeline::GetRenderPass(void) { return &renderPass; }
+Camera *		VulkanRenderPipeline::GetCurrentCamera(void) { return currentCamera; }

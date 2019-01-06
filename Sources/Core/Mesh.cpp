@@ -72,6 +72,7 @@ void		Mesh::Clear(void)
 {
 	_attributes.clear();
 	_indices.clear();
+	_bounds = Bounds();
 }
 
 
@@ -183,7 +184,7 @@ void				Mesh::Draw(VkCommandBuffer cmd)
 std::vector< int >				Mesh::GetIndices(void) const { return _indices; }
 void							Mesh::SetIndices(const std::vector< int > & tmp) { _indices = tmp; }
 std::vector< Mesh::VertexAttributes >	Mesh::GetVertexAttributes(void) const { return _attributes; }
-void							Mesh::SetVertexAttributes(const std::vector< Mesh::VertexAttributes > & tmp) { _attributes = tmp; }
+void							Mesh::SetVertexAttributes(const std::vector< Mesh::VertexAttributes > & tmp) { _attributes = tmp; RecalculateBounds(); }
 
 std::ostream &	operator<<(std::ostream & o, Mesh const & r)
 {

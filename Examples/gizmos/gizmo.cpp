@@ -2,6 +2,9 @@
 
 using namespace LWGC;
 
+static Gizmo::Ray * r;
+static int i;
+
 void	ProcessEvent(EventSystem * es, Application & app)
 {
 	es->Get()->onKey.AddListener([&](KeyCode key, ButtonAction action)
@@ -19,7 +22,7 @@ void		InitGizmos(Hierarchy * hierarchy)
 	lineGizmo->GetTransform()->SetPosition(glm::vec3(0, 0, 0));
 	hierarchy->AddGameObject(lineGizmo);
 
-	auto rayGizmo = new Gizmo::Ray(glm::vec3(1, 0, 0), glm::vec3(0, 1, 0), Color::Red);
+	auto rayGizmo = r = new Gizmo::Ray(glm::vec3(1, 0, 0), glm::vec3(0, 1, 0), Color::Red);
 	rayGizmo->GetTransform()->SetPosition(glm::vec3(0, 0, 0));
 	hierarchy->AddGameObject(rayGizmo);
 
@@ -37,7 +40,6 @@ void		InitGizmos(Hierarchy * hierarchy)
 
 	auto arrow = new Gizmo::Arrow(2, 50, false, Color::LightGray);
 	arrow->GetTransform()->SetPosition(glm::vec3(2, 0, -1));
-	arrow->GetTransform()->Rotate(glm::vec3(0, 0, 0));
 	arrow->AddComponent(new Rotator());
 	hierarchy->AddGameObject(arrow);
 }

@@ -21,15 +21,18 @@ namespace LWGC
 	{
 		private:
 			GLFWwindow *			_window;
+			glm::vec2				_mousePosition;
 
 			static std::map< GLFWwindow *, EventSystem * > eventSystems;
 			static EventSystem *	eventSystemInstance;
+
+			void			UpdateMousePosition(void);
 
 		public:
 			Delegate< void(void) >								onQuit;
 			Delegate< void(int) >								onFocus;
 			Delegate< void(KeyCode, ButtonAction) >				onKey;
-			Delegate< void(glm::vec2, ButtonAction) >			onMouseClick;
+			Delegate< void(glm::vec2, int, ButtonAction) >		onMouseClick;
 			Delegate< void(glm::vec2, MouseMoveAction) >		onMouseMove;
 			glm::vec2											delta;
 			glm::vec2											oldMousePosition;
@@ -42,9 +45,12 @@ namespace LWGC
 
 			void			BindWindow(GLFWwindow *window);
 
-			void	LockCursor(void);
-			void	ReleaseCursor(void);
-			void	ToggleLockCursor(void);
+			void			LockCursor(void);
+			void			ReleaseCursor(void);
+			void			ToggleLockCursor(void);
+			bool			IsCursorLocked(void);
+
+			const glm::vec2			GetCursorPosition(void) const;
 
 			static EventSystem *	Get(void);
 	};

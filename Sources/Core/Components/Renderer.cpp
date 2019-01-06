@@ -101,9 +101,8 @@ void		Renderer::UpdateUniformData(void)
 	Vk::UploadToMemory(_uniformModelBuffer.memory, &_perObject, sizeof(_perObject));
 }
 
-Bounds		Renderer::GetBounds(void)
+Bounds		Renderer::GetBounds(void) noexcept
 {
-	std::cout << "GetBounds(): TODO" << std::endl;
 	return Bounds();
 }
 

@@ -13,26 +13,6 @@ Rotator::~Rotator(void)
 {
 }
 
-void			Rotator::OnAdded(const GameObject & go) noexcept
-{
-	Component::OnAdded(go);
-}
-
-void			Rotator::OnRemoved(const GameObject & go) noexcept
-{
-	Component::OnRemoved(go);
-}
-
-void			Rotator::OnEnable(void) noexcept
-{
-	Component::OnEnable();
-}
-
-void			Rotator::OnDisable(void) noexcept
-{
-	Component::OnDisable();
-}
-
 void			Rotator::Update(void) noexcept
 {
 	static float r = 0;
