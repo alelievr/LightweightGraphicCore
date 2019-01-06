@@ -12,10 +12,11 @@ Hierarchy::Hierarchy(void)
 
 Hierarchy::~Hierarchy(void)
 {
-	std::cout << "Hierarchy destructed" << std::endl;
-
-	for (auto & comps : _components)
-		comps->~Component();
+	// Free everything
+	for (auto & comp : _components)
+		delete comp;
+	for (auto & gameObject : _gameObjects)
+		delete gameObject;
 }
 
 void Hierarchy::Initialize(void)
@@ -71,7 +72,7 @@ void					Hierarchy::UnregisterComponent(const ComponentIndex & index) noexcept
 
 	if (comp->GetType() == static_cast< uint32_t >(ComponentType::Camera))
 		std::remove(_cameras.begin(), _cameras.end(), comp);
-	
+
 	_components.erase(index);
 }
 

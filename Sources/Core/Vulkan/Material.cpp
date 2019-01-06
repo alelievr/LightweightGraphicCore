@@ -433,7 +433,7 @@ void				Material::SetBuffer(const std::string & bindingName, VkBuffer buffer, si
 	vkUpdateDescriptorSets(_device, static_cast< uint32_t >(descriptorWrites.size()), descriptorWrites.data(), 0, nullptr);
 }
 
-void				Material::SetTexture(const std::string & bindingName, const Texture & texture, VkImageLayout imageLayout, VkDescriptorType descriptorType, bool silent)
+void				Material::SetTexture(const std::string & bindingName, const Texture * texture, VkImageLayout imageLayout, VkDescriptorType descriptorType, bool silent)
 {
 	if (!DescriptorSetExists(bindingName, silent))
 		return ;
@@ -442,10 +442,8 @@ void				Material::SetTexture(const std::string & bindingName, const Texture & te
 	VkDescriptorImageInfo imageInfo = {};
 
 	imageInfo.imageLayout = imageLayout;
-	imageInfo.imageView = texture.GetView();
+	imageInfo.imageView = texture->GetView();
 	imageInfo.sampler = 0;
-
-	std::cout << "Bind texture: " << bindingName << ": " << _bindingTable->GetDescriptorIndex(bindingName) << std::endl;;
 
 	descriptorWrites[0].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
 	descriptorWrites[0].dstSet = _setTable.at(_bindingTable->GetDescriptorSetBinding(bindingName)).set;

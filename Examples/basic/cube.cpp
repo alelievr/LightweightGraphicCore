@@ -39,7 +39,7 @@ int			main(void)
 	hierarchy->AddGameObject(cube);
 	hierarchy->AddGameObject(cam);
 
-	textureMaterial->SetTexture(TextureBinding::Albedo, animeTexture, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE);
+	textureMaterial->SetTexture(TextureBinding::Albedo, &animeTexture, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE);
 
 	ProcessEvent(es, app);
 	while (app.ShouldNotQuit())

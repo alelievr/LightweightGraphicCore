@@ -63,7 +63,7 @@ int			main(void)
 	auto	writeProceduralTexture = Material::Create("Shaders/Compute/ProceduralTexture.hlsl", VK_SHADER_STAGE_COMPUTE_BIT);
 	auto	displayProceduralTexture = CreateFullscreenMaterial();
 
-	Texture2D proceduralTexture(512, 512, VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_USAGE_STORAGE_BIT | VK_IMAGE_USAGE_SAMPLED_BIT, false);
+	Texture2D * proceduralTexture = new Texture2D(512, 512, VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_USAGE_STORAGE_BIT | VK_IMAGE_USAGE_SAMPLED_BIT, false);
 
 	InitCamera(hierarchy);
 
