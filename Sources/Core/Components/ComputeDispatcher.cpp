@@ -30,30 +30,10 @@ void			ComputeDispatcher::Initialize(void) noexcept
 			<< _workGroupWidth << ", " << _workGroupHeight << ", " << _workGroupDepth << std::endl;
 		return ;
 	}
-
-	// // Record command buffer:
-	// VkCommandBufferBeginInfo beginInfo = {};
-	// beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
-	// beginInfo.flags = VK_COMMAND_BUFFER_USAGE_RENDER_PASS_CONTINUE_BIT;
-
-	// if (vkBeginCommandBuffer(_computeCommandBuffer, &beginInfo) != VK_SUCCESS)
-	// {
-	// 	throw std::runtime_error("failed to begin recording command buffer!");
-	// }
-
-	// vkCmdBindPipeline(_computeCommandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, _material->GetPipeline());
-
-	// vkCmdDispatch(_computeCommandBuffer, _width / _workGroupWidth, _height / _workGroupHeight, _depth / _workGroupDepth);
-
-	// if (vkEndCommandBuffer(_computeCommandBuffer) != VK_SUCCESS)
-	// {
-	// 	throw std::runtime_error("failed to record command buffer!");
-	// }
 }
 
 void			ComputeDispatcher::RecordCommands(VkCommandBuffer cmd)
 {
-	std::cout << "work dispatch: " << _width / _workGroupWidth << "/" << _height / _workGroupHeight << "/" << _depth / _workGroupDepth << std::endl;
 	vkCmdDispatch(cmd, _width / _workGroupWidth, _height / _workGroupHeight, _depth / _workGroupDepth);
 }
 

@@ -18,13 +18,13 @@ Texture2D::Texture2D(const std::string fileName, VkFormat format, int usage, boo
 	}
 
     this->depth = 1;
-	
+
 	AllocateImage(VK_IMAGE_VIEW_TYPE_2D);
 
     // UploadImage(_pixels, this->width * this->height * 4);
 
 	UploadImageWithMips(image, format, _pixels, this->width * this->height * 4);
-	
+
 	stbi_image_free(_pixels);
 }
 
@@ -35,7 +35,7 @@ Texture2D::Texture2D(std::size_t width, std::size_t height, VkFormat format, int
 	this->height = height;
     this->arraySize = 1;
     this->usage = usage;
-	
+
 	maxMipLevel = (allocateMips) ? static_cast<uint32_t>(std::floor(std::log2(std::max(width, height)))) + 1 : 0;
 
     AllocateImage(VK_IMAGE_VIEW_TYPE_2D);
@@ -55,23 +55,23 @@ Texture2D::~Texture2D(void)
 
 // void		Texture2D::Apply(void)
 // {
-	
+
 // }
 
 // void		Texture2D::SetPixel(int x, int y)
 // {
-	
+
 // }
 
 // void		Texture2D::GetPixel(int x, int y)
 // {
-	
+
 // }
 
 Texture2D &	Texture2D::operator=(Texture2D const & src)
 {
 	Texture::operator=(src);
-	
+
 	if (this != &src) {
 	}
 	return (*this);
