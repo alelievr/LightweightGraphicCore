@@ -73,10 +73,7 @@ Texture2D * Texture2D::Create(Texture2D const & src)
 	return (newTexture2D);
 }
 
-Texture2D::~Texture2D(void)
-{
-	
-}
+Texture2D::~Texture2D(void) {}
 
 // void		Texture2D::Apply(void)
 // {

@@ -8,7 +8,6 @@ template< typename T = void(void) >
 class		ObjectTable
 {
 	private:
-	
 	protected:
 		std::unordered_set< T * >	_objects;
 
