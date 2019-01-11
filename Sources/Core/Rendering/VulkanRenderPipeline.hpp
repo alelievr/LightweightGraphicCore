@@ -52,7 +52,6 @@ namespace LWGC
 			SwapChain *						swapChain;
 			VkCommandBuffer					commandBuffer;
 			bool							framebufferResized;
-			Selection						selection;
 			Camera *						currentCamera;
 
 			virtual void		CreateRenderPass(void);

@@ -16,29 +16,29 @@ namespace LWGC
 	class		Selection
 	{
 		private:
-			GameObject *		_selectedGameObject;
-			GameObject *		_hoveredGameObject;
-			EventSystem *		_eventSystem;
-			RenderContext *		_renderContext;
-			glm::vec3			_worldRay;
+			static GameObject *		_selectedGameObject;
+			static GameObject *		_hoveredGameObject;
+			static EventSystem *	_eventSystem;
+			static RenderContext *	_renderContext;
+			static glm::vec3		_worldRay;
 
-			void		Update(void) noexcept;
-			void		UpdateSelectedObject(Camera * cam) noexcept;
-			void		UpdateHandles(void) noexcept;
-			void		UpdateWorldRay(Camera * cam) noexcept;
-			void		MouseClickCallback(const glm::vec2 mousePos, int button, const ButtonAction action) noexcept;
+			static void		Update(void) noexcept;
+			static void		UpdateSelectedObject(Camera * cam) noexcept;
+			static void		UpdateHandles(void) noexcept;
+			static void		UpdateWorldRay(Camera * cam) noexcept;
+			static void		MouseClickCallback(const glm::vec2 mousePos, int button, const ButtonAction action) noexcept;
 
 		public:
-			Selection();
+			Selection(void) = delete;
 			Selection(const Selection &) = delete;
-			virtual ~Selection(void);
+			virtual ~Selection(void) = delete;
 
-			GameObject *		GetSelectedGameObject(void) const noexcept;
-			GameObject *		GetHoveredGameObject(void) const noexcept;
-			glm::vec3			GetWorldRay(void) const noexcept;
+			static void			Initialize(void) noexcept;
+
+			static GameObject *	GetSelectedGameObject(void) noexcept;
+			static GameObject *	GetHoveredGameObject(void) noexcept;
+			static glm::vec3	GetWorldRay(void) noexcept;
 
 			Selection &	operator=(Selection const & src) = delete;
 	};
-
-	std::ostream &	operator<<(std::ostream & o, Selection const & r);
 }

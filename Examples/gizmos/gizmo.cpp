@@ -42,6 +42,9 @@ void		InitGizmos(Hierarchy * hierarchy)
 	arrow->GetTransform()->SetPosition(glm::vec3(2, 0, -1));
 	arrow->AddComponent(new Rotator());
 	hierarchy->AddGameObject(arrow);
+
+	// selection and handle test for cube:
+	hierarchy->AddGameObject(new GameObject(new MeshRenderer(PrimitiveType::Cube)));
 }
 
 void		InitCamera(Hierarchy * hierarchy)

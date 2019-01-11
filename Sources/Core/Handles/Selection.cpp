@@ -10,21 +10,26 @@
 
 using namespace LWGC;
 
+GameObject *		Selection::_selectedGameObject;
+GameObject *		Selection::_hoveredGameObject;
+EventSystem *		Selection::_eventSystem;
+RenderContext *		Selection::_renderContext;
+glm::vec3			Selection::_worldRay;
+
 // Workaround for std::bind because it can't bind members with parameters
 #define BIND_CALLBACK_2(x) [&](const auto & _1, const auto & _2){ x(_1, _2); }
 #define BIND_CALLBACK_3(x) [&](const auto & _1, const auto & _2, const auto & _3){ x(_1, _2, _3); }
 
-Selection::Selection(void) : _selectedGameObject(nullptr), _worldRay(glm::vec3(0, 0, -1))
+void	Selection::Initialize(void) noexcept
 {
-	Application::update.AddListener(std::bind(&Selection::Update, this));
+	_selectedGameObject = nullptr;
+	_worldRay = glm::vec3(0, 0, -1);
+
+	Application::update.AddListener(Selection::Update);
 	_eventSystem = Application::Get()->GetEventSystem();
 	_renderContext = Application::Get()->GetHierarchy()->GetRenderContext();
 
 	_eventSystem->onMouseClick.AddListener(BIND_CALLBACK_3(MouseClickCallback));
-}
-
-Selection::~Selection(void)
-{
 }
 
 void	Selection::Update(void) noexcept
@@ -89,8 +94,10 @@ void	Selection::UpdateWorldRay(Camera * cam) noexcept
 
 void	Selection::MouseClickCallback(const glm::vec2 mousePos, int button, const ButtonAction action) noexcept
 {
+	(void)mousePos;
+
 	// left click select
-	if (button == 0)
+	if (button == 0 && action == ButtonAction::Press)
 	{
 		_selectedGameObject = _hoveredGameObject;
 
@@ -99,13 +106,6 @@ void	Selection::MouseClickCallback(const glm::vec2 mousePos, int button, const B
 	}
 }
 
-GameObject *	Selection::GetSelectedGameObject(void) const noexcept { return _selectedGameObject; }
-GameObject *	Selection::GetHoveredGameObject(void) const noexcept { return _hoveredGameObject; }
-glm::vec3		Selection::GetWorldRay(void) const noexcept { return _worldRay; }
-
-std::ostream &	operator<<(std::ostream & o, Selection const & r)
-{
-	o << "tostring of the class" << std::endl;
-	(void)r;
-	return (o);
-}
+GameObject *	Selection::GetSelectedGameObject(void) noexcept { return _selectedGameObject; }
+GameObject *	Selection::GetHoveredGameObject(void) noexcept { return _hoveredGameObject; }
+glm::vec3		Selection::GetWorldRay(void) noexcept { return _worldRay; }
