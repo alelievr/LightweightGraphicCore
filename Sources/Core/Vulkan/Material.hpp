@@ -79,6 +79,7 @@ namespace LWGC
 			SwapChain *								_swapChain;
 			RenderPass *							_renderPass;
 			ShaderProgram *							_program;
+			ShaderProgram *							_originalProgram;
 			std::vector< VkDescriptorSetLayout >	_setLayouts;
 			const ShaderBindingTable *				_bindingTable;
 			SetTable								_setTable;
@@ -90,7 +91,6 @@ namespace LWGC
 			Material(void);
 			Material(const std::string & shader, VkShaderStageFlagBits stage);
 			Material(const std::string & fragmentShader, const std::string & vertexShader = BuiltinShaders::DefaultVertex);
-			Material(ShaderProgram * program);
 
 			void		CreateTextureSampler(void);
 			void		CreateUniformBuffer(void);
@@ -113,7 +113,6 @@ namespace LWGC
 			static Material	*Create(void);
 			static Material	*Create(const std::string & shader, VkShaderStageFlagBits stage);
 			static Material	*Create(const std::string & fragmentShader, const std::string & vertexShader = BuiltinShaders::DefaultVertex);
-			static Material	*Create(ShaderProgram * program);
 
 			void	Initialize(SwapChain * swapchain, RenderPass * renderPass);
 			void	CleanupPipeline(void) noexcept;
@@ -129,7 +128,7 @@ namespace LWGC
 			bool				IsCompute(void) const;
 			bool				IsReady(void) const noexcept;
 			
-			void				Update(void) noexcept;
+			void				ReloadShaders(void) noexcept;
 
 			void				SetBuffer(const std::string & bindingName, VkBuffer buffer, size_t size, VkDescriptorType descriptorType, bool silent = false);
 			void				SetTexture(const std::string & bindingName, const Texture * texture, VkImageLayout imageLayout, VkDescriptorType descriptorType, bool silent = false);
@@ -139,7 +138,6 @@ namespace LWGC
 			void				SetInputAssemblyState(VkPipelineInputAssemblyStateCreateInfo info);
 			void				SetDepthStencilState(VkPipelineDepthStencilStateCreateInfo info);
 			void				SetRasterizationState(VkPipelineRasterizationStateCreateInfo info);
-			// reload -> vkdestroy -> redo pipline
 	};
 
 	std::ostream &	operator<<(std::ostream & o, Material const & r);

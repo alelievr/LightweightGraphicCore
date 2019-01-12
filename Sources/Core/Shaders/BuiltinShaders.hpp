@@ -12,5 +12,6 @@ namespace LWGC
 			static const std::string	FullScreenQuad;
 			static const std::string	Pink;
 			static const std::string	ColorDirection;
+			static const std::string	ComputeError;
 	};
 }

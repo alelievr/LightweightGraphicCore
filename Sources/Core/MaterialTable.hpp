@@ -26,8 +26,8 @@ namespace LWGC
 			MaterialTable(const MaterialTable&) = delete;
 			virtual ~MaterialTable(void);
 
+			void 	RegsiterObject(Material * material) override; 
 			void 	Initialize(LWGC::SwapChain *swapChain , LWGC::RenderPass * renderPipeline);
-			void 	AddToList(ShaderProgram *shaderProgram, Material * material);
 
 			MaterialTable &	operator=(MaterialTable const & src) = delete;
 	};

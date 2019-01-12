@@ -7,11 +7,11 @@
 
 using namespace LWGC;
 
-ShaderProgram::ShaderProgram(void)
+ShaderProgram::ShaderProgram(void) : _isUpdateBound(false)
 {
 }
 
-ShaderProgram::ShaderProgram(const std::string & fragmentShaderName, const std::string & vertexShaderName)
+ShaderProgram::ShaderProgram(const std::string & fragmentShaderName, const std::string & vertexShaderName) : _isUpdateBound(false)
 {
 	SetSourceFile(fragmentShaderName, VK_SHADER_STAGE_FRAGMENT_BIT);
 	SetSourceFile(vertexShaderName, VK_SHADER_STAGE_VERTEX_BIT);
@@ -25,6 +25,11 @@ ShaderProgram::~ShaderProgram(void)
 void		ShaderProgram::CompileAndLink(void)
 {
 	_bindingTable.SetStage(IsCompute() ? VK_SHADER_STAGE_COMPUTE_BIT : VK_SHADER_STAGE_ALL_GRAPHICS);
+	if (!_isUpdateBound)
+	{
+		_updateIndex = Application::update.AddListener(std::bind(&ShaderProgram::Update, this));
+		_isUpdateBound = true;
+	}
 
 	for (auto & shaderSource : _shaderSources)
 	{
@@ -44,7 +49,6 @@ void		ShaderProgram::CompileAndLink(void)
 	}
 
 	_bindingTable.GenerateSetLayouts();
-	_updateIndex = Application::update.AddListener(std::bind(&ShaderProgram::Update, this));
 }
 
 bool		ShaderProgram::IsCompiled(void) const noexcept
@@ -69,22 +73,15 @@ bool		ShaderProgram::IsCompute(void) const noexcept
 
 void		ShaderProgram::Update(void)
 {
+	auto device = VulkanInstance::Get()->GetDevice();
+	
 	for (auto & shaderSource : _shaderSources)
 	{
 		if (shaderSource->NeedReload())
 		{
-			shaderSource->Reload();
-
-			// Update stage code:
-			const auto & t = std::find_if(_shaderStages.begin(), _shaderStages.end(),
-				[& shaderSource](const VkPipelineShaderStageCreateInfo & s) {
-				return shaderSource->GetStage() == s.stage;
-			});
-			
-			if (t == _shaderStages.end())
-				throw std::runtime_error("Failed to reload shader program code, you're probably adding shader sources after the program being compiled and linked");
-
-			t->module = shaderSource->GetModule();
+			for (auto stage : _shaderStages)
+				vkDestroyShaderModule(device, stage.module, nullptr);
+			_shaderStages.clear();
 			Application::Get()->GetMaterialTable()->UpdateMaterial(this);
 		}
 	}

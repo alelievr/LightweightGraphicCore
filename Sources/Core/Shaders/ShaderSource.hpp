@@ -50,7 +50,6 @@ namespace LWGC
 
 			void	SetSourceFile(const std::string & file, const VkShaderStageFlagBits stage);
 			bool	NeedReload(void) const;
-			void	Reload(void);
 			void	Compile(void);
 			void	GenerateBindingTable(ShaderBindingTable & bindingTable);
 

@@ -18,13 +18,18 @@ void MaterialTable::UpdateMaterial(ShaderProgram *shaderProgram) noexcept
 	
 	for (auto material: materials)
 	{
-		material->Update();
+		try {
+			material->ReloadShaders();
+		} catch (const std::runtime_error & e) {
+			std::cout << e.what() << std::endl;
+		}
 	}
 }
 
-void	MaterialTable::AddToList(ShaderProgram * shaderProgram, Material * material)
+void	MaterialTable::RegsiterObject(Material * material)
 {
-	_shadersPrograms[shaderProgram].push_back(material);
+	ObjectTable::RegsiterObject(material);
+	_shadersPrograms[material->GetShaderProgram()].push_back(material);
 }
 
 void 	MaterialTable::Initialize(LWGC::SwapChain *swapChain , LWGC::RenderPass *renderPipeline)

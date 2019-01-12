@@ -105,6 +105,8 @@ void		ShaderSource::Compile(void)
 	char path[2048];
 	getcwd(path, sizeof(path));
 
+	_sourceFile.lastModificationTime = GetFileModificationTime(_sourceFile.path);
+
 	// I gave up using the c++ api of glslang, it's totally unusable
 	std::string cmd = "glslangValidator -e main -V -D -S " + StageToText(_stage) + " -I" + path;
 	for (const auto & p : shaderIncludePaths)
@@ -127,8 +129,6 @@ void		ShaderSource::Compile(void)
 
 	if (vkCreateShaderModule(VulkanInstance::Get()->GetDevice(), &createInfo, nullptr, &_module) != VK_SUCCESS)
 		throw std::runtime_error("failed to create shader module!");
-
-	_sourceFile.lastModificationTime = GetFileModificationTime(_sourceFile.path);
 }
 
 void		ShaderSource::GenerateBindingTable(ShaderBindingTable & bindingTable)
@@ -216,12 +216,6 @@ bool		ShaderSource::HasSource(void) const
 void		ShaderSource::AddIncludePath(const std::string & path)
 {
 	shaderIncludePaths.push_back(path);
-}
-
-void		ShaderSource::Reload(void)
-{
-	vkDestroyShaderModule(VulkanInstance::Get()->GetDevice(), _module, NULL);
-	Compile();
 }
 
 std::ostream &	LWGC::operator<<(std::ostream & o, ShaderSource const & r)

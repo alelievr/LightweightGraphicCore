@@ -23,6 +23,7 @@ namespace LWGC
 			uint32_t										_threadHeight;
 			uint32_t										_threadDepth;
 			DelegateIndex<void ()>							_updateIndex;
+			bool											_isUpdateBound;
 
 		public:
 			ShaderProgram(void);
