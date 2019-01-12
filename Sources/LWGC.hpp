@@ -46,6 +46,7 @@
 #include "Core/Components/FreeCameraControls.hpp"
 #include "Core/Components/ComputeDispatcher.hpp"
 #include "Core/Components/Rotator.hpp"
+#include "Core/Components/Movator.hpp"
 
 // Gimos & handles
 #include "Core/Gizmos/Line.hpp"
@@ -54,6 +55,7 @@
 #include "Core/Gizmos/Circle.hpp"
 #include "Core/Gizmos/Cone.hpp"
 #include "Core/Gizmos/Arrow.hpp"
+#include "Core/Gizmos/Position.hpp"
 
 // Utils
 #include "Utils/Bounds.hpp"

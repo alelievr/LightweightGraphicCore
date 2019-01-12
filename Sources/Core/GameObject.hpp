@@ -16,15 +16,16 @@ namespace LWGC
 		friend class Hierarchy;
 
 		private:
-			std::shared_ptr< Transform >		_transform;
 			bool								_active;
 			std::unordered_set< Component * >	_components;
-			Hierarchy *							_hierarchy;
 			bool								_initialized;
 
 			void SetHierarchy(Hierarchy * hierarchy);
 
 		protected:
+			std::shared_ptr< Transform >		transform;
+			Hierarchy *							hierarchy;
+
 			virtual void Initialize(void) noexcept;
 
 		public:

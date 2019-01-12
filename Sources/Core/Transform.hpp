@@ -28,7 +28,7 @@ namespace LWGC
 	{
 		private:
 			std::shared_ptr< Transform >	_parent;
-			std::vector< std::shared_ptr< Transform > >	_childs;
+			std::vector< Transform * >		_childs;
 			glm::vec3						_position;
 			glm::quat						_rotation;
 			glm::vec3						_scale;
@@ -45,6 +45,9 @@ namespace LWGC
 			void		UpdateRotationDatas(void) noexcept;
 			void		UpdateScaleDatas(void) noexcept;
 			void		UpdateLocalToWorldMatrix(void) noexcept;
+			glm::vec4	GetParentUp(void) const noexcept;
+			glm::vec4	GetParentRight(void) const noexcept;
+			glm::vec4	GetParentForward(void) const noexcept;
 
 		public:
 			Transform(void);
@@ -58,9 +61,9 @@ namespace LWGC
 			void		RotateAxis(float angle, const glm::vec3 & axis);
 			void		RotateAround(const glm::vec3 & point, const glm::vec3 & axis, const float angle);
 			size_t		GetChildCount(void);
-			bool		IsChildOf(std::shared_ptr< Transform > t);
-			std::shared_ptr< Transform >	GetChildAt(const int index) const;
-			void		LookAt(const int index);
+			bool		IsChildOf(Transform * t);
+			Transform *	GetChildAt(const int index) const;
+			void		LookAt(const glm::vec3 & direction, const glm::vec3 & up = glm::vec3(0, 1, 0));
 			glm::vec3	TransformDirection(const glm::vec3 & direction);
 			glm::vec3	TransformDirection(const float x, const float y, const float z);
 			glm::vec3	TransformPoint(const glm::vec3 & position);
@@ -68,7 +71,7 @@ namespace LWGC
 			void		Translate(const glm::vec3 & translation);
 			void		Scale(const glm::vec3 & scaleFactor);
 
-			std::shared_ptr< Transform >	GetRoot(void);
+			Transform *	GetRoot(void);
 			std::shared_ptr< Transform >	GetParent(void) const;
 			void		AddChild(std::shared_ptr< Transform > child);
 			void		RemoveChild(std::shared_ptr< Transform > child);
@@ -79,7 +82,7 @@ namespace LWGC
 			void		SetRotation(glm::quat tmp);
 			glm::vec3	GetScale(void) const;
 			void		SetScale(glm::vec3 tmp);
-			
+
 			glm::vec3	GetUp(void) const;
 			glm::vec3	GetDown(void) const;
 			glm::vec3	GetRight(void) const;

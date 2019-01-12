@@ -14,15 +14,13 @@ namespace LWGC
 		private:
 
 		public:
-			Rotator(void);
+			Rotator(void) = default;
 			Rotator(const Rotator &) = delete;
-			virtual ~Rotator(void);
+			virtual ~Rotator(void) = default;
 
 			Rotator &	operator=(Rotator const & src) = delete;
 
 			virtual void Update(void) noexcept override;
-
-			virtual void Initialize(void) noexcept override;
 
 			virtual uint32_t	GetType(void) const noexcept override;
 	};

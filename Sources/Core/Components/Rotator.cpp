@@ -5,14 +5,6 @@
 
 using namespace LWGC;
 
-Rotator::Rotator(void)
-{
-}
-
-Rotator::~Rotator(void)
-{
-}
-
 void			Rotator::Update(void) noexcept
 {
 	static float r = 0;
@@ -20,11 +12,6 @@ void			Rotator::Update(void) noexcept
 	r++;
 
 	transform->RotateAxis(1 * Math::DegToRad, glm::vec3(1, 0, 0));
-}
-
-void			Rotator::Initialize(void) noexcept
-{
-	Component::Initialize();
 }
 
 uint32_t		Rotator::GetType(void) const noexcept

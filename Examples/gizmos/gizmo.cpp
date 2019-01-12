@@ -43,6 +43,9 @@ void		InitGizmos(Hierarchy * hierarchy)
 	arrow->AddComponent(new Rotator());
 	hierarchy->AddGameObject(arrow);
 
+	auto position = new Gizmo::Position(glm::vec3(0, 0, -5));
+	hierarchy->AddGameObject(position);
+
 	// selection and handle test for cube:
 	hierarchy->AddGameObject(new GameObject(new MeshRenderer(PrimitiveType::Cube)));
 }

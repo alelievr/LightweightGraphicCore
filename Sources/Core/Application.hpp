@@ -34,7 +34,7 @@ namespace LWGC
 			VulkanRenderPipeline *				_renderPipeline;
 			GLFWwindow *						_window;
 			EventSystem							_eventSystem;
-			std::shared_ptr< Hierarchy >		_hierarchy;
+			std::shared_ptr< Hierarchy >		hierarchy;
 			// ImGUIWrapper						_imGUI;
 			MaterialTable						_materialTable;
 

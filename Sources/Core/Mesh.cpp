@@ -199,6 +199,12 @@ void				Mesh::Translate(const glm::vec3 & translation)
 		_attributes[i].position += translation;
 }
 
+void				Mesh::Rotate(const glm::quat & rotation)
+{
+	for (size_t i = 0; i < _attributes.size(); i++)
+		_attributes[i].position = rotation * glm::vec4(_attributes[i].position, 0);
+}
+
 void Mesh::VertexAttributes::QuadVertexAttrib(
 	const glm::vec3 & p0,
 	const glm::vec3 & p1,

@@ -6,7 +6,7 @@ using namespace LWGC;
 
 GameObject::GameObject(void) : _active(false), _initialized(false)
 {
-	this->_transform = std::make_shared< Transform >();
+	this->transform = std::make_shared< Transform >();
 	this->_name = "GameObject";
 	this->_flags = 0;
 }
@@ -72,16 +72,16 @@ void			GameObject::RemoveComponent(Component * component) noexcept
 	_components.erase(component);
 }
 
-void			GameObject::SetHierarchy(Hierarchy * hierarchy) { _hierarchy = hierarchy; }
-Hierarchy *		GameObject::GetHierarchy(void) const noexcept { return _hierarchy; }
+void			GameObject::SetHierarchy(Hierarchy * hierarchy) { this->hierarchy = hierarchy; }
+Hierarchy *		GameObject::GetHierarchy(void) const noexcept { return hierarchy; }
 
-Transform *		GameObject::GetTransform(void) const { return (this->_transform.get()); }
+Transform *		GameObject::GetTransform(void) const { return (this->transform.get()); }
 
 void			GameObject::SetActive(bool active)
 {
 	if (active == _active)
 		return ;
-	
+
 	_active = active;
 
 	for (const auto & comp : _components)

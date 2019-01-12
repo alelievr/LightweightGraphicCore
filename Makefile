@@ -35,6 +35,7 @@ SRC			=	Core/Application.cpp \
 				Core/Components/FreeCameraControls.cpp \
 				Core/Components/Light.cpp \
 				Core/Components/Rotator.cpp \
+				Core/Components/Movator.cpp \
 				Core/ComputeDispatcher.cpp \
 				Core/ShaderCache.cpp \
 				Core/Object.cpp \
@@ -67,6 +68,7 @@ SRC			=	Core/Application.cpp \
 				Core/Gizmos/Circle.cpp \
 				Core/Gizmos/Cone.cpp \
 				Core/Gizmos/Arrow.cpp \
+				Core/Gizmos/Position.cpp \
 				Core/Handles/Selection.cpp \
 				Core/Handles/Tools.cpp \
 				Core/ImGUIWrapper.cpp \
