@@ -127,6 +127,8 @@ void		ShaderSource::Compile(void)
 
 	if (vkCreateShaderModule(VulkanInstance::Get()->GetDevice(), &createInfo, nullptr, &_module) != VK_SUCCESS)
 		throw std::runtime_error("failed to create shader module!");
+
+	_sourceFile.lastModificationTime = GetFileModificationTime(_sourceFile.path);
 }
 
 void		ShaderSource::GenerateBindingTable(ShaderBindingTable & bindingTable)
@@ -218,7 +220,8 @@ void		ShaderSource::AddIncludePath(const std::string & path)
 
 void		ShaderSource::Reload(void)
 {
-	std::cout << "TODO" << std::endl;
+	vkDestroyShaderModule(VulkanInstance::Get()->GetDevice(), _module, NULL);
+	Compile();
 }
 
 std::ostream &	LWGC::operator<<(std::ostream & o, ShaderSource const & r)

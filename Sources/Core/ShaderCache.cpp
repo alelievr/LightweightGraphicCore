@@ -37,4 +37,3 @@ ShaderProgram		*ShaderCache::GetShader(const std::string & shader, VkShaderStage
 
 	return (_shaders[key]);
 }
-

@@ -122,11 +122,14 @@ namespace LWGC
 			void	MarkAsReady(void) noexcept;
 
 			VkPipeline			GetPipeline(void) const;
+			ShaderProgram *		GetShaderProgram(void) const;
 			VkPipelineLayout	GetPipelineLayout(void) const;
 			uint32_t			GetDescriptorSetBinding(const std::string & setName) const;
 			void				GetComputeWorkSize(uint32_t & width, uint32_t & height, uint32_t & depth) const;
 			bool				IsCompute(void) const;
 			bool				IsReady(void) const noexcept;
+			
+			void				Update(void) noexcept;
 
 			void				SetBuffer(const std::string & bindingName, VkBuffer buffer, size_t size, VkDescriptorType descriptorType, bool silent = false);
 			void				SetTexture(const std::string & bindingName, const Texture * texture, VkImageLayout imageLayout, VkDescriptorType descriptorType, bool silent = false);
@@ -136,6 +139,7 @@ namespace LWGC
 			void				SetInputAssemblyState(VkPipelineInputAssemblyStateCreateInfo info);
 			void				SetDepthStencilState(VkPipelineDepthStencilStateCreateInfo info);
 			void				SetRasterizationState(VkPipelineRasterizationStateCreateInfo info);
+			// reload -> vkdestroy -> redo pipline
 	};
 
 	std::ostream &	operator<<(std::ostream & o, Material const & r);

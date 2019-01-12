@@ -3,6 +3,7 @@
 #include <algorithm>
 
 #include "Core/Vulkan/Vk.hpp"
+#include "Core/Application.hpp"
 
 using namespace LWGC;
 
@@ -18,6 +19,7 @@ ShaderProgram::ShaderProgram(const std::string & fragmentShaderName, const std::
 
 ShaderProgram::~ShaderProgram(void)
 {
+	Application::update.RemoveListener(_updateIndex);
 }
 
 void		ShaderProgram::CompileAndLink(void)
@@ -42,6 +44,7 @@ void		ShaderProgram::CompileAndLink(void)
 	}
 
 	_bindingTable.GenerateSetLayouts();
+	_updateIndex = Application::update.AddListener(std::bind(&ShaderProgram::Update, this));
 }
 
 bool		ShaderProgram::IsCompiled(void) const noexcept
@@ -64,10 +67,8 @@ bool		ShaderProgram::IsCompute(void) const noexcept
 	});
 }
 
-bool		ShaderProgram::Update(void)
+void		ShaderProgram::Update(void)
 {
-	bool		hasReloaded = false;
-
 	for (auto & shaderSource : _shaderSources)
 	{
 		if (shaderSource->NeedReload())
@@ -79,17 +80,14 @@ bool		ShaderProgram::Update(void)
 				[& shaderSource](const VkPipelineShaderStageCreateInfo & s) {
 				return shaderSource->GetStage() == s.stage;
 			});
-
+			
 			if (t == _shaderStages.end())
 				throw std::runtime_error("Failed to reload shader program code, you're probably adding shader sources after the program being compiled and linked");
 
 			t->module = shaderSource->GetModule();
-
-			hasReloaded = true;
+			Application::Get()->GetMaterialTable()->UpdateMaterial(this);
 		}
 	}
-
-	return hasReloaded;
 }
 
 VkPipelineShaderStageCreateInfo *		ShaderProgram::GetShaderStages(void)

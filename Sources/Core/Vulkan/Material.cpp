@@ -159,6 +159,7 @@ void					Material::SetupDefaultSettings(void)
 	_rasterizationState.frontFace = VK_FRONT_FACE_CLOCKWISE;
 	_rasterizationState.depthBiasEnable = VK_FALSE;
 	Application::Get()->_materialTable.RegsiterObject(this);
+	Application::Get()->_materialTable.AddToList(GetShaderProgram(), this);
 }
 
 void					Material::Initialize(SwapChain * swapChain, RenderPass * renderPass)
@@ -323,6 +324,13 @@ void					Material::CreateUniformBuffer(void)
 	);
 }
 
+void					Material::Update(void) noexcept
+{
+	std::cout << "Update Material" << std::endl;
+	vkDestroyPipeline(VulkanInstance::Get()->GetDevice(), _pipeline, NULL);
+	CreatePipeline();
+}
+
 void					Material::UpdateUniformBuffer()
 {
 	_perMaterial.albedo = glm::vec4(1, 1, 0, 1);
@@ -381,6 +389,11 @@ uint32_t			Material::GetDescriptorSetBinding(const std::string & setName) const
 		return -1;
 
 	return _bindingTable->GetDescriptorSetBinding(setName);
+}
+
+ShaderProgram *		Material::GetShaderProgram(void) const
+{
+	return _program;
 }
 
 void				Material::GetComputeWorkSize(uint32_t & width, uint32_t & height, uint32_t & depth) const

@@ -2,12 +2,29 @@
 
 using namespace LWGC;
 
+std::unordered_map<ShaderProgram *, std::vector< Material * > > MaterialTable::_shadersPrograms;
+
 MaterialTable::MaterialTable(void) : _swapChain(nullptr), _renderPass(nullptr)
 {
 }
 
 MaterialTable::~MaterialTable(void)
 {
+}
+
+void MaterialTable::UpdateMaterial(ShaderProgram *shaderProgram) noexcept
+{
+	auto materials = _shadersPrograms[shaderProgram];
+	
+	for (auto material: materials)
+	{
+		material->Update();
+	}
+}
+
+void	MaterialTable::AddToList(ShaderProgram * shaderProgram, Material * material)
+{
+	_shadersPrograms[shaderProgram].push_back(material);
 }
 
 void 	MaterialTable::Initialize(LWGC::SwapChain *swapChain , LWGC::RenderPass *renderPipeline)
