@@ -3,6 +3,8 @@
 #include <iostream>
 #include <string>
 
+#include "Core/Handles/PositionHandle.hpp"
+
 namespace LWGC
 {
 	enum class	BuiltinTools
@@ -15,7 +17,8 @@ namespace LWGC
 	class		Tools
 	{
 		private:
-			static int		_toolIndex;
+			static int				_toolIndex;
+			static PositionHandle *	_positionHandle;
 
 			static void		Update(void) noexcept;
 

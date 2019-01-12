@@ -27,7 +27,7 @@ void	Position::Initialize(void) noexcept
 	hierarchy->AddGameObject(forwardArrow);
 
 	upArrow->GetTransform()->SetRotation(glm::angleAxis(0.0f * Math::DegToRad, glm::vec3(0, 1, 0)));
-	rightArrow->GetTransform()->SetRotation(glm::angleAxis(90.0f * Math::DegToRad, glm::vec3(0, 0, 1)));
+	rightArrow->GetTransform()->SetRotation(glm::angleAxis(90.0f * Math::DegToRad, glm::vec3(0, 0, -1)));
 	forwardArrow->GetTransform()->SetRotation(glm::angleAxis(90.0f * Math::DegToRad, glm::vec3(1, 0, 0)));
 
 	// parent all these transforms

@@ -70,6 +70,8 @@ SRC			=	Core/Application.cpp \
 				Core/Gizmos/Arrow.cpp \
 				Core/Gizmos/Position.cpp \
 				Core/Handles/Selection.cpp \
+				Core/Handles/HandleManager.cpp \
+				Core/Handles/PositionHandle.cpp \
 				Core/Handles/Tools.cpp \
 				Core/ImGUIWrapper.cpp \
 				Utils/Bounds.cpp \
