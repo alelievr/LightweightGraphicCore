@@ -36,25 +36,19 @@ const std::string	LWGCBinding::Object = "object";
 
 Material::Material(void)
 {
-	_program = ShaderCache::GetShader(BuiltinShaders::Pink, BuiltinShaders::DefaultVertex);
+	_originalProgram = ShaderCache::GetShader(BuiltinShaders::Pink, BuiltinShaders::DefaultVertex);
 	SetupDefaultSettings();
 }
 
 Material::Material(const std::string & shader, VkShaderStageFlagBits stage)
 {
-	_program = ShaderCache::GetShader(shader, stage);
+	_originalProgram = ShaderCache::GetShader(shader, stage);
 	SetupDefaultSettings();
 }
 
 Material::Material(const std::string & fragmentShader, const std::string & vertexShader)
 {
-	_program = ShaderCache::GetShader(fragmentShader, vertexShader);
-	SetupDefaultSettings();
-}
-
-Material::Material(ShaderProgram * program)
-{
-	_program = program;
+	_originalProgram = ShaderCache::GetShader(fragmentShader, vertexShader);
 	SetupDefaultSettings();
 }
 
@@ -107,11 +101,6 @@ Material *Material::Create(const std::string & fragmentShader, const std::string
 	return new Material(fragmentShader, vertexShader);
 }
 
-Material *Material::Create(ShaderProgram * program)
-{
-	return new Material(program);
-}
-
 void					Material::SetupDefaultSettings(void)
 {
 	this->_pipelineLayout = VK_NULL_HANDLE;
@@ -121,6 +110,7 @@ void					Material::SetupDefaultSettings(void)
 	this->_device = VK_NULL_HANDLE;
 	this->_swapChain = nullptr;
 	this->_renderPass = nullptr;
+	this->_program = nullptr;
 
 	static auto bindingDescription = Mesh::GetBindingDescription();
 	static auto attributeDescriptions = Mesh::GetAttributeDescriptions();
@@ -196,16 +186,20 @@ void					Material::CleanupPipeline(void) noexcept
 
 void					Material::CompileShaders(void)
 {
+	std::cout << "Recompiled shader material\n";
 	try {
-		if (!_program->IsCompiled())
-			_program->CompileAndLink();
+		if (!_originalProgram->IsCompiled())
+			_originalProgram->CompileAndLink();
+		_program = _originalProgram;
 	} catch (const std::runtime_error & e) {
 		std::cout << e.what() << std::endl;
 		if (IsCompute())
-			throw std::runtime_error("Failed to compile compute shader");
+			_program = ShaderCache::GetShader(BuiltinShaders::ComputeError, VK_SHADER_STAGE_COMPUTE_BIT);
+		else
+			_program = ShaderCache::GetShader(BuiltinShaders::Pink, BuiltinShaders::DefaultVertex);			
 
-		_program = ShaderCache::GetShader(BuiltinShaders::Pink, BuiltinShaders::DefaultVertex);
-		_program->CompileAndLink();
+		if (!_program->IsCompiled())
+			_program->CompileAndLink();
 	}
 
 	// Retreive set layout of the shader program:
@@ -323,6 +317,13 @@ void					Material::CreateUniformBuffer(void)
 	);
 }
 
+void					Material::ReloadShaders(void) noexcept
+{
+	CompileShaders();
+	vkDestroyPipeline(VulkanInstance::Get()->GetDevice(), _pipeline, NULL);
+	CreatePipeline();
+}
+
 void					Material::UpdateUniformBuffer()
 {
 	_perMaterial.albedo = glm::vec4(1, 1, 0, 1);
@@ -383,6 +384,11 @@ uint32_t			Material::GetDescriptorSetBinding(const std::string & setName) const
 	return _bindingTable->GetDescriptorSetBinding(setName);
 }
 
+ShaderProgram *		Material::GetShaderProgram(void) const
+{
+	return _originalProgram;
+}
+
 void				Material::GetComputeWorkSize(uint32_t & width, uint32_t & height, uint32_t & depth) const
 {
 	_program->GetWorkingThreadSize(width, height, depth);
@@ -390,7 +396,7 @@ void				Material::GetComputeWorkSize(uint32_t & width, uint32_t & height, uint32
 
 bool				Material::IsCompute(void) const
 {
-	return _program->IsCompute();
+	return (_program != nullptr) ? _program->IsCompute() : _originalProgram->IsCompute();
 }
 
 bool					Material::DescriptorSetExists(const std::string & bindingName, bool silent)

@@ -13,7 +13,7 @@ namespace LWGC
 	class Hierarchy;
 	class Component;
 	
-    using ComponentIndex = std::unordered_set< Component * >::iterator;
+	using ComponentIndex = std::unordered_set< Component * >::iterator;
 
 	enum class	ComponentType : uint32_t
 	{
