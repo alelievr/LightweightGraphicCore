@@ -3,7 +3,7 @@
 #include "Core/Hierarchy.hpp"
 #include "Core/Rendering/VulkanRenderPipeline.hpp"
 #include "Core/Vulkan/VulkanInstance.hpp"
-
+#include "Utils/Vector.hpp"
 
 #include "IncludeDeps.hpp"
 #include GLM_INCLUDE

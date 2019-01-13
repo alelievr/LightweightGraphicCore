@@ -1,5 +1,8 @@
 #include "Random.hpp"
 
+#include <climits>
+#include <cmath>
+
 using namespace LWGC;
 
 Random::Random(void)
@@ -18,59 +21,68 @@ Random::~Random(void)
 	std::cout << "Destructor of Random called" << std::endl;
 }
 
-float		Random::GetFloat(void)
+float			Random::GetValue(void)
 {
-	
-}
-
-int		Random::GetInt(void)
-{
-	
+	return drand48();
 }
 
 glm::vec2		Random::OnCircle(void)
 {
-	
+	float p = drand48() * 2 * M_PI;
+
+	return glm::vec2(cos(p), sin(p));
 }
 
 glm::vec2		Random::InsideCircle(void)
 {
-	
+	return OnCircle() * (float)drand48();
 }
 
 glm::vec3		Random::OnSphere(void)
 {
-	
+	return glm::normalize(InsideSphere());
 }
 
 glm::vec3		Random::InsideSphere(void)
 {
-	
+	glm::vec3 p;
+
+	do
+	{
+		p = glm::vec3(drand48(), drand48(), drand48()) * 2.0f - 1.0f;
+	} while (glm::dot(p, p) >= 1);
+
+	return p;
 }
 
 glm::quat		Random::GetRotation(void)
 {
-	
+	return glm::normalize(glm::quat(GetValue(), GetValue(), GetValue(), GetValue()));
 }
 
-Color		Random::GetColor(void)
+glm::vec3		Random::GetPosition(const glm::vec3 & min, const glm::vec3 & max)
 {
-	
+	return glm::vec3(Range(min.x, max.x), Range(min.y, max.y), Range(min.z, max.z));
 }
 
-float		Random::Range(const float a, const float b)
+Color			Random::GetColor(void)
 {
-	
+	return Color(GetValue(), GetValue(), GetValue(), 1);
 }
 
-int		Random::Range(const int a, const int b)
+float			Random::Range(const float a, const float b)
 {
-	
+	return drand48() * (b - a) + a;
 }
 
-void		Random::SetSeed(const long seed)
+int				Random::Range(const int a, const int b)
 {
-	
+	return mrand48() % (b - a) + a;
+}
+
+void			Random::SetSeed(const long seed)
+{
+	srand48(seed);
 }
 
 

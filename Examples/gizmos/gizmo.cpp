@@ -45,6 +45,14 @@ void		InitGizmos(Hierarchy * hierarchy)
 	auto position = new Gizmo::Position(glm::vec3(0, 0, 5));
 	hierarchy->AddGameObject(position);
 
+	for (int i = 0; i < 40; i++)
+	{
+		auto arrow = new Gizmo::Arrow(2, 50, false, Random::GetColor());
+		arrow->GetTransform()->SetPosition(Random::GetPosition(glm::vec3(-10), glm::vec3(10)));
+		arrow->GetTransform()->SetRotation(Random::GetRotation());
+		hierarchy->AddGameObject(arrow);
+	}
+
 	// selection and handle test for cube:
 	hierarchy->AddGameObject(new GameObject(new MeshRenderer(PrimitiveType::Cube, Material::Create(BuiltinShaders::ColorDirection))));
 }

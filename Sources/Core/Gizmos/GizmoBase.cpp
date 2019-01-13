@@ -8,6 +8,7 @@ static const std::string GizmoShader = "Shaders/Gizmo/Default.hlsl";
 
 GizmoBase::GizmoBase(const Color & c, bool wireframe)
 {
+	// TODO: share the gizmo material to avoid useless descriptor allocation
 	material = Material::Create(GizmoShader);
 	renderer = new MeshRenderer(material);
 	AddComponent(renderer);
