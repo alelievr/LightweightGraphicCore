@@ -47,6 +47,7 @@
 #include "Core/Components/ComputeDispatcher.hpp"
 #include "Core/Components/Rotator.hpp"
 #include "Core/Components/Movator.hpp"
+#include "Core/Components/Activator.hpp"
 
 // Gimos & handles
 #include "Core/Gizmos/Line.hpp"

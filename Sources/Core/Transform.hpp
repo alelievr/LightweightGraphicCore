@@ -24,10 +24,18 @@
 
 namespace LWGC
 {
+	class GameObject;
+
 	class		Transform
 	{
+		friend class GameObject;
+
 		private:
-			std::shared_ptr< Transform >	_parent;
+			Transform(void);
+			Transform(const Transform &) = delete;
+
+			GameObject * 					_gameObeject;
+			Transform *						_parent;
 			std::vector< Transform * >		_childs;
 			glm::vec3						_position;
 			glm::quat						_rotation;
@@ -50,8 +58,6 @@ namespace LWGC
 			glm::vec4	GetParentForward(void) const noexcept;
 
 		public:
-			Transform(void);
-			Transform(const Transform &) = delete;
 			virtual ~Transform(void);
 
 			Transform &	operator=(Transform const & src) = delete;
@@ -72,16 +78,18 @@ namespace LWGC
 			void		Scale(const glm::vec3 & scaleFactor);
 
 			Transform *	GetRoot(void);
-			std::shared_ptr< Transform >	GetParent(void) const;
-			void		AddChild(std::shared_ptr< Transform > child);
-			void		RemoveChild(std::shared_ptr< Transform > child);
-			void		SetParent(std::shared_ptr< Transform > tmp);
-			glm::vec3	GetPosition(void) const;
-			void		SetPosition(glm::vec3 tmp);
-			glm::quat	GetRotation(void) const;
-			void		SetRotation(glm::quat tmp);
-			glm::vec3	GetScale(void) const;
-			void		SetScale(glm::vec3 tmp);
+			Transform *	GetParent(void) const;
+			std::vector< Transform * > &	GetChilds(void);
+			void			AddChild(Transform * child);
+			void			RemoveChild(Transform * child);
+			void			SetParent(Transform * tmp);
+			GameObject *	GetGameObject(void);
+			glm::vec3		GetPosition(void) const;
+			void			SetPosition(glm::vec3 tmp);
+			glm::quat		GetRotation(void) const;
+			void			SetRotation(glm::quat tmp);
+			glm::vec3		GetScale(void) const;
+			void			SetScale(glm::vec3 tmp);
 
 			glm::vec3	GetUp(void) const;
 			glm::vec3	GetDown(void) const;

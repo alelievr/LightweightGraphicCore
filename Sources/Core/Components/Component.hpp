@@ -25,6 +25,7 @@ namespace LWGC
 		ComputeDispatcher,
 		Rotator,
 		Movator,
+		Activator,
 		Count, // Note: this MUST be the last element of the enum
 	};
 

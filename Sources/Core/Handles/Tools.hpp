@@ -19,6 +19,7 @@ namespace LWGC
 		private:
 			static int				_toolIndex;
 			static PositionHandle *	_positionHandle;
+			static Hierarchy *		_hierarchy;
 
 			static void		Update(void) noexcept;
 

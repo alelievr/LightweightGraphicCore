@@ -81,6 +81,11 @@ Transform *	Transform::GetChildAt(const int index) const
 	return _childs[index];
 }
 
+std::vector< Transform * > &	Transform::GetChilds(void)
+{
+	return _childs;
+}
+
 void		Transform::LookAt(const glm::vec3 & direction, const glm::vec3 & up)
 {
 	_rotation = glm::quatLookAt(direction, up);
@@ -126,9 +131,9 @@ Transform *		Transform::GetRoot(void)
 	if (_parent == nullptr)
 		return this;
 
-	tmp = _parent.get();
+	tmp = _parent;
 	while (tmp->_parent != nullptr)
-		tmp = tmp->_parent.get();
+		tmp = tmp->_parent;
 	return tmp;
 }
 
@@ -164,7 +169,7 @@ void			Transform::UpdateLocalToWorldMatrix(void) noexcept
 		_localToWorld = _parent->_localToWorld * _localToWorld;
 }
 
-void			Transform::SetParent(std::shared_ptr< Transform > tmp)
+void			Transform::SetParent(Transform * tmp)
 {
 	this->_parent = tmp;
 
@@ -213,6 +218,9 @@ glm::vec3		Transform::GetBack(void) const { return _rotation * -GetParentForward
 
 glm::vec3		Transform::GetEulerAngles(void) const { return glm::eulerAngles(_rotation) * Math::DegToRad; }
 glm::mat4x4		Transform::GetLocalToWorldMatrix(void) const { return _localToWorld; }
+
+GameObject *	Transform::GetGameObject(void) { return _gameObeject; }
+Transform *		Transform::GetParent(void) const { return _parent; }
 
 std::ostream &	operator<<(std::ostream & o, Transform const & r)
 {

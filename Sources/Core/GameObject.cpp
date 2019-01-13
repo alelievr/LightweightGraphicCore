@@ -6,7 +6,7 @@ using namespace LWGC;
 
 GameObject::GameObject(void) : _active(false), _initialized(false)
 {
-	this->transform = std::make_shared< Transform >();
+	this->transform = new Transform();
 	this->_name = "GameObject";
 	this->_flags = 0;
 }
@@ -23,6 +23,7 @@ GameObject::GameObject(GameObject const & src)
 
 GameObject::~GameObject(void)
 {
+	delete transform;
 }
 
 GameObject &	GameObject::operator=(GameObject const & src)
@@ -75,7 +76,7 @@ void			GameObject::RemoveComponent(Component * component) noexcept
 void			GameObject::SetHierarchy(Hierarchy * hierarchy) { this->hierarchy = hierarchy; }
 Hierarchy *		GameObject::GetHierarchy(void) const noexcept { return hierarchy; }
 
-Transform *		GameObject::GetTransform(void) const { return (this->transform.get()); }
+Transform *		GameObject::GetTransform(void) const { return transform; }
 
 void			GameObject::SetActive(bool active)
 {
@@ -88,7 +89,22 @@ void			GameObject::SetActive(bool active)
 		comp->UpdateGameObjectActive();
 }
 
-bool			GameObject::IsActive(void) const { return _active; }
+bool			GameObject::IsActive(void) const
+{
+	if (!_active)
+		return false;
+
+	// is active only if all his parents are active
+	Transform * t = transform->GetParent();
+	while (t != nullptr)
+	{
+		if (!t->GetGameObject()->IsActive())
+			return false;
+		t = t->GetParent();
+	}
+
+	return true;
+}
 
 std::ostream &	operator<<(std::ostream & o, GameObject const & r)
 {

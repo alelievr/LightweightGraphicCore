@@ -36,6 +36,7 @@ SRC			=	Core/Application.cpp \
 				Core/Components/Light.cpp \
 				Core/Components/Rotator.cpp \
 				Core/Components/Movator.cpp \
+				Core/Components/Activator.cpp \
 				Core/ComputeDispatcher.cpp \
 				Core/ShaderCache.cpp \
 				Core/Object.cpp \

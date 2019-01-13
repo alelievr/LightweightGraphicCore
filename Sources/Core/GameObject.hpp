@@ -23,8 +23,8 @@ namespace LWGC
 			void SetHierarchy(Hierarchy * hierarchy);
 
 		protected:
-			std::shared_ptr< Transform >		transform;
-			Hierarchy *							hierarchy;
+			Transform *		transform;
+			Hierarchy *		hierarchy;
 
 			virtual void Initialize(void) noexcept;
 

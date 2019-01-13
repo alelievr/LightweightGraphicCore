@@ -35,6 +35,7 @@ void		InitGizmos(Hierarchy * hierarchy)
 
 	auto cone = new Gizmo::Cone(2, 1, 40, true, Color::DarkGreen);
 	cone->GetTransform()->SetPosition(glm::vec3(-2, 0, 1));
+	cone->AddComponent(new Activator());
 	hierarchy->AddGameObject(cone);
 
 	auto arrow = new Gizmo::Arrow(2, 50, false, Color::LightGray);
