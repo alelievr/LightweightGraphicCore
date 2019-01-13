@@ -14,11 +14,13 @@ namespace LWGC
 		Scale,
 	};
 
+	using namespace Handles;
+
 	class		Tools
 	{
 		private:
 			static int				_toolIndex;
-			static PositionHandle *	_positionHandle;
+			static Position *		_positionHandle;
 			static Hierarchy *		_hierarchy;
 
 			static void		Update(void) noexcept;

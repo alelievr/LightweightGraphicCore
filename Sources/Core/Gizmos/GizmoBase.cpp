@@ -31,8 +31,21 @@ GizmoBase::GizmoBase(const Color & c, bool wireframe)
 	assemblyState.topology = (wireframe) ? VK_PRIMITIVE_TOPOLOGY_LINE_LIST : VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST;
 	assemblyState.primitiveRestartEnable = VK_FALSE;
 
+	VkPipelineDepthStencilStateCreateInfo depthStencil = {};
+	depthStencil.sType = VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO;
+	depthStencil.depthTestEnable = VK_FALSE;
+	depthStencil.depthWriteEnable = VK_TRUE;
+	depthStencil.depthCompareOp = VK_COMPARE_OP_ALWAYS;
+	depthStencil.depthBoundsTestEnable = VK_FALSE;
+	depthStencil.minDepthBounds = 0.0f; // Optional
+	depthStencil.maxDepthBounds = 1.0f; // Optional
+	depthStencil.stencilTestEnable = VK_FALSE;
+	depthStencil.front = {}; // Optional
+	depthStencil.back = {}; // Optional
+
 	material->SetRasterizationState(rasterState);
 	material->SetInputAssemblyState(assemblyState);
+	material->SetDepthStencilState(depthStencil);
 }
 
 void	GizmoBase::Initialize(void) noexcept

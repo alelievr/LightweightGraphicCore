@@ -43,14 +43,11 @@ void			Component::UpdateGameObjectActive(void) noexcept
 {
 	if (gameObject->IsActive())
 	{
-		std::cout << "Enabling component\n";
-		oldState = enabled;
 		if (!enabled)
 			OnEnable();
 	}
 	else
 	{
-		std::cout << "Disabling component\n";
 		OnDisable();
 	}
 }

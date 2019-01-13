@@ -108,14 +108,12 @@ Bounds		Renderer::GetBounds(void) noexcept
 
 void		Renderer::OnEnable() noexcept
 {
-	std::cout << "OnEnabled !\n";
 	Component::OnEnable();
 	_renderContextIndex = hierarchy->RegisterComponentInRenderContext(GetType(), this);
 }
 
 void		Renderer::OnDisable() noexcept
 {
-	std::cout << "OnDisabled !\n";
 	Component::OnDisable();
 	hierarchy->UnregisterComponentInRenderContext(GetType(), _renderContextIndex);
 }

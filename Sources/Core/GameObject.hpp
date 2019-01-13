@@ -20,7 +20,8 @@ namespace LWGC
 			std::unordered_set< Component * >	_components;
 			bool								_initialized;
 
-			void SetHierarchy(Hierarchy * hierarchy);
+			void 		SetHierarchy(Hierarchy * hierarchy);
+			void		UpdateComponentsActiveStatus(void);
 
 		protected:
 			Transform *		transform;

@@ -11,7 +11,7 @@ using namespace LWGC;
 
 VkDescriptorSetLayout Camera::_perCameraDescriptorSetLayout = VK_NULL_HANDLE;
 
-Camera::Camera(void) : _initDescriptorSetLayout(false), _swapChain(nullptr)
+Camera::Camera(void) : _swapChain(nullptr), _initDescriptorSetLayout(false)
 {
 	this->_target = new RenderTarget();
 	this->_viewportSize = glm::vec2(0, 0);

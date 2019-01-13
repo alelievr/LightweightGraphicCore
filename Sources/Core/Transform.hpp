@@ -31,10 +31,11 @@ namespace LWGC
 		friend class GameObject;
 
 		private:
-			Transform(void);
+			Transform(void) = delete;
+			Transform(GameObject * go);
 			Transform(const Transform &) = delete;
 
-			GameObject * 					_gameObeject;
+			GameObject * 					_gameObject;
 			Transform *						_parent;
 			std::vector< Transform * >		_childs;
 			glm::vec3						_position;

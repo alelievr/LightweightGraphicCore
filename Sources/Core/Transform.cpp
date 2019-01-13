@@ -6,7 +6,7 @@
 
 using namespace LWGC;
 
-Transform::Transform(void)
+Transform::Transform(GameObject * go) : _gameObject(go)
 {
 	this->_parent = nullptr;
 	this->_position = glm::vec3(0, 0, 0);
@@ -219,7 +219,7 @@ glm::vec3		Transform::GetBack(void) const { return _rotation * -GetParentForward
 glm::vec3		Transform::GetEulerAngles(void) const { return glm::eulerAngles(_rotation) * Math::DegToRad; }
 glm::mat4x4		Transform::GetLocalToWorldMatrix(void) const { return _localToWorld; }
 
-GameObject *	Transform::GetGameObject(void) { return _gameObeject; }
+GameObject *	Transform::GetGameObject(void) { return _gameObject; }
 Transform *		Transform::GetParent(void) const { return _parent; }
 
 std::ostream &	operator<<(std::ostream & o, Transform const & r)

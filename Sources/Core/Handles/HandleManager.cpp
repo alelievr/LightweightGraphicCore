@@ -3,6 +3,9 @@
 #include "Core/Application.hpp"
 
 using namespace LWGC;
+using namespace Handles;
+
+std::unordered_set< IHandleControl * >		HandleManager::_handles;
 
 void		HandleManager::Initialize(void)
 {

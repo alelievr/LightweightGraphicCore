@@ -6,7 +6,7 @@ using namespace LWGC;
 
 GameObject::GameObject(void) : _active(false), _initialized(false)
 {
-	this->transform = new Transform();
+	this->transform = new Transform(this);
 	this->_name = "GameObject";
 	this->hierarchy = nullptr;
 	this->_flags = 0;
@@ -70,6 +70,15 @@ void			GameObject::SetActive(bool active)
 
 	_active = active;
 
+	UpdateComponentsActiveStatus();
+
+	// Also update childs components
+	for (auto child : transform->GetChilds())
+		child->GetGameObject()->UpdateComponentsActiveStatus();
+}
+
+void			GameObject::UpdateComponentsActiveStatus(void)
+{
 	for (const auto & comp : _components)
 		comp->UpdateGameObjectActive();
 }

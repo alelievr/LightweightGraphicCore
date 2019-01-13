@@ -2,12 +2,17 @@
 
 #include <iostream>
 #include <string>
+#include <unordered_set>
 
-namespace LWGC
+#include "Core/Handles/IHandleControl.hpp"
+
+namespace LWGC::Handles
 {
 	class		HandleManager
 	{
 		private:
+			static std::unordered_set< IHandleControl * >		_handles;
+
 			static void		Update(void);
 
 		public:

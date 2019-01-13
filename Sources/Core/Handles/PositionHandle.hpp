@@ -5,29 +5,29 @@
 
 #include "Core/GameObject.hpp"
 #include "Core/Gizmos/Position.hpp"
-#include "Core/Handles/IHandle.hpp"
+#include "Core/Handles/BaseHandle.tpp"
 #include "IncludeDeps.hpp"
 #include "Utils/Color.hpp"
 
 #include GLM_INCLUDE
 #include GLM_INCLUDE_QUATERNION
 
-namespace LWGC
+namespace LWGC::Handles
 {
-	class		PositionHandle : public Gizmo::Position, public IHandle< glm::vec3 >
+	class		Position : public Gizmo::Position, public BaseHandle< glm::vec3 >
 	{
 		public:
-			PositionHandle(const glm::vec3 & position);
-			PositionHandle(const PositionHandle &) = delete;
-			virtual ~PositionHandle(void);
+			Position(const glm::vec3 & position);
+			Position(const Position &) = delete;
+			virtual ~Position(void);
 
 			bool		HasChanged(void) override;
 			glm::vec3	GetDelta(void) override;
 			void		Select(void) override;
 			void		UnSelect(void) override;
 
-			PositionHandle &	operator=(PositionHandle const & src) = delete;
+			Position &	operator=(Position const & src) = delete;
 	};
 
-	std::ostream &	operator<<(std::ostream & o, PositionHandle const & r);
+	std::ostream &	operator<<(std::ostream & o, Position const & r);
 }
