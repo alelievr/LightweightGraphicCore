@@ -6,7 +6,7 @@
 #    By: amerelo <amerelo@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2014/07/15 15:13:38 by alelievr          #+#    #+#              #
-#    Updated: 2019/01/06 19:25:46 by amerelo          ###   ########.fr        #
+#    Updated: 2019/01/13 17:27:50 by amerelo          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -25,6 +25,7 @@ SRC			=	Core/Application.cpp \
 				Core/Mesh.cpp \
 				Core/ShaderCache.cpp \
 				Core/Object.cpp \
+				Core/Time.cpp \
 				Core/PrimitiveMeshFactory.cpp \
 				Core/ComputeDispatcher.cpp \
 				Core/TextureTable.cpp \

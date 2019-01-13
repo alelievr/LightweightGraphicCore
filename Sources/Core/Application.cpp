@@ -4,6 +4,7 @@
 #include "Core/Rendering/ForwardRenderPipeline.hpp"
 #include "Core/Vulkan/VulkanInstance.hpp"
 #include "Core/Components/MeshRenderer.hpp"
+#include "Core/Time.hpp"
 
 using namespace LWGC;
 
@@ -126,19 +127,23 @@ void			Application::Open(const std::string & name, const int width, const int he
 	glfwSetWindowUserPointer(_window, &_renderPipeline);
 	glfwSetFramebufferSizeCallback(_window, FramebufferResizeCallback);
 
+	Time::SetStartTime();
+
 	// _imGUI.Initialize(&_swapChain, &_surface);
 }
 
 void				Application::Update(void) noexcept
 {
 	glfwPollEvents();
-
+	//update timeframe
 	Application::update.Invoke();
 	Application::lateUpdate.Invoke();
 
 	//TODO: hierarchy get cameras
 	const auto cameras =_hierarchy->GetCameras();
 	_renderPipeline->RenderInternal(cameras, _hierarchy->GetRenderContext());
+
+	Time::GetUnscaledDeltaTime();
 
 	// _imGUI.BeginFrame();
 
