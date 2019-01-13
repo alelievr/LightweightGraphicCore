@@ -2,7 +2,6 @@
 
 using namespace LWGC;
 
-static Gizmo::Ray * r;
 static int i;
 
 void	ProcessEvent(EventSystem * es, Application & app)
@@ -22,7 +21,7 @@ void		InitGizmos(Hierarchy * hierarchy)
 	lineGizmo->GetTransform()->SetPosition(glm::vec3(0, 0, 0));
 	hierarchy->AddGameObject(lineGizmo);
 
-	auto rayGizmo = r = new Gizmo::Ray(glm::vec3(1, 0, 0), glm::vec3(0, 1, 0), Color::Red);
+	auto rayGizmo = new Gizmo::Ray(glm::vec3(1, 0, 0), glm::vec3(0, 1, 0), Color::Red);
 	rayGizmo->GetTransform()->SetPosition(glm::vec3(0, 0, 0));
 	hierarchy->AddGameObject(rayGizmo);
 
@@ -47,7 +46,7 @@ void		InitGizmos(Hierarchy * hierarchy)
 	hierarchy->AddGameObject(position);
 
 	// selection and handle test for cube:
-	hierarchy->AddGameObject(new GameObject(new MeshRenderer(PrimitiveType::Cube)));
+	hierarchy->AddGameObject(new GameObject(new MeshRenderer(PrimitiveType::Cube, Material::Create(BuiltinShaders::ColorDirection))));
 }
 
 void		InitCamera(Hierarchy * hierarchy)

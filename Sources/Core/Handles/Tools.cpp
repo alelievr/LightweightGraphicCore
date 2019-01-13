@@ -1,6 +1,7 @@
 #include "Tools.hpp"
 
 #include "Core/Application.hpp"
+#include "Core/Handles/Selection.hpp"
 
 using namespace LWGC;
 

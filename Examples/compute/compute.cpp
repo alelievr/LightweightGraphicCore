@@ -15,7 +15,6 @@ void	ProcessEvent(EventSystem * es, Application & app)
 
 Material *		CreateFullscreenMaterial(void)
 {
-	return Material::Create(BuiltinShaders::Standard);
 	auto		fullScreenMaterial = Material::Create(BuiltinShaders::Standard, BuiltinShaders::FullScreenQuad);
 
 	// Setup material to display the procedural texture:
@@ -72,8 +71,7 @@ int			main(void)
 	hierarchy->AddGameObject(computeProcessor);
 
 	// fullscreen compute display
-	// hierarchy->AddGameObject(new GameObject(new ProceduralRenderer(displayProceduralTexture, 4)));
-	hierarchy->AddGameObject(new GameObject(new MeshRenderer(PrimitiveType::Cone, displayProceduralTexture)));
+	hierarchy->AddGameObject(new GameObject(new ProceduralRenderer(displayProceduralTexture, 4)));
 
 	// Reserve memory so we don't have to allocate and bind the descriptor set
 	writeProceduralTexture->SetTexture("proceduralTexture", proceduralTexture, VK_IMAGE_LAYOUT_GENERAL, VK_DESCRIPTOR_TYPE_STORAGE_IMAGE);

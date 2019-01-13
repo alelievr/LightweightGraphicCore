@@ -9,7 +9,6 @@
 #include "Core/Vulkan/Material.hpp"
 #include "Core/Vulkan/VulkanInstance.hpp"
 #include "Core/Mesh.hpp"
-#include "Core/Handles/Selection.hpp"
 
 #include IMGUI_INCLUDE
 
@@ -60,6 +59,7 @@ namespace LWGC
 			virtual void		RecreateSwapChain(RenderContext * renderContext);
 			virtual void		Render(const std::vector< Camera * > & cameras, RenderContext * context) = 0;
 			virtual void		CreateDescriptorSets(void);
+			virtual void		InitializeHandles(void) noexcept;
 
 		public:
 			VulkanRenderPipeline(void);

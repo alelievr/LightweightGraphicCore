@@ -1,8 +1,10 @@
 #include "VulkanRenderPipeline.hpp"
+
 #include "Core/Components/MeshRenderer.hpp"
 #include "Core/Components/ComputeDispatcher.hpp"
-
 #include "Core/PrimitiveMeshFactory.hpp"
+#include "Core/Handles/Selection.hpp"
+#include "Core/Handles/Tools.hpp"
 
 #include <cmath>
 #include <unordered_set>
@@ -52,6 +54,14 @@ void                VulkanRenderPipeline::Initialize(SwapChain * swapChain)
 
 	CreateDescriptorSets();
 	CreatePerFrameDescriptorSet();
+
+	InitializeHandles();
+}
+
+void				VulkanRenderPipeline::InitializeHandles(void) noexcept
+{
+	Selection::Initialize();
+	Tools::Initialize();
 }
 
 void				VulkanRenderPipeline::CreateDescriptorSets(void) {}

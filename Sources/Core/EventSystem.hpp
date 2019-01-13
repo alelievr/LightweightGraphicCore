@@ -22,6 +22,7 @@ namespace LWGC
 		private:
 			GLFWwindow *			_window;
 			glm::vec2				_mousePosition;
+			glm::vec2				_oldMousePosition;
 
 			static std::map< GLFWwindow *, EventSystem * > eventSystems;
 			static EventSystem *	eventSystemInstance;
@@ -35,7 +36,6 @@ namespace LWGC
 			Delegate< void(glm::vec2, int, ButtonAction) >		onMouseClick;
 			Delegate< void(glm::vec2, MouseMoveAction) >		onMouseMove;
 			glm::vec2											delta;
-			glm::vec2											oldMousePosition;
 
 			EventSystem(void);
 			EventSystem(const EventSystem&) = delete;

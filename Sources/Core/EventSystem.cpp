@@ -71,23 +71,21 @@ void			EventSystem::BindWindow(GLFWwindow * window)
 			glm::vec2 virtualMousePos = glm::vec2(posX, posY);
 			self->UpdateMousePosition();
 
-			self->delta = virtualMousePos - self->oldMousePosition;
-			self->oldMousePosition = virtualMousePos;
+			self->delta = virtualMousePos - self->_oldMousePosition;
+			self->_oldMousePosition = virtualMousePos;
 			self->onMouseMove.Invoke(virtualMousePos, MouseMoveAction::Move);
 		}
 	);
 
 	UpdateMousePosition();
 
-	delta = _mousePosition - oldMousePosition;
-	oldMousePosition = _mousePosition;
-	onMouseMove.Invoke(_mousePosition, MouseMoveAction::Move);
-
-	Application::update.AddListener([&](){
-		}
-	);
+	// We need to initialize oldMousePosition to the current mouse position for the first frame (avoid delta jumps)
+	double posX, posY;
+	glfwGetCursorPos(_window, &posX, &posY);
+	_oldMousePosition = glm::vec2(posX, posY);
 
 	Application::lateUpdate.AddListener([&](){
+			// reset delta after it was used in the update by the components
 			this->delta = glm::vec2(0, 0);
 		}
 	);

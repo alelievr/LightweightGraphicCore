@@ -6,7 +6,7 @@
 #    By: amerelo <amerelo@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 0014/07/15 15:13:38 by alelievr          #+#    #+#              #
-#    Updated: 2018/12/22 17:14:01 by alelievr         ###   ########.fr        #
+#    Updated: 2019/01/13 12:24:23 by alelievr         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -224,7 +224,8 @@ fclean: clean
 		$(RM) $(NAME))
 
 #	All removing then compiling
-re: fclean all
+re: fclean
+	@$(MAKE) all
 
 f:	all run
 
