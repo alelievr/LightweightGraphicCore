@@ -39,7 +39,7 @@ namespace LWGC
 
 			static void						CreateCameraDescriptorSetLayout(void) noexcept;
 			static VkDescriptorSetLayout	GetDescriptorSetLayout(void) noexcept;
-			void							CreateDescriptorSet(void) noexcept;
+			void							CreateDescriptorSet(void);
 			void							UpdateUniformData(void) noexcept;
 			virtual void					Update(void) noexcept override;
 

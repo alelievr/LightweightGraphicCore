@@ -37,7 +37,7 @@ namespace LWGC
 
 			void				RenderInternal(const std::vector< Camera * > & cameras, RenderContext * context);
 			void				UpdatePerframeUnformBuffer(void) noexcept;
-			void				CreatePerFrameDescriptorSet(void) noexcept;
+			void				CreatePerFrameDescriptorSet(void);
 
 		protected:
 			std::vector<VkSemaphore>		imageAvailableSemaphores;

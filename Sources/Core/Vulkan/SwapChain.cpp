@@ -6,7 +6,7 @@
 
 using namespace LWGC;
 
-SwapChain::SwapChain(void)
+SwapChain::SwapChain(void) : _instance(nullptr), _window(nullptr), _imageCount(0)
 {
 	this->_swapChain = VK_NULL_HANDLE;
 	this->_device = VK_NULL_HANDLE;

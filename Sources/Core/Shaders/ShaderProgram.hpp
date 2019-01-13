@@ -15,12 +15,15 @@ namespace LWGC
 	class		ShaderProgram
 	{
 		private:
+			std::string										_name;
 			std::vector< ShaderSource * >					_shaderSources;
 			std::vector< VkPipelineShaderStageCreateInfo >	_shaderStages;
 			ShaderBindingTable								_bindingTable;
 			uint32_t										_threadWidth;
 			uint32_t										_threadHeight;
 			uint32_t										_threadDepth;
+
+			const std::string		GetFileName(const std::string & filePath);
 
 		public:
 			ShaderProgram(void);
@@ -42,6 +45,7 @@ namespace LWGC
 			void								GetWorkingThreadSize(uint32_t & width, uint32_t & height, uint32_t & depth);
 			bool								HasBinding(const std::string & bindingName) const;
 			const ShaderBindingTable *			GetShaderBindingTable(void) const;
+			const std::string					GetName(void) const;
 	};
 
 	std::ostream &	operator<<(std::ostream & o, ShaderProgram const & r);

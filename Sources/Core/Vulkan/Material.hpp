@@ -103,12 +103,13 @@ namespace LWGC
 			bool		DescriptorSetExists(const std::string & bindingName, bool silent);
 			void		InitMaterialIfPossible(void);
 			void		AllocateDescriptorSet(const std::string & bindingName);
+			bool		IsInitialized(void) const;
 
 		public:
-			Material(const Material &);
+			Material(const Material &) = delete;
 			virtual ~Material(void);
 
-			Material &	operator=(Material const & src);
+			Material &	operator=(Material const & src) = delete;
 
 			static Material	*Create(void);
 			static Material	*Create(const std::string & shader, VkShaderStageFlagBits stage);

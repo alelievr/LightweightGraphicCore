@@ -4,7 +4,7 @@
 
 using namespace LWGC;
 
-RenderPass::RenderPass(void)
+RenderPass::RenderPass(void) : _instance(nullptr), _swapChain(nullptr), _currentMaterial(nullptr)
 {
 	this->_renderPass = VK_NULL_HANDLE;
 	this->_attachmentCount = 0;

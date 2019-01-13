@@ -66,7 +66,7 @@ void				VulkanRenderPipeline::InitializeHandles(void) noexcept
 
 void				VulkanRenderPipeline::CreateDescriptorSets(void) {}
 
-void				VulkanRenderPipeline::CreatePerFrameDescriptorSet(void) noexcept
+void				VulkanRenderPipeline::CreatePerFrameDescriptorSet(void)
 {
 	auto layoutBinding = Vk::CreateDescriptorSetLayoutBinding(0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_ALL);
 	Vk::CreateDescriptorSetLayout({layoutBinding}, _perFrameDescriptorSetLayout);

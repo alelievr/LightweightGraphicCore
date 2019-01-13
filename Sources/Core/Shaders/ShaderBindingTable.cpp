@@ -27,7 +27,6 @@ void					ShaderBindingTable::SetStage(VkShaderStageFlagBits stage)
 ShaderBinding &			ShaderBindingTable::AddBinding(const std::string & name, int descriptorSet, int bindingIndex, VkDescriptorType descriptorType)
 {
 	// Check for same-location bindings:
-
 	for (const auto & binding : _bindings)
 	{
 		if (binding.second.bindingIndex == bindingIndex && binding.second.descriptorSet == descriptorSet && binding.first != name)

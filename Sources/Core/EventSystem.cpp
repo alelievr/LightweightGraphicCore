@@ -9,7 +9,7 @@ using namespace LWGC;
 std::map< GLFWwindow *, EventSystem * > EventSystem::eventSystems;
 EventSystem *	EventSystem::eventSystemInstance;
 
-EventSystem::EventSystem(void)
+EventSystem::EventSystem(void) : _window(nullptr)
 {
 	eventSystemInstance = this;
 }

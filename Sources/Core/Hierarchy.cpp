@@ -6,7 +6,7 @@
 
 using namespace LWGC;
 
-Hierarchy::Hierarchy(void)
+Hierarchy::Hierarchy(void) : _initialized(false)
 {
 }
 

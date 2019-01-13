@@ -30,12 +30,12 @@ namespace LWGC
 
 		public:
 			GameObject(void);
-			GameObject(const GameObject&);
+			GameObject(const GameObject &) = delete;
 			virtual		~GameObject(void);
 
 			GameObject(Component * components);
 
-			GameObject &	operator=(GameObject const & src);
+			GameObject &	operator=(GameObject const & src) = delete;
 
 			Hierarchy *		GetHierarchy(void) const noexcept;
 			Transform *		GetTransform(void) const;

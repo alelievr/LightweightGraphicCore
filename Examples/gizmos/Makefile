@@ -6,7 +6,7 @@
 #    By: amerelo <amerelo@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 0014/07/15 15:13:38 by alelievr          #+#    #+#              #
-#    Updated: 2019/01/13 12:24:23 by alelievr         ###   ########.fr        #
+#    Updated: 2019/01/13 17:35:56 by alelievr         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -37,7 +37,7 @@ INCDIRS		=	../../sources ../../Deps/vulkansdk-macos-1.1.85.0/macOS/include/
 
 #	Libraries
 LIBDIRS		=	../../ ../../Deps/glfw/src/ ../../Deps/imgui/ ../../Deps/vulkansdk-macos-1.1.85.0/macOS/lib
-LDLIBS		=	-lLWGC -lglfw3 -limgui -lvulkan -lglslang -lSPIRV -lHLSL -lSPVRemapper -lSPIRV-Tools -lSPIRV-Tools-link -lSPIRV-Tools-opt -lspirv-cross -lOSDependent -lOGLCompiler -lspirv-cross
+LDLIBS		=	-lLWGC -lglfw3 -limgui -lvulkan -lglslang -lSPIRV -lHLSL -lSPVRemapper -lSPIRV-Tools -lSPIRV-Tools-link -lSPIRV-Tools-opt -lOSDependent -lOGLCompiler ../../Deps/SPIRV-Cross/libspirv-cross.a
 
 #	Output
 NAME		=	gizmo

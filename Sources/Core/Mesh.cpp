@@ -79,6 +79,12 @@ void		Mesh::Clear(void)
 Mesh &	Mesh::operator=(Mesh const & src)
 {
 	if (this != &src) {
+		this->_instance = src._instance;
+		this->_device = src._device;
+		this->_vertexBuffer = src._vertexBuffer;
+		this->_vertexBufferMemory = src._vertexBufferMemory;
+		this->_indexBuffer = src._indexBuffer;
+		this->_indexBufferMemory = src._indexBufferMemory;
 		this->_attributes = src._attributes;
 		this->_indices = src._indices;
 		this->_bounds = src._bounds;
