@@ -135,7 +135,7 @@ void			Application::Open(const std::string & name, const int width, const int he
 void				Application::Update(void) noexcept
 {
 	glfwPollEvents();
-	//update timeframe
+	Time::FrameCount();
 	Application::update.Invoke();
 	Application::lateUpdate.Invoke();
 

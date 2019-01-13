@@ -16,23 +16,22 @@ namespace LWGC
 			static NanoSecondTime	_tmp;
 			static double			_value;
 			static float 			_scale;
-			// static std::chrono::duration<double> _unscaledDeltaTime
-
+			static int 				_frameCount;
 
 		public:
 			Time() = delete;
 			Time(const Time&) = delete;
 			virtual ~Time(void)  = delete;
 			
-			static void		SetStartTime();
+			static void		FrameCount(void);
 			
-			// GetTime();
-			// GetDeltaTime()
-			// GetTimeScale()
-			
+			static void		SetStartTime(void);
+			static void		SetScale(float scale);
+
+			static double	GetDeltaTime(void);
 			static double	GetUnscaledDeltaTime();
-			// GetUnscaleDeltaTime()
-			// GetFrameCount()
+			static float	GetTimeScale(void);
+			static int		GetFrameCount(void);
 
 			Time &	operator=(Time const & src) = delete;
 	};
