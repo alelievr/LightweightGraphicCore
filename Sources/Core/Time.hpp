@@ -28,8 +28,10 @@ namespace LWGC
 			static void		SetStartTime(void);
 			static void		SetScale(float scale);
 
-			static double	GetDeltaTime(void);
-			static double	GetUnscaledDeltaTime();
+			// GetDeltaTime()
+			// GetUnscaledDeltaTime()
+			static double	GetTime(void);
+			static double	GetUnscaledTime();
 			static float	GetTimeScale(void);
 			static int		GetFrameCount(void);
 

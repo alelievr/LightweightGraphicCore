@@ -36,7 +36,7 @@ void	Time::SetScale(float scale)
 	}
 }
 
-double	Time::GetDeltaTime(void)
+double	Time::GetTime(void)
 {
 	auto now = std::chrono::high_resolution_clock::now();
 	
@@ -46,7 +46,7 @@ double	Time::GetDeltaTime(void)
 		return(_value  + (now - _tmp).count() * _scale);
 }
 
-double	Time::GetUnscaledDeltaTime(void)
+double	Time::GetUnscaledTime(void)
 {
 	auto now = std::chrono::high_resolution_clock::now();
 
