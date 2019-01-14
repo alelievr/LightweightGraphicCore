@@ -13,9 +13,10 @@ namespace LWGC
 	{
 		private:
 			static NanoSecondTime	_start;
-			static NanoSecondTime	_tmp;
+			static NanoSecondTime	_lastdeltaTime;
 			static double			_value;
-			static float 			_scale;
+			static double			_deltaTime;
+			static double 			_scale;
 			static int 				_frameCount;
 
 		public:
@@ -28,8 +29,8 @@ namespace LWGC
 			static void		SetStartTime(void);
 			static void		SetScale(float scale);
 
-			// GetDeltaTime()
-			// GetUnscaledDeltaTime()
+			static double	GetDeltaTime(void);
+			static double	GetUnscaledDeltaTime(void);
 			static double	GetTime(void);
 			static double	GetUnscaledTime();
 			static float	GetTimeScale(void);

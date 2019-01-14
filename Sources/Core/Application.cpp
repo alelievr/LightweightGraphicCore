@@ -128,9 +128,9 @@ void			Application::Open(const std::string & name, const int width, const int he
 	glfwSetFramebufferSizeCallback(_window, FramebufferResizeCallback);
 
 	Time::SetStartTime();
-
 	// _imGUI.Initialize(&_swapChain, &_surface);
 }
+#include <limits>
 
 void				Application::Update(void) noexcept
 {
