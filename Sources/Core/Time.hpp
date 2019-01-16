@@ -4,13 +4,16 @@
 # include <string>
 #include <chrono>
 #include <ctime>
+#include "Core/Application.hpp"
+
 
 namespace LWGC
 {
 	using NanoSecondTime = std::__1::chrono::time_point<std::__1::chrono::steady_clock, std::__1::chrono::nanoseconds>;
-	
 	class		Time
 	{
+		friend class Application;
+		
 		private:
 			static NanoSecondTime	_start;
 			static NanoSecondTime	_diff;
@@ -19,15 +22,16 @@ namespace LWGC
 			static double			_deltaTime;
 			static double 			_scale;
 			static int 				_frameCount;
+			
+			static void		Initialize(void);
 
 		public:
 			Time() = delete;
 			Time(const Time&) = delete;
 			virtual ~Time(void)  = delete;
 			
-			static void		FrameCount(void);
+			static void		BeginFrame(void);
 			
-			static void		SetStartTime(void);
 			static void		SetScale(float scale);
 
 			static double	GetDeltaTime(void);

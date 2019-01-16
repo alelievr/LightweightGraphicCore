@@ -127,7 +127,7 @@ void			Application::Open(const std::string & name, const int width, const int he
 	glfwSetWindowUserPointer(_window, &_renderPipeline);
 	glfwSetFramebufferSizeCallback(_window, FramebufferResizeCallback);
 
-	Time::SetStartTime();
+	Time::Initialize();
 	// _imGUI.Initialize(&_swapChain, &_surface);
 }
 #include <limits>
@@ -135,7 +135,7 @@ void			Application::Open(const std::string & name, const int width, const int he
 void				Application::Update(void) noexcept
 {
 	glfwPollEvents();
-	Time::FrameCount();
+	Time::BeginFrame();
 	Application::update.Invoke();
 	Application::lateUpdate.Invoke();
 

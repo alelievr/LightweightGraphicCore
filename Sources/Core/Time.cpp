@@ -10,7 +10,7 @@ double				Time::_value = 0.0;
 double				Time::_deltaTime = -1.0;
 int 				Time::_frameCount = 0;
 
-void	Time::FrameCount(void)
+void	Time::BeginFrame(void)
 {
 	auto now = std::chrono::high_resolution_clock::now();
 
@@ -21,7 +21,7 @@ void	Time::FrameCount(void)
 	_frameCount++;
 }
 
-void	Time::SetStartTime(void)
+void	Time::Initialize(void)
 {
 	_start = std::chrono::high_resolution_clock::now();
 	_diff = std::chrono::high_resolution_clock::now();
