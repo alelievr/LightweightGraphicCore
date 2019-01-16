@@ -13,6 +13,7 @@ namespace LWGC
 	{
 		private:
 			static NanoSecondTime	_start;
+			static NanoSecondTime	_diff;
 			static NanoSecondTime	_lastdeltaTime;
 			static double			_value;
 			static double			_deltaTime;

@@ -3,6 +3,7 @@
 using namespace LWGC;
 
 NanoSecondTime		Time::_start;
+NanoSecondTime		Time::_diff;
 NanoSecondTime		Time::_lastdeltaTime = std::chrono::high_resolution_clock::now();
 double 				Time::_scale = 1.0;
 double				Time::_value = 0.0;
@@ -23,17 +24,18 @@ void	Time::FrameCount(void)
 void	Time::SetStartTime(void)
 {
 	_start = std::chrono::high_resolution_clock::now();
+	_diff = std::chrono::high_resolution_clock::now();
 }
 
 void	Time::SetScale(float scale)
 {
-	_scale = scale;
-
 	auto now = std::chrono::high_resolution_clock::now();
 
-	std::chrono::duration<double> elapsed_seconds = now - _start;
-	_value = elapsed_seconds.count() * _scale;
-	_start = std::chrono::high_resolution_clock::now();
+	std::chrono::duration<double> elapsed_seconds = now - _diff;
+	_value += elapsed_seconds.count() * _scale;
+	_diff = std::chrono::high_resolution_clock::now();
+	
+	_scale = scale;
 }
 
 double	Time::GetDeltaTime(void)
@@ -50,9 +52,9 @@ double	Time::GetTime(void)
 {
 	auto now = std::chrono::high_resolution_clock::now();
 	
-	std::chrono::duration<double> elapsed_seconds = now - _start;
+	std::chrono::duration<double> elapsed_seconds = now - _diff;
 
-	return _value + elapsed_seconds.count() * _scale;
+	return _value + (elapsed_seconds.count() * _scale);
 }
 
 double	Time::GetUnscaledTime(void)

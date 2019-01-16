@@ -6,7 +6,7 @@
 #    By: amerelo <amerelo@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 0014/07/15 15:13:38 by alelievr          #+#    #+#              #
-#    Updated: 2019/01/05 15:52:24 by amerelo          ###   ########.fr        #
+#    Updated: 2019/01/16 14:50:59 by amerelo          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -16,7 +16,7 @@
 
 #	Sources
 SRCDIR		=	src
-SRC			=	cube.cpp	\
+SRC			=	cubeTime.cpp	\
 
 #	Objects
 OBJDIR		=	obj
@@ -40,7 +40,7 @@ LIBDIRS		=	../../ ../../Deps/glfw/src/ ../../Deps/imgui/ ../../Deps/glslang/buil
 LDLIBS		=	-lLWGC -lglfw3 -lImGUI -lvulkan -lglslang -lSPIRV -lHLSL -lSPVRemapper -lspirv-cross
 
 #	Output
-NAME		=	cube
+NAME		=	cubeTime
 
 #	Compiler
 WERROR		=	
