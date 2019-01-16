@@ -8,6 +8,7 @@
 #include "Core/Handles/BaseHandle.tpp"
 #include "IncludeDeps.hpp"
 #include "Utils/Color.hpp"
+#include "Core/Handles/Slider1DHandle.hpp"
 
 #include GLM_INCLUDE
 #include GLM_INCLUDE_QUATERNION
@@ -16,6 +17,16 @@ namespace LWGC::Handles
 {
 	class		Position : public Gizmo::Position, public BaseHandle< glm::vec3 >
 	{
+		private:
+			Slider1D		_upHandle;
+			Slider1D		_rightHandle;
+			Slider1D		_forwardHandle;
+
+			glm::vec3		_delta;
+			bool			_changed;
+
+			void			OnSliderMoved(IHandleControl * control, const glm::vec3 delta);
+
 		public:
 			Position(const glm::vec3 & position);
 			Position(const Position &) = delete;
@@ -23,8 +34,6 @@ namespace LWGC::Handles
 
 			bool		HasChanged(void) override;
 			glm::vec3	GetDelta(void) override;
-			void		Select(void) override;
-			void		UnSelect(void) override;
 
 			Position &	operator=(Position const & src) = delete;
 	};

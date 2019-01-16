@@ -10,35 +10,43 @@
 using namespace LWGC;
 using namespace Handles;
 
-Position::Position(const glm::vec3 & position) : Gizmo::Position(position)
+Position::Position(const glm::vec3 & position) : Gizmo::Position(position), _delta(0, 0, 0), _changed(false)
 {
-	// TODO: Add 3 line handles to control the 3 arrows
+	// _upHandle.onSelected.AddListener(std::bind(&Position::OnSliderSelected));
+	_upHandle.onDelta.AddListener([&](auto c, auto d) { OnSliderMoved(c, d); });
+	// _rightHandle.onSelected.AddListener(std::bind(&Position::OnSliderSelected));
+	_rightHandle.onDelta.AddListener([&](auto c, auto d) { OnSliderMoved(c, d); });
+	// _forwardHandle.onSelected.AddListener(std::bind(&Position::OnSliderSelected));
+	_forwardHandle.onDelta.AddListener([&](auto c, auto d) { OnSliderMoved(c, d); });
 }
 
 Position::~Position(void)
 {
 }
 
+// void		Position::OnSliderSelected(IHandleControl * control)
+// {
+
+// }
+
+void		Position::OnSliderMoved(IHandleControl * control, const glm::vec3 delta)
+{
+	_changed = true;
+	_delta += delta;
+}
+
 bool		Position::HasChanged(void)
 {
-	return false;
+	return _changed;
 }
 
 glm::vec3	Position::GetDelta(void)
 {
-	// TODO
-	return glm::vec3(0.1f, 0, 0);
+	glm::vec3 delta = _delta;
+	_delta = glm::vec3(0, 0, 0);
+	_changed = false;
+	return delta;
 }
-
-void		Position::Select(void)
-{
-	std::cout << "SELECT !" << std::endl;;
-}
-
-void		Position::UnSelect(void)
-{
-}
-
 
 std::ostream &	operator<<(std::ostream & o, Position const & r)
 {

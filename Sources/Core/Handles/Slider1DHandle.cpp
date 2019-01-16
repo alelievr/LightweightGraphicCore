@@ -7,9 +7,14 @@ Slider1D::Slider1D(void)
 {
 }
 
-Slider1D::Slider1D(Slider1D const & src)
+void		Slider1D::UpdateSelected(void)
 {
-	*this = src;
+	std::cout << "TODO !\n";
+}
+
+float		UpdateDistance(Camera * cam)
+{
+	// TODO
 }
 
 Slider1D::~Slider1D(void)

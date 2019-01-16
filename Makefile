@@ -108,6 +108,7 @@ STBLIB      =   Deps/stb/stb.h
 GLMLIB      =   Deps/glm/glm
 GLSLANGLIB	=	Deps/glslang/build/StandAlone/glslangValidator
 IMGUILIB    =   Deps/imgui/libImGUI.a
+SPIRV_CROSSLIB	=	Deps/SPIRV-Cross/libspirv-cross.a
 
 #	Output
 NAME		=	libLWGC.a
@@ -239,7 +240,7 @@ endif
 #################
 
 #	First target
-all: $(VULKAN) $(GLFWLIB) $(OBJLIB) $(GLMLIB) $(IMGUILIB) $(GLSLANGLIB) $(STBLIB) $(NAME)
+all: $(VULKAN) $(GLFWLIB) $(OBJLIB) $(GLMLIB) $(IMGUILIB) $(SPIRV_CROSSLIB) $(GLSLANGLIB) $(STBLIB) $(NAME)
 
 $(GLMLIB):
 	@git submodule init
@@ -264,6 +265,10 @@ $(IMGUILIB):
 	@git submodule init
 	@git submodule update
 	@$(MAKE) -f ImGUI.Makefile -j 4
+
+$(SPIRV_CROSSLIB):
+	@git submodule update --init
+	cd Deps/SPIRV-Cross/ && cmake . && make -j 4
 
 $(VULKAN):
 	@$(DOWNLOAD_VULKAN)

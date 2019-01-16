@@ -5,6 +5,7 @@
 #include <unordered_set>
 
 #include "Core/Handles/IHandleControl.hpp"
+#include "Core/EventSystem.hpp"
 
 namespace LWGC::Handles
 {
@@ -12,6 +13,8 @@ namespace LWGC::Handles
 	{
 		private:
 			static std::unordered_set< IHandleControl * >		_handles;
+			static IHandleControl *								_selectedHandle;
+			static IHandleControl *								_hoveredHandle;
 
 			static void		Update(void);
 
@@ -21,6 +24,9 @@ namespace LWGC::Handles
 			virtual ~HandleManager(void) = delete;
 
 			static void		Initialize(void);
+
+			static void		MouseClickCallback(const glm::vec2 mousePos, int button, ButtonAction action);
+			static void		UpdateHoveredHandle(void);
 
 			HandleManager &	operator=(HandleManager const & src) = delete;
 	};
