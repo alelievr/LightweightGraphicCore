@@ -52,13 +52,17 @@ void					Camera::Update(void) noexcept
 	UpdateUniformData();
 }
 
-glm::vec3		Camera::WorldToScreenPoint(glm::vec3 worldPosition)
+// return NDC space
+glm::vec2		Camera::WorldToScreenPoint(glm::vec3 worldPosition)
 {
-	return worldPosition;
+	glm::vec3 cameraSpacePos = GetViewMatrix() * glm::vec4(worldPosition, 1);
+	glm::vec2 ndcPos = GetProjectionMatrix() * glm::vec4(cameraSpacePos, 1);
+	return ndcPos;
 }
 
 glm::vec3		Camera::ScreenToWorldPoint(glm::vec3 screenPosition)
 {
+	std::cout << "ScreenToWorldPoint: TODO !" << std::endl;
 	return screenPosition;
 }
 

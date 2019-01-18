@@ -8,6 +8,7 @@
 #include "Transform.hpp"
 #include "Object.hpp"
 #include "Core/Components/Component.hpp"
+#include "Core/Delegate.tpp"
 
 namespace LWGC
 {
@@ -37,6 +38,8 @@ namespace LWGC
 			GameObject(Component * components);
 
 			GameObject &	operator=(GameObject const & src) = delete;
+
+			Delegate< void(bool) >	onEnableChanged;
 
 			Hierarchy *		GetHierarchy(void) const noexcept;
 			Transform *		GetTransform(void) const;

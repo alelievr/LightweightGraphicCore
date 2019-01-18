@@ -75,6 +75,7 @@ SRC			=	Core/Application.cpp \
 				Core/Handles/PositionHandle.cpp \
 				Core/Handles/Tools.cpp \
 				Core/Handles/Slider1DHandle.cpp \
+				Core/Handles/HandleControl.cpp \
 				Core/ImGUIWrapper.cpp \
 				Utils/Bounds.cpp \
 				Utils/Color.cpp \

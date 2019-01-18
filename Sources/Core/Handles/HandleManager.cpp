@@ -6,13 +6,13 @@
 #include <cmath>
 
 using namespace LWGC;
-using namespace Handles;
+using namespace Handle;
 
-#define SELECTION_DISTANCE	0.2f
+#define SELECTION_DISTANCE	0.5f
 
-std::unordered_set< IHandleControl * >		HandleManager::_handles;
-IHandleControl *							HandleManager::_hoveredHandle;
-IHandleControl *							HandleManager::_selectedHandle;
+std::unordered_set< HandleControl * >		HandleManager::_handles;
+HandleControl *							HandleManager::_hoveredHandle;
+HandleControl *							HandleManager::_selectedHandle;
 
 void		HandleManager::Initialize(void)
 {
@@ -49,8 +49,12 @@ void		HandleManager::MouseClickCallback(const glm::vec2 mousePos, int button, Bu
 void		HandleManager::UpdateHoveredHandle(void)
 {
 	float nearest = 1e20;
-	IHandleControl * nearestHandle = nullptr;
+	HandleControl * nearestHandle = nullptr;
 	auto cam = VulkanRenderPipeline::Get()->GetCurrentCamera();
+
+	// We can't compute distance without a camera
+	if (cam == nullptr)
+		return ;
 
 	for (auto handleControl : _handles)
 	{
@@ -65,4 +69,14 @@ void		HandleManager::UpdateHoveredHandle(void)
 	{
 		_hoveredHandle = nearestHandle;
 	}
+}
+
+void		HandleManager::AddHandleControl(HandleControl * control)
+{
+	_handles.insert(control);
+}
+
+void		HandleManager::RemoveHandleControl(HandleControl * control)
+{
+	_handles.erase(control);
 }

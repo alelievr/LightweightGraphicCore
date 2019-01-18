@@ -5,6 +5,7 @@
 #include "Core/PrimitiveMeshFactory.hpp"
 #include "Core/Handles/Selection.hpp"
 #include "Core/Handles/Tools.hpp"
+#include "Core/Handles/HandleManager.hpp"
 
 #include <cmath>
 #include <unordered_set>
@@ -62,6 +63,7 @@ void				VulkanRenderPipeline::InitializeHandles(void) noexcept
 {
 	Selection::Initialize();
 	Tools::Initialize();
+	HandleManager::Initialize();
 }
 
 void				VulkanRenderPipeline::CreateDescriptorSets(void) {}

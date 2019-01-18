@@ -183,9 +183,10 @@ std::vector<const char *>	VulkanInstance::GetRequiredExtensions(void) noexcept
 	return extensions;
 }
 
-void			VulkanInstance::InitQueueIndicesForPhysicalDevice(VkPhysicalDevice physicalDevice) noexcept
+DeviceCapability			VulkanInstance::GetDeviceCapability(VkPhysicalDevice physicalDevice) noexcept
 {
-	_queueIndex = -1;
+	DeviceCapability	capability;
+	capability.physicalDevice = physicalDevice;
 
 	uint32_t queueFamilyCount = 0;
 	vkGetPhysicalDeviceQueueFamilyProperties(physicalDevice, &queueFamilyCount, nullptr);
@@ -193,28 +194,25 @@ void			VulkanInstance::InitQueueIndicesForPhysicalDevice(VkPhysicalDevice physic
 	std::vector<VkQueueFamilyProperties> queueFamilies(queueFamilyCount);
 	vkGetPhysicalDeviceQueueFamilyProperties(physicalDevice, &queueFamilyCount, queueFamilies.data());
 
+	int index = 0;
 	for (const auto& queueFamily : queueFamilies)
 	{
+		VkBool32 presentSupport = false;
+		vkGetPhysicalDeviceSurfaceSupportKHR(physicalDevice, index, _surface, &presentSupport);
+
+		capability.queues.push_back(DeviceQueue{
+			index++,
+			VK_NULL_HANDLE,
+			presentSupport == true,
+			(queueFamily.queueFlags & VK_QUEUE_COMPUTE_BIT) != 0
+		});
 		auto g = queueFamily.minImageTransferGranularity;
-		std::cout << "queue family: " << queueFamily.queueCount << ", "
+		std::cout << "queue count:" << queueFamily.queueCount << ", flags: "
 			<< queueFamily.queueFlags << ", memory granularity: "
 			<< g.width << "/" << g.height << "/" << g.depth << std::endl;
 	}
 
-	int i = 0;
-	for (const auto& queueFamily : queueFamilies)
-	{
-		VkBool32 presentSupport = false;
-		vkGetPhysicalDeviceSurfaceSupportKHR(physicalDevice, i, _surface, &presentSupport);
-
-		if (queueFamily.queueCount > 0 && queueFamily.queueFlags & (VK_QUEUE_GRAPHICS_BIT | VK_QUEUE_COMPUTE_BIT))
-			_queueIndex = i;
-
-		if (_queueIndex != -1u && presentSupport)
-		    break;
-
-		i++;
-	}
+	return capability;
 }
 
 void			VulkanInstance::InitSurfaceForPhysicalDevice(VkPhysicalDevice physicalDevice) noexcept
@@ -240,29 +238,26 @@ void			VulkanInstance::InitSurfaceForPhysicalDevice(VkPhysicalDevice physicalDev
 	}
 }
 
-bool			VulkanInstance::IsPhysicalDeviceSuitable(VkPhysicalDevice physicalDevice) noexcept
+DeviceCapability			VulkanInstance::IsPhysicalDeviceSuitable(VkPhysicalDevice physicalDevice) noexcept
 {
-	InitQueueIndicesForPhysicalDevice(physicalDevice);
+	DeviceCapability capability = GetDeviceCapability(physicalDevice);
 
-	if (_queueIndex == -1u)
-		return false;
-
-	if (!AreExtensionsSupportedForPhysicalDevice(physicalDevice))
-		return false;
+	capability.supportExtensions = AreExtensionsSupportedForPhysicalDevice(physicalDevice);
 
 	InitSurfaceForPhysicalDevice(physicalDevice);
-	if (_surfaceFormats.empty() || _surfacePresentModes.empty())
-		return false;
+	capability.supportSurface = !_surfaceFormats.empty() && !_surfacePresentModes.empty();
 
 	VkPhysicalDeviceFeatures supportedFeatures;
 	vkGetPhysicalDeviceFeatures(physicalDevice, &supportedFeatures);
 
 	// Check for decent GPU
-	return supportedFeatures.samplerAnisotropy
+	capability.supportedFeatures = supportedFeatures.samplerAnisotropy
 		&& supportedFeatures.shaderUniformBufferArrayDynamicIndexing	// Dynamic indexing for bindless
 		&& supportedFeatures.depthClamp									// Depth clamp for directional lights
 		&& supportedFeatures.imageCubeArray
 		&& supportedFeatures.fragmentStoresAndAtomics;					// For FPTL ?
+
+	return capability;
 }
 
 void			VulkanInstance::ChoosePhysicalDevice(void)
@@ -279,17 +274,28 @@ void			VulkanInstance::ChoosePhysicalDevice(void)
 	if (deviceCount == 0)
 		throw std::runtime_error("No GPU detected");
 
+	std::vector< DeviceCapability >	deviceCapabilities;
+
 	for (const auto & device : devices)
 	{
-		if (IsPhysicalDeviceSuitable(device))
-		{
-		    _physicalDevice = device;
-		    break;
-		}
+		deviceCapabilities.push_back(IsPhysicalDeviceSuitable(device));
 	}
 
-	if (_physicalDevice == VK_NULL_HANDLE)
-		throw std::runtime_error("failed to find a suitable GPU!");
+	if (deviceCapabilities.size() == 0)
+		throw std::runtime_error("failed to find a GPU!");
+
+	// Find the "best" GPU on the machine
+
+	std::sort(deviceCapabilities.begin(), deviceCapabilities.end(), [](const DeviceCapability & c1, const DeviceCapability & c2){
+		return c1.GetGPUScore() < c2.GetGPUScore();
+	});
+
+	if (deviceCapabilities[0].GetGPUScore() == -1)
+		throw std::runtime_error("Can't find a GPU that met requirement");
+
+	// setup choosen device
+	_physicalDevice = deviceCapabilities[0].physicalDevice;
+	_queueIndex = deviceCapabilities[0].queues[0].index;
 }
 
 void			VulkanInstance::CreateLogicalDevice(void)
@@ -497,6 +503,24 @@ void		VulkanInstance::DestroyDebugUtilsMessengerEXT(VkDebugUtilsMessengerEXT cal
 
 	if (func != nullptr)
 		func(_instance, callback, pAllocator);
+}
+
+int			DeviceCapability::GetGPUScore(void) const
+{
+	if (!supportedFeatures || !supportExtensions || !supportSurface)
+	{
+		std::cout << "supported features: " << supportedFeatures << ", " << supportExtensions << ", " << supportSurface << std::endl;
+		return -1;
+	}
+
+	int score = queues.size();
+
+	for (const auto queue : queues)
+	{
+		score += queue.supportCompute;
+	}
+
+	return score;
 }
 
 std::ostream &	operator<<(std::ostream & o, VulkanInstance const & r)

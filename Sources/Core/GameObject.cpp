@@ -68,6 +68,8 @@ void			GameObject::SetActive(bool active)
 	if (active == _active)
 		return ;
 
+	onEnableChanged.Invoke(active);
+
 	_active = active;
 
 	UpdateComponentsActiveStatus();

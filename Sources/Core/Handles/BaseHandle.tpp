@@ -1,6 +1,6 @@
 #pragma once
 
-namespace LWGC::Handles
+namespace LWGC::Handle
 {
 	template< typename T >
 	class BaseHandle

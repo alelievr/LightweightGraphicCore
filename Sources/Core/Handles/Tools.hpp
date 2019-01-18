@@ -14,7 +14,7 @@ namespace LWGC
 		Scale,
 	};
 
-	using namespace Handles;
+	using namespace Handle;
 
 	class		Tools
 	{

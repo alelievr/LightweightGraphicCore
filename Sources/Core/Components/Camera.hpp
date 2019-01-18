@@ -55,7 +55,7 @@ namespace LWGC
 
 			virtual void Initialize(void) noexcept override;
 
-			glm::vec3	WorldToScreenPoint(glm::vec3 worldPosition);
+			glm::vec2	WorldToScreenPoint(glm::vec3 worldPosition);
 
 			glm::vec3	ScreenToWorldPoint(glm::vec3 screenPosition);
 

@@ -57,6 +57,7 @@
 #include "Core/Gizmos/Cone.hpp"
 #include "Core/Gizmos/Arrow.hpp"
 #include "Core/Gizmos/Position.hpp"
+#include "Core/Handles/PositionHandle.hpp"
 
 // Utils
 #include "Utils/Bounds.hpp"
