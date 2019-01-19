@@ -3,6 +3,7 @@
 #include <set>
 #include <array>
 #include <string.h>
+#include <algorithm>
 
 #include GLFW_INCLUDE
 #include "Vk.hpp"
@@ -188,6 +189,11 @@ DeviceCapability			VulkanInstance::GetDeviceCapability(VkPhysicalDevice physical
 	DeviceCapability	capability;
 	capability.physicalDevice = physicalDevice;
 
+	VkPhysicalDeviceProperties	properties;
+	vkGetPhysicalDeviceProperties(physicalDevice, &properties);
+
+	std::cout << "Device: " << properties.deviceName << std::endl;
+
 	uint32_t queueFamilyCount = 0;
 	vkGetPhysicalDeviceQueueFamilyProperties(physicalDevice, &queueFamilyCount, nullptr);
 
@@ -255,7 +261,11 @@ DeviceCapability			VulkanInstance::IsPhysicalDeviceSuitable(VkPhysicalDevice phy
 		&& supportedFeatures.shaderUniformBufferArrayDynamicIndexing	// Dynamic indexing for bindless
 		&& supportedFeatures.depthClamp									// Depth clamp for directional lights
 		&& supportedFeatures.imageCubeArray
-		&& supportedFeatures.fragmentStoresAndAtomics;					// For FPTL ?
+		&& supportedFeatures.fragmentStoresAndAtomics					// For FPTL ?
+		&& supportedFeatures.fillModeNonSolid							// For gizmos
+	;
+
+	std::cout << "supportedFeatures.fillModeNonSolid: " << supportedFeatures.fillModeNonSolid << std::endl;
 
 	return capability;
 }
