@@ -387,7 +387,7 @@ void	VulkanRenderPipeline::Render(const std::vector< Camera * > & cameras, Rende
 			renderPass.BindMaterial(m);
 
 			// Get the command buffer, should be empty at this state
-			VkCommandBuffer drawMeshBuffer = meshRenderer->GetCommandBuffer();
+			VkCommandBuffer drawMeshBuffer = meshRenderer->GetCommandBuffer(currentFrame);
 			renderPass.BeginSecondaryCommandBuffer(drawMeshBuffer, VK_COMMAND_BUFFER_USAGE_RENDER_PASS_CONTINUE_BIT);
 			meshRenderer->RecordCommands(drawMeshBuffer);
 			renderPass.ExecuteCommandBuffer(drawMeshBuffer);

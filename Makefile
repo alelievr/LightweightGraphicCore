@@ -45,6 +45,7 @@ SRC			=	Core/Application.cpp \
 				Core/Rendering/RenderTarget.cpp \
 				Core/Rendering/VulkanRenderPipeline.cpp \
 				Core/Rendering/RenderContext.cpp \
+				Core/Rendering/PipelineCommandBuffer.cpp \
 				Core/Shaders/ShaderProgram.cpp \
 				Core/Shaders/ShaderSource.cpp \
 				Core/Shaders/BuiltinShaders.cpp \

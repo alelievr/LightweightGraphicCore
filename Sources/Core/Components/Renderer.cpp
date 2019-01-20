@@ -34,7 +34,7 @@ void		Renderer::Initialize(void) noexcept
 
 	_material->MarkAsReady();
 
-	_drawCommandBuffer = VulkanInstance::Get()->GetCommandBufferPool()->Allocate(VK_COMMAND_BUFFER_LEVEL_SECONDARY);
+	PipelineCommandBuffer::Allocate(VulkanRenderPipeline::Get()->GetSwapChain()->GetImageCount());
 
 	if (_descriptorSetLayout == VK_NULL_HANDLE)
 		CreateGraphicDescriptorSetLayout();
@@ -136,7 +136,6 @@ void		Renderer::RecordCommands(VkCommandBuffer cmd)
 Material *	Renderer::GetMaterial(void) const { return (this->_material); }
 void						Renderer::SetMaterial(Material * tmp) { this->_material = tmp; }
 
-VkCommandBuffer				Renderer::GetCommandBuffer(void) const { return _drawCommandBuffer; }
 VkDescriptorSet				Renderer::GetDescriptorSet(void) const { return _descriptorSet; }
 
 std::ostream &	operator<<(std::ostream & o, Renderer const & r)
