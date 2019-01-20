@@ -28,7 +28,7 @@ VulkanRenderPipeline::~VulkanRenderPipeline(void)
 {
 	vkDeviceWaitIdle(device);
 
-	for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++)
+	for (size_t i = 0; i < swapChain->GetImageCount(); i++)
 	{
 		vkDestroySemaphore(device, renderFinishedSemaphores[i], nullptr);
 		vkDestroySemaphore(device, imageAvailableSemaphores[i], nullptr);
@@ -230,9 +230,10 @@ void			VulkanRenderPipeline::RenderGUI(void) noexcept
 
 void			VulkanRenderPipeline::CreateSyncObjects(void)
 {
-	imageAvailableSemaphores.resize(MAX_FRAMES_IN_FLIGHT);
-	renderFinishedSemaphores.resize(MAX_FRAMES_IN_FLIGHT);
-	inFlightFences.resize(MAX_FRAMES_IN_FLIGHT);
+	size_t frameBufferCount = swapChain->GetImageCount();
+	imageAvailableSemaphores.resize(frameBufferCount);
+	renderFinishedSemaphores.resize(frameBufferCount);
+	inFlightFences.resize(frameBufferCount);
 
 	VkSemaphoreCreateInfo semaphoreInfo = {};
 	semaphoreInfo.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
@@ -241,7 +242,7 @@ void			VulkanRenderPipeline::CreateSyncObjects(void)
 	fenceInfo.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
 	fenceInfo.flags = VK_FENCE_CREATE_SIGNALED_BIT;
 
-	for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++)
+	for (size_t i = 0; i < frameBufferCount; i++)
 	{
 		if (vkCreateSemaphore(device, &semaphoreInfo, nullptr, &imageAvailableSemaphores[i]) != VK_SUCCESS || vkCreateSemaphore(device, &semaphoreInfo, nullptr, &renderFinishedSemaphores[i]) != VK_SUCCESS || vkCreateFence(device, &fenceInfo, nullptr, &inFlightFences[i]) != VK_SUCCESS)
 		{
@@ -356,7 +357,7 @@ void			VulkanRenderPipeline::RenderInternal(const std::vector< Camera * > & came
 		throw std::runtime_error("failed to present swap chain image!");
 	}
 
-	currentFrame = (currentFrame + 1) % MAX_FRAMES_IN_FLIGHT;
+	currentFrame = (currentFrame + 1) % swapChain->GetImageCount();
 }
 
 void	VulkanRenderPipeline::Render(const std::vector< Camera * > & cameras, RenderContext * context)

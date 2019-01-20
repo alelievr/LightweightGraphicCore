@@ -263,9 +263,10 @@ DeviceCapability			VulkanInstance::IsPhysicalDeviceSuitable(VkPhysicalDevice phy
 		&& supportedFeatures.imageCubeArray
 		&& supportedFeatures.fragmentStoresAndAtomics					// For FPTL ?
 		&& supportedFeatures.fillModeNonSolid							// For gizmos
+		&& supportedFeatures.wideLines									// For gizmos
 	;
 
-	std::cout << "supportedFeatures.fillModeNonSolid: " << supportedFeatures.fillModeNonSolid << std::endl;
+	std::cout << "supportedFeatures.multiViewport: " << supportedFeatures.multiViewport << std::endl;
 
 	return capability;
 }
@@ -329,6 +330,14 @@ void			VulkanInstance::CreateLogicalDevice(void)
 	VkDeviceCreateInfo createInfo = {};
 	createInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
 	deviceFeatures.samplerAnisotropy = VK_TRUE;
+	deviceFeatures.fillModeNonSolid = VK_TRUE;
+	deviceFeatures.depthClamp = VK_TRUE;
+	deviceFeatures.depthBiasClamp = VK_TRUE;
+	deviceFeatures.wideLines = VK_TRUE;
+	deviceFeatures.shaderUniformBufferArrayDynamicIndexing = VK_TRUE;
+	deviceFeatures.imageCubeArray = VK_TRUE;
+	deviceFeatures.fragmentStoresAndAtomics = VK_TRUE;
+	deviceFeatures.multiViewport = VK_TRUE;
 
 	createInfo.queueCreateInfoCount = static_cast<uint32_t>(queueCreateInfos.size());
 	createInfo.pQueueCreateInfos = queueCreateInfos.data();

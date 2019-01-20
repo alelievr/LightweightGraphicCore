@@ -12,7 +12,6 @@
 
 #include IMGUI_INCLUDE
 
-#define MAX_FRAMES_IN_FLIGHT	2
 #define PER_FRAME_BINDING_INDEX	0
 
 namespace LWGC
