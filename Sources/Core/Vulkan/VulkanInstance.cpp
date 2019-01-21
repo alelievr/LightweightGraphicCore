@@ -192,7 +192,7 @@ DeviceCapability			VulkanInstance::GetDeviceCapability(VkPhysicalDevice physical
 	VkPhysicalDeviceProperties	properties;
 	vkGetPhysicalDeviceProperties(physicalDevice, &properties);
 
-	std::cout << "Device: " << properties.deviceName << std::endl;
+	capability.deviceName = properties.deviceName;
 
 	uint32_t queueFamilyCount = 0;
 	vkGetPhysicalDeviceQueueFamilyProperties(physicalDevice, &queueFamilyCount, nullptr);
@@ -263,10 +263,9 @@ DeviceCapability			VulkanInstance::IsPhysicalDeviceSuitable(VkPhysicalDevice phy
 		&& supportedFeatures.imageCubeArray
 		&& supportedFeatures.fragmentStoresAndAtomics					// For FPTL ?
 		&& supportedFeatures.fillModeNonSolid							// For gizmos
-		&& supportedFeatures.wideLines									// For gizmos
 	;
 
-	std::cout << "supportedFeatures.multiViewport: " << supportedFeatures.multiViewport << std::endl;
+	std::cout << "supportedFeatures.wideLines: " << supportedFeatures.wideLines << std::endl;
 
 	return capability;
 }
@@ -278,6 +277,8 @@ void			VulkanInstance::ChoosePhysicalDevice(void)
 
 	if (deviceCount == 0)
 		throw std::runtime_error("failed to find GPUs with Vulkan support!");
+
+	std::cout << "Found devices count: " << deviceCount << std::endl;
 
 	std::vector<VkPhysicalDevice> devices(deviceCount);
 	vkEnumeratePhysicalDevices(_instance, &deviceCount, devices.data());
@@ -307,6 +308,8 @@ void			VulkanInstance::ChoosePhysicalDevice(void)
 	// setup choosen device
 	_physicalDevice = deviceCapabilities[0].physicalDevice;
 	_queueIndex = deviceCapabilities[0].queues[0].index;
+
+	std::cout << "Choosed " << deviceCapabilities[0].deviceName << " as the best GPU on your machine." << std::endl;
 }
 
 void			VulkanInstance::CreateLogicalDevice(void)
@@ -333,7 +336,6 @@ void			VulkanInstance::CreateLogicalDevice(void)
 	deviceFeatures.fillModeNonSolid = VK_TRUE;
 	deviceFeatures.depthClamp = VK_TRUE;
 	deviceFeatures.depthBiasClamp = VK_TRUE;
-	deviceFeatures.wideLines = VK_TRUE;
 	deviceFeatures.shaderUniformBufferArrayDynamicIndexing = VK_TRUE;
 	deviceFeatures.imageCubeArray = VK_TRUE;
 	deviceFeatures.fragmentStoresAndAtomics = VK_TRUE;

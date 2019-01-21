@@ -28,6 +28,7 @@ namespace LWGC
 		bool				supportSurface;
 		VkPhysicalDevice	physicalDevice;
 		std::vector< DeviceQueue >	queues;
+		std::string			deviceName;
 
 		int		GetGPUScore(void) const;
 	};

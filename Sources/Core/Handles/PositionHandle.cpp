@@ -48,8 +48,8 @@ void		Position::OnSliderMoved(HandleControl * control, const glm::vec3 delta)
 
 	if (control == &_upHandle)
 		dir = glm::vec3(0, 1, 0);
-	else if (control == &_rightHandle)
-		dir = glm::vec3(1, 0, 0);
+	// else if (control == &_rightHandle)
+		// dir = glm::vec3(1, 0, 0);
 	else
 		dir = glm::vec3(0, 0, 1);
 

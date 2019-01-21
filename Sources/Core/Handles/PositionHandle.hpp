@@ -19,8 +19,8 @@ namespace LWGC::Handle
 	{
 		private:
 			Slider1D		_upHandle;
-			Slider1D		_rightHandle;
-			Slider1D		_forwardHandle;
+			// Slider1D		_rightHandle;
+			// Slider1D		_forwardHandle;
 
 			glm::vec3		_delta;
 			bool			_changed;
