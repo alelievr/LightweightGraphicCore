@@ -67,6 +67,7 @@ void		HandleManager::UpdateHoveredHandle(void)
 	_hoveredHandle = nullptr;
 	if (nearest < SELECTION_DISTANCE)
 	{
+		std::cout << "hover ! " << nearest << std::endl;
 		_hoveredHandle = nearestHandle;
 	}
 }

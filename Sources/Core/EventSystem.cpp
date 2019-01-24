@@ -76,7 +76,15 @@ void			EventSystem::BindWindow(GLFWwindow * window)
 			self->onMouseMove.Invoke(virtualMousePos, MouseMoveAction::Move);
 		}
 	);
+	glfwSetWindowSizeCallback(window, [](GLFWwindow * window, int width, int height)
+		{
+			auto & self = eventSystems[window];
+			self->_windowWidth = width;
+			self->_windowHeight = height;
+		}
+	);
 
+	glfwGetWindowSize(_window, &_windowWidth, &_windowHeight);
 	UpdateMousePosition();
 
 	// We need to initialize oldMousePosition to the current mouse position for the first frame (avoid delta jumps)
@@ -100,8 +108,7 @@ void				EventSystem::UpdateMousePosition(void)
 	// If the cursor is lock, the only possible position is the middle of the screen
 	if (IsCursorLocked())
 	{
-		auto extent = VulkanRenderPipeline::Get()->GetSwapChain()->GetExtent();
-		_mousePosition = glm::vec2(extent.width, extent.height) / 2.0f;
+		_mousePosition = glm::vec2(_windowWidth, _windowHeight) / 2.0f;
 	}
 	else
 		_mousePosition = glm::vec2(posX, posY);
@@ -132,7 +139,10 @@ bool				EventSystem::IsCursorLocked(void)
 	return glfwGetInputMode(_window, GLFW_CURSOR) == GLFW_CURSOR_DISABLED;
 }
 
-const glm::vec2		EventSystem::GetCursorPosition(void) const { return _mousePosition; }
+const glm::vec2		EventSystem::GetNormalizedCursorPosition(void) const
+{
+	return _mousePosition / glm::vec2(_windowWidth, _windowHeight) * 2.0f - 1.0f;
+}
 
 EventSystem *		EventSystem::Get(void) { return eventSystemInstance; }
 

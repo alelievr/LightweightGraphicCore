@@ -1,6 +1,7 @@
 #include "Core/Handles/Slider1DHandle.hpp"
 
 #include "Core/EventSystem.hpp"
+#include "Core/Handles/HandleUtils.hpp"
 
 using namespace LWGC;
 using namespace Handle;
@@ -19,6 +20,7 @@ void		Slider1D::UpdateSelected(void)
 {
 	glm::vec3 delta = glm::vec3(EventSystem::Get()->delta.y, 0, 0);
 	onDelta.Invoke(this, delta);
+	std::cout << "update selected !\n";
 }
 
 float		Slider1D::UpdateDistance(Camera * cam)
@@ -26,17 +28,13 @@ float		Slider1D::UpdateDistance(Camera * cam)
 	glm::vec2 screenPoint0 = cam->WorldToScreenPoint(_worldPoint0);
 	glm::vec2 screenPoint1 = cam->WorldToScreenPoint(_worldPoint1);
 
-	glm::vec2 mousePos = EventSystem::Get()->GetCursorPosition() / cam->GetViewportSize() * 2.0f - 1.0f;
+	std::cout << "ScreenPos0: " << screenPoint0.x << ", " << screenPoint0.y << std::endl;
+	std::cout << "ScreenPos1: " << screenPoint1.x << ", " << screenPoint1.y << std::endl;
 
-	// segment - point distance:
-	const float l2 = glm::length(screenPoint0 - screenPoint1);
-	if (l2 == 0.0)
-		return glm::distance(mousePos, screenPoint0);
-	const float t = fmaxf(0, fminf(1, glm::dot(mousePos - screenPoint0, screenPoint1 - screenPoint0) / l2));
-	const glm::vec2 projection = screenPoint0 + t * (screenPoint1 - screenPoint0);
-	float dist = glm::distance(mousePos, projection);
-	std::cout << "dist: " << dist << std::endl;
-	return dist;
+	std::cout << "Cursor pos: " << EventSystem::Get()->GetNormalizedCursorPosition().y << std::endl;
+	glm::vec2 mousePos = EventSystem::Get()->GetNormalizedCursorPosition();
+
+	return HandleUtils::DistanceToSegment(screenPoint0, screenPoint1, mousePos);
 }
 
 Slider1D::~Slider1D(void)

@@ -75,13 +75,11 @@ void	Selection::UpdateHandles(void) noexcept
 
 void	Selection::UpdateWorldRay(Camera * cam) noexcept
 {
-	const glm::vec2	viewportPosition = _eventSystem->GetCursorPosition();
-
 	// If there is no camera, we don't have to raycast
 	if (cam == nullptr)
 		return ;
 
-	glm::vec2 ndcPosition = viewportPosition / cam->GetViewportSize() * 2.0f - 1.0f;
+	glm::vec2 ndcPosition = _eventSystem->GetNormalizedCursorPosition();
 	glm::vec4 clipDirection = glm::vec4(ndcPosition, 1, 0); // z = -1 because we cast a ray forward to the camera
 	glm::vec4 eyeDirection = cam->GetProjectionMatrix() * clipDirection;
 	// Again, forward and 0 for homogenous direction

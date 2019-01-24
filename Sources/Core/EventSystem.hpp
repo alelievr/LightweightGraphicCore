@@ -20,9 +20,11 @@ namespace LWGC
 	class		EventSystem
 	{
 		private:
-			GLFWwindow *			_window;
-			glm::vec2				_mousePosition;
-			glm::vec2				_oldMousePosition;
+			GLFWwindow *	_window;
+			glm::vec2		_mousePosition;
+			glm::vec2		_oldMousePosition;
+			int				_windowWidth;
+			int				_windowHeight;
 
 			static std::map< GLFWwindow *, EventSystem * > eventSystems;
 			static EventSystem *	eventSystemInstance;
@@ -50,7 +52,7 @@ namespace LWGC
 			void			ToggleLockCursor(void);
 			bool			IsCursorLocked(void);
 
-			const glm::vec2			GetCursorPosition(void) const;
+			const glm::vec2			GetNormalizedCursorPosition(void) const;
 
 			static EventSystem *	Get(void);
 	};

@@ -3,6 +3,7 @@
 #include "Core/Vulkan/Vk.hpp"
 #include "Core/Vulkan/SwapChain.hpp"
 #include "Core/Rendering/VulkanRenderPipeline.hpp"
+#include "Utils/Vector.hpp"
 #include "IncludeDeps.hpp"
 #include GLM_INCLUDE_QUATERNION
 #include GLM_INCLUDE_MATRIX_TRANSFORM
@@ -56,7 +57,12 @@ void					Camera::Update(void) noexcept
 glm::vec2		Camera::WorldToScreenPoint(glm::vec3 worldPosition)
 {
 	glm::vec3 cameraSpacePos = GetViewMatrix() * glm::vec4(worldPosition, 1);
-	glm::vec2 ndcPos = GetProjectionMatrix() * glm::vec4(cameraSpacePos, 1);
+	glm::vec3 ndcPos = GetProjectionMatrix() * glm::vec4(cameraSpacePos, 1);
+
+	// remove perspective
+	ndcPos.x /= ndcPos.z;
+	ndcPos.y /= ndcPos.z;
+
 	return ndcPos;
 }
 

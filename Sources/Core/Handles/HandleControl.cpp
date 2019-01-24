@@ -1,6 +1,8 @@
 #include "Core/Handles/HandleControl.hpp"
 #include "Core/Handles/HandleManager.hpp"
 
+#include "Utils/Utils.hpp"
+
 using namespace LWGC;
 using namespace Handle;
 

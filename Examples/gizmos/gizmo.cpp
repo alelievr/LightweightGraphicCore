@@ -46,7 +46,7 @@ void		InitGizmos(Hierarchy * hierarchy)
 	arrow->AddComponent(new Rotator());
 	hierarchy->AddGameObject(arrow);
 
-	auto position = new Handle::Position(glm::vec3(0, 0, 5));
+	auto position = new Handle::Position(glm::vec3(0, 0, 0)); // TODO: test another position
 	hierarchy->AddGameObject(position);
 
 	for (int i = 0; i < 40; i++)

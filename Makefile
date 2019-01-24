@@ -77,6 +77,7 @@ SRC			=	Core/Application.cpp \
 				Core/Handles/Tools.cpp \
 				Core/Handles/Slider1DHandle.cpp \
 				Core/Handles/HandleControl.cpp \
+				Core/Handles/HandleUtils.cpp \
 				Core/ImGUIWrapper.cpp \
 				Utils/Bounds.cpp \
 				Utils/Color.cpp \
@@ -84,6 +85,7 @@ SRC			=	Core/Application.cpp \
 				Utils/Rect.cpp \
 				Utils/Math.cpp \
 				Utils/Vector.cpp \
+				Utils/Utils.cpp \
 
 #	Objects
 OBJDIR		=	Objects
