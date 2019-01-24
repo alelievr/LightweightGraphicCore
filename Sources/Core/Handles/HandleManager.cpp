@@ -8,7 +8,7 @@
 using namespace LWGC;
 using namespace Handle;
 
-#define SELECTION_DISTANCE	0.5f
+#define SELECTION_DISTANCE	0.1f
 
 std::unordered_set< HandleControl * >		HandleManager::_handles;
 HandleControl *							HandleManager::_hoveredHandle;
@@ -25,10 +25,10 @@ void		HandleManager::Initialize(void)
 
 void		HandleManager::Update(void)
 {
-	if (_selectedHandle == nullptr)
-		UpdateHoveredHandle();
-	else
-		_selectedHandle->UpdateSelected(); // TODO
+	UpdateHoveredHandle();
+
+	if (_selectedHandle != nullptr)
+		_selectedHandle->UpdateSelected();
 
 	// then if there is a click, call Select on the nearest handle
 	// block the distance update until selection wears off

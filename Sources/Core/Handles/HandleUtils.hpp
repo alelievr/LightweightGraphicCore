@@ -17,7 +17,8 @@ namespace LWGC::Handle
 			HandleUtils(const HandleUtils &) = delete;
 			virtual ~HandleUtils(void) = delete;
 
-			static float	DistanceToSegment(const glm::vec2 & segment0, const glm::vec2 & segment1, const glm::vec2 & point);
+			static float		DistanceToSegment(const glm::vec3 & segment0, const glm::vec3 & segment1, const glm::vec3 & point);
+			static glm::vec3	ProjectPointLine(const glm::vec3 & segment0, const glm::vec3 & segment1, const glm::vec3 & point);
 
 			HandleUtils &	operator=(HandleUtils const & src) = delete;
 	};

@@ -18,6 +18,7 @@ void		Slider1D::UpdateWorldPositions(const glm::vec3 & p0, const glm::vec3 & p1)
 
 void		Slider1D::UpdateSelected(void)
 {
+	// TODO: use the delta of the projected mouse point on the line instead of mouse delta
 	glm::vec3 delta = glm::vec3(EventSystem::Get()->delta.y, 0, 0);
 	onDelta.Invoke(this, delta);
 	std::cout << "update selected !\n";
@@ -25,16 +26,12 @@ void		Slider1D::UpdateSelected(void)
 
 float		Slider1D::UpdateDistance(Camera * cam)
 {
-	glm::vec2 screenPoint0 = cam->WorldToScreenPoint(_worldPoint0);
-	glm::vec2 screenPoint1 = cam->WorldToScreenPoint(_worldPoint1);
+	glm::vec3 screenPoint0 = cam->WorldToScreenPoint(_worldPoint0);
+	glm::vec3 screenPoint1 = cam->WorldToScreenPoint(_worldPoint1);
 
-	std::cout << "ScreenPos0: " << screenPoint0.x << ", " << screenPoint0.y << std::endl;
-	std::cout << "ScreenPos1: " << screenPoint1.x << ", " << screenPoint1.y << std::endl;
-
-	std::cout << "Cursor pos: " << EventSystem::Get()->GetNormalizedCursorPosition().y << std::endl;
 	glm::vec2 mousePos = EventSystem::Get()->GetNormalizedCursorPosition();
 
-	return HandleUtils::DistanceToSegment(screenPoint0, screenPoint1, mousePos);
+	return HandleUtils::DistanceToSegment(screenPoint0, screenPoint1, glm::vec3(mousePos, 0));
 }
 
 Slider1D::~Slider1D(void)

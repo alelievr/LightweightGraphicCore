@@ -54,7 +54,7 @@ void					Camera::Update(void) noexcept
 }
 
 // return NDC space
-glm::vec2		Camera::WorldToScreenPoint(glm::vec3 worldPosition)
+glm::vec3		Camera::WorldToScreenPoint(glm::vec3 worldPosition)
 {
 	glm::vec3 cameraSpacePos = GetViewMatrix() * glm::vec4(worldPosition, 1);
 	glm::vec3 ndcPos = GetProjectionMatrix() * glm::vec4(cameraSpacePos, 1);
@@ -62,6 +62,7 @@ glm::vec2		Camera::WorldToScreenPoint(glm::vec3 worldPosition)
 	// remove perspective
 	ndcPos.x /= ndcPos.z;
 	ndcPos.y /= ndcPos.z;
+	ndcPos.z = 0;
 
 	return ndcPos;
 }
