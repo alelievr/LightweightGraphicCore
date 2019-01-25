@@ -21,7 +21,6 @@ void		Slider1D::UpdateSelected(void)
 	// TODO: use the delta of the projected mouse point on the line instead of mouse delta
 	glm::vec3 delta = glm::vec3(EventSystem::Get()->delta.y, 0, 0);
 	onDelta.Invoke(this, delta);
-	std::cout << "update selected !\n";
 }
 
 float		Slider1D::UpdateDistance(Camera * cam)

@@ -15,9 +15,9 @@ Position::Position(const glm::vec3 & position) : Gizmo::Position(position), _del
 	// _upHandle.onSelected.AddListener(std::bind(&Position::OnSliderSelected));
 	_upHandle.onDelta.AddListener([&](auto c, auto d) { OnSliderMoved(c, d); });
 	// _rightHandle.onSelected.AddListener(std::bind(&Position::OnSliderSelected));
-	// _rightHandle.onDelta.AddListener([&](auto c, auto d) { OnSliderMoved(c, d); });
-	// // _forwardHandle.onSelected.AddListener(std::bind(&Position::OnSliderSelected));
-	// _forwardHandle.onDelta.AddListener([&](auto c, auto d) { OnSliderMoved(c, d); });
+	_rightHandle.onDelta.AddListener([&](auto c, auto d) { OnSliderMoved(c, d); });
+	// _forwardHandle.onSelected.AddListener(std::bind(&Position::OnSliderSelected));
+	_forwardHandle.onDelta.AddListener([&](auto c, auto d) { OnSliderMoved(c, d); });
 
 	Application::update.AddListener(std::bind(&Position::Update, this));
 
@@ -33,8 +33,8 @@ void		Position::Update(void)
 	glm::vec3 p0 = transform->GetPosition();
 
 	_upHandle.UpdateWorldPositions(p0, transform->GetUp());
-	// _rightHandle.UpdateWorldPositions(p0, transform->GetRight());
-	// _forwardHandle.UpdateWorldPositions(p0, transform->GetForward());
+	_rightHandle.UpdateWorldPositions(p0, transform->GetRight());
+	_forwardHandle.UpdateWorldPositions(p0, transform->GetForward());
 }
 
 // void		Position::OnSliderSelected(HandleControl * control)
@@ -47,14 +47,15 @@ void		Position::OnSliderMoved(HandleControl * control, const glm::vec3 delta)
 	glm::vec3 dir;
 
 	if (control == &_upHandle)
-		dir = glm::vec3(0, 1, 0);
-	// else if (control == &_rightHandle)
-		// dir = glm::vec3(1, 0, 0);
+		dir = transform->GetUp();
+	else if (control == &_rightHandle)
+		dir = transform->GetRight();
 	else
-		dir = glm::vec3(0, 0, 1);
+		dir = transform->GetForward();
 
 	_changed = true;
 	_delta += dir * delta.x; // Slider1D only output in x component
+	transform->Translate(dir * delta.x);
 }
 
 bool		Position::HasChanged(void)

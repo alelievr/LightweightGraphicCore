@@ -18,6 +18,8 @@ namespace LWGC::Handle
 
 			Delegate< void(HandleControl *) >						onSelected;
 			Delegate< void(HandleControl *, const glm::vec3) >		onDelta;
+			Delegate< void(HandleControl *) >						onHover;
+			Delegate< void(HandleControl *) >						onNormal;
 
 			// Update called only when the handle is selected
 			virtual void		UpdateSelected(void) = 0;

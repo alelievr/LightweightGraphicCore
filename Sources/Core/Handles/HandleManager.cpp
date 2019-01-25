@@ -8,9 +8,9 @@
 using namespace LWGC;
 using namespace Handle;
 
-#define SELECTION_DISTANCE	0.1f
+#define SELECTION_DISTANCE	0.08f
 
-std::unordered_set< HandleControl * >		HandleManager::_handles;
+std::unordered_set< HandleControl * >	HandleManager::_handles;
 HandleControl *							HandleManager::_hoveredHandle;
 HandleControl *							HandleManager::_selectedHandle;
 
@@ -36,7 +36,13 @@ void		HandleManager::Update(void)
 
 void		HandleManager::MouseClickCallback(const glm::vec2 mousePos, int button, ButtonAction action)
 {
-	if (_hoveredHandle != nullptr)
+	(void)mousePos;
+
+	// Handle only use left click currently
+	if (button != 0)
+		return ;
+
+	if (_hoveredHandle != nullptr && (action == ButtonAction::Press || action == ButtonAction::Repeat))
 	{
 		_selectedHandle = _hoveredHandle;
 
@@ -64,11 +70,20 @@ void		HandleManager::UpdateHoveredHandle(void)
 		nearest = fminf(nearest, dist);
 	}
 
+	HandleControl * oldHoveredHandle = _hoveredHandle;
 	_hoveredHandle = nullptr;
 	if (nearest < SELECTION_DISTANCE)
 	{
-		std::cout << "hover ! " << nearest << std::endl;
 		_hoveredHandle = nearestHandle;
+	}
+
+	if (oldHoveredHandle != _hoveredHandle)
+	{
+		// Notify the handle that the hover have changed
+		if (_hoveredHandle != nullptr)
+			_hoveredHandle->onHover.Invoke(_hoveredHandle);
+		else
+			oldHoveredHandle->onNormal.Invoke(oldHoveredHandle);
 	}
 }
 
