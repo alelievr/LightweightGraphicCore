@@ -10,12 +10,13 @@ namespace LWGC
 	class		TextureCube : public Texture
 	{
 		private:
-	
+			TextureCube(void) = default;
+			TextureCube(const TextureCube&);
 	
 		public:
-			TextureCube();
-			TextureCube(const TextureCube&);
-			virtual ~TextureCube(void);
+			TextureCube*	Create(void);
+			TextureCube*	Create(const TextureCube&);
+			virtual ~TextureCube(void) = default;
 	
 			TextureCube &	operator=(TextureCube const & src);
 	};

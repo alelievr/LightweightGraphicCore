@@ -4,6 +4,7 @@
 #include "Core/Rendering/ForwardRenderPipeline.hpp"
 #include "Core/Vulkan/VulkanInstance.hpp"
 #include "Core/Components/MeshRenderer.hpp"
+#include "Core/Time.hpp"
 
 using namespace LWGC;
 
@@ -23,7 +24,8 @@ Application::Application(VulkanRenderPipeline * renderPipeline) : Application()
 
 Application::~Application(void)
 {
-	_materialTable.DestroyMaterials();
+	_materialTable.DestroyObjects();
+	_textureTable.DestroyObjects();
 	Vk::Release();
 	delete _renderPipeline;
 
@@ -125,19 +127,23 @@ void			Application::Open(const std::string & name, const int width, const int he
 	glfwSetWindowUserPointer(_window, &_renderPipeline);
 	glfwSetFramebufferSizeCallback(_window, FramebufferResizeCallback);
 
+	Time::Initialize();
 	// _imGUI.Initialize(&_swapChain, &_surface);
 }
+#include <limits>
 
 void				Application::Update(void) noexcept
 {
 	glfwPollEvents();
-
+	Time::BeginFrame();
 	Application::update.Invoke();
 	Application::lateUpdate.Invoke();
 
 	//TODO: hierarchy get cameras
 	const auto cameras =hierarchy->GetCameras();
 	_renderPipeline->RenderInternal(cameras, hierarchy->GetRenderContext());
+
+	Time::GetUnscaledDeltaTime();
 
 	// _imGUI.BeginFrame();
 
@@ -151,6 +157,7 @@ void				Application::Update(void) noexcept
 EventSystem *		Application::GetEventSystem(void) noexcept { return &this->_eventSystem; }
 Hierarchy *			Application::GetHierarchy(void) noexcept { return this->hierarchy.get(); }
 MaterialTable *		Application::GetMaterialTable(void) noexcept { return &this->_materialTable; }
+TextureTable *		Application::GetTextureTable(void) noexcept { return &this->_textureTable; }
 
 Application *	Application::Get(void) noexcept { return _app; }
 

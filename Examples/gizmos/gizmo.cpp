@@ -17,7 +17,7 @@ void	ProcessEvent(EventSystem * es, Application & app)
 
 void		InitGizmos(Hierarchy * hierarchy)
 {
-	selection and handle test for cube:
+	// selection and handle test for cube:
 	hierarchy->AddGameObject(new GameObject(new MeshRenderer(PrimitiveType::Cube, Material::Create(BuiltinShaders::ColorDirection))));
 
 	auto lineGizmo = new Gizmo::Line(glm::vec3(-1, 0, 0), glm::vec3(0, 4, 0), Color::Yellow);

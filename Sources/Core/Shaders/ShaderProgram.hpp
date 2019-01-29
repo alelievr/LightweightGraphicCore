@@ -8,6 +8,7 @@
 
 #include GLFW_INCLUDE
 #include "ShaderSource.hpp"
+#include "Core/Delegate.tpp"
 #include "Core/Shaders/ShaderBindingTable.hpp"
 
 namespace LWGC
@@ -22,6 +23,8 @@ namespace LWGC
 			uint32_t										_threadWidth;
 			uint32_t										_threadHeight;
 			uint32_t										_threadDepth;
+			DelegateIndex<void ()>							_updateIndex;
+			bool											_isUpdateBound;
 
 			const std::string		GetFileName(const std::string & filePath);
 
@@ -36,7 +39,7 @@ namespace LWGC
 			void		CompileAndLink(void);
 
 			void		Bind(void);
-			bool		Update(void);
+			void		Update(void);
 			bool		IsCompiled(void) const noexcept;
 			bool		IsCompute(void) const noexcept;
 

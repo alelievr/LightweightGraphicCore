@@ -3,10 +3,11 @@
 #include <algorithm>
 
 #include "Core/Vulkan/Vk.hpp"
+#include "Core/Application.hpp"
 
 using namespace LWGC;
 
-ShaderProgram::ShaderProgram(void) : _threadWidth(1), _threadHeight(1), _threadDepth(1)
+ShaderProgram::ShaderProgram(void) : _isUpdateBound(false), _threadWidth(1), _threadHeight(1), _threadDepth(1)
 {
 }
 
@@ -20,11 +21,17 @@ ShaderProgram::ShaderProgram(const std::string & fragmentShaderName, const std::
 
 ShaderProgram::~ShaderProgram(void)
 {
+	Application::update.RemoveListener(_updateIndex);
 }
 
 void		ShaderProgram::CompileAndLink(void)
 {
 	_bindingTable.SetStage(IsCompute() ? VK_SHADER_STAGE_COMPUTE_BIT : VK_SHADER_STAGE_ALL_GRAPHICS);
+	if (!_isUpdateBound)
+	{
+		_updateIndex = Application::update.AddListener(std::bind(&ShaderProgram::Update, this));
+		_isUpdateBound = true;
+	}
 
 	for (auto & shaderSource : _shaderSources)
 	{
@@ -81,32 +88,20 @@ bool		ShaderProgram::IsCompute(void) const noexcept
 	});
 }
 
-bool		ShaderProgram::Update(void)
+void		ShaderProgram::Update(void)
 {
-	bool		hasReloaded = false;
+	auto device = VulkanInstance::Get()->GetDevice();
 
 	for (auto & shaderSource : _shaderSources)
 	{
 		if (shaderSource->NeedReload())
 		{
-			shaderSource->Reload();
-
-			// Update stage code:
-			const auto & t = std::find_if(_shaderStages.begin(), _shaderStages.end(),
-				[& shaderSource](const VkPipelineShaderStageCreateInfo & s) {
-				return shaderSource->GetStage() == s.stage;
-			});
-
-			if (t == _shaderStages.end())
-				throw std::runtime_error("Failed to reload shader program code, you're probably adding shader sources after the program being compiled and linked");
-
-			t->module = shaderSource->GetModule();
-
-			hasReloaded = true;
+			for (auto stage : _shaderStages)
+				vkDestroyShaderModule(device, stage.module, nullptr);
+			_shaderStages.clear();
+			Application::Get()->GetMaterialTable()->UpdateMaterial(this);
 		}
 	}
-
-	return hasReloaded;
 }
 
 VkPipelineShaderStageCreateInfo *		ShaderProgram::GetShaderStages(void)

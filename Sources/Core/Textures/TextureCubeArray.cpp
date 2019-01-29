@@ -1,22 +1,19 @@
 #include "TextureCubeArray.hpp"
 
-
-TextureCubeArray::TextureCubeArray(void)
-{
-	std::cout << "Default constructor of TextureCubeArray called" << std::endl;
-}
-
 TextureCubeArray::TextureCubeArray(TextureCubeArray const & src)
 {
 	*this = src;
-	std::cout << "Copy constructor of TextureCubeArray called" << std::endl;
 }
 
-TextureCubeArray::~TextureCubeArray(void)
+TextureCubeArray* TextureCubeArray::Create(void)
 {
-	std::cout << "Destructor of TextureCubeArray called" << std::endl;
+	return new TextureCubeArray();
 }
 
+TextureCubeArray* TextureCubeArray::Create(const TextureCubeArray& t)
+{
+	return new TextureCubeArray(t);
+}
 
 TextureCubeArray &	TextureCubeArray::operator=(TextureCubeArray const & src)
 {

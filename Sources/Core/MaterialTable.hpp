@@ -2,30 +2,32 @@
 
 #include <iostream>
 #include <string>
+#include <vector>
 #include "Core/Vulkan/Material.hpp"
+#include "Core/ObjectTable.tpp"
 
 namespace LWGC
 {
-	class		MaterialTable
+	class		MaterialTable : public ObjectTable<Material>
 	{
 		friend class Material;
+		friend class ShaderProgram;
 
 		private:
-			std::vector< Material * >	_materials;
-			LWGC::SwapChain *			_swapChain;
-			LWGC::RenderPass *			_renderPass;
-			std::vector< Material >		_stagingMaterials;
+			LWGC::SwapChain *														_swapChain;
+			LWGC::RenderPass *														_renderPass;
+			static std::unordered_map<ShaderProgram *, std::vector< Material * > >	_shadersPrograms;
 
-			void NotifyMaterialReady(Material * material);
+			void 	UpdateMaterial(ShaderProgram *shaderProgram) noexcept;
+			void 	NotifyMaterialReady(Material * material);
 
 		public:
 			MaterialTable();
 			MaterialTable(const MaterialTable&) = delete;
-
-			void 	Initialize(LWGC::SwapChain *swapChain , LWGC::RenderPass * renderPipeline);
-			void	RegsiterMaterial(Material * material);
-			void	DestroyMaterials();
 			virtual ~MaterialTable(void);
+
+			void 	RegsiterObject(Material * material) override; 
+			void 	Initialize(LWGC::SwapChain *swapChain , LWGC::RenderPass * renderPipeline);
 
 			MaterialTable &	operator=(MaterialTable const & src) = delete;
 	};

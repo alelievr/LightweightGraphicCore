@@ -6,7 +6,7 @@
 /*   By: amerelo <amerelo@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/08/27 21:37:58 by alelievr          #+#    #+#             */
-/*   Updated: 2019/01/05 18:42:25 by amerelo          ###   ########.fr       */
+/*   Updated: 2019/01/13 15:53:46 by amerelo          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,7 @@
 #include "Core/Hierarchy.hpp"
 #include "Core/Transform.hpp"
 #include "Core/GameObject.hpp"
+#include "Core/Time.hpp"
 
 // Event System
 #include "Core/EventSystem.hpp"
