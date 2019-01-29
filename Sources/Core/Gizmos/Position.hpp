@@ -15,7 +15,7 @@ namespace LWGC::Gizmo
 {
 	class		Position : public GameObject
 	{
-		private:
+		protected:
 			Arrow *		upArrow;
 			Arrow *		rightArrow;
 			Arrow *		forwardArrow;

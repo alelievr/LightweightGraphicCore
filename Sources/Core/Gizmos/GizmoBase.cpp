@@ -1,10 +1,14 @@
 #include "GizmoBase.hpp"
 
 #include "Core/Vulkan/Vk.hpp"
+#include "Utils/Vector.hpp"
 
+using namespace LWGC;
 using namespace LWGC::Gizmo;
 
 static const std::string GizmoShader = "Shaders/Gizmo/Default.hlsl";
+
+Color GizmoBase::HoverColor = Color::Yellow;
 
 GizmoBase::GizmoBase(const Color & c, bool wireframe)
 {
@@ -13,6 +17,7 @@ GizmoBase::GizmoBase(const Color & c, bool wireframe)
 	renderer = new MeshRenderer(material);
 	AddComponent(renderer);
 
+	normalColor = c;
 	gizmoData.color = c;
 	gizmoData.colorMode = 0; // TODO: implement color mode
 
@@ -61,7 +66,18 @@ void	GizmoBase::Initialize(void) noexcept
 void	GizmoBase::SetColor(const Color & c)
 {
 	gizmoData.color = c;
+	std::cout << "Set Color: " << gizmoData.color << std::endl;
 	Vk::UploadToMemory(gizmoDataMemory, &gizmoData, sizeof(LWGC_GizmoData));
+}
+
+void	GizmoBase::Hover(void)
+{
+	SetColor(HoverColor);
+}
+
+void	GizmoBase::Normal(void)
+{
+	SetColor(normalColor);
 }
 
 GizmoBase::~GizmoBase(void)

@@ -7,6 +7,8 @@
 
 #include "Utils/Math.hpp"
 
+#define unused __attribute__((unused))
+
 using namespace LWGC;
 using namespace Handle;
 
@@ -20,6 +22,13 @@ Position::Position(const glm::vec3 & position) : Gizmo::Position(position), _del
 	_forwardHandle.onDelta.AddListener([&](auto c, auto d) { OnSliderMoved(c, d); });
 
 	Application::update.AddListener(std::bind(&Position::Update, this));
+
+	_upHandle.onHover.AddListener([&](unused auto c) { upArrow->Hover(); });
+	_rightHandle.onHover.AddListener([&](unused auto c) { rightArrow->Hover(); });
+	_forwardHandle.onHover.AddListener([&](unused auto c) { forwardArrow->Hover(); });
+	_upHandle.onNormal.AddListener([&](unused auto c) { upArrow->Normal(); });
+	_rightHandle.onNormal.AddListener([&](unused auto c) { rightArrow->Normal(); });
+	_forwardHandle.onNormal.AddListener([&](unused auto c) { forwardArrow->Normal(); });
 
 	_upHandle.BindGameObject(this);
 }
@@ -55,7 +64,8 @@ void		Position::OnSliderMoved(HandleControl * control, const glm::vec3 delta)
 
 	_changed = true;
 	_delta += dir * delta.x; // Slider1D only output in x component
-	transform->Translate(dir * delta.x);
+	std::cout << "delta: " << delta.x << std::endl;
+	transform->Translate(dir * delta.x * 0.01f);
 }
 
 bool		Position::HasChanged(void)

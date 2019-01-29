@@ -19,6 +19,7 @@ void		Slider1D::UpdateWorldPositions(const glm::vec3 & p0, const glm::vec3 & p1)
 void		Slider1D::UpdateSelected(void)
 {
 	// TODO: use the delta of the projected mouse point on the line instead of mouse delta
+	std::cout << "TODO: UpdateSelected of Slider1DHandle" << std::endl;
 	glm::vec3 delta = glm::vec3(EventSystem::Get()->delta.y, 0, 0);
 	onDelta.Invoke(this, delta);
 }

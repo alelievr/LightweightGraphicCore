@@ -82,7 +82,7 @@ void		HandleManager::UpdateHoveredHandle(void)
 		// Notify the handle that the hover have changed
 		if (_hoveredHandle != nullptr)
 			_hoveredHandle->onHover.Invoke(_hoveredHandle);
-		else
+		if (oldHoveredHandle != nullptr)
 			oldHoveredHandle->onNormal.Invoke(oldHoveredHandle);
 	}
 }

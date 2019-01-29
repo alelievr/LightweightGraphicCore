@@ -17,8 +17,8 @@ void	ProcessEvent(EventSystem * es, Application & app)
 
 void		InitGizmos(Hierarchy * hierarchy)
 {
-	// selection and handle test for cube:
-	// hierarchy->AddGameObject(new GameObject(new MeshRenderer(PrimitiveType::Cube, Material::Create(BuiltinShaders::ColorDirection))));
+	selection and handle test for cube:
+	hierarchy->AddGameObject(new GameObject(new MeshRenderer(PrimitiveType::Cube, Material::Create(BuiltinShaders::ColorDirection))));
 
 	auto lineGizmo = new Gizmo::Line(glm::vec3(-1, 0, 0), glm::vec3(0, 4, 0), Color::Yellow);
 	lineGizmo->GetTransform()->SetPosition(glm::vec3(0, 0, 0));
@@ -46,8 +46,9 @@ void		InitGizmos(Hierarchy * hierarchy)
 	arrow->AddComponent(new Rotator());
 	hierarchy->AddGameObject(arrow);
 
-	auto position = new Handle::Position(glm::vec3(0, 0, 0)); // TODO: test another position
-	hierarchy->AddGameObject(position);
+	// Currently broken !
+	// auto position = new Handle::Position(glm::vec3(0, 0, 0)); // TODO: test another position
+	// hierarchy->AddGameObject(position);
 
 	for (int i = 0; i < 40; i++)
 	{
@@ -61,7 +62,7 @@ void		InitGizmos(Hierarchy * hierarchy)
 void		InitCamera(Hierarchy * hierarchy)
 {
 	auto cam = new GameObject(new Camera());
-	cam->GetTransform()->SetPosition(glm::vec3(0, 0, -5));
+	cam->GetTransform()->SetPosition(glm::vec3(0, -1, -5));
 	cam->AddComponent(new FreeCameraControls());
 	hierarchy->AddGameObject(cam);
 }
