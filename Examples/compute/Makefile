@@ -6,7 +6,7 @@
 #    By: amerelo <amerelo@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 0014/07/15 15:13:38 by alelievr          #+#    #+#              #
-#    Updated: 2019/01/03 21:46:00 by alelievr         ###   ########.fr        #
+#    Updated: 2019/01/13 17:35:54 by alelievr         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -37,7 +37,7 @@ INCDIRS		=	../../Sources ${VULKAN_SDK}/include/
 
 #	Libraries
 LIBDIRS		=	../../ ../../Deps/glfw/src/ ../../Deps/imgui/ ../../Deps/glslang/build/SPIRV ../../Deps/glslang/build/hlsl ../../Deps/glslang/build/glslang ${VULKAN_SDK}/lib ../../Deps/SPIRV-Cross
-LDLIBS		=	-lLWGC -lglfw3 -lImGUI -lvulkan -lglslang -lSPIRV -lHLSL -lSPVRemapper -lspirv-cross
+LDLIBS		=	-lLWGC -lglfw3 -lImGUI -lvulkan -lglslang -lSPIRV -lHLSL -lSPVRemapper ../../Deps/SPIRV-Cross/libspirv-cross.a
 
 #	Output
 NAME		=	compute
@@ -210,7 +210,8 @@ fclean: clean
 		$(RM) $(NAME))
 
 #	All removing then compiling
-re: fclean all
+re: fclean
+	@$(MAKE) all
 
 f:	all run
 

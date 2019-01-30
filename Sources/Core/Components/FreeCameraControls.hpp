@@ -25,7 +25,6 @@ namespace LWGC
 			float					_rotationY;
 			keyDelegateIndex		_keydi;
 			mouseMoveDelegateIndex 	_mousemdi;
-			mouseClickDelegateIndex _mousecdi;
 
 			virtual void	Update(void) noexcept override;
 			void		KeyPressedCallback(KeyCode, ButtonAction);
@@ -38,9 +37,6 @@ namespace LWGC
 			virtual ~FreeCameraControls(void);
 
 			FreeCameraControls &	operator=(FreeCameraControls const & src) = delete;
-
-			virtual void OnAdded(const GameObject &go) noexcept override;
-			virtual void OnRemoved(const GameObject & go) noexcept override;
 
 			virtual void OnEnable() noexcept override;
 			virtual void OnDisable() noexcept override;

@@ -16,7 +16,7 @@ RenderContext::~RenderContext()
 }
 
 template< class T >
-void    RenderContext::GetComponentSet(uint32_t componentType, std::unordered_set< T * > & components) 
+void    RenderContext::GetComponentSet(uint32_t componentType, std::unordered_set< T * > & components)
 {
     components.clear();
 
@@ -32,7 +32,7 @@ void    RenderContext::GetComponentSet(uint32_t componentType, std::unordered_se
 
 // TODO: optimize !
 template< class T >
-void    RenderContext::GetComponentSet(std::unordered_set< T * > & components) 
+void    RenderContext::GetComponentSet(std::unordered_set< T * > & components)
 {
     components.clear();
 
@@ -47,12 +47,12 @@ void    RenderContext::GetComponentSet(std::unordered_set< T * > & components)
     }
 }
 
-void    RenderContext::GetLights(std::unordered_set< Light * > & lights) 
+void    RenderContext::GetLights(std::unordered_set< Light * > & lights)
 {
     GetComponentSet< Light >(static_cast< uint32_t >(ComponentType::Light), lights);
 }
 
-void    RenderContext::GetRenderers(std::unordered_set< Renderer * > & renderers) 
+void    RenderContext::GetRenderers(std::unordered_set< Renderer * > & renderers)
 {
     GetComponentSet< Renderer >(renderers);
 }

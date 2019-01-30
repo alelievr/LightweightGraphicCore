@@ -12,7 +12,6 @@
 
 #include IMGUI_INCLUDE
 
-#define MAX_FRAMES_IN_FLIGHT	2
 #define PER_FRAME_BINDING_INDEX	0
 
 namespace LWGC
@@ -28,16 +27,16 @@ namespace LWGC
 				glm::vec4	time;
 			};
 
-			static VulkanRenderPipeline *	pipelineInstance;
-			std::vector< VkCommandBuffer >	swapChainCommandBuffers;
-			LWGC_PerFrame					perFrame;
-			UniformBuffer					uniformPerFrame;
-			VkDescriptorSet					perFrameDescriptorSet;
-			VkDescriptorSetLayout			perFrameDescriptorSetLayout;
+			static VulkanRenderPipeline *	_pipelineInstance;
+			std::vector< VkCommandBuffer >	_swapChainCommandBuffers;
+			LWGC_PerFrame					_perFrame;
+			UniformBuffer					_uniformPerFrame;
+			VkDescriptorSet					_perFrameDescriptorSet;
+			VkDescriptorSetLayout			_perFrameDescriptorSetLayout;
 
-			void				RenderInternal(const std::vector< Camera * > & cameras, RenderContext & context);
+			void				RenderInternal(const std::vector< Camera * > & cameras, RenderContext * context);
 			void				UpdatePerframeUnformBuffer(void) noexcept;
-			void				CreatePerFrameDescriptorSet(void) noexcept;
+			void				CreatePerFrameDescriptorSet(void);
 
 		protected:
 			std::vector<VkSemaphore>		imageAvailableSemaphores;
@@ -51,13 +50,15 @@ namespace LWGC
 			SwapChain *						swapChain;
 			VkCommandBuffer					commandBuffer;
 			bool							framebufferResized;
+			Camera *						currentCamera;
 
 			virtual void		CreateRenderPass(void);
-			void				BeginRenderPass(RenderContext & context);
+			void				BeginRenderPass(RenderContext * context);
 			void				EndRenderPass(void);
-			virtual void		RecreateSwapChain(RenderContext & renderContext);
-			virtual void		Render(const std::vector< Camera * > & cameras, RenderContext & context) = 0;
+			virtual void		RecreateSwapChain(RenderContext * renderContext);
+			virtual void		Render(const std::vector< Camera * > & cameras, RenderContext * context) = 0;
 			virtual void		CreateDescriptorSets(void);
+			virtual void		InitializeHandles(void) noexcept;
 
 		public:
 			VulkanRenderPipeline(void);
@@ -72,6 +73,7 @@ namespace LWGC
 
 			SwapChain *		GetSwapChain(void);
 			RenderPass *	GetRenderPass(void);
+			Camera *		GetCurrentCamera(void);
 
 			static VulkanRenderPipeline *	Get();
 	};

@@ -9,7 +9,7 @@
 
 #define GLFW_INCLUDE_GLCOREARB
 #include GLFW_INCLUDE
-
+#include GLM_INCLUDE_QUATERNION
 #include GLM_INCLUDE
 #include VULKAN_INCLUDE
 #include "../Utils/Color.hpp"
@@ -56,6 +56,7 @@ namespace LWGC
 
 			// transform operation on vertices
 			void	Translate(const glm::vec3 & translation);
+			void	Rotate(const glm::quat & rotation);
 
 			std::vector< int >			GetIndices(void) const;
 			void						SetIndices(const std::vector< int > & tmp);

@@ -18,12 +18,12 @@ namespace LWGC::Gizmo
 			glm::vec3	_origin;
 
 		public:
-			Ray(const glm::vec3 origin, const glm::vec3 direction, const Color & c = Color::Red);
+			Ray(const glm::vec3 & origin, const glm::vec3 & direction, const Color & c = Color::Red);
 			Ray(const Ray &) = delete;
 			virtual ~Ray(void);
 
-			void	SetOrigin(const glm::vec3 origin);
-			void	SetDirection(const glm::vec3 direction);
+			void	SetOrigin(const glm::vec3 & origin);
+			void	SetDirection(const glm::vec3 & direction);
 
 			Ray &	operator=(Ray const & src) = delete;
 	};

@@ -6,7 +6,7 @@
 #    By: amerelo <amerelo@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2014/07/15 15:13:38 by alelievr          #+#    #+#              #
-#    Updated: 2019/01/06 19:25:46 by amerelo          ###   ########.fr        #
+#    Updated: 2019/01/13 17:27:50 by amerelo          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -25,6 +25,7 @@ SRC			=	Core/Application.cpp \
 				Core/Mesh.cpp \
 				Core/ShaderCache.cpp \
 				Core/Object.cpp \
+				Core/Time.cpp \
 				Core/PrimitiveMeshFactory.cpp \
 				Core/ComputeDispatcher.cpp \
 				Core/TextureTable.cpp \
@@ -36,6 +37,8 @@ SRC			=	Core/Application.cpp \
 				Core/Components/FreeCameraControls.cpp \
 				Core/Components/Light.cpp \
 				Core/Components/Rotator.cpp \
+				Core/Components/Movator.cpp \
+				Core/Components/Activator.cpp \
 				Core/ComputeDispatcher.cpp \
 				Core/ShaderCache.cpp \
 				Core/Object.cpp \
@@ -44,6 +47,7 @@ SRC			=	Core/Application.cpp \
 				Core/Rendering/RenderTarget.cpp \
 				Core/Rendering/VulkanRenderPipeline.cpp \
 				Core/Rendering/RenderContext.cpp \
+				Core/Rendering/PipelineCommandBuffer.cpp \
 				Core/Shaders/ShaderProgram.cpp \
 				Core/Shaders/ShaderSource.cpp \
 				Core/Shaders/BuiltinShaders.cpp \
@@ -68,6 +72,14 @@ SRC			=	Core/Application.cpp \
 				Core/Gizmos/Circle.cpp \
 				Core/Gizmos/Cone.cpp \
 				Core/Gizmos/Arrow.cpp \
+				Core/Gizmos/Position.cpp \
+				Core/Handles/Selection.cpp \
+				Core/Handles/HandleManager.cpp \
+				Core/Handles/PositionHandle.cpp \
+				Core/Handles/Tools.cpp \
+				Core/Handles/Slider1DHandle.cpp \
+				Core/Handles/HandleControl.cpp \
+				Core/Handles/HandleUtils.cpp \
 				Core/ImGUIWrapper.cpp \
 				Utils/Bounds.cpp \
 				Utils/Color.cpp \
@@ -75,6 +87,7 @@ SRC			=	Core/Application.cpp \
 				Utils/Rect.cpp \
 				Utils/Math.cpp \
 				Utils/Vector.cpp \
+				Utils/Utils.cpp \
 
 #	Objects
 OBJDIR		=	Objects
@@ -101,6 +114,7 @@ STBLIB      =   Deps/stb/stb.h
 GLMLIB      =   Deps/glm/glm
 GLSLANGLIB	=	Deps/glslang/build/StandAlone/glslangValidator
 IMGUILIB    =   Deps/imgui/libImGUI.a
+SPIRV_CROSSLIB	=	Deps/SPIRV-Cross/libspirv-cross.a
 
 #	Output
 NAME		=	libLWGC.a
@@ -232,7 +246,7 @@ endif
 #################
 
 #	First target
-all: $(VULKAN) $(GLFWLIB) $(OBJLIB) $(GLMLIB) $(IMGUILIB) $(GLSLANGLIB) $(STBLIB) $(NAME)
+all: $(VULKAN) $(GLFWLIB) $(OBJLIB) $(GLMLIB) $(IMGUILIB) $(SPIRV_CROSSLIB) $(GLSLANGLIB) $(STBLIB) $(NAME)
 
 $(GLMLIB):
 	@git submodule init
@@ -257,6 +271,10 @@ $(IMGUILIB):
 	@git submodule init
 	@git submodule update
 	@$(MAKE) -f ImGUI.Makefile -j 4
+
+$(SPIRV_CROSSLIB):
+	@git submodule update --init
+	cd Deps/SPIRV-Cross/ && cmake . && make -j 4
 
 $(VULKAN):
 	@$(DOWNLOAD_VULKAN)

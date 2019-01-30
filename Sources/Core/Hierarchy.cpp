@@ -6,7 +6,7 @@
 
 using namespace LWGC;
 
-Hierarchy::Hierarchy(void)
+Hierarchy::Hierarchy(void) : _initialized(false)
 {
 }
 
@@ -93,9 +93,9 @@ void Hierarchy::UnregisterComponentInRenderContext(uint32_t componentType, const
 	_renderContext.renderComponents[componentType].erase(index);
 }
 
-RenderContext &	Hierarchy::GetRenderContext(void)
+RenderContext *	Hierarchy::GetRenderContext(void)
 {
-	return _renderContext;
+	return &_renderContext;
 }
 
 std::ostream &	operator<<(std::ostream & o, Hierarchy const & r)

@@ -23,11 +23,11 @@ namespace LWGC
 			static std::shared_ptr< Mesh >	_CreateWireframeQuadMesh(void);
 
 		public:
-			PrimitiveMeshFactory(void);
-			PrimitiveMeshFactory(const PrimitiveMeshFactory&);
-			virtual ~PrimitiveMeshFactory(void);
+			PrimitiveMeshFactory(void) = delete;
+			PrimitiveMeshFactory(const PrimitiveMeshFactory&) = delete;
+			virtual ~PrimitiveMeshFactory(void) = delete;
 
-			PrimitiveMeshFactory &	operator=(PrimitiveMeshFactory const & src);
+			PrimitiveMeshFactory &	operator=(PrimitiveMeshFactory const & src) = delete;
 
 			static std::shared_ptr< Mesh >	CreateMesh(PrimitiveType type);
 			static std::shared_ptr< Mesh >	CreateFrustum(float fovRad, float aspect, float nearPlane, float farPlane);

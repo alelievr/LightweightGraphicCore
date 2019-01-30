@@ -7,22 +7,6 @@
 
 using namespace LWGC;
 
-PrimitiveMeshFactory::PrimitiveMeshFactory(void)
-{
-	std::cout << "Default constructor of PrimitiveMeshFactory called" << std::endl;
-}
-
-PrimitiveMeshFactory::PrimitiveMeshFactory(PrimitiveMeshFactory const & src)
-{
-	*this = src;
-	std::cout << "Copy constructor called" << std::endl;
-}
-
-PrimitiveMeshFactory::~PrimitiveMeshFactory(void)
-{
-	std::cout << "Destructor of PrimitiveMeshFactory called" << std::endl;
-}
-
 void						PrimitiveMeshFactory::_ComputeFrustumPoints(float fovY, float aspect, float nearPlane, float farPlane, std::vector< glm::vec3 > & p)
 {
 	// near plane
@@ -353,15 +337,6 @@ std::shared_ptr< Mesh >		PrimitiveMeshFactory::CreateMesh(PrimitiveType type)
 	throw std::runtime_error("Can't find mesh generator for primitive type: " + std::to_string(static_cast< int >(type)));
 }
 
-
-PrimitiveMeshFactory &	PrimitiveMeshFactory::operator=(PrimitiveMeshFactory const & src)
-{
-	std::cout << "Assignment operator called" << std::endl;
-
-	if (this != &src) {
-	}
-	return (*this);
-}
 
 std::ostream &	operator<<(std::ostream & o, PrimitiveMeshFactory const & r)
 {
