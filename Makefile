@@ -274,7 +274,7 @@ $(IMGUILIB):
 
 $(SPIRV_CROSSLIB):
 	@git submodule update --init
-	cd Deps/SPIRV-Cross/ && cmake . && make -j 4
+	cd Deps/SPIRV-Cross/ && make -j 4
 
 $(VULKAN):
 	@$(DOWNLOAD_VULKAN)
