@@ -1,38 +1,42 @@
 #include "VulkanRenderPipeline.hpp"
+
 #include "Core/Components/MeshRenderer.hpp"
 #include "Core/Components/ComputeDispatcher.hpp"
-
 #include "Core/PrimitiveMeshFactory.hpp"
+#include "Core/Handles/Selection.hpp"
+#include "Core/Handles/Tools.hpp"
+#include "Core/Handles/HandleManager.hpp"
 
 #include <cmath>
 #include <unordered_set>
 
 using namespace LWGC;
 
-VulkanRenderPipeline *					VulkanRenderPipeline::pipelineInstance = nullptr;
+VulkanRenderPipeline *					VulkanRenderPipeline::_pipelineInstance = nullptr;
 
-VulkanRenderPipeline * VulkanRenderPipeline::Get() { return pipelineInstance; }
+VulkanRenderPipeline * VulkanRenderPipeline::Get() { return _pipelineInstance; }
 
 VulkanRenderPipeline::VulkanRenderPipeline(void) : framebufferResized(false)
 {
 	swapChain = VK_NULL_HANDLE;
 	instance = VK_NULL_HANDLE;
-	pipelineInstance = this;
+	currentCamera = nullptr;
+	_pipelineInstance = this;
 }
 
 VulkanRenderPipeline::~VulkanRenderPipeline(void)
 {
 	vkDeviceWaitIdle(device);
 
-	for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++)
+	for (size_t i = 0; i < swapChain->GetImageCount(); i++)
 	{
 		vkDestroySemaphore(device, renderFinishedSemaphores[i], nullptr);
 		vkDestroySemaphore(device, imageAvailableSemaphores[i], nullptr);
 		vkDestroyFence(device, inFlightFences[i], nullptr);
 	}
 
-	vkDestroyBuffer(device, uniformPerFrame.buffer, nullptr);
-	vkFreeMemory(device, uniformPerFrame.memory, nullptr);
+	vkDestroyBuffer(device, _uniformPerFrame.buffer, nullptr);
+	vkFreeMemory(device, _uniformPerFrame.memory, nullptr);
 }
 
 void                VulkanRenderPipeline::Initialize(SwapChain * swapChain)
@@ -44,39 +48,48 @@ void                VulkanRenderPipeline::Initialize(SwapChain * swapChain)
 	CreateRenderPass();
 
 	// Allocate primary command buffers
-	instance->GetCommandBufferPool()->Allocate(VK_COMMAND_BUFFER_LEVEL_PRIMARY, swapChainCommandBuffers, swapChain->GetImageCount());
+	instance->GetCommandBufferPool()->Allocate(VK_COMMAND_BUFFER_LEVEL_PRIMARY, _swapChainCommandBuffers, swapChain->GetImageCount());
 
 	// Allocate LWGC_PerFrame uniform buffer
-	Vk::CreateBuffer(sizeof(LWGC_PerFrame), VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, uniformPerFrame.buffer, uniformPerFrame.memory);
+	Vk::CreateBuffer(sizeof(LWGC_PerFrame), VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, _uniformPerFrame.buffer, _uniformPerFrame.memory);
 
 	CreateDescriptorSets();
 	CreatePerFrameDescriptorSet();
+
+	InitializeHandles();
+}
+
+void				VulkanRenderPipeline::InitializeHandles(void) noexcept
+{
+	Selection::Initialize();
+	Tools::Initialize();
+	HandleManager::Initialize();
 }
 
 void				VulkanRenderPipeline::CreateDescriptorSets(void) {}
 
-void				VulkanRenderPipeline::CreatePerFrameDescriptorSet(void) noexcept
+void				VulkanRenderPipeline::CreatePerFrameDescriptorSet(void)
 {
 	auto layoutBinding = Vk::CreateDescriptorSetLayoutBinding(0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_ALL);
-	Vk::CreateDescriptorSetLayout({layoutBinding}, perFrameDescriptorSetLayout);
+	Vk::CreateDescriptorSetLayout({layoutBinding}, _perFrameDescriptorSetLayout);
 
 	VkDescriptorSetAllocateInfo allocInfo = {};
 	allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
 	allocInfo.descriptorPool = instance->GetDescriptorPool();
 	allocInfo.descriptorSetCount = 1u;
-	allocInfo.pSetLayouts = &perFrameDescriptorSetLayout; // First layout set is per frame cbuffer
+	allocInfo.pSetLayouts = &_perFrameDescriptorSetLayout; // First layout set is per frame cbuffer
 
-	if (vkAllocateDescriptorSets(device, &allocInfo, &perFrameDescriptorSet) != VK_SUCCESS)
+	if (vkAllocateDescriptorSets(device, &allocInfo, &_perFrameDescriptorSet) != VK_SUCCESS)
 		throw std::runtime_error("failed to allocate descriptor sets!");
 
 	VkDescriptorBufferInfo bufferInfo = {};
-	bufferInfo.buffer = uniformPerFrame.buffer;
+	bufferInfo.buffer = _uniformPerFrame.buffer;
 	bufferInfo.offset = 0;
 	bufferInfo.range = sizeof(LWGC_PerFrame);
 
 	VkWriteDescriptorSet descriptorWrite = {};
 	descriptorWrite.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-	descriptorWrite.dstSet = perFrameDescriptorSet;
+	descriptorWrite.dstSet = _perFrameDescriptorSet;
 	descriptorWrite.dstBinding = 0;
 	descriptorWrite.dstArrayElement = 0;
 	descriptorWrite.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
@@ -111,7 +124,7 @@ void				VulkanRenderPipeline::CreateRenderPass(void)
 	renderPass.Create();
 }
 
-void			VulkanRenderPipeline::BeginRenderPass(RenderContext & context)
+void			VulkanRenderPipeline::BeginRenderPass(RenderContext * context)
 {
 	VkCommandBufferBeginInfo beginInfo = {};
 	beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
@@ -128,10 +141,10 @@ void			VulkanRenderPipeline::BeginRenderPass(RenderContext & context)
 
 	// Run all compute shaders before begin render pass:
 	std::unordered_set< ComputeDispatcher * >	computeDispatchers;
-	context.GetComputeDispatchers(computeDispatchers);
+	context->GetComputeDispatchers(computeDispatchers);
 
 	// Bind frame infos for compute shaders
-	renderPass.BindDescriptorSet(LWGCBinding::Frame, perFrameDescriptorSet);
+	renderPass.BindDescriptorSet(LWGCBinding::Frame, _perFrameDescriptorSet);
 
 	for (auto & compute : computeDispatchers)
 	{
@@ -217,9 +230,10 @@ void			VulkanRenderPipeline::RenderGUI(void) noexcept
 
 void			VulkanRenderPipeline::CreateSyncObjects(void)
 {
-	imageAvailableSemaphores.resize(MAX_FRAMES_IN_FLIGHT);
-	renderFinishedSemaphores.resize(MAX_FRAMES_IN_FLIGHT);
-	inFlightFences.resize(MAX_FRAMES_IN_FLIGHT);
+	size_t frameBufferCount = swapChain->GetImageCount();
+	imageAvailableSemaphores.resize(frameBufferCount);
+	renderFinishedSemaphores.resize(frameBufferCount);
+	inFlightFences.resize(frameBufferCount);
 
 	VkSemaphoreCreateInfo semaphoreInfo = {};
 	semaphoreInfo.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
@@ -228,7 +242,7 @@ void			VulkanRenderPipeline::CreateSyncObjects(void)
 	fenceInfo.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
 	fenceInfo.flags = VK_FENCE_CREATE_SIGNALED_BIT;
 
-	for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++)
+	for (size_t i = 0; i < frameBufferCount; i++)
 	{
 		if (vkCreateSemaphore(device, &semaphoreInfo, nullptr, &imageAvailableSemaphores[i]) != VK_SUCCESS || vkCreateSemaphore(device, &semaphoreInfo, nullptr, &renderFinishedSemaphores[i]) != VK_SUCCESS || vkCreateFence(device, &fenceInfo, nullptr, &inFlightFences[i]) != VK_SUCCESS)
 		{
@@ -239,7 +253,7 @@ void			VulkanRenderPipeline::CreateSyncObjects(void)
 	printf("Semaphores created !\n");
 }
 
-void			VulkanRenderPipeline::RecreateSwapChain(RenderContext & renderContext)
+void			VulkanRenderPipeline::RecreateSwapChain(RenderContext * renderContext)
 {
 	std::unordered_set< Renderer * >	renderers;
 	vkDeviceWaitIdle(device);
@@ -249,7 +263,7 @@ void			VulkanRenderPipeline::RecreateSwapChain(RenderContext & renderContext)
 
 	// Rebuild all Material graphic pipelines
 	// TODO: do not work with compute dispatchers
-	renderContext.GetRenderers(renderers);
+	renderContext->GetRenderers(renderers);
 
 	for (auto & meshRenderer : renderers)
 		meshRenderer->CleanupPipeline();
@@ -264,16 +278,16 @@ void			VulkanRenderPipeline::RecreateSwapChain(RenderContext & renderContext)
 
 void			VulkanRenderPipeline::UpdatePerframeUnformBuffer(void) noexcept
 {
-	perFrame.time.x = static_cast< float >(glfwGetTime());
-	perFrame.time.y = sin(perFrame.time.x);
-	perFrame.time.z = cos(perFrame.time.x);
-	perFrame.time.w = 0; // TODO: delta time
+	_perFrame.time.x = static_cast< float >(glfwGetTime());
+	_perFrame.time.y = sin(_perFrame.time.x);
+	_perFrame.time.z = cos(_perFrame.time.x);
+	_perFrame.time.w = 0; // TODO: delta time
 
 	// Upload datas to GPU
-	Vk::UploadToMemory(uniformPerFrame.memory, &perFrame, sizeof(LWGC_PerFrame));
+	Vk::UploadToMemory(_uniformPerFrame.memory, &_perFrame, sizeof(LWGC_PerFrame));
 }
 
-void			VulkanRenderPipeline::RenderInternal(const std::vector< Camera * > & cameras, RenderContext & context)
+void			VulkanRenderPipeline::RenderInternal(const std::vector< Camera * > & cameras, RenderContext * context)
 {
 	UpdatePerframeUnformBuffer();
 
@@ -293,7 +307,9 @@ void			VulkanRenderPipeline::RenderInternal(const std::vector< Camera * > & came
 		throw std::runtime_error("failed to acquire swap chain image!");
 	}
 
-	commandBuffer = swapChainCommandBuffers[imageIndex];
+	commandBuffer = _swapChainCommandBuffers[imageIndex];
+
+	currentCamera = (cameras.size() == 0) ? nullptr : cameras[0];
 
 	Render(cameras, context);
 
@@ -341,28 +357,28 @@ void			VulkanRenderPipeline::RenderInternal(const std::vector< Camera * > & came
 		throw std::runtime_error("failed to present swap chain image!");
 	}
 
-	currentFrame = (currentFrame + 1) % MAX_FRAMES_IN_FLIGHT;
+	currentFrame = (currentFrame + 1) % swapChain->GetImageCount();
 }
 
-void	VulkanRenderPipeline::Render(const std::vector< Camera * > & cameras, RenderContext & context)
+void	VulkanRenderPipeline::Render(const std::vector< Camera * > & cameras, RenderContext * context)
 {
 	if (cameras.empty())
 		throw std::runtime_error("No camera for rendering !");
 
 	BeginRenderPass(context);
 
-	renderPass.BindDescriptorSet(LWGCBinding::Frame, perFrameDescriptorSet);
+	renderPass.BindDescriptorSet(LWGCBinding::Frame, _perFrameDescriptorSet);
 
 	for (const auto camera : cameras)
 	{
-		for (auto & updatePerCamera : context.GetUpdatePerCameras())
+		for (auto & updatePerCamera : context->GetUpdatePerCameras())
 			updatePerCamera->UpdatePerCamera(camera);
 
 		std::unordered_set< Renderer * >	renderers;
 
 		renderPass.BindDescriptorSet(LWGCBinding::Camera, camera->GetDescriptorSet());
 
-		context.GetRenderers(renderers);
+		context->GetRenderers(renderers);
 
 		for (const auto & meshRenderer : renderers)
 		{
@@ -371,7 +387,7 @@ void	VulkanRenderPipeline::Render(const std::vector< Camera * > & cameras, Rende
 			renderPass.BindMaterial(m);
 
 			// Get the command buffer, should be empty at this state
-			VkCommandBuffer drawMeshBuffer = meshRenderer->GetCommandBuffer();
+			VkCommandBuffer drawMeshBuffer = meshRenderer->GetCommandBuffer(currentFrame);
 			renderPass.BeginSecondaryCommandBuffer(drawMeshBuffer, VK_COMMAND_BUFFER_USAGE_RENDER_PASS_CONTINUE_BIT);
 			meshRenderer->RecordCommands(drawMeshBuffer);
 			renderPass.ExecuteCommandBuffer(drawMeshBuffer);
@@ -385,3 +401,4 @@ void	VulkanRenderPipeline::Render(const std::vector< Camera * > & cameras, Rende
 
 SwapChain *		VulkanRenderPipeline::GetSwapChain(void) { return swapChain; }
 RenderPass *	VulkanRenderPipeline::GetRenderPass(void) { return &renderPass; }
+Camera *		VulkanRenderPipeline::GetCurrentCamera(void) { return currentCamera; }

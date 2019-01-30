@@ -13,11 +13,11 @@ using namespace LWGC;
 
 std::vector< std::string > ShaderSource::shaderIncludePaths;
 
-ShaderSource::ShaderSource(void) : _sourceFile({"", 0}), _module(VK_NULL_HANDLE)
+ShaderSource::ShaderSource(void) : _sourceFile({"", 0}), _module(VK_NULL_HANDLE), _threadWidth(1), _threadHeight(1), _threadDepth(1)
 {
 }
 
-ShaderSource::ShaderSource(const std::string & shaderName, VkShaderStageFlagBits stage)
+ShaderSource::ShaderSource(const std::string & shaderName, VkShaderStageFlagBits stage) : ShaderSource()
 {
 	SetSourceFile(shaderName, stage);
 }
@@ -86,7 +86,7 @@ void		ShaderSource::SetSourceFile(const std::string & file, const VkShaderStageF
 	// If the file don't exists, check inside include paths
 	if (stat(file.c_str(), &buffer) != 0)
 	{
-		for (const auto includePath : shaderIncludePaths)
+		for (const auto & includePath : shaderIncludePaths)
 		{
 			std::string newPath = includePath + file;
 			if (stat(newPath.c_str(), &buffer) == 0)
@@ -133,30 +133,29 @@ void		ShaderSource::Compile(void)
 
 void		ShaderSource::GenerateBindingTable(ShaderBindingTable & bindingTable)
 {
-	auto glsl = new spirv_cross::CompilerGLSL(_SpirVCode);
+	auto reflection = new spirv_cross::CompilerReflection(std::move(_SpirVCode));
 
 	// Retrieve working group size of compute shader
 	if (_stage == VK_SHADER_STAGE_COMPUTE_BIT)
 	{
-		const auto & entry = glsl->get_entry_point("main", spv::ExecutionModel::ExecutionModelGLCompute);
+		const auto & entry = reflection->get_entry_point("main", spv::ExecutionModel::ExecutionModelGLCompute);
 
 		_threadWidth = entry.workgroup_size.x;
 		_threadHeight = entry.workgroup_size.y;
 		_threadDepth = entry.workgroup_size.z;
 	}
 
-	spirv_cross::ShaderResources resources = glsl->get_shader_resources();
+	spirv_cross::ShaderResources resources = reflection->get_shader_resources();
 
 	// Warning: currently no differenciation between Buffer/Texture2D and RWBuffer/RWTexture2D is done
 	const auto & addBinding = [&](const spirv_cross::Resource & resource, const VkDescriptorType descriptorType) {
-		unsigned set = glsl->get_decoration(resource.id, spv::DecorationDescriptorSet);
-		unsigned binding = glsl->get_decoration(resource.id, spv::DecorationBinding);
-		const spirv_cross::SPIRType & type = glsl->get_type(resource.type_id);
+		unsigned set = reflection->get_decoration(resource.id, spv::DecorationDescriptorSet);
+		unsigned binding = reflection->get_decoration(resource.id, spv::DecorationBinding);
+		const spirv_cross::SPIRType & type = reflection->get_type(resource.type_id);
 		auto & shaderBinding = bindingTable.AddBinding(resource.name, set, binding, descriptorType);
 		if (type.basetype == spirv_cross::SPIRType::Struct)
 		{
-			shaderBinding.elementSize = glsl->get_declared_struct_size(type);
-			printf("Add binding %s, size: %i\n", resource.name.c_str(), shaderBinding.elementSize);
+			shaderBinding.elementSize = reflection->get_declared_struct_size(type);
 		}
 	};
 
@@ -180,7 +179,7 @@ void		ShaderSource::GenerateBindingTable(ShaderBindingTable & bindingTable)
 	for (auto & resource : resources.storage_buffers)
 		addBinding(resource, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER);
 
-	// delete glsl;
+	delete reflection;
 }
 
 void		ShaderSource::GetWorkingThreadSize(uint32_t & width, uint32_t & height, uint32_t & depth) const

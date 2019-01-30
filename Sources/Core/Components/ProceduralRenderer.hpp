@@ -37,6 +37,8 @@ namespace LWGC
 			int		GetElementCount(void) const noexcept;
 			void	SetElementCount(int verticeCount) noexcept;
 
+			Bounds	GetBounds(void) noexcept override;
+
 			virtual uint32_t	GetType(void) const noexcept override;
 	};
 

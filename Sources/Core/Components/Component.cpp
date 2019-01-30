@@ -11,7 +11,7 @@ Component::Component(void) : oldState(false), enabled(false) {}
 
 Component::~Component(void) {}
 
-void    Component::OnAdded(const GameObject & go) noexcept
+void    Component::OnAdded(GameObject & go) noexcept
 {
     gameObject = &go;
     hierarchy = gameObject->GetHierarchy();
@@ -43,15 +43,12 @@ void			Component::UpdateGameObjectActive(void) noexcept
 {
 	if (gameObject->IsActive())
 	{
-		oldState = enabled;
 		if (!enabled)
 			OnEnable();
 	}
-	else if (oldState)
+	else
 	{
-		if (enabled)
-			OnDisable();
-		enabled = oldState;
+		OnDisable();
 	}
 }
 
@@ -79,10 +76,9 @@ bool            Component::IsEnabled() noexcept
     return enabled && gameObject->IsActive();
 }
 
-Transform *		Component::GetTransform() const noexcept
-{
-	return transform;
-}
+Transform *		Component::GetTransform() const noexcept { return transform; }
+
+GameObject *	Component::GetGameObject() const noexcept { return gameObject; }
 
 uint32_t		Component::GetType() const noexcept
 {

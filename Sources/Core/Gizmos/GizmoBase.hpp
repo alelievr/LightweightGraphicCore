@@ -24,6 +24,8 @@ namespace LWGC::Gizmo
 			VkBuffer		gizmoDataBuffer;
 			VkDeviceMemory	gizmoDataMemory;
 			LWGC_GizmoData	gizmoData;
+			bool			selected;
+			Color			normalColor;
 
 			void Initialize(void) noexcept override;
 
@@ -33,8 +35,13 @@ namespace LWGC::Gizmo
 			GizmoBase(const GizmoBase &) = delete;
 			virtual ~GizmoBase(void);
 
+			void	Hover(void);
+			void	Normal(void);
+
 			void	SetColor(const Color & color);
 
 			GizmoBase &	operator=(GizmoBase const & src) = delete;
+
+			static Color	HoverColor;
 	};
 }

@@ -9,7 +9,7 @@ using namespace LWGC;
 std::map< GLFWwindow *, EventSystem * > EventSystem::eventSystems;
 EventSystem *	EventSystem::eventSystemInstance;
 
-EventSystem::EventSystem(void)
+EventSystem::EventSystem(void) : _window(nullptr)
 {
 	eventSystemInstance = this;
 }
@@ -55,68 +55,96 @@ void			EventSystem::BindWindow(GLFWwindow * window)
 	);
 	glfwSetMouseButtonCallback(window, [](GLFWwindow * window, int button, int action, int mods)
 		{
+			(void)mods;
 			auto & self = eventSystems[window];
 			double posX;
 			double posY;
 			glfwGetCursorPos(window, &posX, &posY);
 			const glm::vec2 & mousePosition = glm::vec2(posX, posY);
 
-			self->onMouseClick.Invoke(mousePosition, static_cast< ButtonAction >(action));
-
-			(void)mods;
+			self->onMouseClick.Invoke(mousePosition, button, static_cast< ButtonAction >(action));
 		}
 	);
 	glfwSetCursorPosCallback(window, [](GLFWwindow * window, double posX, double posY)
 		{
 			auto & self = eventSystems[window];
-			const glm::vec2 & mousePosition = glm::vec2(posX, posY);
-			
-			self->delta = mousePosition - self->oldMousePosition;
-			self->oldMousePosition = mousePosition;
-			self->onMouseMove.Invoke(mousePosition, MouseMoveAction::Move);
+			glm::vec2 virtualMousePos = glm::vec2(posX, posY);
+			self->UpdateMousePosition();
+
+			self->delta = virtualMousePos - self->_oldMousePosition;
+			self->_oldMousePosition = virtualMousePos;
+			self->onMouseMove.Invoke(virtualMousePos, MouseMoveAction::Move);
 		}
 	);
-	double posX;
-	double posY;
-	glfwGetCursorPos(window, &posX, &posY);
-	const glm::vec2 & mousePosition = glm::vec2(posX, posY);
-
-	delta = mousePosition - oldMousePosition;
-	oldMousePosition = mousePosition;
-	onMouseMove.Invoke(mousePosition, MouseMoveAction::Move);
-
-	Application::update.AddListener([&](){
+	glfwSetWindowSizeCallback(window, [](GLFWwindow * window, int width, int height)
+		{
+			auto & self = eventSystems[window];
+			self->_windowWidth = width;
+			self->_windowHeight = height;
 		}
 	);
-	
+
+	glfwGetWindowSize(_window, &_windowWidth, &_windowHeight);
+	UpdateMousePosition();
+
+	// We need to initialize oldMousePosition to the current mouse position for the first frame (avoid delta jumps)
+	double posX, posY;
+	glfwGetCursorPos(_window, &posX, &posY);
+	_oldMousePosition = glm::vec2(posX, posY);
+
 	Application::lateUpdate.AddListener([&](){
+			// reset delta after it was used in the update by the components
 			this->delta = glm::vec2(0, 0);
 		}
 	);
 }
 
+void				EventSystem::UpdateMousePosition(void)
+{
+	double posX;
+	double posY;
+	glfwGetCursorPos(_window, &posX, &posY);
+
+	// If the cursor is lock, the only possible position is the middle of the screen
+	if (IsCursorLocked())
+	{
+		_mousePosition = glm::vec2(_windowWidth, _windowHeight) / 2.0f;
+	}
+	else
+		_mousePosition = glm::vec2(posX, posY);
+}
+
 void				EventSystem::LockCursor(void)
 {
 	glfwSetInputMode(_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+	UpdateMousePosition();
 }
 
 void				EventSystem::ReleaseCursor(void)
 {
 	glfwSetInputMode(_window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+	UpdateMousePosition();
 }
 
 void				EventSystem::ToggleLockCursor(void)
 {
-	if (glfwGetInputMode(_window, GLFW_CURSOR) == GLFW_CURSOR_DISABLED)
+	if (IsCursorLocked())
 		ReleaseCursor();
 	else
 		LockCursor();
 }
 
-EventSystem *		EventSystem::Get(void)
+bool				EventSystem::IsCursorLocked(void)
 {
-	return eventSystemInstance;
+	return glfwGetInputMode(_window, GLFW_CURSOR) == GLFW_CURSOR_DISABLED;
 }
+
+const glm::vec2		EventSystem::GetNormalizedCursorPosition(void) const
+{
+	return _mousePosition / glm::vec2(_windowWidth, _windowHeight) * 2.0f - 1.0f;
+}
+
+EventSystem *		EventSystem::Get(void) { return eventSystemInstance; }
 
 std::ostream &	operator<<(std::ostream & o, EventSystem const & r)
 {

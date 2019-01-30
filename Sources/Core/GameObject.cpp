@@ -6,8 +6,9 @@ using namespace LWGC;
 
 GameObject::GameObject(void) : _active(false), _initialized(false)
 {
-	this->_transform = std::make_shared< Transform >();
+	this->transform = new Transform(this);
 	this->_name = "GameObject";
+	this->hierarchy = nullptr;
 	this->_flags = 0;
 }
 
@@ -16,24 +17,9 @@ GameObject::GameObject(Component * component) : GameObject()
 	AddComponent(component);
 }
 
-GameObject::GameObject(GameObject const & src)
-{
-	*this = src;
-}
-
 GameObject::~GameObject(void)
 {
-}
-
-GameObject &	GameObject::operator=(GameObject const & src)
-{
-	if (this != &src)
-	{
-		this->_initialized = src._initialized;
-		this->_name = src.GetName();
-		this->_flags = src.GetFlags();
-	}
-	return (*this);
+	delete transform;
 }
 
 void		GameObject::Initialize(void) noexcept
@@ -72,23 +58,49 @@ void			GameObject::RemoveComponent(Component * component) noexcept
 	_components.erase(component);
 }
 
-void			GameObject::SetHierarchy(Hierarchy * hierarchy) { _hierarchy = hierarchy; }
-Hierarchy *		GameObject::GetHierarchy(void) const noexcept { return _hierarchy; }
+void			GameObject::SetHierarchy(Hierarchy * hierarchy) { this->hierarchy = hierarchy; }
+Hierarchy *		GameObject::GetHierarchy(void) const noexcept { return hierarchy; }
 
-Transform *		GameObject::GetTransform(void) const { return (this->_transform.get()); }
+Transform *		GameObject::GetTransform(void) const { return transform; }
 
 void			GameObject::SetActive(bool active)
 {
 	if (active == _active)
 		return ;
-	
+
+	onEnableChanged.Invoke(active);
+
 	_active = active;
 
+	UpdateComponentsActiveStatus();
+
+	// Also update childs components
+	for (auto child : transform->GetChilds())
+		child->GetGameObject()->UpdateComponentsActiveStatus();
+}
+
+void			GameObject::UpdateComponentsActiveStatus(void)
+{
 	for (const auto & comp : _components)
 		comp->UpdateGameObjectActive();
 }
 
-bool			GameObject::IsActive(void) const { return _active; }
+bool			GameObject::IsActive(void) const
+{
+	if (!_active)
+		return false;
+
+	// is active only if all his parents are active
+	Transform * t = transform->GetParent();
+	while (t != nullptr)
+	{
+		if (!t->GetGameObject()->IsActive())
+			return false;
+		t = t->GetParent();
+	}
+
+	return true;
+}
 
 std::ostream &	operator<<(std::ostream & o, GameObject const & r)
 {

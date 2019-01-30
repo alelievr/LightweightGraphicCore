@@ -50,6 +50,11 @@ void		MeshRenderer::SetModel(std::shared_ptr< Mesh > mesh, Material * material)
 	this->_material = material;
 }
 
+Bounds		MeshRenderer::GetBounds(void) noexcept
+{
+	return _mesh->GetBounds();
+}
+
 uint32_t					MeshRenderer::GetType(void) const noexcept { return static_cast< uint32_t >(ComponentType::MeshRenderer); }
 
 std::shared_ptr< Mesh >		MeshRenderer::GetMesh(void) const { return (this->_mesh); }

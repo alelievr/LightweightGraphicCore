@@ -2,10 +2,12 @@
 
 #include <iostream>
 #include <string>
+#include <memory>
 
 #include "Core/Gizmos/GizmoBase.hpp"
 #include "IncludeDeps.hpp"
 #include "Utils/Color.hpp"
+#include "Core/Mesh.hpp"
 
 #include GLM_INCLUDE
 
@@ -14,11 +16,11 @@ namespace LWGC::Gizmo
 	class		Line : public GizmoBase
 	{
 		private:
-			glm::vec3	_p0;
-			glm::vec3	_p1;
+			std::vector< Mesh::VertexAttributes >	_vertexAttributes;
+			std::shared_ptr< Mesh >					_lineMesh;
 
 		public:
-			Line(const glm::vec3 p0, const glm::vec3 p1, const Color & c = Color::Red);
+			Line(const glm::vec3 & p0, const glm::vec3 & p1, const Color & c = Color::Red);
 			Line(const Line &) = delete;
 			virtual ~Line(void);
 

@@ -7,7 +7,6 @@ std::unordered_map<std::string, ShaderProgram *> ShaderCache::_shaders;
 ShaderProgram		*ShaderCache::GetShader(const std::string & shader, const std::string & elem)
 {
 	std::string key = shader + elem;
-	std::cout << "Added shader " << shader << std::endl;	
 
 	// TODO: _shaders do not keep track of vertex shaders
 	if (_shaders.find(key) == _shaders.end())
@@ -28,8 +27,6 @@ ShaderProgram		*ShaderCache::GetShader(const std::string & shader, VkShaderStage
 {
 	std::string key = shader + std::to_string(stage);
 
-	std::cout << "Added shader " << shader << std::endl;
-	
 	if (_shaders.find(key) == _shaders.end())
 	{
 		ShaderProgram	 *program = new ShaderProgram();

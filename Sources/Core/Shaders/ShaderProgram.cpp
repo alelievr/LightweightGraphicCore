@@ -7,14 +7,16 @@
 
 using namespace LWGC;
 
-ShaderProgram::ShaderProgram(void) : _isUpdateBound(false)
+ShaderProgram::ShaderProgram(void) : _isUpdateBound(false), _threadWidth(1), _threadHeight(1), _threadDepth(1)
 {
 }
 
-ShaderProgram::ShaderProgram(const std::string & fragmentShaderName, const std::string & vertexShaderName) : _isUpdateBound(false)
+ShaderProgram::ShaderProgram(const std::string & fragmentShaderName, const std::string & vertexShaderName) : ShaderProgram()
 {
 	SetSourceFile(fragmentShaderName, VK_SHADER_STAGE_FRAGMENT_BIT);
 	SetSourceFile(vertexShaderName, VK_SHADER_STAGE_VERTEX_BIT);
+
+	_name = GetFileName(fragmentShaderName);
 }
 
 ShaderProgram::~ShaderProgram(void)
@@ -61,7 +63,22 @@ void		ShaderProgram::SetSourceFile(const std::string & file, VkShaderStageFlagBi
 	if (IsCompiled())
 		throw std::runtime_error("Can't add shader source file after it's compiled: " + file);
 
+	if (_name.empty())
+		_name = GetFileName(file);
+
 	_shaderSources.push_back(new ShaderSource(file, stage));
+}
+
+const std::string	ShaderProgram::GetFileName(const std::string & filePath)
+{
+	std::string fileName = filePath;
+	const size_t last_slash_idx = filePath.find_last_of("\\/");
+
+	if (std::string::npos != last_slash_idx)
+	{
+		fileName.erase(0, last_slash_idx + 1);
+	}
+	return fileName;
 }
 
 bool		ShaderProgram::IsCompute(void) const noexcept
@@ -74,7 +91,7 @@ bool		ShaderProgram::IsCompute(void) const noexcept
 void		ShaderProgram::Update(void)
 {
 	auto device = VulkanInstance::Get()->GetDevice();
-	
+
 	for (auto & shaderSource : _shaderSources)
 	{
 		if (shaderSource->NeedReload())
@@ -107,6 +124,11 @@ bool			ShaderProgram::HasBinding(const std::string & bindingName) const
 const ShaderBindingTable *	ShaderProgram::GetShaderBindingTable(void) const
 {
 	return &_bindingTable;
+}
+
+const std::string		ShaderProgram::GetName(void) const
+{
+	return _name;
 }
 
 std::ostream &	operator<<(std::ostream & o, ShaderProgram const & r)

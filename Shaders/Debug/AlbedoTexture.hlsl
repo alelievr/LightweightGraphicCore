@@ -11,7 +11,7 @@ FragmentOutput main(FragmentInput i)
 	FragmentOutput	o;
 
 	// o.color = float4(1, 1, 0, 1);
-	o.color = float4(albedoMap.SampleLevel(trilinearClamp, i.uv, + (frame.time.y + 1) * 5).rgb, 1.0) + 0.1;
+	o.color = float4(albedoMap.SampleLevel(trilinearClamp, i.uv, 0));
 
 	return o;
 }

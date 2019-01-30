@@ -4,7 +4,7 @@
 
 using namespace LWGC;
 
-RenderPass::RenderPass(void)
+RenderPass::RenderPass(void) : _instance(nullptr), _swapChain(nullptr), _currentMaterial(nullptr)
 {
 	this->_renderPass = VK_NULL_HANDLE;
 	this->_attachmentCount = 0;
@@ -143,7 +143,7 @@ void	RenderPass::BeginSecondaryCommandBuffer(VkCommandBuffer cmd, VkCommandBuffe
 
 	VkCommandBufferBeginInfo beginInfo = {};
 	beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
-	beginInfo.flags = commandBufferUsage;
+	beginInfo.flags = commandBufferUsage | VK_COMMAND_BUFFER_USAGE_SIMULTANEOUS_USE_BIT;
 	beginInfo.pInheritanceInfo = &inheritanceInfo;
 
 	if (vkBeginCommandBuffer(cmd, &beginInfo) != VK_SUCCESS)

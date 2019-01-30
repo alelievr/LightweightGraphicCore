@@ -13,6 +13,26 @@ namespace LWGC
 {
 	class VulkanSurface;
 
+	struct DeviceQueue
+	{
+		int		index;
+		VkQueue	queue;
+		bool	supportPresent;
+		bool	supportCompute;
+	};
+
+	struct DeviceCapability
+	{
+		bool				supportedFeatures;
+		bool				supportExtensions;
+		bool				supportSurface;
+		VkPhysicalDevice	physicalDevice;
+		std::vector< DeviceQueue >	queues;
+		std::string			deviceName;
+
+		int		GetGPUScore(void) const;
+	};
+
 	class		VulkanInstance
 	{
 		friend class VulkanSurface;
@@ -35,6 +55,10 @@ namespace LWGC
 			uint32_t					_queueIndex;
 			VkQueue						_queue;
 
+			DeviceQueue					_mainQueue;
+			DeviceQueue					_transfertQueue;
+			std::vector< DeviceQueue >	_concurrentQueues;
+
 			VkSurfaceKHR				_surface;
 			VkSurfaceCapabilitiesKHR	_surfaceCapabilities;
 			std::vector< VkSurfaceFormatKHR >	_surfaceFormats;
@@ -52,19 +76,20 @@ namespace LWGC
 			void		SetupDebugCallbacks(void) noexcept;
 			bool		AreValidationLayerSupported(void) noexcept;
 			void		ChoosePhysicalDevice(void);
-			bool		IsPhysicalDeviceSuitable(VkPhysicalDevice physicalDevice) noexcept;
+			DeviceCapability	IsPhysicalDeviceSuitable(VkPhysicalDevice physicalDevice) noexcept;
 			void		InitQueueIndicesForPhysicalDevice(VkPhysicalDevice device) noexcept;
-			void		InitSurfaceForPhysicalDevice(VkPhysicalDevice physicalDevice) noexcept;
 			bool		AreExtensionsSupportedForPhysicalDevice(VkPhysicalDevice physicalDevice) noexcept;
 			void		CreateInstance(void);
 			void		CreateLogicalDevice(void);
 			void		CreateCommandBufferPools(void) noexcept;
 			void		CreateDescriptorPool(void) noexcept;
 			std::vector<const char *>	GetRequiredExtensions(void) noexcept;
+			DeviceCapability	GetDeviceCapability(VkPhysicalDevice physicalDevice) noexcept;
 
 			VkResult	CreateDebugUtilsMessengerEXT(const VkDebugUtilsMessengerCreateInfoEXT* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkDebugUtilsMessengerEXT* pCallback) noexcept;
 			void		DestroyDebugUtilsMessengerEXT(VkDebugUtilsMessengerEXT callback, const VkAllocationCallbacks* pAllocator);
 			void		InitializeSurface(VkSurfaceKHR surface);
+			void		InitSurfaceForPhysicalDevice(VkPhysicalDevice physicalDevice) noexcept;
 
 		public:
 			VulkanInstance(void);

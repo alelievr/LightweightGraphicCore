@@ -2,6 +2,7 @@
 
 #include "Core/Vulkan/Vk.hpp"
 #include <cmath>
+#include <algorithm>
 
 using namespace LWGC;
 
@@ -27,7 +28,6 @@ void					ShaderBindingTable::SetStage(VkShaderStageFlagBits stage)
 ShaderBinding &			ShaderBindingTable::AddBinding(const std::string & name, int descriptorSet, int bindingIndex, VkDescriptorType descriptorType)
 {
 	// Check for same-location bindings:
-
 	for (const auto & binding : _bindings)
 	{
 		if (binding.second.bindingIndex == bindingIndex && binding.second.descriptorSet == descriptorSet && binding.first != name)
@@ -45,13 +45,16 @@ ShaderBinding &			ShaderBindingTable::AddBinding(const std::string & name, int d
 void					ShaderBindingTable::GenerateSetLayouts()
 {
 	std::unordered_map< int, std::vector< VkDescriptorSetLayoutBinding > >	layoutBindings;
+	std::unordered_map< int, std::vector< int > >							layoutBindingIndices;
 	int		maxDescriptorSet = 0;
 
 	for (const auto & binding : _bindings)
 	{
-		auto b = Vk::CreateDescriptorSetLayoutBinding(binding.second.bindingIndex, binding.second.descriptorType, _stageFlags);
-		layoutBindings[binding.second.descriptorSet].push_back(b);
-		maxDescriptorSet = fmax(maxDescriptorSet, binding.second.descriptorSet);
+		auto & bind = binding.second;
+		auto b = Vk::CreateDescriptorSetLayoutBinding(bind.bindingIndex, bind.descriptorType, _stageFlags);
+		layoutBindings[bind.descriptorSet].push_back(b);
+		layoutBindingIndices[bind.descriptorSet].push_back(bind.bindingIndex);
+		maxDescriptorSet = fmax(maxDescriptorSet, bind.descriptorSet);
 	}
 
 	// We add 1 to the max descriptor set because we want to include the last index
@@ -73,6 +76,16 @@ void					ShaderBindingTable::GenerateSetLayouts()
 			{
 				if (binding.second.descriptorSet == i)
 					_elementLayouts[binding.first] = _descriptorSetLayout[i];
+			}
+
+			// Check for descriptor set index gaps
+			auto & indices = layoutBindingIndices[i];
+			int max = *std::max_element(indices.begin(), indices.end());
+			for (int j = 0; j < max && j < 10; j++)
+			{
+				// TODO: only report this error when the property is set from the material
+				if (std::find(indices.begin(), indices.end(), j) == indices.end())
+					std::cerr << "Error in shader scriptor set layout #" << i << ", Binding #" << j << " does not exists (but another binding with a greater index exists)" << std::endl;
 			}
 		}
 	}

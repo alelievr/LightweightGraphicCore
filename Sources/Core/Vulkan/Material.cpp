@@ -52,11 +52,6 @@ Material::Material(const std::string & fragmentShader, const std::string & verte
 	SetupDefaultSettings();
 }
 
-Material::Material(Material const & src)
-{
-	*this = src;
-}
-
 Material::~Material(void)
 {
 	// Don't delete if the material have not been initialized
@@ -69,21 +64,6 @@ Material::~Material(void)
 
 	vkDestroyBuffer(_device, _uniformPerMaterial.buffer, nullptr);
 	vkFreeMemory(_device, _uniformPerMaterial.memory, nullptr);
-}
-
-Material &	Material::operator=(Material const & src)
-{
-	if (this != &src)
-	{
-		this->_pipelineLayout = src._pipelineLayout;
-		this->_pipeline = src._pipeline;
-		this->_uniformPerMaterial = src._uniformPerMaterial;
-		this->_samplers = src._samplers;
-		this->_instance = src._instance;
-		this->_device = src._device;
-		this->_swapChain = src._swapChain;
-	}
-	return (*this);
 }
 
 Material *Material::Create(void)
@@ -186,7 +166,6 @@ void					Material::CleanupPipeline(void) noexcept
 
 void					Material::CompileShaders(void)
 {
-	std::cout << "Recompiled shader material\n";
 	try {
 		if (!_originalProgram->IsCompiled())
 			_originalProgram->CompileAndLink();
@@ -196,7 +175,7 @@ void					Material::CompileShaders(void)
 		if (IsCompute())
 			_program = ShaderCache::GetShader(BuiltinShaders::ComputeError, VK_SHADER_STAGE_COMPUTE_BIT);
 		else
-			_program = ShaderCache::GetShader(BuiltinShaders::Pink, BuiltinShaders::DefaultVertex);			
+			_program = ShaderCache::GetShader(BuiltinShaders::Pink, BuiltinShaders::DefaultVertex);
 
 		if (!_program->IsCompiled())
 			_program->CompileAndLink();
@@ -379,7 +358,7 @@ uint32_t			Material::GetDescriptorSetBinding(const std::string & setName) const
 {
 	// We ignore nonexistent bindings
 	if (!_program->HasBinding(setName))
-		return -1;
+		return -1u;
 
 	return _bindingTable->GetDescriptorSetBinding(setName);
 }
@@ -408,7 +387,7 @@ bool					Material::DescriptorSetExists(const std::string & bindingName, bool sil
 	if (setBinding == -1u)
 	{
 		if (!silent)
-			std::cerr << "Can't find binding " << bindingName << " in the shader, maybe it was removed at compilation / the shader is not compiled" << std::endl;
+			std::cerr << "Can't find binding " << bindingName << " in the shader " << _program->GetName() << ", maybe it was removed at compilation / the shader is not compiled" << std::endl;
 		return false;
 	}
 
@@ -496,9 +475,14 @@ void				Material::SetRasterizationState(VkPipelineRasterizationStateCreateInfo i
 
 bool				Material::IsReady(void) const noexcept { return _isReady; }
 
+bool				Material::IsInitialized(void) const
+{
+	return (_instance != nullptr);
+}
+
 void				Material::MarkAsReady(void) noexcept
 {
-	if (_instance != nullptr)
+	if (IsInitialized())
 		return ;
 
 	_isReady = true;

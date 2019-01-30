@@ -34,6 +34,7 @@ namespace LWGC
 
 			void	SetModel(const Mesh & mesh, Material * material);
 			void	SetModel(std::shared_ptr< Mesh > mesh, Material * material);
+			Bounds	GetBounds(void) noexcept override;
 
 			std::shared_ptr< Mesh >		GetMesh(void) const;
 			void						SetMesh(std::shared_ptr< Mesh > tmp);
