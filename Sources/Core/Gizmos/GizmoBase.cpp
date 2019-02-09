@@ -66,7 +66,6 @@ void	GizmoBase::Initialize(void) noexcept
 void	GizmoBase::SetColor(const Color & c)
 {
 	gizmoData.color = c;
-	std::cout << "Set Color: " << gizmoData.color << std::endl;
 	Vk::UploadToMemory(gizmoDataMemory, &gizmoData, sizeof(LWGC_GizmoData));
 }
 

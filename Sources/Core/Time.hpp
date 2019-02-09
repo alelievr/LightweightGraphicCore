@@ -1,7 +1,7 @@
-#ifndef TIME_HPP
-# define TIME_HPP
-# include <iostream>
-# include <string>
+#pragma once
+
+#include <iostream>
+#include <string>
 #include <chrono>
 #include <ctime>
 #include "Core/Application.hpp"
@@ -9,7 +9,7 @@
 
 namespace LWGC
 {
-	using NanoSecondTime = std::__1::chrono::time_point<std::__1::chrono::steady_clock, std::__1::chrono::nanoseconds>;
+	using NanoSecondTime = std::chrono::time_point<std::chrono::system_clock, std::chrono::nanoseconds>;
 	class		Time
 	{
 		friend class Application;
@@ -44,5 +44,3 @@ namespace LWGC
 			Time &	operator=(Time const & src) = delete;
 	};
 }
-
-#endif
