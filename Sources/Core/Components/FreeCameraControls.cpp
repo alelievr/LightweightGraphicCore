@@ -5,10 +5,11 @@
 #include "Core/Application.hpp"
 #include "Utils/Math.hpp"
 #include "Utils/Vector.hpp"
+#include "Core/Time.hpp"
 
 using namespace LWGC;
 
-FreeCameraControls::FreeCameraControls(void) : _forward(0), _right(0), _up(0), _speed(0.05f), _mouseSpeed(0.2f), _rotationX(0), _rotationY(0)
+FreeCameraControls::FreeCameraControls(void) : _forward(0), _right(0), _up(0), _speed(5.0f), _mouseSpeed(0.2f), _rotationX(0), _rotationY(0)
 {
 }
 
@@ -112,7 +113,7 @@ void		FreeCameraControls::Update(void) noexcept
 	transform->Translate((
 		transform->GetRight() * _right
 		+ transform->GetUp() * _up
-		+ transform->GetForward() * _forward) * _speed);
+		+ transform->GetForward() * _forward) * _speed * Time::GetDeltaTime());
 }
 
 void		FreeCameraControls::SetSpeed(float speed) noexcept { _speed = speed; }

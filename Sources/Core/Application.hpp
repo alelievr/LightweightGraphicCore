@@ -39,7 +39,7 @@ namespace LWGC
 			GLFWwindow *						_window;
 			EventSystem							_eventSystem;
 			std::shared_ptr< Hierarchy >		hierarchy;
-			// ImGUIWrapper						_imGUI;
+			ImGUIWrapper						_imGUI;
 			MaterialTable						_materialTable;
 			TextureTable						_textureTable;
 

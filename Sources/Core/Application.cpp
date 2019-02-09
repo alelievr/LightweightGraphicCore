@@ -140,15 +140,11 @@ void				Application::Update(void) noexcept
 	Application::lateUpdate.Invoke();
 
 	//TODO: hierarchy get cameras
-	const auto cameras =hierarchy->GetCameras();
+	const auto cameras = hierarchy->GetCameras();
 	_renderPipeline->RenderInternal(cameras, hierarchy->GetRenderContext());
 
-	Time::GetUnscaledDeltaTime();
-
 	// _imGUI.BeginFrame();
-
 	// _renderPipeline->RenderGUI();
-
 	// _imGUI.EndFrame();
 
 	_shouldNotQuit = !glfwWindowShouldClose(_window);
