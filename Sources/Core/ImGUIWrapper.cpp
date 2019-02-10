@@ -1,6 +1,9 @@
 #include "ImGUIWrapper.hpp"
 
 #include "Core/Vulkan/Vk.hpp"
+#include "Core/Rendering/VulkanRenderPipeline.hpp"
+
+#define IMGUI_MAX_ELEMENTS	1000
 
 using namespace LWGC;
 
@@ -35,21 +38,16 @@ void		ImGUIWrapper::Initialize(SwapChain * swapChain, VulkanSurface * surface)
 void		ImGUIWrapper::InitImGUI(void)
 {
 	VkPhysicalDevice	physicalDevice = _instance->GetPhysicalDevice();
-	const auto &		extent = _swapChain->GetExtent();
+	_renderPass.Initialize();
 
-	ImGui_ImplVulkanH_CreateWindowDataCommandBuffers(physicalDevice, _device, _instance->GetQueueIndex(), &_wd, VK_NULL_HANDLE);
+	InitImGUIFrameDatas();
 	_wd.Surface = _surface->GetSurface();
-	printf("physicalDevice: %p\n", physicalDevice);
-	printf("surface: %p\n", _wd.Surface);
-    ImGui_ImplVulkanH_CreateWindowDataSwapChainAndFramebuffer(physicalDevice, _device, &_wd, VK_NULL_HANDLE, extent.width, extent.height);
 
-	// // Init IMGUI
+	// Init IMGUI
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
 
-	// TODO framebuffer resize
-
-	// // Is this important ?
+	// Is this important ?
     ImGuiIO& io = ImGui::GetIO(); (void)io;
 	//io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;  // Enable Keyboard Controls
 
@@ -70,9 +68,74 @@ void		ImGUIWrapper::InitImGUI(void)
 		std::cout << "Error: " << ret << std::endl;
 	};
 
-	ImGui_ImplGlfw_InitForVulkan(_surface->GetWindow(), true);
-	ImGui_ImplVulkan_Init(&initInfo, _wd.RenderPass);
+	auto pipeline = VulkanRenderPipeline::Get();
+	ImGui_ImplGlfw_InitForVulkan(_surface->GetWindow(), false); // TODO: ImGUI GLFW callbacks using the EventSystem (see imgui_impl_glfw.cpp)
+	ImGui_ImplVulkan_Init(&initInfo, pipeline->GetRenderPass()->GetRenderPass());
 	ImGui::StyleColorsDark();
+}
+
+void		ImGUIWrapper::InitImGUIFrameDatas(void)
+{
+	_wd.Swapchain = _swapChain->GetSwapChain();
+	_wd.BackBufferCount = _swapChain->GetImageCount();
+
+	_wd.Width = _swapChain->GetExtent().width;
+	_wd.Height = _swapChain->GetExtent().height;
+
+	for (uint32_t i = 0; i < _wd.BackBufferCount; i++)
+		_wd.BackBuffer[i] = _swapChain->GetImages()[i];
+
+	VkAttachmentDescription colorAttachment = {};
+	colorAttachment.format = _swapChain->GetImageFormat();
+	colorAttachment.samples = VK_SAMPLE_COUNT_1_BIT;
+	colorAttachment.loadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE; // We don't want the GUI to clear the frame before
+	colorAttachment.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
+	colorAttachment.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
+	colorAttachment.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
+	colorAttachment.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+	colorAttachment.finalLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
+
+	_renderPass.AddAttachment(
+		colorAttachment,
+		VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL
+	);
+	_renderPass.SetDepthAttachment(
+		RenderPass::GetDefaultDepthAttachment(_instance->FindDepthFormat()),
+		VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL
+	);
+
+	VkSubpassDependency dependency = {};
+	dependency.srcSubpass = VK_SUBPASS_EXTERNAL;
+	dependency.dstSubpass = 0;
+	dependency.srcStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+	dependency.srcAccessMask = 0;
+	dependency.dstStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+	dependency.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_READ_BIT | VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
+
+	_renderPass.AddDependency(dependency);
+	_renderPass.Create();
+	_wd.RenderPass = _renderPass.GetRenderPass();
+
+	for (uint32_t i = 0; i < _swapChain->GetImageCount(); i++)
+	{
+		auto frame = _wd.Frames + i;
+
+		VkCommandPoolCreateInfo commandPoolInfo = {};
+		commandPoolInfo.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
+		commandPoolInfo.flags = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
+		commandPoolInfo.queueFamilyIndex = _instance->GetQueueIndex();
+		Vk::CheckResult(vkCreateCommandPool(_device, &commandPoolInfo, nullptr, &frame->CommandPool), "Can't create ImGUI command pool");
+		
+		VkCommandBufferAllocateInfo commandBufferInfo = {};
+		commandBufferInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
+		commandBufferInfo.commandPool = frame->CommandPool;
+		commandBufferInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
+		commandBufferInfo.commandBufferCount = 1;
+		Vk::CheckResult(vkAllocateCommandBuffers(_device, &commandBufferInfo, &frame->CommandBuffer), "Can't create ImGUI command buffer");
+
+		_wd.BackBufferView[i] = _swapChain->GetImageViews()[i];
+		_wd.Framebuffer[i] = _swapChain->GetFramebuffers()[i];
+	}
 }
 
 void		ImGUIWrapper::UploadFonts(void)
@@ -108,22 +171,22 @@ void		ImGUIWrapper::CreateDescriptorPool(void)
 {
 	VkDescriptorPoolSize poolSizes[] =
 	{
-		{ VK_DESCRIPTOR_TYPE_SAMPLER, 1000 },
-		{ VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 1000 },
-		{ VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE, 1000 },
-		{ VK_DESCRIPTOR_TYPE_STORAGE_IMAGE, 1000 },
-		{ VK_DESCRIPTOR_TYPE_UNIFORM_TEXEL_BUFFER, 1000 },
-		{ VK_DESCRIPTOR_TYPE_STORAGE_TEXEL_BUFFER, 1000 },
-		{ VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 1000 },
-		{ VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, 1000 },
-		{ VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, 1000 },
-		{ VK_DESCRIPTOR_TYPE_STORAGE_BUFFER_DYNAMIC, 1000 },
-		{ VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT, 1000 }
+		{ VK_DESCRIPTOR_TYPE_SAMPLER, IMGUI_MAX_ELEMENTS },
+		{ VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, IMGUI_MAX_ELEMENTS },
+		{ VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE, IMGUI_MAX_ELEMENTS },
+		{ VK_DESCRIPTOR_TYPE_STORAGE_IMAGE, IMGUI_MAX_ELEMENTS },
+		{ VK_DESCRIPTOR_TYPE_UNIFORM_TEXEL_BUFFER, IMGUI_MAX_ELEMENTS },
+		{ VK_DESCRIPTOR_TYPE_STORAGE_TEXEL_BUFFER, IMGUI_MAX_ELEMENTS },
+		{ VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, IMGUI_MAX_ELEMENTS },
+		{ VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, IMGUI_MAX_ELEMENTS },
+		{ VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, IMGUI_MAX_ELEMENTS },
+		{ VK_DESCRIPTOR_TYPE_STORAGE_BUFFER_DYNAMIC, IMGUI_MAX_ELEMENTS },
+		{ VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT, IMGUI_MAX_ELEMENTS }
 	};
 	VkDescriptorPoolCreateInfo poolInfo = {};
 	poolInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
 	poolInfo.flags = VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT;
-	poolInfo.maxSets = 1000 * IM_ARRAYSIZE(poolSizes);
+	poolInfo.maxSets = IMGUI_MAX_ELEMENTS * IM_ARRAYSIZE(poolSizes);
 	poolInfo.poolSizeCount = (uint32_t)IM_ARRAYSIZE(poolSizes);
 	poolInfo.pPoolSizes = poolSizes;
 	Vk::CheckResult(vkCreateDescriptorPool(_device, &poolInfo, VK_NULL_HANDLE, &_descriptorPool), "Create ImGUI descriptor pool failed");
@@ -146,17 +209,7 @@ void		ImGUIWrapper::EndFrame(void)
     ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 	memcpy(&_wd.ClearValue.color.float32[0], &clear_color, 4 * sizeof(float));
 
-	VkSemaphore& image_acquired_semaphore  = _wd.Frames[_wd.FrameIndex].ImageAcquiredSemaphore;
-
-	// Is this needed as we already wait in the defaut rendering ?
 	ImGui_ImplVulkanH_FrameData* fd = &_wd.Frames[_wd.FrameIndex];
-    {
-		err = vkWaitForFences(_device, 1, &fd->Fence, VK_TRUE, UINT64_MAX);	// wait indefinitely instead of periodically checking
-		Vk::CheckResult(err, "Error while rendering GUI");
-
-		err = vkResetFences(_device, 1, &fd->Fence);
-		Vk::CheckResult(err, "Error while rendering GUI");
-	}
 	{
 		err = vkResetCommandPool(_device, fd->CommandPool, 0);
 		Vk::CheckResult(err, "Error while rendering GUI");
@@ -173,7 +226,7 @@ void		ImGUIWrapper::EndFrame(void)
 		info.framebuffer = _wd.Framebuffer[_wd.FrameIndex];
 		info.renderArea.extent.width = _wd.Width;
 		info.renderArea.extent.height = _wd.Height;
-		info.clearValueCount = 1;
+		info.clearValueCount = 2;
 		info.pClearValues = &_wd.ClearValue;
 		vkCmdBeginRenderPass(fd->CommandBuffer, &info, VK_SUBPASS_CONTENTS_INLINE);
 	}
@@ -184,32 +237,12 @@ void		ImGUIWrapper::EndFrame(void)
 	// Submit command buffer
 	vkCmdEndRenderPass(fd->CommandBuffer);
 	{
-		VkPipelineStageFlags wait_stage = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
-		VkSubmitInfo info = {};
-		info.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
-		info.waitSemaphoreCount = 1;
-		info.pWaitSemaphores = &image_acquired_semaphore;
-		info.pWaitDstStageMask = &wait_stage;
-		info.commandBufferCount = 1;
-		info.pCommandBuffers = &fd->CommandBuffer;
-		info.signalSemaphoreCount = 1;
-		info.pSignalSemaphores = &fd->RenderCompleteSemaphore;
-
 		err = vkEndCommandBuffer(fd->CommandBuffer);
 		Vk::CheckResult(err, "Error while rendering GUI");
-		err = vkQueueSubmit(_queue, 1, &info, fd->Fence);
-		Vk::CheckResult(err, "Error while rendering GUI");
+		VulkanRenderPipeline::Get()->EnqueueFrameCommandBuffer(fd->CommandBuffer);
 	}
 
-	// Will need to use the semaphores inside the Vulkan render pipeline :(
-	VkPresentInfoKHR info = {};
-	info.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
-	info.waitSemaphoreCount = 1;
-	info.pWaitSemaphores = &fd->RenderCompleteSemaphore;
-	info.swapchainCount = 1;
-	info.pSwapchains = &_wd.Swapchain;
-	info.pImageIndices = &_wd.FrameIndex;
-	Vk::CheckResult(vkQueuePresentKHR(_queue, &info), "ImGUI present failed");
+	_wd.FrameIndex = (_wd.FrameIndex + 1) % _swapChain->GetImageCount();
 }
 
 

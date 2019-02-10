@@ -9,7 +9,7 @@
 
 using namespace LWGC;
 
-FreeCameraControls::FreeCameraControls(void) : _forward(0), _right(0), _up(0), _speed(5.0f), _mouseSpeed(0.2f), _rotationX(0), _rotationY(0)
+FreeCameraControls::FreeCameraControls(void) : _forward(0), _right(0), _up(0), _speed(7.0f), _mouseSpeed(0.2f), _rotationX(0), _rotationY(0)
 {
 }
 

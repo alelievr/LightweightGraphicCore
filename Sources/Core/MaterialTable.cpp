@@ -3,9 +3,13 @@
 using namespace LWGC;
 
 std::unordered_map<ShaderProgram *, std::vector< Material * > > MaterialTable::_shadersPrograms;
+MaterialTable * _instance = nullptr;
+
+MaterialTable *	MaterialTable::Get(void) { return _instance; }
 
 MaterialTable::MaterialTable(void) : _swapChain(nullptr), _renderPass(nullptr)
 {
+	_instance = this;
 }
 
 MaterialTable::~MaterialTable(void)
@@ -37,7 +41,7 @@ void 	MaterialTable::Initialize(LWGC::SwapChain *swapChain , LWGC::RenderPass *r
 	_swapChain = swapChain;
 	_renderPass = renderPipeline;
 
-	for (auto material: _objects)
+	for (auto material : _objects)
 	{
 		material->Initialize(_swapChain, _renderPass);
 	}
@@ -48,6 +52,15 @@ void	MaterialTable::NotifyMaterialReady(Material * material)
 	if (_renderPass && _swapChain)
 	{
 		material->Initialize(_swapChain, _renderPass);
+	}
+}
+
+void	MaterialTable::RecreateAll(void)
+{
+	for (auto material : _objects)
+	{
+		material->CleanupPipeline();
+		material->CreatePipeline();
 	}
 }
 

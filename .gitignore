@@ -39,3 +39,6 @@ Examples/basic/simple
 
 # deps
 Deps/vulkansdk-macos-1.1.85.0/
+
+# Others
+*.ini
