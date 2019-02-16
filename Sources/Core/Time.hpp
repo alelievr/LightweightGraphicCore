@@ -9,11 +9,15 @@
 
 namespace LWGC
 {
+#if __APPLE__
+	using NanoSecondTime = std::chrono::time_point<std::chrono::steady_clock, std::chrono::nanoseconds>;
+#else
 	using NanoSecondTime = std::chrono::time_point<std::chrono::system_clock, std::chrono::nanoseconds>;
+#endif
 	class		Time
 	{
 		friend class Application;
-		
+
 		private:
 			static NanoSecondTime	_start;
 			static NanoSecondTime	_diff;
@@ -22,16 +26,16 @@ namespace LWGC
 			static double			_deltaTime;
 			static double 			_scale;
 			static int 				_frameCount;
-			
+
 			static void		Initialize(void);
 
 		public:
 			Time() = delete;
 			Time(const Time&) = delete;
 			virtual ~Time(void)  = delete;
-			
+
 			static void		BeginFrame(void);
-			
+
 			static void		SetScale(float scale);
 
 			static float	GetDeltaTime(void);

@@ -125,7 +125,7 @@ void		ImGUIWrapper::InitImGUIFrameDatas(void)
 		commandPoolInfo.flags = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
 		commandPoolInfo.queueFamilyIndex = _instance->GetQueueIndex();
 		Vk::CheckResult(vkCreateCommandPool(_device, &commandPoolInfo, nullptr, &frame->CommandPool), "Can't create ImGUI command pool");
-		
+
 		VkCommandBufferAllocateInfo commandBufferInfo = {};
 		commandBufferInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
 		commandBufferInfo.commandPool = frame->CommandPool;
@@ -211,7 +211,8 @@ void		ImGUIWrapper::EndFrame(void)
 
 	ImGui_ImplVulkanH_FrameData* fd = &_wd.Frames[_wd.FrameIndex];
 	{
-		err = vkResetCommandPool(_device, fd->CommandPool, 0);
+		err = vkResetCommandBuffer(fd->CommandBuffer, 0);
+		// err = vkResetCommandPool(_device, fd->CommandPool, 0);
 		Vk::CheckResult(err, "Error while rendering GUI");
 		VkCommandBufferBeginInfo info = {};
 		info.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
@@ -232,7 +233,7 @@ void		ImGUIWrapper::EndFrame(void)
 	}
 
 	// Record Imgui Draw Data and draw funcs into command buffer
-	ImGui_ImplVulkan_RenderDrawData(ImGui::GetDrawData(), fd->CommandBuffer);
+	// ImGui_ImplVulkan_RenderDrawData(ImGui::GetDrawData(), fd->CommandBuffer);
 
 	// Submit command buffer
 	vkCmdEndRenderPass(fd->CommandBuffer);
