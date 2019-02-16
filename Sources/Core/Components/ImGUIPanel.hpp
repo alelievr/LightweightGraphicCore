@@ -29,7 +29,7 @@ namespace LWGC
 
 			void Initialize(void) noexcept override;
 
-			virtual uint32_t	GetType(void) const noexcept override;
+			uint32_t	GetType(void) const noexcept override;
 
 			virtual void DrawImGUI(void) noexcept;
 	};

@@ -7,7 +7,7 @@
 
 using namespace LWGC;
 
-ImGUIPanel::ImGUIPanel(void)
+ImGUIPanel::ImGUIPanel(void) : opened(true)
 {
 }
 
