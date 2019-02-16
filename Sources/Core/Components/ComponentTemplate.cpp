@@ -10,7 +10,7 @@ Template::~Template(void)
 {
 }
 
-void			Template::OnAdded(const GameObject & go) noexcept
+void			Template::OnAdded(GameObject & go) noexcept
 {
 	Component::OnAdded(go);
 }

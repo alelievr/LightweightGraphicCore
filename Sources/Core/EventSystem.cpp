@@ -47,9 +47,8 @@ void			EventSystem::BindWindow(GLFWwindow * window)
 			double posY;
 			glfwGetCursorPos(window, &posX, &posY);
 
-			self->onKey.Invoke(static_cast< KeyCode >(key), static_cast< ButtonAction >(action));
+			self->onKey.Invoke(static_cast< KeyCode >(key), static_cast< ButtonAction >(action), mods);
 
-			(void)mods;
 			(void)scancode;
 		}
 	);
@@ -81,6 +80,18 @@ void			EventSystem::BindWindow(GLFWwindow * window)
 			auto & self = eventSystems[window];
 			self->_windowWidth = width;
 			self->_windowHeight = height;
+		}
+	);
+	glfwSetScrollCallback(window, [](GLFWwindow * window, double xOffset, double yOffset)
+		{
+			auto & self = eventSystems[window];
+			self->onScroll.Invoke(xOffset, yOffset);
+		}
+	);
+	glfwSetCharCallback(window, [](GLFWwindow * window, uint32_t c)
+		{
+			auto & self = eventSystems[window];
+			self->onChar.Invoke(c);
 		}
 	);
 

@@ -17,6 +17,14 @@ namespace LWGC
 	enum class ButtonAction {Press = GLFW_PRESS, Release = GLFW_RELEASE, Repeat = GLFW_REPEAT};
 	enum class MouseMoveAction {Entered = GLFW_TRUE, Exited = GLFW_FALSE, Move = 2};
 
+	using QuitDelegateIndex = DelegateIndex< void(void) >;
+	using FocusDelegateIndex = DelegateIndex< void(int) >;
+	using KeyDelegateIndex = DelegateIndex<void (LWGC::KeyCode, LWGC::ButtonAction, int)>;
+	using MouseClickDelegateIndex = DelegateIndex<void (glm::vec<2, float, glm::qualifier::packed_highp>, LWGC::ButtonAction)>;
+	using ScrollDelegateIndex = DelegateIndex< void(double, double) >;
+	using MouseMoveDelegateIndex = DelegateIndex<void (glm::vec<2, float, glm::qualifier::packed_highp>, LWGC::MouseMoveAction)>;
+	using CharDelegateIndex = DelegateIndex< void(uint32_t) >;
+
 	class		EventSystem
 	{
 		private:
@@ -34,9 +42,11 @@ namespace LWGC
 		public:
 			Delegate< void(void) >								onQuit;
 			Delegate< void(int) >								onFocus;
-			Delegate< void(KeyCode, ButtonAction) >				onKey;
+			Delegate< void(KeyCode, ButtonAction, int) >		onKey;
 			Delegate< void(glm::vec2, int, ButtonAction) >		onMouseClick;
+			Delegate< void(double, double) >					onScroll;
 			Delegate< void(glm::vec2, MouseMoveAction) >		onMouseMove;
+			Delegate< void(uint32_t) >							onChar;
 			glm::vec2											delta;
 
 			EventSystem(void);

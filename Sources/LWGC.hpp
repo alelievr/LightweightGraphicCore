@@ -46,6 +46,7 @@
 #include "Core/Components/Camera.hpp"
 #include "Core/Components/FreeCameraControls.hpp"
 #include "Core/Components/ComputeDispatcher.hpp"
+#include "Core/Components/ImGUIPanel.hpp"
 #include "Core/Components/Rotator.hpp"
 #include "Core/Components/Movator.hpp"
 #include "Core/Components/Activator.hpp"

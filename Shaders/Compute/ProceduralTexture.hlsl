@@ -31,6 +31,6 @@ float noise(float2 p)
 void        main(ComputeInput i)
 {
 	float2 uv = i.dispatchThreadId.xy / float2(512);
-	proceduralTexture[i.dispatchThreadId.xy] = half4(uv, 1, 1);
-	// proceduralTexture[i.dispatchThreadId.xy] = half4(noise(uv * 10 + frame.time.x), 0, 0, 1);
+	//proceduralTexture[i.dispatchThreadId.xy] = half4(uv, 1, 1);
+	proceduralTexture[i.dispatchThreadId.xy] = half4(noise(uv * 10 + frame.time.x), 0, 0, 1);
 }

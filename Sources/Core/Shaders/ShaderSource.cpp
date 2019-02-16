@@ -111,12 +111,13 @@ void		ShaderSource::Compile(void)
 	std::string cmd = "glslangValidator -e main -V -D -S " + StageToText(_stage) + " -I" + path;
 	for (const auto & p : shaderIncludePaths)
 		cmd += " -I" + p;
-	cmd += " " + _sourceFile.path + " -o " + tmpFilePath;
+	std::string tmpPidPath = tmpFilePath + std::to_string(getpid());
+	cmd += " " + _sourceFile.path + " -o " + tmpPidPath;
 	if (system(cmd.c_str()) != 0)
 		throw std::runtime_error("Shader compilation error");
 
 	// Read back spriv from tmp file
-	const auto & spirV = ReadFile(tmpFilePath);
+	const auto & spirV = ReadFile(tmpPidPath);
 
 	_SpirVCode.resize(spirV.size() / 4);
 	std::memcpy(_SpirVCode.data(), spirV.data(), spirV.size());

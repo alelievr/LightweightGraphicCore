@@ -26,7 +26,10 @@ namespace LWGC
 		Rotator,
 		Movator,
 		Activator,
-		Count, // Note: this MUST be the last element of the enum
+		ImGUIPanel,
+
+ 		// Note: this MUST be the last element of the enum
+		Count,
 	};
 
 	class Component

@@ -36,6 +36,7 @@ SRC			=	Core/Application.cpp \
 				Core/Components/MeshRenderer.cpp \
 				Core/Components/FreeCameraControls.cpp \
 				Core/Components/Light.cpp \
+				Core/Components/ImGUIPanel.cpp \
 				Core/Components/Rotator.cpp \
 				Core/Components/Movator.cpp \
 				Core/Components/Activator.cpp \
@@ -46,7 +47,6 @@ SRC			=	Core/Application.cpp \
 				Core/Rendering/ForwardRenderPipeline.cpp \
 				Core/Rendering/RenderTarget.cpp \
 				Core/Rendering/VulkanRenderPipeline.cpp \
-				Core/Rendering/RenderContext.cpp \
 				Core/Rendering/PipelineCommandBuffer.cpp \
 				Core/Shaders/ShaderProgram.cpp \
 				Core/Shaders/ShaderSource.cpp \

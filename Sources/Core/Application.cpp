@@ -128,7 +128,7 @@ void			Application::Open(const std::string & name, const int width, const int he
 	glfwSetFramebufferSizeCallback(_window, FramebufferResizeCallback);
 
 	Time::Initialize();
-	// _imGUI.Initialize(&_swapChain, &_surface);
+	_imGUI.Initialize(&_swapChain, &_surface);
 }
 #include <limits>
 
@@ -140,16 +140,14 @@ void				Application::Update(void) noexcept
 	Application::lateUpdate.Invoke();
 
 	//TODO: hierarchy get cameras
-	const auto cameras =hierarchy->GetCameras();
+	const auto cameras = hierarchy->GetCameras();
 	_renderPipeline->RenderInternal(cameras, hierarchy->GetRenderContext());
 
-	Time::GetUnscaledDeltaTime();
+	_imGUI.BeginFrame();
+	_renderPipeline->RenderGUI(hierarchy->GetRenderContext());
+	_imGUI.EndFrame();
 
-	// _imGUI.BeginFrame();
-
-	// _renderPipeline->RenderGUI();
-
-	// _imGUI.EndFrame();
+	_renderPipeline->PresentFrame();
 
 	_shouldNotQuit = !glfwWindowShouldClose(_window);
 }

@@ -28,7 +28,6 @@ namespace LWGC
 			VkRenderPass							_renderPass;
 			VkFramebuffer							_framebuffer;
 			VulkanInstance *						_instance;
-			SwapChain *								_swapChain;
 	
 			std::vector< VkAttachmentDescription >	_attachments;
 			std::vector< VkAttachmentReference >	_references;
@@ -49,7 +48,7 @@ namespace LWGC
 	
 			RenderPass &	operator=(RenderPass const & src) = delete;
 	
-			void	Initialize(SwapChain * swapChain) noexcept;
+			void	Initialize(void) noexcept;
 			void	AddAttachment(const VkAttachmentDescription & attachment, VkImageLayout finalLayout) noexcept;
 			void	SetDepthAttachment(const VkAttachmentDescription & attachment, VkImageLayout layout) noexcept;
 			void	AddDependency(const VkSubpassDependency & dependency) noexcept;

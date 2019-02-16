@@ -6,7 +6,7 @@ static int i;
 
 void	ProcessEvent(EventSystem * es, Application & app)
 {
-	es->Get()->onKey.AddListener([&](KeyCode key, ButtonAction action)
+	es->Get()->onKey.AddListener([&](KeyCode key, ButtonAction action, int)
 		{
 			if (action == ButtonAction::Press
 				&& key == KeyCode::ESCAPE)

@@ -53,8 +53,6 @@ namespace LWGC
 			void	OnEnable(void) noexcept override;
 			void	OnDisable(void) noexcept override;
 
-			void	CleanupPipeline(void) noexcept;
-			void	CreatePipeline(void) noexcept;
 			void	RecordCommands(VkCommandBuffer cmd) override;
 
 			Material *	GetMaterial(void) const;

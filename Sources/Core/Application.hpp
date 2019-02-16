@@ -13,7 +13,7 @@
 #include "Vulkan/SwapChain.hpp"
 #include "Vulkan/RenderPass.hpp"
 #include "Vulkan/Material.hpp"
-#include "Core/Rendering/RenderContext.hpp"
+#include "Core/Rendering/RenderContext.tpp"
 #include "Core/Delegate.tpp"
 #include "Core/ImGUIWrapper.hpp"
 #include "Core/MaterialTable.hpp"
@@ -39,7 +39,7 @@ namespace LWGC
 			GLFWwindow *						_window;
 			EventSystem							_eventSystem;
 			std::shared_ptr< Hierarchy >		hierarchy;
-			// ImGUIWrapper						_imGUI;
+			ImGUIWrapper						_imGUI;
 			MaterialTable						_materialTable;
 			TextureTable						_textureTable;
 

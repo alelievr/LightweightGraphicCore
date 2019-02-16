@@ -2,10 +2,12 @@
 
 #include "Core/Components/MeshRenderer.hpp"
 #include "Core/Components/ComputeDispatcher.hpp"
+#include "Core/Components/ImGUIPanel.hpp"
 #include "Core/PrimitiveMeshFactory.hpp"
 #include "Core/Handles/Selection.hpp"
 #include "Core/Handles/Tools.hpp"
 #include "Core/Handles/HandleManager.hpp"
+#include "Core/MaterialTable.hpp"
 
 #include <cmath>
 #include <unordered_set>
@@ -44,7 +46,7 @@ void                VulkanRenderPipeline::Initialize(SwapChain * swapChain)
     this->instance = VulkanInstance::Get();
 	this->device = instance->GetDevice();
     this->swapChain = swapChain;
-	renderPass.Initialize(swapChain);
+	renderPass.Initialize();
 	CreateRenderPass();
 
 	// Allocate primary command buffers
@@ -120,8 +122,8 @@ void				VulkanRenderPipeline::CreateRenderPass(void)
 
 	renderPass.AddDependency(dependency);
 
-	// Will also generate framebuffers
 	renderPass.Create();
+	swapChain->CreateFrameBuffers(renderPass);
 }
 
 void			VulkanRenderPipeline::BeginRenderPass(RenderContext * context)
@@ -130,14 +132,14 @@ void			VulkanRenderPipeline::BeginRenderPass(RenderContext * context)
 	beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
 	beginInfo.flags = VK_COMMAND_BUFFER_USAGE_SIMULTANEOUS_USE_BIT;
 
-	if (vkBeginCommandBuffer(commandBuffer, &beginInfo) != VK_SUCCESS)
+	if (vkBeginCommandBuffer(frameCommandBuffers[0], &beginInfo) != VK_SUCCESS)
 	{
 		throw std::runtime_error("failed to begin recording command buffer!");
 	}
 
 	framebuffer = swapChain->GetFramebuffers()[currentFrame]; // TODO: simplify this
 
-	renderPass.BeginFrame(commandBuffer, framebuffer);
+	renderPass.BeginFrame(frameCommandBuffers[0], framebuffer);
 
 	// Run all compute shaders before begin render pass:
 	std::unordered_set< ComputeDispatcher * >	computeDispatchers;
@@ -173,59 +175,29 @@ void			VulkanRenderPipeline::BeginRenderPass(RenderContext * context)
 	renderPassInfo.clearValueCount = static_cast<uint32_t>(clearValues.size());
 	renderPassInfo.pClearValues = clearValues.data();
 
-	vkCmdBeginRenderPass(commandBuffer, &renderPassInfo, VK_SUBPASS_CONTENTS_SECONDARY_COMMAND_BUFFERS);
+	vkCmdBeginRenderPass(frameCommandBuffers[0], &renderPassInfo, VK_SUBPASS_CONTENTS_SECONDARY_COMMAND_BUFFERS);
 }
 
 void			VulkanRenderPipeline::EndRenderPass(void)
 {
-	vkCmdEndRenderPass(commandBuffer);
+	vkCmdEndRenderPass(frameCommandBuffers[0]);
 
-	if (vkEndCommandBuffer(commandBuffer) != VK_SUCCESS)
+	if (vkEndCommandBuffer(frameCommandBuffers[0]) != VK_SUCCESS)
 	{
 		throw std::runtime_error("failed to record command buffer!");
 	}
 }
 
-static bool my_tool_active;
-static float my_color[4];
-
-void			VulkanRenderPipeline::RenderGUI(void) noexcept
+void			VulkanRenderPipeline::RenderGUI(RenderContext * context) noexcept
 {
-	// tests:
-	ImGui::Begin("My First Tool", &my_tool_active, ImGuiWindowFlags_MenuBar);
-	if (ImGui::BeginMenuBar())
+	std::unordered_set< ImGUIPanel * >	imGUIPanels;
+
+	context->GetComponentSet< ImGUIPanel * >(imGUIPanels);
+
+	for (auto imGUIPanel : imGUIPanels)
 	{
-		if (ImGui::BeginMenu("File"))
-		{
-			if (ImGui::MenuItem("Open..", "Ctrl+O"))
-			{ /* Do stuff */
-			}
-			if (ImGui::MenuItem("Save", "Ctrl+S"))
-			{ /* Do stuff */
-			}
-			if (ImGui::MenuItem("Close", "Ctrl+W"))
-			{
-				my_tool_active = false;
-			}
-			ImGui::EndMenu();
-		}
-		ImGui::EndMenuBar();
+		imGUIPanel->DrawImGUI();
 	}
-
-	// Edit a color (stored as ~4 floats)
-	ImGui::ColorEdit4("Color", my_color);
-
-	// Plot some values
-	const float my_values[] = {0.2f, 0.1f, 1.0f, 0.5f, 0.9f, 2.2f};
-	ImGui::PlotLines("Frame Times", my_values, IM_ARRAYSIZE(my_values));
-
-	// Display contents in a scrolling region
-	ImGui::TextColored(ImVec4(1, 1, 0, 1), "Important Stuff");
-	ImGui::BeginChild("Scrolling");
-	for (int n = 0; n < 50; n++)
-		ImGui::Text("%04d: Some text", n);
-	ImGui::EndChild();
-	ImGui::End();
 }
 
 void			VulkanRenderPipeline::CreateSyncObjects(void)
@@ -244,7 +216,9 @@ void			VulkanRenderPipeline::CreateSyncObjects(void)
 
 	for (size_t i = 0; i < frameBufferCount; i++)
 	{
-		if (vkCreateSemaphore(device, &semaphoreInfo, nullptr, &imageAvailableSemaphores[i]) != VK_SUCCESS || vkCreateSemaphore(device, &semaphoreInfo, nullptr, &renderFinishedSemaphores[i]) != VK_SUCCESS || vkCreateFence(device, &fenceInfo, nullptr, &inFlightFences[i]) != VK_SUCCESS)
+		if (vkCreateSemaphore(device, &semaphoreInfo, nullptr, &imageAvailableSemaphores[i]) != VK_SUCCESS
+			|| vkCreateSemaphore(device, &semaphoreInfo, nullptr, &renderFinishedSemaphores[i]) != VK_SUCCESS
+			|| vkCreateFence(device, &fenceInfo, nullptr, &inFlightFences[i]) != VK_SUCCESS)
 		{
 			throw std::runtime_error("failed to create synchronization objects for a frame!");
 		}
@@ -253,7 +227,7 @@ void			VulkanRenderPipeline::CreateSyncObjects(void)
 	printf("Semaphores created !\n");
 }
 
-void			VulkanRenderPipeline::RecreateSwapChain(RenderContext * renderContext)
+void			VulkanRenderPipeline::RecreateSwapChain(void)
 {
 	std::unordered_set< Renderer * >	renderers;
 	vkDeviceWaitIdle(device);
@@ -261,19 +235,12 @@ void			VulkanRenderPipeline::RecreateSwapChain(RenderContext * renderContext)
 	swapChain->Cleanup();
 	renderPass.Cleanup();
 
-	// Rebuild all Material graphic pipelines
-	// TODO: do not work with compute dispatchers
-	renderContext->GetRenderers(renderers);
-
-	for (auto & meshRenderer : renderers)
-		meshRenderer->CleanupPipeline();
-
 	instance->UpdateSurface();
 	swapChain->Create();
 	CreateRenderPass();
 
-	for (auto & meshRenderer : renderers)
-		meshRenderer->CreatePipeline();
+	// Recreate all materials with the new RenderPass
+	MaterialTable::Get()->RecreateAll();
 }
 
 void			VulkanRenderPipeline::UpdatePerframeUnformBuffer(void) noexcept
@@ -293,13 +260,12 @@ void			VulkanRenderPipeline::RenderInternal(const std::vector< Camera * > & came
 
 	vkWaitForFences(device, 1, &inFlightFences[currentFrame], VK_TRUE, std::numeric_limits<uint64_t>::max());
 
-	uint32_t imageIndex;
 	// TODO: maybe put this function inside the swapChain class ?
-	VkResult result = vkAcquireNextImageKHR(device, swapChain->GetSwapChain(), std::numeric_limits<uint64_t>::max(), imageAvailableSemaphores[currentFrame], VK_NULL_HANDLE, &imageIndex);
+	VkResult result = vkAcquireNextImageKHR(device, swapChain->GetSwapChain(), std::numeric_limits<uint64_t>::max(), imageAvailableSemaphores[currentFrame], VK_NULL_HANDLE, &_imageIndex);
 
 	if (result == VK_ERROR_OUT_OF_DATE_KHR)
 	{
-		RecreateSwapChain(context);
+		RecreateSwapChain();
 		return;
 	}
 	else if (result != VK_SUCCESS && result != VK_SUBOPTIMAL_KHR)
@@ -307,12 +273,16 @@ void			VulkanRenderPipeline::RenderInternal(const std::vector< Camera * > & came
 		throw std::runtime_error("failed to acquire swap chain image!");
 	}
 
-	commandBuffer = _swapChainCommandBuffers[imageIndex];
+	frameCommandBuffers.clear();
+	frameCommandBuffers.push_back(_swapChainCommandBuffers[_imageIndex]);
 
 	currentCamera = (cameras.size() == 0) ? nullptr : cameras[0];
 
 	Render(cameras, context);
+}
 
+void	VulkanRenderPipeline::PresentFrame(void)
+{
 	VkSubmitInfo submitInfo = {};
 	submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
 
@@ -322,8 +292,8 @@ void			VulkanRenderPipeline::RenderInternal(const std::vector< Camera * > & came
 	submitInfo.pWaitSemaphores = waitSemaphores;
 	submitInfo.pWaitDstStageMask = waitStages;
 
-	submitInfo.commandBufferCount = 1;
-	submitInfo.pCommandBuffers = &commandBuffer;
+	submitInfo.commandBufferCount = frameCommandBuffers.size();
+	submitInfo.pCommandBuffers = frameCommandBuffers.data();
 
 	VkSemaphore signalSemaphores[] = {renderFinishedSemaphores[currentFrame]};
 	submitInfo.signalSemaphoreCount = 1;
@@ -343,14 +313,14 @@ void			VulkanRenderPipeline::RenderInternal(const std::vector< Camera * > & came
 	presentInfo.swapchainCount = 1;
 	presentInfo.pSwapchains = swapChains;
 
-	presentInfo.pImageIndices = &imageIndex;
+	presentInfo.pImageIndices = &_imageIndex;
 
-	result = vkQueuePresentKHR(instance->GetQueue(), &presentInfo);
+	VkResult result = vkQueuePresentKHR(instance->GetQueue(), &presentInfo);
 
 	if (result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR || framebufferResized)
 	{
 		framebufferResized = false;
-		RecreateSwapChain(context);
+		RecreateSwapChain();
 	}
 	else if (result != VK_SUCCESS)
 	{
@@ -397,6 +367,11 @@ void	VulkanRenderPipeline::Render(const std::vector< Camera * > & cameras, Rende
 	EndRenderPass();
 
 	renderPass.ClearBindings();
+}
+
+void			VulkanRenderPipeline::EnqueueFrameCommandBuffer(VkCommandBuffer cmd)
+{
+	frameCommandBuffers.push_back(cmd);
 }
 
 SwapChain *		VulkanRenderPipeline::GetSwapChain(void) { return swapChain; }

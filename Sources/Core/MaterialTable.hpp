@@ -22,14 +22,17 @@ namespace LWGC
 			void 	NotifyMaterialReady(Material * material);
 
 		public:
-			MaterialTable();
+			MaterialTable(void);
 			MaterialTable(const MaterialTable&) = delete;
 			virtual ~MaterialTable(void);
 
 			void 	RegsiterObject(Material * material) override; 
 			void 	Initialize(LWGC::SwapChain *swapChain , LWGC::RenderPass * renderPipeline);
+			void	RecreateAll(void);
 
 			MaterialTable &	operator=(MaterialTable const & src) = delete;
+
+			static MaterialTable *	Get(void);
 	};
 
 	std::ostream &	operator<<(std::ostream & o, MaterialTable const & r);

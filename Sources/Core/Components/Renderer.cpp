@@ -118,16 +118,6 @@ void		Renderer::OnDisable() noexcept
 	hierarchy->UnregisterComponentInRenderContext(GetType(), _renderContextIndex);
 }
 
-void		Renderer::CleanupPipeline(void) noexcept
-{
-	_material->CleanupPipeline();
-}
-
-void		Renderer::CreatePipeline(void) noexcept
-{
-	_material->CreatePipeline();
-}
-
 void		Renderer::RecordCommands(VkCommandBuffer cmd)
 {
 	RecordDrawCommand(cmd);

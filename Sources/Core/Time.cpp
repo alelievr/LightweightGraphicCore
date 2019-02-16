@@ -38,30 +38,30 @@ void	Time::SetScale(float scale)
 	_scale = scale;
 }
 
-double	Time::GetDeltaTime(void)
+float	Time::GetDeltaTime(void)
 {
 	return _deltaTime * _scale;
 }
 
-double	Time::GetUnscaledDeltaTime(void)
+float	Time::GetUnscaledDeltaTime(void)
 {
 	return _deltaTime;
 }
 
-double	Time::GetTime(void)
+float	Time::GetTime(void)
 {
 	auto now = std::chrono::high_resolution_clock::now();
 	
-	std::chrono::duration<double> elapsed_seconds = now - _diff;
+	std::chrono::duration<float> elapsed_seconds = now - _diff;
 
 	return _value + (elapsed_seconds.count() * _scale);
 }
 
-double	Time::GetUnscaledTime(void)
+float	Time::GetUnscaledTime(void)
 {
 	auto now = std::chrono::high_resolution_clock::now();
 
-	std::chrono::duration<double> elapsed_seconds = now - _start;
+	std::chrono::duration<float> elapsed_seconds = now - _start;
 
 	return elapsed_seconds.count();
 }
