@@ -25,9 +25,9 @@ namespace LWGC
             std::vector<IUpdatePerCamera *> _updatePerCamera;
 
         public:
-            RenderContext(void);
+            RenderContext(void) = default;
             RenderContext(const RenderContext &rc) = delete;
-            virtual ~RenderContext(void);
+            virtual ~RenderContext(void) = default;
 
             RenderContext operator=(const RenderContext &rhs) = delete;
 

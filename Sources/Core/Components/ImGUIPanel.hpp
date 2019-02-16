@@ -24,10 +24,10 @@ namespace LWGC
 
 			ImGUIPanel &	operator=(ImGUIPanel const & src) = delete;
 
-			virtual void OnEnable(void) noexcept override;
-			virtual void OnDisable(void) noexcept override;
+			void OnEnable(void) noexcept override;
+			void OnDisable(void) noexcept override;
 
-			virtual void Initialize(void) noexcept override;
+			void Initialize(void) noexcept override;
 
 			virtual uint32_t	GetType(void) const noexcept override;
 
