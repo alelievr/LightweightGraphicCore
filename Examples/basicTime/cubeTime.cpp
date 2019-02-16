@@ -4,7 +4,7 @@ using namespace LWGC;
 
 void	ProcessEvent(EventSystem * es, Application & app)
 {
-	es->Get()->onKey.AddListener([&](KeyCode key, ButtonAction action)
+	es->Get()->onKey.AddListener([&](KeyCode key, ButtonAction action, int)
 		{
 			if (action == ButtonAction::Press
 				&& key == KeyCode::ESCAPE)
@@ -33,7 +33,7 @@ int			main(void)
 
 	auto cube = new GameObject(new MeshRenderer(PrimitiveType::Cube, textureMaterial));
 	auto cube2 = new GameObject(new MeshRenderer(PrimitiveType::Cube, textureMaterial));
-	
+
 	auto cam = new GameObject(new Camera());
 	cam->GetTransform()->SetPosition(glm::vec3(0, 0, -5));
 	cam->AddComponent(new FreeCameraControls());
@@ -45,16 +45,16 @@ int			main(void)
 	textureMaterial->SetTexture(TextureBinding::Albedo, animeTexture, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE);
 
 	ProcessEvent(es, app);
-	
+
 	float degree = 10.0;
 	float scale = 0.5;
 	auto tmptime = Time::GetTime();
 	auto tmptime2 = Time::GetUnscaledTime();
 	auto tmpUnscaledtime = Time::GetUnscaledTime();
-	
+
 	Time::SetScale(scale);
 	cube->GetTransform()->SetPosition(glm::vec3(3, 0, 0));
-	
+
 	while (app.ShouldNotQuit())
 	{
 		app.Update();

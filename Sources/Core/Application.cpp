@@ -144,7 +144,7 @@ void				Application::Update(void) noexcept
 	_renderPipeline->RenderInternal(cameras, hierarchy->GetRenderContext());
 
 	_imGUI.BeginFrame();
-	_renderPipeline->RenderGUI();
+	_renderPipeline->RenderGUI(hierarchy->GetRenderContext());
 	_imGUI.EndFrame();
 
 	_renderPipeline->PresentFrame();

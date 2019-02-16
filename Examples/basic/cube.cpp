@@ -4,7 +4,7 @@ using namespace LWGC;
 
 void	ProcessEvent(EventSystem * es, Application & app)
 {
-	es->Get()->onKey.AddListener([&](KeyCode key, ButtonAction action)
+	es->Get()->onKey.AddListener([&](KeyCode key, ButtonAction action, int)
 		{
 			if (action == ButtonAction::Press
 				&& key == KeyCode::ESCAPE)
@@ -35,6 +35,9 @@ int			main(void)
 	auto cam = new GameObject(new Camera());
 	cam->GetTransform()->SetPosition(glm::vec3(0, 0, -5));
 	cam->AddComponent(new FreeCameraControls());
+
+	// ImGUI test
+	cube->AddComponent(new ImGUIPanel());
 
 	hierarchy->AddGameObject(cube);
 	hierarchy->AddGameObject(cam);

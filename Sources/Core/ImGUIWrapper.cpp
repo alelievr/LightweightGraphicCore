@@ -1,6 +1,7 @@
 #include "ImGUIWrapper.hpp"
 
 #include "Core/Vulkan/Vk.hpp"
+#include "Core/EventSystem.hpp"
 #include "Core/Rendering/VulkanRenderPipeline.hpp"
 
 #define IMGUI_MAX_ELEMENTS	1000
@@ -49,7 +50,7 @@ void		ImGUIWrapper::InitImGUI(void)
 
 	// Is this important ?
     ImGuiIO& io = ImGui::GetIO(); (void)io;
-	//io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;  // Enable Keyboard Controls
+	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;  // Enable Keyboard Controls
 
 	_queue = _instance->GetQueue();
 
@@ -69,7 +70,21 @@ void		ImGUIWrapper::InitImGUI(void)
 	};
 
 	auto pipeline = VulkanRenderPipeline::Get();
-	ImGui_ImplGlfw_InitForVulkan(_surface->GetWindow(), false); // TODO: ImGUI GLFW callbacks using the EventSystem (see imgui_impl_glfw.cpp)
+	ImGui_ImplGlfw_InitForVulkan(_surface->GetWindow(), false);
+	auto es = EventSystem::Get();
+	es->onMouseClick.AddListener([](glm::vec2 pos, int button, ButtonAction action){
+		(void)pos;
+		ImGui_ImplGlfw_MouseButtonCallback(nullptr, button, (int)action, 0);
+	});
+	es->onScroll.AddListener([](double xOffset, double yOffset){
+		ImGui_ImplGlfw_ScrollCallback(nullptr, xOffset, yOffset);
+	});
+	es->onKey.AddListener([](KeyCode key, ButtonAction action, int mods){
+		ImGui_ImplGlfw_KeyCallback(nullptr, (int)key, 0, (int)action, mods);
+	});
+	es->onChar.AddListener([](uint32_t c){
+		ImGui_ImplGlfw_CharCallback(nullptr, c);
+	});
 	ImGui_ImplVulkan_Init(&initInfo, pipeline->GetRenderPass()->GetRenderPass());
 	ImGui::StyleColorsDark();
 }
@@ -212,11 +227,11 @@ void		ImGUIWrapper::EndFrame(void)
 	ImGui_ImplVulkanH_FrameData* fd = &_wd.Frames[_wd.FrameIndex];
 	{
 		err = vkResetCommandBuffer(fd->CommandBuffer, 0);
-		// err = vkResetCommandPool(_device, fd->CommandPool, 0);
+		err = vkResetCommandPool(_device, fd->CommandPool, 0);
 		Vk::CheckResult(err, "Error while rendering GUI");
 		VkCommandBufferBeginInfo info = {};
 		info.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
-		info.flags |= VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
+		info.flags = VK_COMMAND_BUFFER_USAGE_SIMULTANEOUS_USE_BIT | VK_COMMAND_BUFFER_USAGE_RENDER_PASS_CONTINUE_BIT;
 		err = vkBeginCommandBuffer(fd->CommandBuffer, &info);
 		Vk::CheckResult(err, "Error while rendering GUI");
 	}
@@ -233,7 +248,7 @@ void		ImGUIWrapper::EndFrame(void)
 	}
 
 	// Record Imgui Draw Data and draw funcs into command buffer
-	// ImGui_ImplVulkan_RenderDrawData(ImGui::GetDrawData(), fd->CommandBuffer);
+	ImGui_ImplVulkan_RenderDrawData(ImGui::GetDrawData(), fd->CommandBuffer);
 
 	// Submit command buffer
 	vkCmdEndRenderPass(fd->CommandBuffer);

@@ -4,7 +4,7 @@
 
 #include "RenderTarget.hpp"
 #include "Core/Components/Camera.hpp"
-#include "RenderContext.hpp"
+#include "RenderContext.tpp"
 #include "Core/Vulkan/RenderPass.hpp"
 #include "Core/Vulkan/Material.hpp"
 #include "Core/Vulkan/VulkanInstance.hpp"
@@ -63,7 +63,7 @@ namespace LWGC
 			virtual void		PresentFrame(void);
 			virtual void		Initialize(SwapChain * swapChain);
 			virtual void		CreateSyncObjects(void);
-			virtual void		RenderGUI(void) noexcept;
+			virtual void		RenderGUI(RenderContext * context) noexcept;
 
 		public:
 			VulkanRenderPipeline(void);

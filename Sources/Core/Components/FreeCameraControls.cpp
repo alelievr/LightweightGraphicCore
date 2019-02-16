@@ -27,7 +27,7 @@ void		FreeCameraControls::Initialize(void) noexcept
 void		FreeCameraControls::OnEnable(void) noexcept
 {
 	Component::OnEnable();
-	_keydi = EventSystem::Get()->onKey.AddListener([&](auto k, auto a){KeyPressedCallback(k, a);});
+	_keydi = EventSystem::Get()->onKey.AddListener([&](auto k, auto a, int){KeyPressedCallback(k, a);});
 	_mousemdi = EventSystem::Get()->onMouseMove.AddListener([&](auto k, auto a){MouseMovedCallback(k, a);});
 }
 

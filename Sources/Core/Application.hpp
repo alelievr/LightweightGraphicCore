@@ -13,7 +13,7 @@
 #include "Vulkan/SwapChain.hpp"
 #include "Vulkan/RenderPass.hpp"
 #include "Vulkan/Material.hpp"
-#include "Core/Rendering/RenderContext.hpp"
+#include "Core/Rendering/RenderContext.tpp"
 #include "Core/Delegate.tpp"
 #include "Core/ImGUIWrapper.hpp"
 #include "Core/MaterialTable.hpp"

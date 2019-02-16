@@ -2,6 +2,7 @@
 
 #include "Core/Components/MeshRenderer.hpp"
 #include "Core/Components/ComputeDispatcher.hpp"
+#include "Core/Components/ImGUIPanel.hpp"
 #include "Core/PrimitiveMeshFactory.hpp"
 #include "Core/Handles/Selection.hpp"
 #include "Core/Handles/Tools.hpp"
@@ -187,45 +188,16 @@ void			VulkanRenderPipeline::EndRenderPass(void)
 	}
 }
 
-static bool my_tool_active = true;
-static float my_color[4] = {1, 1, 0, 1};
-
-void			VulkanRenderPipeline::RenderGUI(void) noexcept
+void			VulkanRenderPipeline::RenderGUI(RenderContext * context) noexcept
 {
-	ImGui::Begin("My First Tool", &my_tool_active, ImGuiWindowFlags_MenuBar);
-	if (ImGui::BeginMenuBar())
+	std::unordered_set< ImGUIPanel * >	imGUIPanels;
+
+	context->GetComponentSet< ImGUIPanel * >(imGUIPanels);
+
+	for (auto imGUIPanel : imGUIPanels)
 	{
-		if (ImGui::BeginMenu("File"))
-		{
-			if (ImGui::MenuItem("Open..", "Ctrl+O"))
-			{ /* Do stuff */
-			}
-			if (ImGui::MenuItem("Save", "Ctrl+S"))
-			{ /* Do stuff */
-			}
-			if (ImGui::MenuItem("Close", "Ctrl+W"))
-			{
-				my_tool_active = false;
-			}
-			ImGui::EndMenu();
-		}
-		ImGui::EndMenuBar();
+		imGUIPanel->DrawImGUI();
 	}
-
-	// Edit a color (stored as ~4 floats)
-	ImGui::ColorEdit4("Color", my_color);
-
-	// Plot some values
-	const float my_values[] = {0.2f, 0.1f, 1.0f, 0.5f, 0.9f, 2.2f};
-	ImGui::PlotLines("Frame Times", my_values, IM_ARRAYSIZE(my_values));
-
-	// Display contents in a scrolling region
-	ImGui::TextColored(ImVec4(1, 1, 0, 1), "Important Stuff");
-	ImGui::BeginChild("Scrolling");
-	for (int n = 0; n < 50; n++)
-		ImGui::Text("%04d: Some text", n);
-	ImGui::EndChild();
-	ImGui::End();
 }
 
 void			VulkanRenderPipeline::CreateSyncObjects(void)
@@ -301,7 +273,7 @@ void			VulkanRenderPipeline::RenderInternal(const std::vector< Camera * > & came
 		throw std::runtime_error("failed to acquire swap chain image!");
 	}
 
-	frameCommandBuffers.empty();
+	frameCommandBuffers.clear();
 	frameCommandBuffers.push_back(_swapChainCommandBuffers[_imageIndex]);
 
 	currentCamera = (cameras.size() == 0) ? nullptr : cameras[0];

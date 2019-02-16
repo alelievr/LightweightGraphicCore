@@ -6,7 +6,7 @@
 #include "Core/GameObject.hpp"
 #include "Core/EventSystem.hpp"
 #include "IncludeDeps.hpp"
-#include "Core/Rendering/RenderContext.hpp"
+#include "Core/Rendering/RenderContext.tpp"
 #include "Utils/Bounds.hpp"
 
 #include GLM_INCLUDE
