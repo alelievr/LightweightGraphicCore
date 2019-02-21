@@ -2,29 +2,19 @@
 
 #include <cmath>
 
-
 #include "Core/Application.hpp"
 #include "Utils/Math.hpp"
 #include "Utils/Vector.hpp"
+#include "Core/Time.hpp"
 
 using namespace LWGC;
 
-FreeCameraControls::FreeCameraControls(void) : _forward(0), _right(0), _up(0), _speed(0.05f), _mouseSpeed(0.2f), _rotationX(0), _rotationY(0)
+FreeCameraControls::FreeCameraControls(void) : _forward(0), _right(0), _up(0), _speed(7.0f), _mouseSpeed(0.2f), _rotationX(0), _rotationY(0)
 {
 }
 
 FreeCameraControls::~FreeCameraControls(void)
 {
-}
-
-void			FreeCameraControls::OnAdded(const GameObject & go) noexcept
-{
-	Component::OnAdded(go);
-}
-
-void			FreeCameraControls::OnRemoved(const GameObject & go) noexcept
-{
-	Component::OnRemoved(go);
 }
 
 void		FreeCameraControls::Initialize(void) noexcept
@@ -37,9 +27,8 @@ void		FreeCameraControls::Initialize(void) noexcept
 void		FreeCameraControls::OnEnable(void) noexcept
 {
 	Component::OnEnable();
-	_keydi = EventSystem::Get()->onKey.AddListener([&](auto k, auto a){KeyPressedCallback(k, a);});
+	_keydi = EventSystem::Get()->onKey.AddListener([&](auto k, auto a, int){KeyPressedCallback(k, a);});
 	_mousemdi = EventSystem::Get()->onMouseMove.AddListener([&](auto k, auto a){MouseMovedCallback(k, a);});
-	_mousecdi = EventSystem::Get()->onMouseClick.AddListener([&](auto k, auto a){MouseClickCallback(k, a);});
 }
 
 void		FreeCameraControls::OnDisable(void) noexcept
@@ -47,7 +36,6 @@ void		FreeCameraControls::OnDisable(void) noexcept
 	Component::OnDisable();
 	EventSystem::Get()->onKey.RemoveListener(_keydi);
 	EventSystem::Get()->onMouseMove.RemoveListener(_mousemdi);
-	EventSystem::Get()->onMouseClick.RemoveListener(_mousecdi);
 }
 
 void		FreeCameraControls::MouseClickCallback(glm::vec2 pos, ButtonAction action)
@@ -58,6 +46,12 @@ void		FreeCameraControls::MouseClickCallback(glm::vec2 pos, ButtonAction action)
 
 void		FreeCameraControls::MouseMovedCallback(glm::vec2 pos, MouseMoveAction action)
 {
+	(void)pos;
+
+	// Don't move camera if the cursor is locked
+	if (!EventSystem::Get()->IsCursorLocked())
+		return ;
+
 	if (action == MouseMoveAction::Move)
 	{
 		const auto & event = EventSystem::Get();
@@ -65,7 +59,7 @@ void		FreeCameraControls::MouseMovedCallback(glm::vec2 pos, MouseMoveAction acti
 		_rotationX += event->delta.x * _mouseSpeed;
 		_rotationY += event->delta.y * _mouseSpeed;
 		_rotationY = glm::clamp(_rotationY, -90.0f, 90.0f);
-		
+
 		transform->SetRotation(glm::angleAxis(_rotationX * Math::DegToRad, glm::vec3(0, 1, 0)));
 		transform->RotateAxis(_rotationY * Math::DegToRad, glm::vec3(1, 0, 0));
 	}
@@ -74,7 +68,7 @@ void		FreeCameraControls::MouseMovedCallback(glm::vec2 pos, MouseMoveAction acti
 void		FreeCameraControls::KeyPressedCallback(KeyCode key, ButtonAction action)
 {
 	bool buttonPress = action == ButtonAction::Press || action == ButtonAction::Repeat;
-	
+
 	switch (key)
 	{
 		case KeyCode::A:
@@ -106,7 +100,9 @@ void		FreeCameraControls::KeyPressedCallback(KeyCode key, ButtonAction action)
 			_speed /= 1.1f;
 			break ;
 		case KeyCode::SPACE:
-			EventSystem::Get()->ToggleLockCursor();
+			if (action == ButtonAction::Press)
+				EventSystem::Get()->ToggleLockCursor();
+			break ;
 		default:
 		break;
 	}
@@ -117,7 +113,7 @@ void		FreeCameraControls::Update(void) noexcept
 	transform->Translate((
 		transform->GetRight() * _right
 		+ transform->GetUp() * _up
-		+ transform->GetForward() * _forward) * _speed);
+		+ transform->GetForward() * _forward) * _speed * Time::GetDeltaTime());
 }
 
 void		FreeCameraControls::SetSpeed(float speed) noexcept { _speed = speed; }

@@ -4,7 +4,7 @@
 
 #include "RenderTarget.hpp"
 #include "Core/Components/Camera.hpp"
-#include "RenderContext.hpp"
+#include "RenderContext.tpp"
 #include "Core/Vulkan/RenderPass.hpp"
 #include "Core/Vulkan/Material.hpp"
 #include "Core/Vulkan/VulkanInstance.hpp"
@@ -12,7 +12,6 @@
 
 #include IMGUI_INCLUDE
 
-#define MAX_FRAMES_IN_FLIGHT	2
 #define PER_FRAME_BINDING_INDEX	0
 
 namespace LWGC
@@ -28,36 +27,43 @@ namespace LWGC
 				glm::vec4	time;
 			};
 
-			static VulkanRenderPipeline *	pipelineInstance;
-			std::vector< VkCommandBuffer >	swapChainCommandBuffers;
-			LWGC_PerFrame					perFrame;
-			UniformBuffer					uniformPerFrame;
-			VkDescriptorSet					perFrameDescriptorSet;
-			VkDescriptorSetLayout			perFrameDescriptorSetLayout;
+			static VulkanRenderPipeline *	_pipelineInstance;
+			std::vector< VkCommandBuffer >	_swapChainCommandBuffers;
+			LWGC_PerFrame					_perFrame;
+			UniformBuffer					_uniformPerFrame;
+			VkDescriptorSet					_perFrameDescriptorSet;
+			VkDescriptorSetLayout			_perFrameDescriptorSetLayout;
+			uint32_t						_imageIndex;
 
-			void				RenderInternal(const std::vector< Camera * > & cameras, RenderContext & context);
+			void				RenderInternal(const std::vector< Camera * > & cameras, RenderContext * context);
 			void				UpdatePerframeUnformBuffer(void) noexcept;
-			void				CreatePerFrameDescriptorSet(void) noexcept;
+			void				CreatePerFrameDescriptorSet(void);
 
 		protected:
-			std::vector<VkSemaphore>		imageAvailableSemaphores;
-			std::vector<VkSemaphore>		renderFinishedSemaphores;
-			std::vector<VkFence>			inFlightFences;
+			std::vector< VkSemaphore >		imageAvailableSemaphores;
+			std::vector< VkSemaphore >		renderFinishedSemaphores;
+			std::vector< VkFence >			inFlightFences;
 			VkDevice						device;
 			VulkanInstance *				instance;
 			size_t							currentFrame = 0;
 			RenderPass						renderPass;
 			VkFramebuffer					framebuffer;
 			SwapChain *						swapChain;
-			VkCommandBuffer					commandBuffer;
+			std::vector< VkCommandBuffer >	frameCommandBuffers;
 			bool							framebufferResized;
+			Camera *						currentCamera;
 
 			virtual void		CreateRenderPass(void);
-			void				BeginRenderPass(RenderContext & context);
+			void				BeginRenderPass(RenderContext * context);
 			void				EndRenderPass(void);
-			virtual void		RecreateSwapChain(RenderContext & renderContext);
-			virtual void		Render(const std::vector< Camera * > & cameras, RenderContext & context) = 0;
+			virtual void		RecreateSwapChain(void);
+			virtual void		Render(const std::vector< Camera * > & cameras, RenderContext * context) = 0;
 			virtual void		CreateDescriptorSets(void);
+			virtual void		InitializeHandles(void) noexcept;
+			virtual void		PresentFrame(void);
+			virtual void		Initialize(SwapChain * swapChain);
+			virtual void		CreateSyncObjects(void);
+			virtual void		RenderGUI(RenderContext * context) noexcept;
 
 		public:
 			VulkanRenderPipeline(void);
@@ -66,12 +72,10 @@ namespace LWGC
 
 			VulkanRenderPipeline & operator=(const VulkanRenderPipeline & rhs) = delete;
 
-			virtual void	Initialize(SwapChain * swapChain);
-			virtual void	CreateSyncObjects(void);
-			virtual void	RenderGUI(void) noexcept;
-
 			SwapChain *		GetSwapChain(void);
 			RenderPass *	GetRenderPass(void);
+			Camera *		GetCurrentCamera(void);
+			void			EnqueueFrameCommandBuffer(VkCommandBuffer cmd);
 
 			static VulkanRenderPipeline *	Get();
 	};

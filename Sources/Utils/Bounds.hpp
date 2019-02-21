@@ -1,5 +1,8 @@
 #pragma once
 
+#include <iostream>
+#include <string>
+
 #include "IncludeDeps.hpp"
 
 #include GLM_INCLUDE
@@ -17,7 +20,7 @@ namespace LWGC
 			Bounds(const glm::vec3 & min, const glm::vec3 & max);
 			Bounds(const float x1, const float y1, const float z1, const float x2, const float y2, const float z2);
 			Bounds(const Bounds & rhs);
-			
+
 			Bounds & operator=(const Bounds & rhs);
 
 			float		GetMaxX(void) const;
@@ -34,7 +37,10 @@ namespace LWGC
 			glm::vec3	GetMax(void) const;
 
 			void		Encapsulate(const glm::vec3 & p);
+			bool		Intersects(const glm::vec3 & origin, const glm::vec3 direction);
 
 			//...
 	};
+
+	std::ostream &	operator<<(std::ostream & o, Bounds const & r);
 }

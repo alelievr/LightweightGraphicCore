@@ -6,7 +6,7 @@
 /*   By: amerelo <amerelo@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/08/27 21:37:58 by alelievr          #+#    #+#             */
-/*   Updated: 2019/01/05 18:42:25 by amerelo          ###   ########.fr       */
+/*   Updated: 2019/01/13 15:53:46 by amerelo          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,7 @@
 #include "Core/Hierarchy.hpp"
 #include "Core/Transform.hpp"
 #include "Core/GameObject.hpp"
+#include "Core/Time.hpp"
 
 // Event System
 #include "Core/EventSystem.hpp"
@@ -45,7 +46,10 @@
 #include "Core/Components/Camera.hpp"
 #include "Core/Components/FreeCameraControls.hpp"
 #include "Core/Components/ComputeDispatcher.hpp"
+#include "Core/Components/ImGUIPanel.hpp"
 #include "Core/Components/Rotator.hpp"
+#include "Core/Components/Movator.hpp"
+#include "Core/Components/Activator.hpp"
 
 // Gimos & handles
 #include "Core/Gizmos/Line.hpp"
@@ -54,8 +58,11 @@
 #include "Core/Gizmos/Circle.hpp"
 #include "Core/Gizmos/Cone.hpp"
 #include "Core/Gizmos/Arrow.hpp"
+#include "Core/Gizmos/Position.hpp"
+#include "Core/Handles/PositionHandle.hpp"
 
 // Utils
 #include "Utils/Bounds.hpp"
 #include "Utils/Rect.hpp"
 #include "Utils/Math.hpp"
+#include "Utils/Random.hpp"

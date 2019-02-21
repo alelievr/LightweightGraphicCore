@@ -10,7 +10,7 @@ ForwardRenderPipeline::~ForwardRenderPipeline(void)
 {
 }
 
-void	ForwardRenderPipeline::Render(const std::vector< Camera * > & cameras, RenderContext & context)
+void	ForwardRenderPipeline::Render(const std::vector< Camera * > & cameras, RenderContext * context)
 {
 	VulkanRenderPipeline::Render(cameras, context);
 }

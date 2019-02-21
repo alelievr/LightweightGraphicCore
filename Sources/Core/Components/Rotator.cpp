@@ -5,34 +5,6 @@
 
 using namespace LWGC;
 
-Rotator::Rotator(void)
-{
-}
-
-Rotator::~Rotator(void)
-{
-}
-
-void			Rotator::OnAdded(const GameObject & go) noexcept
-{
-	Component::OnAdded(go);
-}
-
-void			Rotator::OnRemoved(const GameObject & go) noexcept
-{
-	Component::OnRemoved(go);
-}
-
-void			Rotator::OnEnable(void) noexcept
-{
-	Component::OnEnable();
-}
-
-void			Rotator::OnDisable(void) noexcept
-{
-	Component::OnDisable();
-}
-
 void			Rotator::Update(void) noexcept
 {
 	static float r = 0;
@@ -40,11 +12,6 @@ void			Rotator::Update(void) noexcept
 	r++;
 
 	transform->RotateAxis(1 * Math::DegToRad, glm::vec3(1, 0, 0));
-}
-
-void			Rotator::Initialize(void) noexcept
-{
-	Component::Initialize();
 }
 
 uint32_t		Rotator::GetType(void) const noexcept

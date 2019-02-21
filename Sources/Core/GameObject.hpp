@@ -8,6 +8,7 @@
 #include "Transform.hpp"
 #include "Object.hpp"
 #include "Core/Components/Component.hpp"
+#include "Core/Delegate.tpp"
 
 namespace LWGC
 {
@@ -16,25 +17,29 @@ namespace LWGC
 		friend class Hierarchy;
 
 		private:
-			std::shared_ptr< Transform >		_transform;
 			bool								_active;
 			std::unordered_set< Component * >	_components;
-			Hierarchy *							_hierarchy;
 			bool								_initialized;
 
-			void SetHierarchy(Hierarchy * hierarchy);
+			void 		SetHierarchy(Hierarchy * hierarchy);
+			void		UpdateComponentsActiveStatus(void);
 
 		protected:
+			Transform *		transform;
+			Hierarchy *		hierarchy;
+
 			virtual void Initialize(void) noexcept;
 
 		public:
 			GameObject(void);
-			GameObject(const GameObject&);
+			GameObject(const GameObject &) = delete;
 			virtual		~GameObject(void);
 
 			GameObject(Component * components);
 
-			GameObject &	operator=(GameObject const & src);
+			GameObject &	operator=(GameObject const & src) = delete;
+
+			Delegate< void(bool) >	onEnableChanged;
 
 			Hierarchy *		GetHierarchy(void) const noexcept;
 			Transform *		GetTransform(void) const;

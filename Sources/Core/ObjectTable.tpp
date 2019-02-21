@@ -16,17 +16,17 @@ class		ObjectTable
 		ObjectTable(const ObjectTable&) = delete;
 		virtual ~ObjectTable(void) { }
 
-		void	RegsiterObject(T * object)
+		virtual void	RegsiterObject(T * object)
 		{
 			_objects.insert(object);
 		}
 		
-		void	UnregisterObject(T * object)
+		void			UnregisterObject(T * object)
 		{
 			_objects.erase(object);
 		}
 
-		void	DestroyObjects(void)
+		void			DestroyObjects(void)
 		{
 			for (auto object: _objects) {
 				delete object;

@@ -12,7 +12,7 @@ namespace LWGC
 	class GameObject;
 	class Hierarchy;
 	class Component;
-	
+
     using ComponentIndex = std::unordered_set< Component * >::iterator;
 
 	enum class	ComponentType : uint32_t
@@ -24,19 +24,24 @@ namespace LWGC
 		FreeCameraControls,
 		ComputeDispatcher,
 		Rotator,
-		Count, // Note: this MUST be the last element of the enum
+		Movator,
+		Activator,
+		ImGUIPanel,
+
+ 		// Note: this MUST be the last element of the enum
+		Count,
 	};
 
 	class Component
 	{
 		friend class GameObject;
-	
+
 		private:
 			bool					oldState;
-		
+
 		protected:
 			bool					enabled;
-			const GameObject *		gameObject;
+			GameObject *			gameObject;
 			Transform *				transform;
 			Hierarchy *				hierarchy;
 			ComponentIndex			index;
@@ -54,7 +59,7 @@ namespace LWGC
 
 			Component operator=(const Component & rhs) = delete;
 
-			virtual void	OnAdded(const GameObject & go) noexcept;
+			virtual void	OnAdded(GameObject & go) noexcept;
 			virtual void	OnRemoved(const GameObject & go) noexcept;
 			virtual void	OnEnable() noexcept;
 			virtual void	OnDisable() noexcept;
@@ -65,6 +70,7 @@ namespace LWGC
 			void			Disable() noexcept;
 
 			Transform *		GetTransform() const noexcept;
+			GameObject *	GetGameObject() const noexcept;
 
 			virtual uint32_t	GetType(void) const noexcept;
 	};

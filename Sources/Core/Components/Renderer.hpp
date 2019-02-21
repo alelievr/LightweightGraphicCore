@@ -8,11 +8,11 @@
 #include "Core/Vulkan/Material.hpp"
 #include "Core/Vulkan/UniformBuffer.hpp"
 #include "Component.hpp"
-#include "Core/Rendering/IPipelineCommandBuffer.hpp"
+#include "Core/Rendering/PipelineCommandBuffer.hpp"
 
 namespace LWGC
 {
-	class		Renderer : public Object, public Component, public IPipelineCommandBuffer
+	class		Renderer : public Object, public Component, public PipelineCommandBuffer
 	{
 		private:
 			struct LWGC_PerObject
@@ -24,21 +24,20 @@ namespace LWGC
 			ComponentIndex		_renderContextIndex;
 			UniformBuffer		_uniformModelBuffer;
 			VkDescriptorSet		_descriptorSet;
-			
+
 			static VkDescriptorSetLayout	_descriptorSetLayout;
-			
+
 			static void		CreateGraphicDescriptorSetLayout(void) noexcept;
 
 			virtual void	CreateDescriptorSet(void);
 
 		protected:
 			Material *	_material;
-			VkCommandBuffer				_drawCommandBuffer;
 
-			virtual void	Initialize(void) noexcept override;
+			void			Initialize(void) noexcept override;
 			virtual void	RecordDrawCommand(VkCommandBuffer cmd) noexcept = 0;
 			virtual void	UpdateUniformData(void);
-			virtual void	Update(void) noexcept override;
+			void			Update(void) noexcept override;
 
 		public:
 			Renderer(void);
@@ -49,15 +48,12 @@ namespace LWGC
 
 			Renderer &	operator=(Renderer const & src) = delete;
 
-			Bounds	GetBounds(void);
+			virtual Bounds	GetBounds(void) noexcept;
 
 			void	OnEnable(void) noexcept override;
 			void	OnDisable(void) noexcept override;
 
-			void	CleanupPipeline(void) noexcept;
-			void	CreatePipeline(void) noexcept;
 			void	RecordCommands(VkCommandBuffer cmd) override;
-            VkCommandBuffer	GetCommandBuffer(void) const override;
 
 			Material *	GetMaterial(void) const;
 			void	SetMaterial(Material * tmp);

@@ -24,7 +24,7 @@ namespace LWGC
 			};
 
 			RenderTarget *			_target;
-			glm::vec2				_size;
+			glm::vec2				_viewportSize;
 			CameraType				_cameraType;
 			float					_fov;
 			float					_nearPlane;
@@ -39,7 +39,7 @@ namespace LWGC
 
 			static void						CreateCameraDescriptorSetLayout(void) noexcept;
 			static VkDescriptorSetLayout	GetDescriptorSetLayout(void) noexcept;
-			void							CreateDescriptorSet(void) noexcept;
+			void							CreateDescriptorSet(void);
 			void							UpdateUniformData(void) noexcept;
 			virtual void					Update(void) noexcept override;
 
@@ -62,8 +62,7 @@ namespace LWGC
 			RenderTarget *	GetTarget(void) const;
 			void			SetTarget(RenderTarget * tmp);
 
-			glm::vec2	GetSize(void) const;
-			void		SetSize(glm::vec2 tmp);
+			glm::vec2	GetViewportSize(void) const;
 
 			CameraType	GetCameraType(void) const;
 			void		SetCameraType(CameraType tmp);
@@ -78,6 +77,7 @@ namespace LWGC
 			void		SetFarPlane(float tmp);
 
 			glm::mat4	GetViewMatrix(void) const;
+			glm::mat4	GetProjectionMatrix(void) const;
 
 			VkDescriptorSet		GetDescriptorSet(void) const;
 

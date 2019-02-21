@@ -3,7 +3,7 @@
 #include "Core/Hierarchy.hpp"
 #include "Core/Rendering/VulkanRenderPipeline.hpp"
 #include "Core/Vulkan/VulkanInstance.hpp"
-
+#include "Utils/Vector.hpp"
 
 #include "IncludeDeps.hpp"
 #include GLM_INCLUDE
@@ -34,7 +34,7 @@ void		Renderer::Initialize(void) noexcept
 
 	_material->MarkAsReady();
 
-	_drawCommandBuffer = VulkanInstance::Get()->GetCommandBufferPool()->Allocate(VK_COMMAND_BUFFER_LEVEL_SECONDARY);
+	PipelineCommandBuffer::Allocate(VulkanRenderPipeline::Get()->GetSwapChain()->GetImageCount());
 
 	if (_descriptorSetLayout == VK_NULL_HANDLE)
 		CreateGraphicDescriptorSetLayout();
@@ -101,9 +101,8 @@ void		Renderer::UpdateUniformData(void)
 	Vk::UploadToMemory(_uniformModelBuffer.memory, &_perObject, sizeof(_perObject));
 }
 
-Bounds		Renderer::GetBounds(void)
+Bounds		Renderer::GetBounds(void) noexcept
 {
-	std::cout << "GetBounds(): TODO" << std::endl;
 	return Bounds();
 }
 
@@ -119,16 +118,6 @@ void		Renderer::OnDisable() noexcept
 	hierarchy->UnregisterComponentInRenderContext(GetType(), _renderContextIndex);
 }
 
-void		Renderer::CleanupPipeline(void) noexcept
-{
-	_material->CleanupPipeline();
-}
-
-void		Renderer::CreatePipeline(void) noexcept
-{
-	_material->CreatePipeline();
-}
-
 void		Renderer::RecordCommands(VkCommandBuffer cmd)
 {
 	RecordDrawCommand(cmd);
@@ -137,7 +126,6 @@ void		Renderer::RecordCommands(VkCommandBuffer cmd)
 Material *	Renderer::GetMaterial(void) const { return (this->_material); }
 void						Renderer::SetMaterial(Material * tmp) { this->_material = tmp; }
 
-VkCommandBuffer				Renderer::GetCommandBuffer(void) const { return _drawCommandBuffer; }
 VkDescriptorSet				Renderer::GetDescriptorSet(void) const { return _descriptorSet; }
 
 std::ostream &	operator<<(std::ostream & o, Renderer const & r)

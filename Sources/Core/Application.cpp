@@ -4,14 +4,15 @@
 #include "Core/Rendering/ForwardRenderPipeline.hpp"
 #include "Core/Vulkan/VulkanInstance.hpp"
 #include "Core/Components/MeshRenderer.hpp"
+#include "Core/Time.hpp"
 
 using namespace LWGC;
 
-Application *	Application::_app = nullptr;
+Application *				Application::_app = nullptr;
 Delegate< void(void) >		Application::update;
 Delegate< void(void) >		Application::lateUpdate;
 
-Application::Application(void) : _renderPipeline(nullptr), _window(nullptr), _hierarchy(std::make_shared< Hierarchy >()), _shouldNotQuit(true)
+Application::Application(void) : _renderPipeline(nullptr), _window(nullptr), hierarchy(std::make_shared< Hierarchy >()), _shouldNotQuit(true)
 {
 	_app = this;
 }
@@ -112,7 +113,7 @@ void			Application::Open(const std::string & name, const int width, const int he
 		_renderPipeline->Initialize(&_swapChain);
 		_renderPipeline->CreateSyncObjects();
 		_materialTable.Initialize(&_swapChain, _renderPipeline->GetRenderPass());
-		_hierarchy->Initialize();
+		hierarchy->Initialize();
 	} catch (const std::runtime_error & e) {
 		std::cout << "Error while initializing the render pipeline:" << std::endl << e.what() << std::endl;
 		exit(-1);
@@ -126,31 +127,33 @@ void			Application::Open(const std::string & name, const int width, const int he
 	glfwSetWindowUserPointer(_window, &_renderPipeline);
 	glfwSetFramebufferSizeCallback(_window, FramebufferResizeCallback);
 
-	// _imGUI.Initialize(&_swapChain, &_surface);
+	Time::Initialize();
+	_imGUI.Initialize(&_swapChain, &_surface);
 }
+#include <limits>
 
 void				Application::Update(void) noexcept
 {
 	glfwPollEvents();
-
+	Time::BeginFrame();
 	Application::update.Invoke();
 	Application::lateUpdate.Invoke();
 
 	//TODO: hierarchy get cameras
-	const auto cameras =_hierarchy->GetCameras();
-	_renderPipeline->RenderInternal(cameras, _hierarchy->GetRenderContext());
+	const auto cameras = hierarchy->GetCameras();
+	_renderPipeline->RenderInternal(cameras, hierarchy->GetRenderContext());
 
-	// _imGUI.BeginFrame();
+	_imGUI.BeginFrame();
+	_renderPipeline->RenderGUI(hierarchy->GetRenderContext());
+	_imGUI.EndFrame();
 
-	// _renderPipeline->RenderGUI();
-
-	// _imGUI.EndFrame();
+	_renderPipeline->PresentFrame();
 
 	_shouldNotQuit = !glfwWindowShouldClose(_window);
 }
 
 EventSystem *		Application::GetEventSystem(void) noexcept { return &this->_eventSystem; }
-Hierarchy *			Application::GetHierarchy(void) noexcept { return this->_hierarchy.get(); }
+Hierarchy *			Application::GetHierarchy(void) noexcept { return this->hierarchy.get(); }
 MaterialTable *		Application::GetMaterialTable(void) noexcept { return &this->_materialTable; }
 TextureTable *		Application::GetTextureTable(void) noexcept { return &this->_textureTable; }
 

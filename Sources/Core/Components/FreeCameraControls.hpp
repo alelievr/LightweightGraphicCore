@@ -9,10 +9,6 @@
 
 namespace LWGC
 {
-	using keyDelegateIndex = DelegateIndex<void (LWGC::KeyCode, LWGC::ButtonAction)>;
-	using mouseMoveDelegateIndex = DelegateIndex<void (glm::vec<2, float, glm::qualifier::packed_highp>, LWGC::MouseMoveAction)>;
-	using mouseClickDelegateIndex = DelegateIndex<void (glm::vec<2, float, glm::qualifier::packed_highp>, LWGC::ButtonAction)>;
-
 	class		FreeCameraControls : public Object, public Component
 	{
 		private:
@@ -23,9 +19,8 @@ namespace LWGC
 			float					_mouseSpeed;
 			float					_rotationX;
 			float					_rotationY;
-			keyDelegateIndex		_keydi;
-			mouseMoveDelegateIndex 	_mousemdi;
-			mouseClickDelegateIndex _mousecdi;
+			KeyDelegateIndex		_keydi;
+			MouseMoveDelegateIndex 	_mousemdi;
 
 			virtual void	Update(void) noexcept override;
 			void		KeyPressedCallback(KeyCode, ButtonAction);
@@ -38,9 +33,6 @@ namespace LWGC
 			virtual ~FreeCameraControls(void);
 
 			FreeCameraControls &	operator=(FreeCameraControls const & src) = delete;
-
-			virtual void OnAdded(const GameObject &go) noexcept override;
-			virtual void OnRemoved(const GameObject & go) noexcept override;
 
 			virtual void OnEnable() noexcept override;
 			virtual void OnDisable() noexcept override;

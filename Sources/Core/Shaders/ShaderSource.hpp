@@ -34,7 +34,7 @@ namespace LWGC
 			long					GetFileModificationTime(const std::string & file) const;
 			std::string				StageToText(const VkShaderStageFlagBits stage);
 
-			const std::string		tmpFilePath = "/tmp/LWGC_spirV.tmp";
+			const std::string		tmpFilePath = "/tmp/LWGC_spirV_";
 
 			static std::vector< std::string >	shaderIncludePaths;
 
@@ -50,7 +50,6 @@ namespace LWGC
 
 			void	SetSourceFile(const std::string & file, const VkShaderStageFlagBits stage);
 			bool	NeedReload(void) const;
-			void	Reload(void);
 			void	Compile(void);
 			void	GenerateBindingTable(ShaderBindingTable & bindingTable);
 

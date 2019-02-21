@@ -6,7 +6,7 @@
 using namespace LWGC;
 
 ComputeDispatcher::ComputeDispatcher(Material * material, int width, int height, int depth) :
-	_material(material), _width(width), _height(height), _depth(depth)
+	_material(material), _width(width), _height(height), _depth(depth), _workGroupWidth(1), _workGroupHeight(1), _workGroupDepth(1)
 {
 }
 

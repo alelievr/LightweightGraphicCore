@@ -35,7 +35,7 @@ void				CommandBufferPool::Initialize(void)
 		throw std::runtime_error("Failed to create command pool !");
 }
 
-void			CommandBufferPool::Allocate(VkCommandBufferLevel level, std::vector< VkCommandBuffer > & commandBuffers, size_t count)
+void				CommandBufferPool::Allocate(VkCommandBufferLevel level, std::vector< VkCommandBuffer > & commandBuffers, size_t count)
 {
 	if (commandBuffers.size() != count)
 		commandBuffers.resize(count);

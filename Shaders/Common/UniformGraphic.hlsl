@@ -9,7 +9,7 @@ ConstantBuffer< LWGC_PerFrame >	frame;
 [[vk::binding(0, 1)]]
 ConstantBuffer< LWGC_PerCamera> camera;
 
-[[vk::binding(1, 2)]]
+[[vk::binding(0, 2)]]
 ConstantBuffer< LWGC_PerObject > object;
 
 [[vk::binding(0, 3)]]

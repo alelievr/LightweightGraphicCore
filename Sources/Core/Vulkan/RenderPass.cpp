@@ -4,7 +4,7 @@
 
 using namespace LWGC;
 
-RenderPass::RenderPass(void)
+RenderPass::RenderPass(void) : _instance(nullptr), _currentMaterial(nullptr)
 {
 	this->_renderPass = VK_NULL_HANDLE;
 	this->_attachmentCount = 0;
@@ -16,10 +16,9 @@ RenderPass::~RenderPass(void)
 	Cleanup();
 }
 
-void		RenderPass::Initialize(SwapChain * swapChain) noexcept
+void		RenderPass::Initialize(void) noexcept
 {
 	_instance = VulkanInstance::Get();
-	_swapChain = swapChain;
 }
 
 void		RenderPass::AddAttachment(const VkAttachmentDescription & attachment, VkImageLayout layout) noexcept
@@ -70,9 +69,6 @@ void		RenderPass::Create(void)
 	auto device = _instance->GetDevice();
 	if (vkCreateRenderPass(device, &renderPassInfo, nullptr, &_renderPass) != VK_SUCCESS)
 		throw std::runtime_error("failed to create render pass!");
-
-	std::cout << "Created subpass !\n";
-	_swapChain->CreateFrameBuffers(*this);
 }
 
 bool	RenderPass::BindDescriptorSet(const std::string & name, VkDescriptorSet set)
@@ -143,7 +139,7 @@ void	RenderPass::BeginSecondaryCommandBuffer(VkCommandBuffer cmd, VkCommandBuffe
 
 	VkCommandBufferBeginInfo beginInfo = {};
 	beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
-	beginInfo.flags = commandBufferUsage;
+	beginInfo.flags = commandBufferUsage | VK_COMMAND_BUFFER_USAGE_SIMULTANEOUS_USE_BIT;
 	beginInfo.pInheritanceInfo = &inheritanceInfo;
 
 	if (vkBeginCommandBuffer(cmd, &beginInfo) != VK_SUCCESS)

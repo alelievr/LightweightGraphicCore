@@ -27,7 +27,7 @@ Color::Color(void) : Color(0, 0, 0, 1)
 {
 }
 
-Color::Color(float r, float g, float b, float a) : _r(r), _g(g), _b(b), _a(a)
+Color::Color(float r, float g, float b, float a) : r(r), g(g), b(b), a(a)
 {
 }
 
@@ -63,37 +63,23 @@ Color		Color::Lerp(const Color & a, const Color & b, const float t)
 
 Color &	Color::operator=(Color const & src)
 {
-	std::cout << "Assignment operator called" << std::endl;
-
 	if (this != &src) {
-		this->_r = src.GetR();
-		this->_g = src.GetG();
-		this->_b = src.GetB();
-		this->_a = src.GetA();
+		this->r = src.r;
+		this->g = src.g;
+		this->b = src.b;
+		this->a = src.a;
 	}
 	return (*this);
 }
 
 Color::operator glm::vec4() const
 {
-	return glm::vec4(_r, _g, _b, _a);
+	return glm::vec4(r, g, b, a);
 }
 
-float		Color::GetR(void) const { return (this->_r); }
-void		Color::SetR(float tmp) { this->_r = tmp; }
-
-float		Color::GetG(void) const { return (this->_g); }
-void		Color::SetG(float tmp) { this->_g = tmp; }
-
-float		Color::GetB(void) const { return (this->_b); }
-void		Color::SetB(float tmp) { this->_b = tmp; }
-
-float		Color::GetA(void) const { return (this->_a); }
-void		Color::SetA(float tmp) { this->_a = tmp; }
-
-std::ostream &	operator<<(std::ostream & o, Color const & r)
+std::ostream &	LWGC::operator<<(std::ostream & o, Color const & r)
 {
-	o << "tostring of the class" << std::endl;
+	o << "RGBA(" << r.r << ", " << r.g << ", " << r.b << ", " << r.a << ")";
 	(void)r;
 	return (o);
 }

@@ -4,7 +4,7 @@ using namespace LWGC;
 
 void	ProcessEvent(EventSystem * es, Application & app)
 {
-	es->Get()->onKey.AddListener([&](KeyCode key, ButtonAction action)
+	es->Get()->onKey.AddListener([&](KeyCode key, ButtonAction action, int)
 		{
 			if (action == ButtonAction::Press
 				&& key == KeyCode::ESCAPE)
@@ -27,14 +27,16 @@ int			main(void)
 	// We must Open the window before doing anything related to vulkan
 	app.Open("Test Window", 1920, 1080, WindowFlag::Resizable | WindowFlag::Decorated | WindowFlag::Focused);
 
-	auto	textureMaterial = Material::Create(BuiltinShaders::Standard);
-
+	auto textureMaterial = Material::Create(BuiltinShaders::Standard);
 	auto animeTexture = Texture2D::Create("Images/656218.jpg", VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_USAGE_SAMPLED_BIT, true);
 
 	auto cube = new GameObject(new MeshRenderer(PrimitiveType::Cube, textureMaterial));
 	auto cam = new GameObject(new Camera());
 	cam->GetTransform()->SetPosition(glm::vec3(0, 0, -5));
 	cam->AddComponent(new FreeCameraControls());
+
+	// ImGUI test
+	cube->AddComponent(new ImGUIPanel());
 
 	hierarchy->AddGameObject(cube);
 	hierarchy->AddGameObject(cam);

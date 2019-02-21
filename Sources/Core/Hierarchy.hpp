@@ -5,7 +5,7 @@
 #include <vector>
 #include <unordered_set>
 
-#include "Core/Rendering/RenderContext.hpp"
+#include "Core/Rendering/RenderContext.tpp"
 #include "Core/Vulkan/SwapChain.hpp"
 #include "Core/GameObject.hpp"
 #include "Core/Components/Camera.hpp"
@@ -38,7 +38,7 @@ namespace LWGC
 
 			GameObject *			GetGameObject(int index);
 			std::vector< Camera * >	GetCameras(void) noexcept;
-			RenderContext &			GetRenderContext(void);
+			RenderContext *			GetRenderContext(void);
 	};
 
 	std::ostream &	operator<<(std::ostream & o, Hierarchy const & r);

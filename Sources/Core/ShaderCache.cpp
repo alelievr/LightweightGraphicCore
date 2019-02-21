@@ -8,6 +8,7 @@ ShaderProgram		*ShaderCache::GetShader(const std::string & shader, const std::st
 {
 	std::string key = shader + elem;
 
+	// TODO: _shaders do not keep track of vertex shaders
 	if (_shaders.find(key) == _shaders.end())
 	{
 		ShaderProgram	 *program = new ShaderProgram();
@@ -37,4 +38,3 @@ ShaderProgram		*ShaderCache::GetShader(const std::string & shader, VkShaderStage
 
 	return (_shaders[key]);
 }
-

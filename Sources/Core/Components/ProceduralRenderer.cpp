@@ -35,6 +35,11 @@ void	ProceduralRenderer::SetVerticeCount(int verticeCount) noexcept { _verticeCo
 int		ProceduralRenderer::GetElementCount(void) const noexcept { return _elementCount; }
 void	ProceduralRenderer::SetElementCount(int elementCount) noexcept { _elementCount = elementCount; }
 
+Bounds	ProceduralRenderer::GetBounds(void) noexcept
+{
+	// No bounds for proceduralRenderer
+	return Bounds();
+}
 
 std::ostream &	operator<<(std::ostream & o, ProceduralRenderer const & r)
 {

@@ -24,13 +24,13 @@ namespace LWGC
 
 			Random &	operator=(Random const & src);
 
-			static float		GetFloat(void);
-			static int			GetInt(void);
+			static float		GetValue(void);
 			static glm::vec2	OnCircle(void);
 			static glm::vec2	InsideCircle(void);
 			static glm::vec3	OnSphere(void);
 			static glm::vec3	InsideSphere(void);
 			static glm::quat	GetRotation(void);
+			static glm::vec3	GetPosition(const glm::vec3 & min, const glm::vec3 & max);
 			static Color		GetColor(void);
 			static float		Range(const float a, const float b);
 			static int			Range(const int a, const int b);
