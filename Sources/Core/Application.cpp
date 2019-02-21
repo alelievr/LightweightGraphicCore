@@ -8,7 +8,7 @@
 
 using namespace LWGC;
 
-Application *	Application::_app = nullptr;
+Application *				Application::_app = nullptr;
 Delegate< void(void) >		Application::update;
 Delegate< void(void) >		Application::lateUpdate;
 

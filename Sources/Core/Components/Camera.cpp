@@ -143,6 +143,7 @@ void					Camera::UpdateUniformData(void) noexcept
 	// Transpose for HLSL
 	_perCamera.projection = glm::transpose(_perCamera.projection);
 	_perCamera.view = glm::transpose(_perCamera.view);
+	_perCamera.screenSize = glm::vec4(_viewportSize, 1.0f / _viewportSize);
 
 	Vk::UploadToMemory(_uniformCameraBuffer.memory, &_perCamera, sizeof(_perCamera));
 }

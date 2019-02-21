@@ -27,8 +27,7 @@ int			main(void)
 	// We must Open the window before doing anything related to vulkan
 	app.Open("Test Window", 1920, 1080, WindowFlag::Resizable | WindowFlag::Decorated | WindowFlag::Focused);
 
-	auto	textureMaterial = Material::Create(BuiltinShaders::Standard);
-
+	auto textureMaterial = Material::Create(BuiltinShaders::Standard);
 	auto animeTexture = Texture2D::Create("Images/656218.jpg", VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_USAGE_SAMPLED_BIT, true);
 
 	auto cube = new GameObject(new MeshRenderer(PrimitiveType::Cube, textureMaterial));
