@@ -52,7 +52,6 @@ void						PrimitiveMeshFactory::_ComputeCubePoints(float size, std::vector< glm:
 
  void						PrimitiveMeshFactory::_ComputeCirclePoints(float radius, int vertexCount, std::vector< glm::vec3 > & points)
 {
-	glm::vec3	center = glm::vec3(0, 0, 0);
 	float		c = 0;
 
 	for (int i = 0; i < vertexCount; i++)
@@ -114,10 +113,6 @@ std::shared_ptr< Mesh >		PrimitiveMeshFactory::_CreateWireframeCubeMesh(const st
 {
 	std::shared_ptr< Mesh >					m = std::make_shared< Mesh >();
 	std::vector< Mesh::VertexAttributes >	attribs(24);
-
-	// no normals nor tangents for wireframe
-	glm::vec3 normal = glm::vec3(0, 0, 0);
-	glm::vec3 tangent = glm::vec3(0, 0, 0);
 
 	// top quad
 	Mesh::VertexAttributes::EdgeVertexAttrib(p[4], p[5], attribs.data() + 0);

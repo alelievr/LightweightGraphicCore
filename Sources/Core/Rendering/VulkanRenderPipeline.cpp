@@ -339,11 +339,11 @@ void	VulkanRenderPipeline::Render(const std::vector< Camera * > & cameras, Rende
 
 	renderPass.BindDescriptorSet(LWGCBinding::Frame, _perFrameDescriptorSet);
 
+	beginFrameRendering.Invoke();
+
 	for (const auto camera : cameras)
 	{
-		for (auto & updatePerCamera : context->GetUpdatePerCameras())
-			updatePerCamera->UpdatePerCamera(camera);
-
+		beginCameraRendering.Invoke(camera);
 		std::unordered_set< Renderer * >	renderers;
 
 		renderPass.BindDescriptorSet(LWGCBinding::Camera, camera->GetDescriptorSet());
@@ -362,7 +362,11 @@ void	VulkanRenderPipeline::Render(const std::vector< Camera * > & cameras, Rende
 			meshRenderer->RecordCommands(drawMeshBuffer);
 			renderPass.ExecuteCommandBuffer(drawMeshBuffer);
 		}
+
+		endCameraRendering.Invoke(camera);
 	}
+
+	endFrameRendering.Invoke();
 
 	EndRenderPass();
 

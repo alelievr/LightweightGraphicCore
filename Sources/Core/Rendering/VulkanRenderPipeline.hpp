@@ -16,6 +16,11 @@
 
 namespace LWGC
 {
+	using BeginFrameRenderingDelegate = Delegate< void(void) >;
+	using BeginCameraRenderingDelegate = Delegate< void(Camera *) >;
+	using EndCameraRenderingDelegate = Delegate< void(Camera *) >;
+	using EndFrameRenderingDelegate = Delegate< void(void) >;
+
 	class VulkanRenderPipeline
 	{
 		friend class Application;
@@ -76,6 +81,11 @@ namespace LWGC
 			RenderPass *	GetRenderPass(void);
 			Camera *		GetCurrentCamera(void);
 			void			EnqueueFrameCommandBuffer(VkCommandBuffer cmd);
+
+			BeginFrameRenderingDelegate		beginFrameRendering;
+			BeginCameraRenderingDelegate	beginCameraRendering;
+			EndCameraRenderingDelegate		endCameraRendering;
+			EndFrameRenderingDelegate		endFrameRendering;
 
 			static VulkanRenderPipeline *	Get();
 	};

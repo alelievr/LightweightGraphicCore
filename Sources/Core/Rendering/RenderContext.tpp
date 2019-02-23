@@ -3,8 +3,6 @@
 #include <unordered_map>
 #include <unordered_set>
 
-#include "Core/IUpdatePerCamera.hpp"
-
 #include "Core/Components/Light.hpp"
 #include "Core/Components/Renderer.hpp"
 #include "Core/Components/ComputeDispatcher.hpp"
@@ -20,9 +18,6 @@ namespace LWGC
     class RenderContext
     {
         friend class Hierarchy;
-
-        private:
-            std::vector<IUpdatePerCamera *> _updatePerCamera;
 
         public:
             RenderContext(void) = default;
@@ -67,6 +62,5 @@ namespace LWGC
             void GetLights(std::unordered_set< Light * > &lights) { return GetComponentSet< Light * >(static_cast< uint32_t >(ComponentType::Light), lights); }
             void GetRenderers(std::unordered_set< Renderer * > &renderers) { return GetComponentSet< Renderer * >(renderers); }
             void GetComputeDispatchers(std::unordered_set< ComputeDispatcher * > &computeDispatchers) { return GetComponentSet< ComputeDispatcher * >(static_cast< uint32_t >(ComponentType::ComputeDispatcher), computeDispatchers); }
-            std::vector< IUpdatePerCamera * > &GetUpdatePerCameras(void) { return _updatePerCamera; }
     };
 }
