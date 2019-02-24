@@ -34,7 +34,7 @@ void	Selection::Initialize(void) noexcept
 
 void	Selection::Update(void) noexcept
 {
-	Camera *		cam = VulkanRenderPipeline::Get()->GetCurrentCamera();
+	Camera *		cam = RenderPipeline::Get()->GetCurrentCamera();
 
 	// If there is no camera, we don't have to raycast
 	if (cam == nullptr)

@@ -5,7 +5,7 @@
 #include <memory>
 
 #include "WindowFlag.hpp"
-#include "Rendering/VulkanRenderPipeline.hpp"
+#include "Rendering/RenderPipeline.hpp"
 #include "EventSystem.hpp"
 #include "Hierarchy.hpp"
 #include "Vulkan/VulkanInstance.hpp"
@@ -35,7 +35,7 @@ namespace LWGC
 			VulkanInstance						_instance;
 			VulkanSurface						_surface;
 			SwapChain							_swapChain;
-			VulkanRenderPipeline *				_renderPipeline;
+			RenderPipeline *				_renderPipeline;
 			GLFWwindow *						_window;
 			EventSystem							_eventSystem;
 			std::shared_ptr< Hierarchy >		hierarchy;
@@ -49,7 +49,7 @@ namespace LWGC
 
 		public:
 			Application(void);
-			Application(VulkanRenderPipeline * renderPipeline);
+			Application(RenderPipeline * renderPipeline);
 			Application(const Application&) = delete;
 			virtual ~Application(void);
 

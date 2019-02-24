@@ -21,7 +21,7 @@ namespace LWGC
 	using EndCameraRenderingDelegate = Delegate< void(Camera *) >;
 	using EndFrameRenderingDelegate = Delegate< void(void) >;
 
-	class VulkanRenderPipeline
+	class RenderPipeline
 	{
 		friend class Application;
 
@@ -32,7 +32,7 @@ namespace LWGC
 				glm::vec4	time;
 			};
 
-			static VulkanRenderPipeline *	_pipelineInstance;
+			static RenderPipeline *	_pipelineInstance;
 			std::vector< VkCommandBuffer >	_swapChainCommandBuffers;
 			LWGC_PerFrame					_perFrame;
 			UniformBuffer					_uniformPerFrame;
@@ -71,11 +71,11 @@ namespace LWGC
 			virtual void		RenderGUI(RenderContext * context) noexcept;
 
 		public:
-			VulkanRenderPipeline(void);
-			VulkanRenderPipeline(const VulkanRenderPipeline & p) = delete;
-			virtual			~VulkanRenderPipeline(void);
+			RenderPipeline(void);
+			RenderPipeline(const RenderPipeline & p) = delete;
+			virtual			~RenderPipeline(void);
 
-			VulkanRenderPipeline & operator=(const VulkanRenderPipeline & rhs) = delete;
+			RenderPipeline & operator=(const RenderPipeline & rhs) = delete;
 
 			SwapChain *		GetSwapChain(void);
 			RenderPass *	GetRenderPass(void);
@@ -87,6 +87,6 @@ namespace LWGC
 			EndCameraRenderingDelegate		endCameraRendering;
 			EndFrameRenderingDelegate		endFrameRendering;
 
-			static VulkanRenderPipeline *	Get();
+			static RenderPipeline *	Get();
 	};
 }

@@ -13,7 +13,7 @@ namespace LWGC
 {
 	class		SwapChain
 	{
-		friend class VulkanRenderPipeline;
+		friend class RenderPipeline;
 	
 		private:
 			VkSwapchainKHR					_swapChain;

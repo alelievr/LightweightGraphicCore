@@ -46,7 +46,8 @@ SRC			=	Core/Application.cpp \
 				Core/PrimitiveMeshFactory.cpp \
 				Core/Rendering/ForwardRenderPipeline.cpp \
 				Core/Rendering/RenderTarget.cpp \
-				Core/Rendering/VulkanRenderPipeline.cpp \
+				Core/Rendering/RenderPipeline.cpp \
+				Core/Rendering/RenderPipelineManager.cpp \
 				Core/Rendering/PipelineCommandBuffer.cpp \
 				Core/Shaders/ShaderProgram.cpp \
 				Core/Shaders/ShaderSource.cpp \

@@ -2,7 +2,7 @@
 
 #include "Core/Vulkan/Vk.hpp"
 #include "Core/Vulkan/SwapChain.hpp"
-#include "Core/Rendering/VulkanRenderPipeline.hpp"
+#include "Core/Rendering/RenderPipeline.hpp"
 #include "Utils/Vector.hpp"
 #include "IncludeDeps.hpp"
 #include GLM_INCLUDE_QUATERNION
@@ -77,7 +77,7 @@ void		Camera::Initialize(void) noexcept
 {
 	Component::Initialize();
 
-	_swapChain = VulkanRenderPipeline::Get()->GetSwapChain();
+	_swapChain = RenderPipeline::Get()->GetSwapChain();
 
 	_viewportSize.x = _swapChain->GetExtent().width;
 	_viewportSize.y = _swapChain->GetExtent().height;

@@ -3,11 +3,11 @@
 #include <iostream>
 #include <string>
 
-#include "VulkanRenderPipeline.hpp"
+#include "RenderPipeline.hpp"
 
 namespace LWGC
 {
-	class		ForwardRenderPipeline : public VulkanRenderPipeline
+	class		ForwardRenderPipeline : public RenderPipeline
 	{
 		private:
 			RenderTarget	_target;

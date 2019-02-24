@@ -7,7 +7,7 @@
 #include GLM_INCLUDE_MATRIX_TRANSFORM
 
 #include "Core/Textures/Texture2DArray.hpp"
-#include "Core/Rendering/VulkanRenderPipeline.hpp"
+#include "Core/Rendering/RenderPipeline.hpp"
 #include "Core/Mesh.hpp"
 #include "Core/Shaders/BuiltinShaders.hpp"
 #include "Core/Vulkan/SwapChain.hpp"

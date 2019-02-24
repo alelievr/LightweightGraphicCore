@@ -17,7 +17,7 @@ Application::Application(void) : _renderPipeline(nullptr), _window(nullptr), hie
 	_app = this;
 }
 
-Application::Application(VulkanRenderPipeline * renderPipeline) : Application()
+Application::Application(RenderPipeline * renderPipeline) : Application()
 {
 	this->_renderPipeline = renderPipeline;
 }
@@ -79,7 +79,7 @@ void		Application::FramebufferResizeCallback(GLFWwindow *window, int width, int 
 		glfwWaitEvents();
 	}
 
-	auto app = reinterpret_cast<VulkanRenderPipeline *>(glfwGetWindowUserPointer(window));
+	auto app = reinterpret_cast<RenderPipeline *>(glfwGetWindowUserPointer(window));
 	app->framebufferResized = true;
 }
 

@@ -1,7 +1,7 @@
 #include "Renderer.hpp"
 #include "Core/PrimitiveMeshFactory.hpp"
 #include "Core/Hierarchy.hpp"
-#include "Core/Rendering/VulkanRenderPipeline.hpp"
+#include "Core/Rendering/RenderPipeline.hpp"
 #include "Core/Vulkan/VulkanInstance.hpp"
 #include "Utils/Vector.hpp"
 
@@ -34,7 +34,7 @@ void		Renderer::Initialize(void) noexcept
 
 	_material->MarkAsReady();
 
-	PipelineCommandBuffer::Allocate(VulkanRenderPipeline::Get()->GetSwapChain()->GetImageCount());
+	PipelineCommandBuffer::Allocate(RenderPipeline::Get()->GetSwapChain()->GetImageCount());
 
 	if (_descriptorSetLayout == VK_NULL_HANDLE)
 		CreateGraphicDescriptorSetLayout();

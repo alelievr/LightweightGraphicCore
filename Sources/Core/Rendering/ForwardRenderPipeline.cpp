@@ -12,5 +12,5 @@ ForwardRenderPipeline::~ForwardRenderPipeline(void)
 
 void	ForwardRenderPipeline::Render(const std::vector< Camera * > & cameras, RenderContext * context)
 {
-	VulkanRenderPipeline::Render(cameras, context);
+	RenderPipeline::Render(cameras, context);
 }

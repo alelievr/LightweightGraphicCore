@@ -1,7 +1,7 @@
 #include "HandleManager.hpp"
 
 #include "Core/Application.hpp"
-#include "Core/Rendering/VulkanRenderPipeline.hpp"
+#include "Core/Rendering/RenderPipeline.hpp"
 
 #include <cmath>
 
@@ -56,7 +56,7 @@ void		HandleManager::UpdateHoveredHandle(void)
 {
 	float nearest = 1e20;
 	HandleControl * nearestHandle = nullptr;
-	auto cam = VulkanRenderPipeline::Get()->GetCurrentCamera();
+	auto cam = RenderPipeline::Get()->GetCurrentCamera();
 
 	// We can't compute distance without a camera
 	if (cam == nullptr)
