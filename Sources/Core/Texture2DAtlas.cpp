@@ -1,15 +1,14 @@
 #include "Texture2DAtlas.hpp"
 
+#include <vector>
 
-Texture2DAtlas::Texture2DAtlas(void)
-{
-	std::cout << "Default constructor of Texture2DAtlas called" << std::endl;
-}
+using namespace LWGC;
 
-Texture2DAtlas::Texture2DAtlas(Texture2DAtlas const & src)
+Texture2DAtlas::Texture2DAtlas(int w, int h)
 {
-	*this = src;
-	std::cout << "Copy constructor of Texture2DAtlas called" << std::endl;
+	width = w;
+	height = h;
+	// alloc_mem
 }
 
 Texture2DAtlas::~Texture2DAtlas(void)
@@ -17,14 +16,25 @@ Texture2DAtlas::~Texture2DAtlas(void)
 	std::cout << "Destructor of Texture2DAtlas called" << std::endl;
 }
 
-
-Texture2DAtlas &	Texture2DAtlas::operator=(Texture2DAtlas const & src)
+void *Texture2DAtlas::fit(Texture texture, int width, int height)
 {
-	std::cout << "Assignment operator of Texture2DAtlas called" << std::endl;
-
-	if (this != &src) {
+	auto node = findnode(width, height);
+	if (node != NULL)
+	{
+		//save texture in node;
+		return node;
 	}
-	return (*this);
+}
+
+void *Texture2DAtlas::findnode(int w, int h)
+{
+	// if (root.used)
+	// 	return this.findNode(root.right, w, h) || this.findNode(root.down, w, h);
+	// else 
+	if ((width <= w) && (height <= h))
+		return NULL; //mem_ptr;
+	else
+		return NULL;
 }
 
 std::ostream &	operator<<(std::ostream & o, Texture2DAtlas const & r)
