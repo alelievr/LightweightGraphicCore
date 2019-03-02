@@ -17,6 +17,7 @@ namespace LWGC
 			LWGC::SwapChain *														_swapChain;
 			LWGC::RenderPass *														_renderPass;
 			static std::unordered_map<ShaderProgram *, std::vector< Material * > >	_shadersPrograms;
+			bool																	_initialized;
 
 			void 	UpdateMaterial(ShaderProgram *shaderProgram) noexcept;
 			void 	NotifyMaterialReady(Material * material);
@@ -26,9 +27,11 @@ namespace LWGC
 			MaterialTable(const MaterialTable&) = delete;
 			virtual ~MaterialTable(void);
 
-			void 	RegsiterObject(Material * material) override; 
+			void 	RegsiterObject(Material * material) override;
 			void 	Initialize(LWGC::SwapChain *swapChain , LWGC::RenderPass * renderPipeline);
 			void	RecreateAll(void);
+			bool	IsInitialized(void) const noexcept;
+			void	SetRenderPass(RenderPass * renderPass);
 
 			MaterialTable &	operator=(MaterialTable const & src) = delete;
 

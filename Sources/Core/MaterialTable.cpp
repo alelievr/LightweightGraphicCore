@@ -7,7 +7,7 @@ MaterialTable * _instance = nullptr;
 
 MaterialTable *	MaterialTable::Get(void) { return _instance; }
 
-MaterialTable::MaterialTable(void) : _swapChain(nullptr), _renderPass(nullptr)
+MaterialTable::MaterialTable(void) : _swapChain(nullptr), _renderPass(nullptr), _initialized(false)
 {
 	_instance = this;
 }
@@ -19,7 +19,7 @@ MaterialTable::~MaterialTable(void)
 void MaterialTable::UpdateMaterial(ShaderProgram *shaderProgram) noexcept
 {
 	auto materials = _shadersPrograms[shaderProgram];
-	
+
 	for (auto material: materials)
 	{
 		try {
@@ -45,6 +45,8 @@ void 	MaterialTable::Initialize(LWGC::SwapChain *swapChain , LWGC::RenderPass *r
 	{
 		material->Initialize(_swapChain, _renderPass);
 	}
+
+	_initialized = true;
 }
 
 void	MaterialTable::NotifyMaterialReady(Material * material)
@@ -63,6 +65,9 @@ void	MaterialTable::RecreateAll(void)
 		material->CreatePipeline();
 	}
 }
+
+void	MaterialTable::SetRenderPass(RenderPass * renderPass) { _renderPass = renderPass; }
+bool	MaterialTable::IsInitialized(void) const noexcept { return _initialized; }
 
 std::ostream &	operator<<(std::ostream & o, MaterialTable const & r)
 {

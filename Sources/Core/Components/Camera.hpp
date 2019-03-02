@@ -31,7 +31,6 @@ namespace LWGC
 			float					_farPlane;
 			UniformBuffer			_uniformCameraBuffer;
 			VkDescriptorSet			_perCameraDescriptorSet;
-			SwapChain *				_swapChain;
 			bool					_initDescriptorSetLayout;
 			LWGC_PerCamera			_perCamera;
 

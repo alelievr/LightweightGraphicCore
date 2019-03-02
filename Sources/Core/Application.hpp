@@ -20,6 +20,7 @@
 #include "Core/TextureTable.hpp"
 #include "Core/Textures/Texture2D.hpp"
 #include "Core/Textures/Texture2DArray.hpp"
+#include "Core/Rendering/RenderPipelineManager.hpp"
 
 #include VULKAN_INCLUDE
 #include GLFW_INCLUDE
@@ -35,21 +36,20 @@ namespace LWGC
 			VulkanInstance						_instance;
 			VulkanSurface						_surface;
 			SwapChain							_swapChain;
-			RenderPipeline *				_renderPipeline;
 			GLFWwindow *						_window;
 			EventSystem							_eventSystem;
 			std::shared_ptr< Hierarchy >		hierarchy;
 			ImGUIWrapper						_imGUI;
 			MaterialTable						_materialTable;
 			TextureTable						_textureTable;
+			bool								_shouldNotQuit;
 
-			bool		_shouldNotQuit;
+			void		UpdateRenderPipeline(void);
 
 			static void	FramebufferResizeCallback(GLFWwindow *window, int width, int height);
 
 		public:
-			Application(void);
-			Application(RenderPipeline * renderPipeline);
+			Application(bool initDeafultRenderPipeline = true);
 			Application(const Application&) = delete;
 			virtual ~Application(void);
 
@@ -61,6 +61,7 @@ namespace LWGC
 			void	Open(const std::string & name, const int width, const int height, const WindowFlag flags) noexcept;
 			void	Update(void) noexcept;
 
+			SwapChain *			GetSwapChain(void) noexcept;
 			EventSystem *		GetEventSystem(void) noexcept;
 			Hierarchy *			GetHierarchy(void) noexcept;
 			MaterialTable *		GetMaterialTable(void) noexcept;

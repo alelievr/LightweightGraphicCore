@@ -3,6 +3,7 @@
 #include "Core/Vulkan/Vk.hpp"
 #include "Core/EventSystem.hpp"
 #include "Core/Rendering/RenderPipeline.hpp"
+#include "Core/Rendering/RenderPipelineManager.hpp"
 
 #define IMGUI_MAX_ELEMENTS	1000
 
@@ -69,7 +70,7 @@ void		ImGUIWrapper::InitImGUI(void)
 		std::cout << "Error: " << ret << std::endl;
 	};
 
-	auto pipeline = RenderPipeline::Get();
+	auto pipeline = RenderPipelineManager::currentRenderPipeline;
 	ImGui_ImplGlfw_InitForVulkan(_surface->GetWindow(), false);
 	auto es = EventSystem::Get();
 	es->onMouseClick.AddListener([](glm::vec2 pos, int button, ButtonAction action){
@@ -255,7 +256,7 @@ void		ImGUIWrapper::EndFrame(void)
 	{
 		err = vkEndCommandBuffer(fd->CommandBuffer);
 		Vk::CheckResult(err, "Error while rendering GUI");
-		RenderPipeline::Get()->EnqueueFrameCommandBuffer(fd->CommandBuffer);
+		RenderPipelineManager::currentRenderPipeline->EnqueueFrameCommandBuffer(fd->CommandBuffer);
 	}
 
 	_wd.FrameIndex = (_wd.FrameIndex + 1) % _swapChain->GetImageCount();

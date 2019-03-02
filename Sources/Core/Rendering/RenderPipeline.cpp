@@ -14,16 +14,11 @@
 
 using namespace LWGC;
 
-RenderPipeline *					RenderPipeline::_pipelineInstance = nullptr;
-
-RenderPipeline * RenderPipeline::Get() { return _pipelineInstance; }
-
-RenderPipeline::RenderPipeline(void) : framebufferResized(false)
+RenderPipeline::RenderPipeline(void) : _initialized(false), framebufferResized(false)
 {
 	swapChain = VK_NULL_HANDLE;
 	instance = VK_NULL_HANDLE;
 	currentCamera = nullptr;
-	_pipelineInstance = this;
 }
 
 RenderPipeline::~RenderPipeline(void)
@@ -59,6 +54,8 @@ void                RenderPipeline::Initialize(SwapChain * swapChain)
 	CreatePerFrameDescriptorSet();
 
 	InitializeHandles();
+
+	_initialized = true;
 }
 
 void				RenderPipeline::InitializeHandles(void) noexcept
@@ -378,6 +375,6 @@ void			RenderPipeline::EnqueueFrameCommandBuffer(VkCommandBuffer cmd)
 	frameCommandBuffers.push_back(cmd);
 }
 
-SwapChain *		RenderPipeline::GetSwapChain(void) { return swapChain; }
 RenderPass *	RenderPipeline::GetRenderPass(void) { return &renderPass; }
 Camera *		RenderPipeline::GetCurrentCamera(void) { return currentCamera; }
+bool			RenderPipeline::IsInitialized(void) { return _initialized; }

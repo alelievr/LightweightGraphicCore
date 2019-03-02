@@ -32,13 +32,13 @@ namespace LWGC
 				glm::vec4	time;
 			};
 
-			static RenderPipeline *	_pipelineInstance;
 			std::vector< VkCommandBuffer >	_swapChainCommandBuffers;
 			LWGC_PerFrame					_perFrame;
 			UniformBuffer					_uniformPerFrame;
 			VkDescriptorSet					_perFrameDescriptorSet;
 			VkDescriptorSetLayout			_perFrameDescriptorSetLayout;
 			uint32_t						_imageIndex;
+			bool							_initialized;
 
 			void				RenderInternal(const std::vector< Camera * > & cameras, RenderContext * context);
 			void				UpdatePerframeUnformBuffer(void) noexcept;
@@ -77,9 +77,10 @@ namespace LWGC
 
 			RenderPipeline & operator=(const RenderPipeline & rhs) = delete;
 
-			SwapChain *		GetSwapChain(void);
 			RenderPass *	GetRenderPass(void);
 			Camera *		GetCurrentCamera(void);
+			bool			IsInitialized(void);
+
 			void			EnqueueFrameCommandBuffer(VkCommandBuffer cmd);
 
 			BeginFrameRenderingDelegate		beginFrameRendering;

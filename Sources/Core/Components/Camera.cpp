@@ -1,7 +1,7 @@
 #include "Camera.hpp"
 
 #include "Core/Vulkan/Vk.hpp"
-#include "Core/Vulkan/SwapChain.hpp"
+#include "Core/Application.hpp"
 #include "Core/Rendering/RenderPipeline.hpp"
 #include "Utils/Vector.hpp"
 #include "IncludeDeps.hpp"
@@ -12,7 +12,7 @@ using namespace LWGC;
 
 VkDescriptorSetLayout Camera::_perCameraDescriptorSetLayout = VK_NULL_HANDLE;
 
-Camera::Camera(void) : _swapChain(nullptr), _initDescriptorSetLayout(false)
+Camera::Camera(void) : _initDescriptorSetLayout(false)
 {
 	this->_target = new RenderTarget();
 	this->_viewportSize = glm::vec2(0, 0);
@@ -77,11 +77,6 @@ void		Camera::Initialize(void) noexcept
 {
 	Component::Initialize();
 
-	_swapChain = RenderPipeline::Get()->GetSwapChain();
-
-	_viewportSize.x = _swapChain->GetExtent().width;
-	_viewportSize.y = _swapChain->GetExtent().height;
-
 	if (_initDescriptorSetLayout == false)
 		CreateCameraDescriptorSetLayout();
 
@@ -131,8 +126,9 @@ void					Camera::UpdateUniformData(void) noexcept
 	// World to camera is the inverse of local (camera) to world
 	_perCamera.view = glm::inverse(transform->GetLocalToWorldMatrix());
 
-	_viewportSize.x = _swapChain->GetExtent().width;
-	_viewportSize.y = _swapChain->GetExtent().height;
+	auto swapChainExtent = Application::Get()->GetSwapChain()->GetExtent();
+	_viewportSize.x = swapChainExtent.width;
+	_viewportSize.y = swapChainExtent.height;
 
 	float ratio = _viewportSize.x / _viewportSize.y;
 	_perCamera.projection = glm::perspective(glm::radians(_fov), ratio, _nearPlane, _farPlane);

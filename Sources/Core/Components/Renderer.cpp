@@ -4,6 +4,7 @@
 #include "Core/Rendering/RenderPipeline.hpp"
 #include "Core/Vulkan/VulkanInstance.hpp"
 #include "Utils/Vector.hpp"
+#include "Core/Application.hpp"
 
 #include "IncludeDeps.hpp"
 #include GLM_INCLUDE
@@ -34,7 +35,7 @@ void		Renderer::Initialize(void) noexcept
 
 	_material->MarkAsReady();
 
-	PipelineCommandBuffer::Allocate(RenderPipeline::Get()->GetSwapChain()->GetImageCount());
+	PipelineCommandBuffer::Allocate(Application::Get()->GetSwapChain()->GetImageCount());
 
 	if (_descriptorSetLayout == VK_NULL_HANDLE)
 		CreateGraphicDescriptorSetLayout();
