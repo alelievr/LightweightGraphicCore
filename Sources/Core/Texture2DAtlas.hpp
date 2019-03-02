@@ -5,28 +5,26 @@
 
 #include "IncludeDeps.hpp"
 #include "Core/Textures/Texture.hpp"
+#include "Core/Vulkan/Vk.hpp"
 
 namespace LWGC
 {
-	class		Texture2DAtlas
+	class		Texture2DAtlas : public Texture
 	{
 		private:
-			int		width;
-			int		height;
-			void*	memory;
-			
-			void	*findnode(int width, int height);
-			// void	*left(mem, w, h);
-			// void	*down(mem, w, h);
+			int			_maxMipLevel;
+			void		*memory;
+			stbi_uc		*_pixels;
 
 		public:
-			Texture2DAtlas(int width, int height);
+			Texture2DAtlas(void) = delete;
+			Texture2DAtlas(uint32_t w, uint32_t h, VkFormat format, int usage, bool allocateMips);
 			Texture2DAtlas(const Texture2DAtlas&) = delete;
 
 			virtual ~Texture2DAtlas(void);
 
 			// vector of blocks -- texture, width, height
-			void	*fit(Texture texture, int width, int height);
+			void	*Fit(std::string fileName);
 
 			Texture2DAtlas &	operator=(Texture2DAtlas const & src) = delete;
 	};
