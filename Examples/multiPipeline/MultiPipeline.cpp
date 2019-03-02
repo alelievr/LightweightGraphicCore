@@ -33,14 +33,18 @@ class SecondPipeline : public RenderPipeline
 
 void SwitchPipeline(RenderPipeline * p1, RenderPipeline * p2)
 {
-	static bool pipe = 0;
+	static int pipe = 0;
 
-	if (pipe)
+	if (pipe % 2)
+	{
 		RenderPipelineManager::SetCurrentRenderPipeline(p1);
+	}
 	else
+	{
 		RenderPipelineManager::SetCurrentRenderPipeline(p2);
+	}
 
-	pipe = !pipe;
+	pipe++;
 }
 
 int			main(void)
@@ -79,7 +83,7 @@ int			main(void)
 	ProcessEvent(es, app);
 	while (app.ShouldNotQuit())
 	{
-		if (((int)Time::GetTime() % 2) == 0)
+		if ((Time::GetFrameCount() % 60) == 0)
 			SwitchPipeline(p1, p2);
 		app.Update();
 	}

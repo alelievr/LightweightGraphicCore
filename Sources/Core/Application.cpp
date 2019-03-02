@@ -1,4 +1,5 @@
 #include <memory>
+#include <unistd.h>
 
 #include "Core/Application.hpp"
 #include "Core/Rendering/ForwardRenderPipeline.hpp"
@@ -76,8 +77,8 @@ void		Application::FramebufferResizeCallback(GLFWwindow *window, int width, int 
 		glfwWaitEvents();
 	}
 
-	auto app = reinterpret_cast<RenderPipeline *>(glfwGetWindowUserPointer(window));
-	app->framebufferResized = true;
+	auto pipeline = reinterpret_cast< RenderPipeline * >(glfwGetWindowUserPointer(window));
+	pipeline->framebufferResized = true;
 }
 
 void			Application::UpdateRenderPipeline(void)
@@ -108,6 +109,7 @@ void			Application::UpdateRenderPipeline(void)
 				_materialTable.RecreateAll();
 
 			// TODO: Recreate ImGUI materials too
+			_imGUI.UpdatePipelineDependentDatas();
 
 			glfwSetWindowUserPointer(_window, currentPipe);
 			lastFramePipeline = currentPipe;
@@ -141,7 +143,9 @@ void			Application::Open(const std::string & name, const int width, const int he
 
 		// Vk needs logical device (which require surface for creation (due to swapchain support checks))
 		Vk::Initialize();
+		Time::Initialize();
 
+		_imGUI.Initialize(&_swapChain, &_surface);
 		UpdateRenderPipeline();
 
 		hierarchy->Initialize();
@@ -156,9 +160,6 @@ void			Application::Open(const std::string & name, const int width, const int he
 	}
 
 	glfwSetFramebufferSizeCallback(_window, FramebufferResizeCallback);
-
-	Time::Initialize();
-	_imGUI.Initialize(&_swapChain, &_surface);
 }
 #include <limits>
 
@@ -175,13 +176,19 @@ void				Application::Update(void) noexcept
 	const auto cameras = hierarchy->GetCameras();
 
 	auto currentPipe = RenderPipelineManager::currentRenderPipeline;
-	currentPipe->RenderInternal(cameras, hierarchy->GetRenderContext());
 
-	_imGUI.BeginFrame();
-	currentPipe->RenderGUI(hierarchy->GetRenderContext());
-	_imGUI.EndFrame();
+	if (currentPipe != nullptr)
+	{
+		currentPipe->RenderInternal(cameras, hierarchy->GetRenderContext());
 
-	currentPipe->PresentFrame();
+		_imGUI.BeginFrame();
+		currentPipe->RenderGUI(hierarchy->GetRenderContext());
+		_imGUI.EndFrame();
+
+		currentPipe->PresentFrame();
+	}
+	else // When there is no pipeline graphic, we limit the application framerate to 60
+		usleep((1.0f / 60.0f) * 1000000.0f);
 
 	_shouldNotQuit = !glfwWindowShouldClose(_window);
 }

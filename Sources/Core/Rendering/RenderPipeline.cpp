@@ -375,6 +375,7 @@ void			RenderPipeline::EnqueueFrameCommandBuffer(VkCommandBuffer cmd)
 	frameCommandBuffers.push_back(cmd);
 }
 
+// This must return the render pass compatible with the swapchain (for the final blit)
 RenderPass *	RenderPipeline::GetRenderPass(void) { return &renderPass; }
 Camera *		RenderPipeline::GetCurrentCamera(void) { return currentCamera; }
 bool			RenderPipeline::IsInitialized(void) { return _initialized; }

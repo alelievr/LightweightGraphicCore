@@ -121,7 +121,7 @@ SPIRV_CROSSLIB	=	Deps/SPIRV-Cross/libspirv-cross.a
 NAME		=	libLWGC.a
 
 #	Compiler
-CFLAGS		=	-Wall -Wextra -pedantic -fPIC
+CFLAGS		=	-Wall -Wextra -pedantic -fPIC -fms-extensions
 CPROTECTION	=	-z execstack -fno-stack-protector
 
 DEBUGFLAGS1	=	-ggdb -fsanitize=address -fno-omit-frame-pointer -fno-optimize-sibling-calls -O0

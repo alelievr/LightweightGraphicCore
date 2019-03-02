@@ -70,7 +70,6 @@ void		ImGUIWrapper::InitImGUI(void)
 		std::cout << "Error: " << ret << std::endl;
 	};
 
-	auto pipeline = RenderPipelineManager::currentRenderPipeline;
 	ImGui_ImplGlfw_InitForVulkan(_surface->GetWindow(), false);
 	auto es = EventSystem::Get();
 	es->onMouseClick.AddListener([](glm::vec2 pos, int button, ButtonAction action){
@@ -86,7 +85,7 @@ void		ImGUIWrapper::InitImGUI(void)
 	es->onChar.AddListener([](uint32_t c){
 		ImGui_ImplGlfw_CharCallback(nullptr, c);
 	});
-	ImGui_ImplVulkan_Init(&initInfo, pipeline->GetRenderPass()->GetRenderPass());
+	ImGui_ImplVulkan_Init(&initInfo, _renderPass.GetRenderPass());
 	ImGui::StyleColorsDark();
 }
 
@@ -150,6 +149,13 @@ void		ImGUIWrapper::InitImGUIFrameDatas(void)
 		Vk::CheckResult(vkAllocateCommandBuffers(_device, &commandBufferInfo, &frame->CommandBuffer), "Can't create ImGUI command buffer");
 
 		_wd.BackBufferView[i] = _swapChain->GetImageViews()[i];
+	}
+}
+
+void		ImGUIWrapper::UpdatePipelineDependentDatas(void)
+{
+	for (uint32_t i = 0; i < _swapChain->GetImageCount(); i++)
+	{
 		_wd.Framebuffer[i] = _swapChain->GetFramebuffers()[i];
 	}
 }

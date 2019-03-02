@@ -2,12 +2,12 @@
 
 using namespace LWGC;
 
-std::vector< RenderPipeline * >	RenderPipelineManager::_usedPipelines;
-RenderPipeline *				RenderPipelineManager::currentRenderPipeline = nullptr;
+std::unordered_set< RenderPipeline * >	RenderPipelineManager::_usedPipelines;
+RenderPipeline *						RenderPipelineManager::currentRenderPipeline = nullptr;
 
 void		RenderPipelineManager::SetCurrentRenderPipeline(RenderPipeline * newPipeline)
 {
-	_usedPipelines.push_back(newPipeline);
+	_usedPipelines.insert(newPipeline);
 	currentRenderPipeline = newPipeline;
 }
 

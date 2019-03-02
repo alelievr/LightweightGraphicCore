@@ -133,6 +133,7 @@ void					Material::SetupDefaultSettings(void)
 
 void					Material::Initialize(SwapChain * swapChain, RenderPass * renderPass)
 {
+	std::cout << "Material INitialize !\n";
 	_instance = VulkanInstance::Get();
 	_device = _instance->GetDevice();
 	_swapChain = swapChain;
@@ -155,6 +156,31 @@ void					Material::Initialize(SwapChain * swapChain, RenderPass * renderPass)
 		SetSampler(SamplerBinding::NearestRepeat, Vk::Samplers::nearestRepeat, true);
 		SetSampler(SamplerBinding::AnisotropicTrilinearClamp, Vk::Samplers::anisotropicTrilinearClamp, true);
 		SetSampler(SamplerBinding::DepthCompare, Vk::Samplers::depthCompare, true);
+	}
+
+	// Bind all the properties that have beed bound before the material was ready:
+	BindMaterialProperties();
+}
+
+void					Material::BindMaterialProperties(void) noexcept
+{
+	for (const auto & prop : _materialProperties)
+	{
+		switch (prop.second.propertyType)
+		{
+			case MaterialPropertyType::Buffer:
+				SetBuffer(prop.first, prop.second.buffer, prop.second.size, prop.second.descriptorType);
+				break ;
+			case MaterialPropertyType::Texture:
+				SetTexture(prop.first, prop.second.texture, prop.second.imageLayout, prop.second.descriptorType);
+				break ;
+			case MaterialPropertyType::Sampler:
+				SetSampler(prop.first, prop.second.sampler);
+				break ;
+			default:
+				std::cerr << "Can't bind material property of type " << static_cast< int >(prop.second.propertyType) << std::endl;
+				break ;
+		}
 	}
 }
 
@@ -398,6 +424,19 @@ bool					Material::DescriptorSetExists(const std::string & bindingName, bool sil
 
 void				Material::SetBuffer(const std::string & bindingName, VkBuffer buffer, size_t size, VkDescriptorType descriptorType, bool silent)
 {
+	// Store the material properties so when we re-create it we cant set these values
+	_materialProperties[bindingName] = MaterialProperty{
+		MaterialPropertyType::Buffer,
+		descriptorType,
+		buffer,
+		size,
+		nullptr,
+		{},
+		VK_NULL_HANDLE
+	};
+
+	if (!IsCompiled())
+		return ;
 	if (!DescriptorSetExists(bindingName, silent))
 		return ;
 
@@ -420,6 +459,19 @@ void				Material::SetBuffer(const std::string & bindingName, VkBuffer buffer, si
 
 void				Material::SetTexture(const std::string & bindingName, const Texture * texture, VkImageLayout imageLayout, VkDescriptorType descriptorType, bool silent)
 {
+
+	_materialProperties[bindingName] = MaterialProperty{
+		MaterialPropertyType::Texture,
+		descriptorType,
+		VK_NULL_HANDLE,
+		0,
+		texture,
+		imageLayout,
+		VK_NULL_HANDLE
+	};
+
+	if (!IsCompiled())
+		return ;
 	if (!DescriptorSetExists(bindingName, silent))
 		return ;
 
@@ -443,6 +495,18 @@ void				Material::SetTexture(const std::string & bindingName, const Texture * te
 
 void				Material::SetSampler(const std::string & bindingName, VkSampler sampler, bool silent)
 {
+	_materialProperties[bindingName] = MaterialProperty{
+		MaterialPropertyType::Sampler,
+		VK_DESCRIPTOR_TYPE_SAMPLER,
+		VK_NULL_HANDLE,
+		0,
+		nullptr,
+		{},
+		sampler
+	};
+
+	if (!IsCompiled())
+		return ;
 	if (!DescriptorSetExists(bindingName, silent))
 		return ;
 
@@ -479,6 +543,8 @@ bool				Material::IsInitialized(void) const
 {
 	return (_instance != nullptr);
 }
+
+bool				Material::IsCompiled(void) const noexcept { return _program != nullptr && _program->IsCompiled(); }
 
 void				Material::MarkAsReady(void) noexcept
 {

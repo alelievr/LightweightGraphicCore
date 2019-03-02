@@ -55,7 +55,7 @@ namespace LWGC
 		friend class RenderPass; // For binding descriptor sets
 
 		private:
-			struct LWGC_PerMaterial
+			struct	LWGC_PerMaterial
 			{
 				glm::vec4		albedo;
 			};
@@ -66,6 +66,25 @@ namespace LWGC
 				std::string		name;
 			};
 
+			enum class MaterialPropertyType
+			{
+				Buffer,
+				Texture,
+				Sampler,
+			};
+
+			struct	MaterialProperty
+			{
+				MaterialPropertyType	propertyType;
+				VkDescriptorType		descriptorType;
+				VkBuffer				buffer;
+				size_t					size;
+				const Texture *			texture;
+				VkImageLayout			imageLayout;
+				VkSampler				sampler;
+			};
+
+			using PropertiesTable = std::unordered_map< std::string, MaterialProperty >;
 			using SetTable = std::unordered_map< uint32_t, DescriptorSet >;
 
 			VkPipelineLayout						_pipelineLayout;
@@ -83,6 +102,7 @@ namespace LWGC
 			std::vector< VkDescriptorSetLayout >	_setLayouts;
 			const ShaderBindingTable *				_bindingTable;
 			SetTable								_setTable;
+			PropertiesTable							_materialProperties;
 			VkPipelineVertexInputStateCreateInfo	_vertexInputState;
 			VkPipelineInputAssemblyStateCreateInfo	_inputAssemblyState;
 			VkPipelineDepthStencilStateCreateInfo	_depthStencilState;
@@ -104,6 +124,7 @@ namespace LWGC
 			void		InitMaterialIfPossible(void);
 			void		AllocateDescriptorSet(const std::string & bindingName);
 			bool		IsInitialized(void) const;
+			void		BindMaterialProperties(void) noexcept;
 
 		public:
 			Material(const Material &) = delete;
@@ -128,7 +149,8 @@ namespace LWGC
 			void				GetComputeWorkSize(uint32_t & width, uint32_t & height, uint32_t & depth) const;
 			bool				IsCompute(void) const;
 			bool				IsReady(void) const noexcept;
-			
+			bool				IsCompiled(void) const noexcept;
+
 			void				ReloadShaders(void) noexcept;
 
 			void				SetBuffer(const std::string & bindingName, VkBuffer buffer, size_t size, VkDescriptorType descriptorType, bool silent = false);

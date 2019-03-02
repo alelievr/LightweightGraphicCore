@@ -2,7 +2,7 @@
 
 #include <iostream>
 #include <string>
-#include <vector>
+#include <unordered_set>
 #include "Core/Rendering/RenderPipeline.hpp"
 
 namespace LWGC
@@ -10,7 +10,7 @@ namespace LWGC
 	class		RenderPipelineManager
 	{
 		private:
-			static std::vector< RenderPipeline * >	_usedPipelines;
+			static std::unordered_set< RenderPipeline * >	_usedPipelines;
 
 		public:
 			RenderPipelineManager(void) = delete;
