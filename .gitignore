@@ -42,3 +42,7 @@ Deps/vulkansdk-macos-1.1.85.0/
 
 # Others
 *.ini
+
+# Build folders
+[Bb]uild/
+[Bb]uilds/

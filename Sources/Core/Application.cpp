@@ -87,7 +87,7 @@ void		Application::FramebufferResizeCallback(GLFWwindow *window, int width, int 
 void			Application::UpdateRenderPipeline(void)
 {
 	// By setting this to null we ensure that the first time the function is called,
-	// we initialize the materials using the renderpipeline (is there is one)
+// we initialize the materials using the renderpipeline (is there is one)
 	static RenderPipeline *	lastFramePipeline = nullptr;
 	auto currentPipe = RenderPipelineManager::currentRenderPipeline;
 

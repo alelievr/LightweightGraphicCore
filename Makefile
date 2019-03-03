@@ -16,7 +16,7 @@
 
 #	Sources
 SRCDIR		=	Sources
-SRC			=	Core/Application.cpp \
+SOURCES		=	Core/Application.cpp \
 				Core/Transform.cpp \
 				Core/GameObject.cpp \
 				Core/Hierarchy.cpp \
@@ -190,12 +190,12 @@ endif
 #################
 
 NASM		=	nasm
-OBJS		=	$(patsubst %.c,%.o, $(filter %.c, $(SRC))) \
-				$(patsubst %.cpp,%.o, $(filter %.cpp, $(SRC))) \
-				$(patsubst %.s,%.o, $(filter %.s, $(SRC)))
+OBJS		=	$(patsubst %.c,%.o, $(filter %.c, $(SOURCES))) \
+				$(patsubst %.cpp,%.o, $(filter %.cpp, $(SOURCES))) \
+				$(patsubst %.s,%.o, $(filter %.s, $(SOURCES)))
 OBJ			=	$(addprefix $(OBJDIR)/,$(notdir $(OBJS)))
 NORME		=	**/*.[ch]
-VPATH		+=	$(dir $(addprefix $(SRCDIR)/,$(SRC)))
+VPATH		+=	$(dir $(addprefix $(SRCDIR)/,$(SOURCES)))
 INCFILES	=	$(foreach inc, $(INCDIRS), $(wildcard $(inc)/*.h))
 CPPFLAGS	=	$(addprefix -I,$(INCDIRS))
 LDFLAGS		=	$(addprefix -L,$(LIBDIRS))
