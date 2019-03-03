@@ -49,9 +49,12 @@ void			Application::Init(void) noexcept
 
 #ifdef __unix__
 	_instance.SetValidationLayers({
-		"VK_LAYER_LUNARG_standard_validation"
+		"VK_LAYER_LUNARG_standard_validation",
 	});
 #endif
+	_instance.SetDeviceExtensions({
+		"VK_EXT_debug_marker",
+	});
 	_instance.SetDeviceExtensions({VK_KHR_SWAPCHAIN_EXTENSION_NAME});
 	_instance.SetApplicationName("LWGC"); // This should be the application name but for the moment we'll keep it like this
 
@@ -105,6 +108,8 @@ void			Application::UpdateRenderPipeline(void)
 
 			if (!_materialTable.IsInitialized())
 				_materialTable.Initialize(&_swapChain, currentPipe->GetRenderPass());
+
+			// We normaly need to upadte the renderpass of the materials if we change a pipeline
 			// else
 				// _materialTable.RecreateAll();
 

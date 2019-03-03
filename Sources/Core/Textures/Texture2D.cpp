@@ -23,11 +23,26 @@ Texture2D::Texture2D(const std::string fileName, VkFormat format, int usage, boo
 
 	AllocateImage(VK_IMAGE_VIEW_TYPE_2D);
 
-    // UploadImage(_pixels, this->width * this->height * 4);
-
 	UploadImageWithMips(image, format, _pixels, this->width * this->height * 4);
 
 	stbi_image_free(_pixels);
+}
+
+Texture2D::Texture2D(unsigned width, unsigned height, VkFormat format, int usage, void *data, unsigned size, bool generateMips)
+{
+	this->format = format;
+	this->width = width;
+	this->height = height;
+    this->usage = usage;
+
+	if (generateMips)
+	{
+		maxMipLevel = static_cast<uint32_t>(std::floor(std::log2(std::max(width, height)))) + 1;
+	}
+
+	AllocateImage(VK_IMAGE_VIEW_TYPE_2D);
+
+	UploadImageWithMips(image, format, data, size);
 }
 
 Texture2D::Texture2D(std::size_t width, std::size_t height, VkFormat format, int usage, bool allocateMips)

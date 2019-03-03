@@ -82,6 +82,7 @@ SRC			=	Core/Application.cpp \
 				Core/Handles/HandleControl.cpp \
 				Core/Handles/HandleUtils.cpp \
 				Core/ImGUIWrapper.cpp \
+				Core/ModelLoader.cpp \
 				Utils/Bounds.cpp \
 				Utils/Color.cpp \
 				Utils/Random.cpp \
@@ -104,11 +105,11 @@ CPPVERSION	=	c++1z
 #Example $> make DEBUG=2 will set debuglevel to 2
 
 #	Includes
-INCDIRS		=	Sources/ Deps/vulkansdk-macos-1.1.85.0/macOS/include/
+INCDIRS		=	Sources/ Deps/vulkansdk-macos-1.1.85.0/macOS/include/ Deps/assimp/include
 
 #	Libraries
 LIBDIRS		=	Deps/glfw/src Deps/glslang/install/lib Deps/glm
-LDLIBS		=	
+LDLIBS		=
 
 GLFWLIB     =   Deps/glfw/src/libglfw3.a
 STBLIB      =   Deps/stb/stb.h
@@ -116,6 +117,7 @@ GLMLIB      =   Deps/glm/glm
 GLSLANGLIB	=	Deps/glslang/build/StandAlone/glslangValidator
 IMGUILIB    =   Deps/imgui/libImGUI.a
 SPIRV_CROSSLIB	=	Deps/SPIRV-Cross/libspirv-cross.a
+ASSIMPLIB	=	Deps/assimp/lib/libassimp.a
 
 #	Output
 NAME		=	libLWGC.a
@@ -124,8 +126,8 @@ NAME		=	libLWGC.a
 CFLAGS		=	-Wall -Wextra -pedantic -fPIC
 CPROTECTION	=	-z execstack -fno-stack-protector
 
-DEBUGFLAGS1	=	-ggdb -fsanitize=address -fno-omit-frame-pointer -fno-optimize-sibling-calls -O0
-DEBUGFLAGS2	=	-fsanitize-memory-track-origins=2
+DEBUGFLAGS1	=	-ggdb -fsanitize=address -fno-omit-frame-pointer -fno-optimize-sibling-calls -O0 -DDEBUG
+DEBUGFLAGS2	=	-fsanitize-memory-track-origins=2 -DDEBUG2
 OPTFLAGS1	=	-funroll-loops -O2
 OPTFLAGS2	=	-pipe -funroll-loops -Ofast
 MYCC		=	clang++
@@ -247,7 +249,7 @@ endif
 #################
 
 #	First target
-all: $(VULKAN) $(GLFWLIB) $(OBJLIB) $(GLMLIB) $(IMGUILIB) $(SPIRV_CROSSLIB) $(GLSLANGLIB) $(STBLIB) $(NAME)
+all: $(VULKAN) $(GLFWLIB) $(OBJLIB) $(GLMLIB) $(IMGUILIB) $(SPIRV_CROSSLIB) $(GLSLANGLIB) $(STBLIB) $(ASSIMPLIB) $(NAME)
 
 $(GLMLIB):
 	@git submodule init
@@ -271,11 +273,15 @@ $(GLSLANGLIB):
 $(IMGUILIB):
 	@git submodule init
 	@git submodule update
-	@$(MAKE) -f ImGUI.Makefile -j 4
+	@$(MAKE) -f ImGUI.Makefile -j4
 
 $(SPIRV_CROSSLIB):
 	@git submodule update --init
-	cd Deps/SPIRV-Cross/ && make -j 4
+	@cd Deps/SPIRV-Cross/ && make -j4
+
+$(ASSIMPLIB):
+	@git submodule update --init
+	@cd Deps/assimp && cmake . -DBUILD_SHARED_LIBS=OFF && make -j4
 
 $(VULKAN):
 	@$(DOWNLOAD_VULKAN)

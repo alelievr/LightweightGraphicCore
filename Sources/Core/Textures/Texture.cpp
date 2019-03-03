@@ -68,7 +68,7 @@ stbi_uc *		Texture::LoadFromFile(const std::string & fileName, int & width, int 
 	return pixels;
 }
 
-void			Texture::UploadImage(stbi_uc * pixels, VkDeviceSize imageSize)
+void			Texture::UploadImage(void * pixels, VkDeviceSize imageSize)
 {
 	VkBuffer stagingBuffer;
 	VkDeviceMemory stagingBufferMemory;
@@ -133,7 +133,7 @@ void		Texture::TransitionImageLayout(VkImage image, VkImageLayout oldLayout, VkI
 	graphicCommandBufferPool->EndSingle(commandBuffer);
 }
 
-void			Texture::UploadImageWithMips(VkImage image, VkFormat format, stbi_uc * pixels, VkDeviceSize imageSize)
+void			Texture::UploadImageWithMips(VkImage image, VkFormat format, void * pixels, VkDeviceSize imageSize)
 {
 	VkBuffer stagingBuffer;
 	VkDeviceMemory stagingBufferMemory;
