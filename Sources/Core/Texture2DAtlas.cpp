@@ -15,6 +15,8 @@ Texture2DAtlas::Texture2DAtlas(uint32_t w, uint32_t h, VkFormat format, int usag
 	this->height = h;
 	this->arraySize = 1;
 	this->usage = usage;
+	// Force transfer flag (as the image comes from the RAM)
+	this->usage |= VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT;
 
 	_maxMipLevel = (allocateMips) ? static_cast<uint32_t>(std::floor(std::log2(std::max(w, h)))) + 1 : 0;
 

@@ -15,7 +15,6 @@ namespace LWGC
 		private:
 			Texture2DAtlas(uint32_t w, uint32_t h, VkFormat format, int usage, bool allocateMips);
 			int			_maxMipLevel;
-			void		*memory;
 			stbi_uc		*_pixels;
 			NodeTree	_nodetree;
 
