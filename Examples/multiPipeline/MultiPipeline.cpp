@@ -44,7 +44,7 @@ void SwitchPipeline(RenderPipeline * p1, RenderPipeline * p2)
 		RenderPipelineManager::SetCurrentRenderPipeline(p2);
 	}
 
-	std::cout << "Switch !\n" << std::endl;
+	std::cout << "Switch !" << std::endl;
 
 	pipe++;
 }

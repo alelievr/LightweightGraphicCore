@@ -105,8 +105,8 @@ void			Application::UpdateRenderPipeline(void)
 
 			if (!_materialTable.IsInitialized())
 				_materialTable.Initialize(&_swapChain, currentPipe->GetRenderPass());
-			else
-				_materialTable.RecreateAll();
+			// else
+				// _materialTable.RecreateAll();
 
 			// TODO: Recreate ImGUI materials too
 			_imGUI.UpdatePipelineDependentDatas();
