@@ -960,6 +960,7 @@
 			buildPhases = (
 				B1741FA8222C5A4600A18DEE /* Sources */,
 				B1741FA9222C5A4600A18DEE /* Frameworks */,
+				B15B151A222C8C8D00880C9E /* ShellScript */,
 				B19A0481222C834C004D513A /* CopyFiles */,
 			);
 			buildRules = (
@@ -1010,6 +1011,22 @@
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		B15B151A222C8C8D00880C9E /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "EXECFILE=$BUILT_PRODUCTS_DIR/$EXECUTABLE_PATH\nLIBPATH=$BUILT_PRODUCTS_DIR/$FRAMEWORKS_FOLDER_PATH\nNEWLIBPATH=$PROJECT_DIR\"/Deps/vulkansdk-macos-1.1.85.0/macOS/lib/libvulkan.1.dylib\"\n\ninstall_name_tool -change \"@rpath/libvulkan.1.dylib\" \"$NEWLIBPATH\" \"$EXECFILE\"";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		B16B4C78222C239100794EEC /* Sources */ = {
