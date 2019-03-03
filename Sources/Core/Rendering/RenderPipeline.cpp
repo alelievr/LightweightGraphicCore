@@ -8,6 +8,7 @@
 #include "Core/Handles/Tools.hpp"
 #include "Core/Handles/HandleManager.hpp"
 #include "Core/MaterialTable.hpp"
+#include "Core/Time.hpp"
 
 #include <cmath>
 #include <unordered_set>
@@ -53,7 +54,7 @@ void                RenderPipeline::Initialize(SwapChain * swapChain)
 	CreateDescriptorSets();
 	CreatePerFrameDescriptorSet();
 
-	InitializeHandles();
+	// InitializeHandles();
 
 	_initialized = true;
 }
@@ -226,7 +227,6 @@ void			RenderPipeline::CreateSyncObjects(void)
 
 void			RenderPipeline::RecreateSwapChain(void)
 {
-	std::unordered_set< Renderer * >	renderers;
 	vkDeviceWaitIdle(device);
 
 	swapChain->Cleanup();
@@ -245,7 +245,7 @@ void			RenderPipeline::UpdatePerframeUnformBuffer(void) noexcept
 	_perFrame.time.x = static_cast< float >(glfwGetTime());
 	_perFrame.time.y = sin(_perFrame.time.x);
 	_perFrame.time.z = cos(_perFrame.time.x);
-	_perFrame.time.w = 0; // TODO: delta time
+	_perFrame.time.w = Time::GetDeltaTime();
 
 	// Upload datas to GPU
 	Vk::UploadToMemory(_uniformPerFrame.memory, &_perFrame, sizeof(LWGC_PerFrame));

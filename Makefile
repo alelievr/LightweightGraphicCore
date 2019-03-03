@@ -6,7 +6,7 @@
 #    By: amerelo <amerelo@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2014/07/15 15:13:38 by alelievr          #+#    #+#              #
-#    Updated: 2019/01/13 17:27:50 by amerelo          ###   ########.fr        #
+#    Updated: 2019/03/03 00:37:13 by alelievr         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -108,7 +108,7 @@ INCDIRS		=	Sources/ Deps/vulkansdk-macos-1.1.85.0/macOS/include/
 
 #	Libraries
 LIBDIRS		=	Deps/glfw/src Deps/glslang/install/lib Deps/glm
-LDLIBS		=	-lglfw3 -lglslang -lglm
+LDLIBS		=	
 
 GLFWLIB     =   Deps/glfw/src/libglfw3.a
 STBLIB      =   Deps/stb/stb.h
@@ -121,7 +121,7 @@ SPIRV_CROSSLIB	=	Deps/SPIRV-Cross/libspirv-cross.a
 NAME		=	libLWGC.a
 
 #	Compiler
-CFLAGS		=	-Wall -Wextra -pedantic -fPIC -fms-extensions
+CFLAGS		=	-Wall -Wextra -pedantic -fPIC
 CPROTECTION	=	-z execstack -fno-stack-protector
 
 DEBUGFLAGS1	=	-ggdb -fsanitize=address -fno-omit-frame-pointer -fno-optimize-sibling-calls -O0

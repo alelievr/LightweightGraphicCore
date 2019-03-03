@@ -14,6 +14,7 @@
 #include "Core/Vulkan/RenderPass.hpp"
 #include "Core/Application.hpp"
 #include "Core/ShaderCache.hpp"
+#include "Utils/Utils.hpp"
 
 using namespace LWGC;
 
@@ -133,7 +134,6 @@ void					Material::SetupDefaultSettings(void)
 
 void					Material::Initialize(SwapChain * swapChain, RenderPass * renderPass)
 {
-	std::cout << "Material INitialize !\n";
 	_instance = VulkanInstance::Get();
 	_device = _instance->GetDevice();
 	_swapChain = swapChain;

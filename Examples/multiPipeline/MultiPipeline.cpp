@@ -44,6 +44,8 @@ void SwitchPipeline(RenderPipeline * p1, RenderPipeline * p2)
 		RenderPipelineManager::SetCurrentRenderPipeline(p2);
 	}
 
+	std::cout << "Switch !\n" << std::endl;
+
 	pipe++;
 }
 
@@ -55,6 +57,8 @@ int			main(void)
 
 	auto p1 = new FirstPipeline();
 	auto p2 = new SecondPipeline();
+
+	SwitchPipeline(p1, p2);
 
 	ShaderSource::AddIncludePath("../../");
 
@@ -83,7 +87,7 @@ int			main(void)
 	ProcessEvent(es, app);
 	while (app.ShouldNotQuit())
 	{
-		if ((Time::GetFrameCount() % 60) == 0)
+		if (Time::GetFrameCount() != 0 && (Time::GetFrameCount() % 60) == 0)
 			SwitchPipeline(p1, p2);
 		app.Update();
 	}

@@ -43,7 +43,7 @@ LDLIBS		=	-lLWGC -lglfw3 -lImGUI -lvulkan -lglslang -lSPIRV -lHLSL -lSPVRemapper
 NAME		=	cube
 
 #	Compiler
-WERROR		=	
+WERROR		=
 CFLAGS		=	-pedantic -ffast-math -ffunction-sections -fdata-sections
 CPPFLAGS	=	-Wno-c++98-compat
 CPROTECTION	=	-z execstack -fno-stack-protector
@@ -81,16 +81,16 @@ CNORM_OK	=	"231m"
 
 OS			:=	$(shell uname -s)
 PROC		:=	$(shell uname -p)
-DEBUGFLAGS	=	
-LINKDEBUG	=	
-OPTFLAGS	=	
-#COMPILATION	=	
+DEBUGFLAGS	=
+LINKDEBUG	=
+OPTFLAGS	=
+#COMPILATION	=
 
 ifeq "$(OS)" "Windows_NT"
 endif
 ifeq "$(OS)" "Linux"
 	LDLIBS		+= -ldl -lpthread -lX11
-	DEBUGFLAGS	+= 
+	DEBUGFLAGS	+=
 endif
 ifeq "$(OS)" "Darwin"
 	FRAMEWORK	=	OpenGL AppKit IOKit CoreVideo
@@ -140,11 +140,11 @@ ifneq ($(filter 2,$(strip $(DEBUGLEVEL)) ${DEBUG}),)
 endif
 
 ifneq ($(filter 1,$(strip $(OPTLEVEL)) ${OPTI}),)
-	DEBUGFLAGS = 
+	DEBUGFLAGS =
 	OPTFLAGS = $(OPTFLAGS1)
 endif
 ifneq ($(filter 2,$(strip $(OPTLEVEL)) ${OPTI}),)
-	DEBUGFLAGS = 
+	DEBUGFLAGS =
 	OPTFLAGS = $(OPTFLAGS1) $(OPTFLAGS2)
 endif
 
@@ -157,7 +157,7 @@ ifneq ($(filter %.cpp,$(SRC)),)
 endif
 
 ifdef ${NOWERROR}
-	WERROR = 
+	WERROR =
 endif
 
 ifeq "$(strip $(LIBFT))" "2"
