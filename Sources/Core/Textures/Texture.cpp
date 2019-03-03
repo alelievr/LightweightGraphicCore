@@ -68,7 +68,7 @@ stbi_uc *		Texture::LoadFromFile(const std::string & fileName, int & width, int 
 	return pixels;
 }
 
-void			Texture::UploadImage(stbi_uc * pixels, VkDeviceSize imageSize)
+void			Texture::UploadImage(stbi_uc * pixels, VkDeviceSize imageSize, int32_t offsetX, int32_t offsetY, int32_t offsetZ)
 {
 	VkBuffer stagingBuffer;
 	VkDeviceMemory stagingBufferMemory;
@@ -77,7 +77,7 @@ void			Texture::UploadImage(stbi_uc * pixels, VkDeviceSize imageSize)
 	Vk::UploadToMemory(stagingBufferMemory, pixels, imageSize);
 
 	TransitionImageLayout(image, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
-	Vk::CopyBufferToImage(stagingBuffer, image, static_cast<uint32_t>(width), static_cast<uint32_t>(height));
+	Vk::CopyBufferToImage(stagingBuffer, image, static_cast<uint32_t>(width), static_cast<uint32_t>(height), 1, offsetX, offsetY, offsetZ);
 	TransitionImageLayout(image, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
 
 	vkDestroyBuffer(device, stagingBuffer, nullptr);
@@ -133,7 +133,7 @@ void		Texture::TransitionImageLayout(VkImage image, VkImageLayout oldLayout, VkI
 	graphicCommandBufferPool->EndSingle(commandBuffer);
 }
 
-void			Texture::UploadImageWithMips(VkImage image, VkFormat format, stbi_uc * pixels, VkDeviceSize imageSize)
+void			Texture::UploadImageWithMips(VkImage image, VkFormat format, stbi_uc * pixels, VkDeviceSize imageSize, int32_t offsetX, int32_t offsetY, int32_t offsetZ)
 {
 	VkBuffer stagingBuffer;
 	VkDeviceMemory stagingBufferMemory;
@@ -142,7 +142,7 @@ void			Texture::UploadImageWithMips(VkImage image, VkFormat format, stbi_uc * pi
 	Vk::UploadToMemory(stagingBufferMemory, pixels, imageSize);
 
 	TransitionImageLayout(image, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
-    Vk::CopyBufferToImage(stagingBuffer, image, static_cast<uint32_t>(width), static_cast<uint32_t>(height));
+    Vk::CopyBufferToImage(stagingBuffer, image, static_cast<uint32_t>(width), static_cast<uint32_t>(height), 1); //, offsetX ,offsetY ,offsetZ
 
 	vkDestroyBuffer(device, stagingBuffer, nullptr);
 	vkFreeMemory(device, stagingBufferMemory, nullptr);

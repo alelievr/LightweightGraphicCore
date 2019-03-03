@@ -28,12 +28,13 @@ namespace LWGC
 			NodeTree(const NodeTree&) = delete;
 			NodeTree(int width, int height);
 			virtual ~NodeTree(void);
+			NodeTree &	operator=(NodeTree const & src) = delete;
 
-			Rect	FindNode(int w, int h);
-			Node	*CreateStartNode(int w, int h);
+			Rect	FindNode(Node *node, int w, int h);
+			Rect	SearchNode(Node *node, int w, int h, int X, int Y);
+			Rect	Allocate(int w, int h);
 			void	CreateNodes(Node *node);
 			void	Clear(void);
-			NodeTree &	operator=(NodeTree const & src) = delete;
 	};
 
 	std::ostream &	operator<<(std::ostream & o, NodeTree const & r) = delete;

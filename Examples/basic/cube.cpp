@@ -30,11 +30,10 @@ int			main(void)
 	auto textureMaterial = Material::Create(BuiltinShaders::Standard);
 
 	auto atlas = Texture2DAtlas::Create(2048, 2048, VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_USAGE_SAMPLED_BIT, true);
+	Rect pos1 = atlas->Fit("Images/512_1.png");
+	// Rect pos2 = atlas->Fit("Images/512_2.png");
 
-	Rect pos1 = atlas.Fit("Images/512_1.png");
-	Rect pos2 = atlas.Fit("Images/512_2.png");
-
-	// auto animeTexture = Texture2D::Create("Images/656218.jpg", VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_USAGE_SAMPLED_BIT, true);
+	auto animeTexture = Texture2D::Create("Images/656218.jpg", VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_USAGE_SAMPLED_BIT, true);
 
 	auto cube = new GameObject(new MeshRenderer(PrimitiveType::Cube, textureMaterial));
 	auto cam = new GameObject(new Camera());
@@ -48,7 +47,7 @@ int			main(void)
 	hierarchy->AddGameObject(cam);
 
 	textureMaterial->SetTexture(TextureBinding::Albedo, animeTexture, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE);
-	textureMaterial->SetBuffer("_ScaleOffset", pos1);
+	// textureMaterial->SetBuffer("_ScaleOffset", pos1);
 
 	ProcessEvent(es, app);
 	while (app.ShouldNotQuit())
