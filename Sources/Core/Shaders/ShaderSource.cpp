@@ -107,8 +107,14 @@ void		ShaderSource::Compile(void)
 
 	_sourceFile.lastModificationTime = GetFileModificationTime(_sourceFile.path);
 
+	std::string compilerPath = "glslangValidator";
+
+	// If the compiler is in the same directory, we need to add ./
+	if (access(compilerPath.c_str(), F_OK) != -1)
+		compilerPath = "./" + compilerPath;
+
 	// I gave up using the c++ api of glslang, it's totally unusable
-	std::string cmd = "glslangValidator -e main -V -D -S " + StageToText(_stage) + " -I" + path;
+	std::string cmd = compilerPath + " -e main -V -D -S " + StageToText(_stage) + " -I" + path;
 	for (const auto & p : shaderIncludePaths)
 		cmd += " -I" + p;
 	std::string tmpPidPath = tmpFilePath + std::to_string(getpid());

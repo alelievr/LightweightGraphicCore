@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		7141031B222D9558000C7515 /* libvulkan.1.1.85.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 7141031A222D9558000C7515 /* libvulkan.1.1.85.dylib */; };
+		7141031D222D95D8000C7515 /* glslangValidator in CopyFiles */ = {isa = PBXBuildFile; fileRef = 7141031C222D95D8000C7515 /* glslangValidator */; };
 		B11D49FE222C67DB007D5D40 /* libLWGC.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B16B4C7C222C239100794EEC /* libLWGC.a */; };
 		B11D49FF222C67EA007D5D40 /* libglfw3.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B1741FA4222C578700A18DEE /* libglfw3.a */; };
 		B11D4A01222C6869007D5D40 /* libImGUI.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B11D4A00222C6869007D5D40 /* libImGUI.a */; };
@@ -187,6 +189,8 @@
 			dstPath = "";
 			dstSubfolderSpec = 16;
 			files = (
+				7141031D222D95D8000C7515 /* glslangValidator in CopyFiles */,
+				7141031B222D9558000C7515 /* libvulkan.1.1.85.dylib in CopyFiles */,
 				B19A0485222C83A2004D513A /* Shaders in CopyFiles */,
 				B19A0483222C8395004D513A /* Images in CopyFiles */,
 			);
@@ -195,6 +199,9 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		71410318222D9356000C7515 /* libvulkan.1.1.85.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libvulkan.1.1.85.dylib; path = "Deps/vulkansdk-macos-1.1.85.0/macOS/lib/libvulkan.1.1.85.dylib"; sourceTree = "<group>"; };
+		7141031A222D9558000C7515 /* libvulkan.1.1.85.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libvulkan.1.1.85.dylib; path = "Deps/vulkansdk-macos-1.1.85.0/macOS/lib/libvulkan.1.1.85.dylib"; sourceTree = "<group>"; };
+		7141031C222D95D8000C7515 /* glslangValidator */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.executable"; name = glslangValidator; path = Deps/glslang/build/StandAlone/glslangValidator; sourceTree = "<group>"; };
 		B11D4A00222C6869007D5D40 /* libImGUI.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libImGUI.a; path = Deps/imgui/libImGUI.a; sourceTree = "<group>"; };
 		B11D4A02222C688E007D5D40 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
 		B11D4A04222C6899007D5D40 /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = System/Library/Frameworks/IOKit.framework; sourceTree = SDKROOT; };
@@ -437,6 +444,9 @@
 		B16B4C73222C239100794EEC = {
 			isa = PBXGroup;
 			children = (
+				7141031C222D95D8000C7515 /* glslangValidator */,
+				71410318222D9356000C7515 /* libvulkan.1.1.85.dylib */,
+				7141031A222D9558000C7515 /* libvulkan.1.1.85.dylib */,
 				B19A0484222C83A2004D513A /* Shaders */,
 				B19A0482222C8395004D513A /* Images */,
 				B174ED30222C240900A18DEE /* Examples */,
@@ -960,8 +970,8 @@
 			buildPhases = (
 				B1741FA8222C5A4600A18DEE /* Sources */,
 				B1741FA9222C5A4600A18DEE /* Frameworks */,
-				B15B151A222C8C8D00880C9E /* ShellScript */,
 				B19A0481222C834C004D513A /* CopyFiles */,
+				B15B151A222C8C8D00880C9E /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -979,7 +989,7 @@
 		B16B4C74222C239100794EEC /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0920;
+				LastUpgradeCheck = 1010;
 				ORGANIZATIONNAME = "Antoine LELIEVRE";
 				TargetAttributes = {
 					B16B4C7B222C239100794EEC = {
@@ -1024,7 +1034,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "EXECFILE=$BUILT_PRODUCTS_DIR/$EXECUTABLE_PATH\nLIBPATH=$BUILT_PRODUCTS_DIR/$FRAMEWORKS_FOLDER_PATH\nNEWLIBPATH=$PROJECT_DIR\"/Deps/vulkansdk-macos-1.1.85.0/macOS/lib/libvulkan.1.dylib\"\n\ninstall_name_tool -change \"@rpath/libvulkan.1.dylib\" \"$NEWLIBPATH\" \"$EXECFILE\"";
+			shellScript = "EXECFILE=$BUILT_PRODUCTS_DIR/$EXECUTABLE_PATH\nLIBPATH=$BUILT_PRODUCTS_DIR/$FRAMEWORKS_FOLDER_PATH\nNEWLIBPATH=$PROJECT_DIR\"/Deps/vulkansdk-macos-1.1.85.0/macOS/lib/libvulkan.1.dylib\"\n\ninstall_name_tool -change \"@rpath/libvulkan.1.dylib\" \"$NEWLIBPATH\" \"$EXECFILE\"\n\nln -sf $BUILT_PRODUCTS_DIR/libvulkan.1.1.85.dylib $BUILT_PRODUCTS_DIR/libvulkan.1.dylib\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
