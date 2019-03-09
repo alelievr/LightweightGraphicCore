@@ -282,6 +282,17 @@ void			Vk::SetDebugName(const std::string & name, uint64_t vulkanObject, VkDebug
 	if (!VkExt::AreDebugMarkersAvailable())
 		return ;
 
+	if (vulkanObject == VK_NULL_HANDLE)
+	{
+		std::cerr << "ERROR: Trying to set debug name on null vulkan object: " << name << std::endl;
+		return;
+	}
+
+// We don't enable this for mac because the marker extension is not well supported
+#ifndef __unix__
+	return ;
+#endif
+
 	VkDevice	device = VulkanInstance::Get()->GetDevice();
 
 	VkDebugMarkerObjectNameInfoEXT nameInfo = {};
@@ -318,3 +329,51 @@ VULKAN_DEBUG_NAME_FUNCTION_TEMPLATE(SetFenceDebugName, VkFence, VK_DEBUG_REPORT_
 VULKAN_DEBUG_NAME_FUNCTION_TEMPLATE(SetEventDebugName, VkEvent, VK_DEBUG_REPORT_OBJECT_TYPE_EVENT_EXT)
 
 #undef VULKAN_DEBUG_NAME_FUNCTION_TEMPLATE
+
+void			Vk::BeginProfilingSample(VkCommandBuffer cmd, const std::string & debugSampleName, const Color & color)
+{
+	if (!VkExt::AreDebugMarkersAvailable())
+		return;
+
+// We don't enable this for mac because the marker extension is not well supported
+#ifndef __unix__
+	return ;
+#endif
+
+	VkDebugMarkerMarkerInfoEXT markerInfo = {};
+	markerInfo.sType = VK_STRUCTURE_TYPE_DEBUG_MARKER_MARKER_INFO_EXT;
+	memcpy(markerInfo.color, &color.r, sizeof(float) * 4);
+	markerInfo.pMarkerName = debugSampleName.c_str();
+
+	VkExt::CmdDebugMarkerBeginFunction(cmd, &markerInfo);
+}
+
+void			Vk::InsertProfilingSample(VkCommandBuffer cmd, const std::string & debugSampleName, const Color & color)
+{
+	if (!VkExt::AreDebugMarkersAvailable())
+		return;
+
+// We don't enable this for mac because the marker extension is not well supported
+#ifndef __unix__
+	return ;
+#endif
+
+	VkDebugMarkerMarkerInfoEXT markerInfo = {};
+	markerInfo.sType = VK_STRUCTURE_TYPE_DEBUG_MARKER_MARKER_INFO_EXT;
+	memcpy(markerInfo.color, &color.r, sizeof(float) * 4);
+	markerInfo.pMarkerName = debugSampleName.c_str();
+	VkExt::CmdDebugMarkerInsertFunction(cmd, &markerInfo);
+}
+
+void			Vk::EndProfilingSample(VkCommandBuffer cmd)
+{
+	if (!VkExt::AreDebugMarkersAvailable())
+		return ;
+
+// We don't enable this for mac because the marker extension is not well supported
+#ifndef __unix__
+	return ;
+#endif
+
+	VkExt::CmdDebugMarkerEndFunction(cmd);
+}

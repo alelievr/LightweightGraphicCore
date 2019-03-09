@@ -1,8 +1,10 @@
 #pragma once
 
-#include "IncludeDeps.hpp"
-#include VULKAN_INCLUDE
 #include "VulkanInstance.hpp"
+#include "IncludeDeps.hpp"
+#include "Utils/Color.hpp"
+
+#include VULKAN_INCLUDE
 
 namespace LWGC
 {
@@ -67,5 +69,9 @@ namespace LWGC
 			static void			SetSemaphoreDebugName(const std::string & name, VkSemaphore semaphore);
 			static void			SetFenceDebugName(const std::string & name, VkFence fence);
 			static void			SetEventDebugName(const std::string & name, VkEvent event);
+
+			static void			BeginProfilingSample(VkCommandBuffer cmd, const std::string & debugSampleName, const Color & color);
+			static void			InsertProfilingSample(VkCommandBuffer cmd, const std::string & debugSampleName, const Color & color);
+			static void			EndProfilingSample(VkCommandBuffer cmd);
 	};
 }

@@ -29,7 +29,7 @@
 // #define GLSLANG_SPV_INCLDUE "../Deps/glslang/SPIRV/GlslangToSpv.h"
 
 #ifdef __APPLE__
-# define VULKAN_INCLUDE "../Deps/vulkansdk-macos-1.1.85.0/macOS/include/vulkan/vulkan.h"
+# define VULKAN_INCLUDE "../Deps/vulkansdk-macos-1.1.101.0/macOS/include/vulkan/vulkan.h"
 #else
 # define VULKAN_INCLUDE <vulkan/vulkan.h>
 #endif

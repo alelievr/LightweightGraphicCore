@@ -4,11 +4,12 @@
 #include <string>
 #include <unordered_set>
 
-template< typename T = void(void) >
+template< class T >
 class		ObjectTable
 {
 	private:
 	protected:
+		std::unordered_set< T * >	__padding;
 		std::unordered_set< T * >	_objects;
 
 	public:
@@ -20,7 +21,7 @@ class		ObjectTable
 		{
 			_objects.insert(object);
 		}
-		
+
 		void			UnregisterObject(T * object)
 		{
 			_objects.erase(object);
@@ -28,7 +29,7 @@ class		ObjectTable
 
 		void			DestroyObjects(void)
 		{
-			for (auto object: _objects) {
+			for (auto object : _objects) {
 				delete object;
 			}
 		}
@@ -36,10 +37,10 @@ class		ObjectTable
 		ObjectTable &	operator=(ObjectTable const & src) = delete;
 };
 
-template< typename T >
+template< class T >
 std::ostream &	operator<<(std::ostream & o, ObjectTable<T> const & r)
 {
-		o << "tostring of the class ObjectTable" << std::endl;
-		(void)r;
-		return (o);
+	o << "tostring of the class ObjectTable" << std::endl;
+	(void)r;
+	return (o);
 }

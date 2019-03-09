@@ -14,7 +14,8 @@
 
 using namespace LWGC;
 
-Texture::Texture(void) : width(0), height(0), depth(1), arraySize(1), autoGenerateMips(false), usage(0), allocated(false), maxMipLevel(1)
+Texture::Texture(void) : width(0), height(0), depth(1), arraySize(1), autoGenerateMips(false), usage(0),
+	allocated(false), maxMipLevel(1), image(VK_NULL_HANDLE), memory(VK_NULL_HANDLE), view(VK_NULL_HANDLE)
 {
 	instance = VulkanInstance::Get();
 	device = instance->GetDevice();

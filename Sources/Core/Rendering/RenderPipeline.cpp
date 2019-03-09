@@ -137,7 +137,7 @@ void			RenderPipeline::BeginRenderPass(RenderContext * context)
 
 	framebuffer = swapChain->GetFramebuffers()[currentFrame]; // TODO: simplify this
 
-	renderPass.BeginFrame(frameCommandBuffers[0], framebuffer);
+	renderPass.BeginFrame(frameCommandBuffers[0], framebuffer, "Main Pass");
 
 	// Run all compute shaders before begin render pass:
 	std::unordered_set< ComputeDispatcher * >	computeDispatchers;
@@ -178,6 +178,8 @@ void			RenderPipeline::BeginRenderPass(RenderContext * context)
 
 void			RenderPipeline::EndRenderPass(void)
 {
+	renderPass.EndFrame();
+
 	vkCmdEndRenderPass(frameCommandBuffers[0]);
 
 	if (vkEndCommandBuffer(frameCommandBuffers[0]) != VK_SUCCESS)

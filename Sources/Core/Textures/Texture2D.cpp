@@ -16,8 +16,6 @@ Texture2D::Texture2D(const std::string fileName, VkFormat format, int usage, boo
 
     _pixels = LoadFromFile(fileName, this->width, this->height);
 
-	SetName(GetFileNameWithoutExtension(fileName));
-
 	if (generateMips)
 	{
 		maxMipLevel = static_cast<uint32_t>(std::floor(std::log2(std::max(width, height)))) + 1;
@@ -30,6 +28,8 @@ Texture2D::Texture2D(const std::string fileName, VkFormat format, int usage, boo
 	UploadImageWithMips(image, format, _pixels, this->width * this->height * 4);
 
 	stbi_image_free(_pixels);
+
+	SetName(GetFileNameWithoutExtension(fileName));
 }
 
 Texture2D::Texture2D(unsigned width, unsigned height, VkFormat format, int usage, void *data, unsigned size, bool generateMips)

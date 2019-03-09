@@ -23,15 +23,15 @@ namespace LWGC
 			int					arraySize;
 			VkFormat			format;
 			bool				autoGenerateMips;
+			int					usage;
+			bool				allocated;
+			int					maxMipLevel;
 			VkImage				image;
 			VkDeviceMemory		memory;
 			VkImageView			view;
-			int					usage;
-			bool				allocated;
 			VulkanInstance *	instance;
 			VkDevice			device;
 			CommandBufferPool *	graphicCommandBufferPool;
-			int					maxMipLevel;
 
 			void			AllocateImage(VkImageViewType viewType);
 			void			UploadImage(void * pixels, VkDeviceSize imageSize);
