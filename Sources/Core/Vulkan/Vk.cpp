@@ -1,6 +1,7 @@
 #include "Vk.hpp"
 
 #include "Core/Vulkan/Material.hpp"
+#include "Core/Vulkan/VkExt.hpp"
 
 using namespace LWGC;
 
@@ -275,3 +276,45 @@ void			Vk::UploadToMemory(VkDeviceMemory memory, void * data, size_t size)
 	memcpy(tmpData, data, size);
 	vkUnmapMemory(device, memory);
 }
+
+void			Vk::SetDebugName(const std::string & name, uint64_t vulkanObject, VkDebugReportObjectTypeEXT objectType)
+{
+	if (!VkExt::AreDebugMarkersAvailable())
+		return ;
+
+	VkDevice	device = VulkanInstance::Get()->GetDevice();
+
+	VkDebugMarkerObjectNameInfoEXT nameInfo = {};
+	nameInfo.sType = VK_STRUCTURE_TYPE_DEBUG_MARKER_OBJECT_NAME_INFO_EXT;
+	nameInfo.objectType = objectType;
+	nameInfo.object = vulkanObject;
+	nameInfo.pObjectName = name.c_str();
+
+	Vk::CheckResult(VkExt::DebugMarkerSetObjectNameFunction(device, &nameInfo), "Failed to set debug marker on object " + name);
+}
+
+// Utils functions to directly set vulkan objects without specifying the debug object type:
+#define VULKAN_DEBUG_NAME_FUNCTION_TEMPLATE(functionName, vulkanObjectType, debugObjectType) \
+void			Vk::functionName(const std::string & name, vulkanObjectType obj) \
+{ \
+	SetDebugName(name, reinterpret_cast<uint64_t>(obj), debugObjectType); \
+}
+
+VULKAN_DEBUG_NAME_FUNCTION_TEMPLATE(SetImageDebugName, VkImage, VK_DEBUG_REPORT_OBJECT_TYPE_IMAGE_EXT)
+VULKAN_DEBUG_NAME_FUNCTION_TEMPLATE(SetImageViewDebugName, VkImageView, VK_DEBUG_REPORT_OBJECT_TYPE_IMAGE_VIEW_EXT)
+VULKAN_DEBUG_NAME_FUNCTION_TEMPLATE(SetCommandBufferDebugName, VkCommandBuffer, VK_DEBUG_REPORT_OBJECT_TYPE_COMMAND_BUFFER_EXT)
+VULKAN_DEBUG_NAME_FUNCTION_TEMPLATE(SetQueueDebugName, VkQueue, VK_DEBUG_REPORT_OBJECT_TYPE_QUEUE_EXT)
+VULKAN_DEBUG_NAME_FUNCTION_TEMPLATE(SetSamplerDebugName, VkSampler, VK_DEBUG_REPORT_OBJECT_TYPE_SAMPLER_EXT)
+VULKAN_DEBUG_NAME_FUNCTION_TEMPLATE(SetDeviceMemoryDebugName, VkDeviceMemory, VK_DEBUG_REPORT_OBJECT_TYPE_DEVICE_MEMORY_EXT)
+VULKAN_DEBUG_NAME_FUNCTION_TEMPLATE(SetShaderModuleDebugName, VkShaderModule, VK_DEBUG_REPORT_OBJECT_TYPE_SHADER_MODULE_EXT)
+VULKAN_DEBUG_NAME_FUNCTION_TEMPLATE(SetPipelineDebugName, VkPipeline, VK_DEBUG_REPORT_OBJECT_TYPE_PIPELINE_EXT)
+VULKAN_DEBUG_NAME_FUNCTION_TEMPLATE(SetPipelineLayoutDebugName, VkPipelineLayout, VK_DEBUG_REPORT_OBJECT_TYPE_PIPELINE_LAYOUT_EXT)
+VULKAN_DEBUG_NAME_FUNCTION_TEMPLATE(SetRenderPassDebugName, VkRenderPass, VK_DEBUG_REPORT_OBJECT_TYPE_RENDER_PASS_EXT)
+VULKAN_DEBUG_NAME_FUNCTION_TEMPLATE(SetFramebufferDebugName, VkFramebuffer, VK_DEBUG_REPORT_OBJECT_TYPE_FRAMEBUFFER_EXT)
+VULKAN_DEBUG_NAME_FUNCTION_TEMPLATE(SetDescriptorSetLayoutDebugName, VkDescriptorSetLayout, VK_DEBUG_REPORT_OBJECT_TYPE_DESCRIPTOR_SET_LAYOUT_EXT)
+VULKAN_DEBUG_NAME_FUNCTION_TEMPLATE(SetDescriptorSetDebugName, VkDescriptorSet, VK_DEBUG_REPORT_OBJECT_TYPE_DESCRIPTOR_SET_EXT)
+VULKAN_DEBUG_NAME_FUNCTION_TEMPLATE(SetSemaphoreDebugName, VkSemaphore, VK_DEBUG_REPORT_OBJECT_TYPE_SEMAPHORE_EXT)
+VULKAN_DEBUG_NAME_FUNCTION_TEMPLATE(SetFenceDebugName, VkFence, VK_DEBUG_REPORT_OBJECT_TYPE_FENCE_EXT)
+VULKAN_DEBUG_NAME_FUNCTION_TEMPLATE(SetEventDebugName, VkEvent, VK_DEBUG_REPORT_OBJECT_TYPE_EVENT_EXT)
+
+#undef VULKAN_DEBUG_NAME_FUNCTION_TEMPLATE

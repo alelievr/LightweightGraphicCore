@@ -7,13 +7,14 @@
 #include "Core/Vulkan/Vk.hpp"
 #include "Core/Vulkan/VulkanInstance.hpp"
 #include "Core/Vulkan/CommandBufferPool.hpp"
+#include "Core/Object.hpp"
 #include VULKAN_INCLUDE
 
 #include STB_INCLUDE_IMAGE
 
 namespace LWGC
 {
-	class		Texture
+	class		Texture : public Object
 	{
 		protected:
 			int					width;

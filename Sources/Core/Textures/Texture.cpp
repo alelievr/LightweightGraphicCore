@@ -2,8 +2,15 @@
 
 #include "Core/Application.hpp"
 
+// STB has some unused parameters, os we ignore them
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wunused-parameter"
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wunused-parameter"
 #define STB_IMAGE_IMPLEMENTATION
 #include STB_INCLUDE_IMAGE
+#pragma GCC diagnostic pop
+#pragma clang diagnostic pop
 
 using namespace LWGC;
 

@@ -28,3 +28,16 @@ void LWGC::PrintCallstack(void)
 
     free(strings);
 }
+
+std::string LWGC::GetFileName(const std::string & path)
+{
+    size_t l = path.find('/');
+    return path.substr(l, path.size() - l);
+}
+
+std::string LWGC::GetFileNameWithoutExtension(const std::string & path)
+{
+    std::string fileName = GetFileName(path);
+    size_t l = fileName.find('.');
+    return path.substr(l, fileName.size() - l);
+}

@@ -52,9 +52,11 @@ void			Application::Init(void) noexcept
 		"VK_LAYER_LUNARG_standard_validation",
 	});
 #endif
+#ifdef DEBUG
 	_instance.SetDeviceExtensions({
-		"VK_EXT_debug_marker",
+		"VK_EXT_debug_marker"
 	});
+#endif
 	_instance.SetDeviceExtensions({VK_KHR_SWAPCHAIN_EXTENSION_NAME});
 	_instance.SetApplicationName("LWGC"); // This should be the application name but for the moment we'll keep it like this
 

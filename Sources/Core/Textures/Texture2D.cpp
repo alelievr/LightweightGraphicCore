@@ -2,6 +2,8 @@
 #include <cmath>
 
 #include "Core/Application.hpp"
+#include "Utils/Utils.hpp"
+#include "Core/Vulkan/VkExt.hpp"
 
 using namespace LWGC;
 
@@ -13,6 +15,8 @@ Texture2D::Texture2D(const std::string fileName, VkFormat format, int usage, boo
 	this->usage = usage;
 
     _pixels = LoadFromFile(fileName, this->width, this->height);
+
+	SetName(GetFileNameWithoutExtension(fileName));
 
 	if (generateMips)
 	{
@@ -95,6 +99,12 @@ Texture2D::~Texture2D(void) {}
 // {
 
 // }
+
+void		Texture2D::SetName(const std::string & name)
+{
+	if (VkExt::AreDebugMarkersAvailable())
+		Vk::SetImageDebugName(name, image);
+}
 
 Texture2D &	Texture2D::operator=(Texture2D const & src)
 {
