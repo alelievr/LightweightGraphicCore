@@ -66,6 +66,13 @@
             ReferencedContainer = "container:LightweightGraphicCore.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
+      <EnvironmentVariables>
+         <EnvironmentVariable
+            key = "VK_ICD_FILENAMES"
+            value = "/Users/alelievr/cpp/LightweightGraphicCore/Deps/vulkansdk-macos-1.1.101.0/macOS/etc/vulkan/icd.d/MoltenVK_icd.json"
+            isEnabled = "YES">
+         </EnvironmentVariable>
+      </EnvironmentVariables>
       <AdditionalOptions>
       </AdditionalOptions>
    </LaunchAction>

@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		7141031B222D9558000C7515 /* libvulkan.1.1.85.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 7141031A222D9558000C7515 /* libvulkan.1.1.85.dylib */; };
 		7141031D222D95D8000C7515 /* glslangValidator in CopyFiles */ = {isa = PBXBuildFile; fileRef = 7141031C222D95D8000C7515 /* glslangValidator */; };
 		B11D49FE222C67DB007D5D40 /* libLWGC.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B16B4C7C222C239100794EEC /* libLWGC.a */; };
 		B11D49FF222C67EA007D5D40 /* libglfw3.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B1741FA4222C578700A18DEE /* libglfw3.a */; };
@@ -16,7 +15,9 @@
 		B11D4A05222C6899007D5D40 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B11D4A04222C6899007D5D40 /* IOKit.framework */; };
 		B11D4A07222C68A5007D5D40 /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B11D4A06222C68A5007D5D40 /* CoreVideo.framework */; };
 		B11D4A0B222C68EB007D5D40 /* libspirv-cross.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B11D4A0A222C68EB007D5D40 /* libspirv-cross.a */; };
-		B11D4A1C222C7B5F007D5D40 /* libvulkan.1.1.85.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = B11D4A1B222C7B5F007D5D40 /* libvulkan.1.1.85.dylib */; };
+		B11ED6F122344C570039257D /* libvulkan.1.1.101.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = B11ED6F022344C560039257D /* libvulkan.1.1.101.dylib */; };
+		B11ED6F222344D9D0039257D /* libvulkan.1.1.101.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = B11ED6F022344C560039257D /* libvulkan.1.1.101.dylib */; };
+		B11ED6F522344E0B0039257D /* ProfilingSample.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B11ED6F422344E0B0039257D /* ProfilingSample.cpp */; };
 		B1741F8F222C289500A18DEE /* ImGUIWrapper.hpp in Headers */ = {isa = PBXBuildFile; fileRef = B174ED9F222C240900A18DEE /* ImGUIWrapper.hpp */; settings = {ATTRIBUTES = (Public, ); }; };
 		B1741FB3222C5B2700A18DEE /* cube.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B174ED34222C240900A18DEE /* cube.cpp */; };
 		B174EE0D222C240900A18DEE /* Application.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B174ED57222C240900A18DEE /* Application.cpp */; };
@@ -168,6 +169,9 @@
 		B174EEA2222C240900A18DEE /* Utils.hpp in Headers */ = {isa = PBXBuildFile; fileRef = B174EDF8222C240900A18DEE /* Utils.hpp */; settings = {ATTRIBUTES = (Public, ); }; };
 		B174EEA3222C240900A18DEE /* Vector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B174EDF9222C240900A18DEE /* Vector.cpp */; };
 		B174EEA4222C240900A18DEE /* Vector.hpp in Headers */ = {isa = PBXBuildFile; fileRef = B174EDFA222C240900A18DEE /* Vector.hpp */; settings = {ATTRIBUTES = (Public, ); }; };
+		B18EDBFC223461B800C92221 /* VkExt.hpp in Headers */ = {isa = PBXBuildFile; fileRef = B18EDBF9223461B800C92221 /* VkExt.hpp */; settings = {ATTRIBUTES = (Public, ); }; };
+		B18EDBFD223461B800C92221 /* ProfilingSample.hpp in Headers */ = {isa = PBXBuildFile; fileRef = B18EDBFA223461B800C92221 /* ProfilingSample.hpp */; settings = {ATTRIBUTES = (Public, ); }; };
+		B18EDBFE223461B800C92221 /* VkExt.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B18EDBFB223461B800C92221 /* VkExt.cpp */; };
 		B19A0483222C8395004D513A /* Images in CopyFiles */ = {isa = PBXBuildFile; fileRef = B19A0482222C8395004D513A /* Images */; };
 		B19A0485222C83A2004D513A /* Shaders in CopyFiles */ = {isa = PBXBuildFile; fileRef = B19A0484222C83A2004D513A /* Shaders */; };
 /* End PBXBuildFile section */
@@ -189,8 +193,8 @@
 			dstPath = "";
 			dstSubfolderSpec = 16;
 			files = (
+				B11ED6F122344C570039257D /* libvulkan.1.1.101.dylib in CopyFiles */,
 				7141031D222D95D8000C7515 /* glslangValidator in CopyFiles */,
-				7141031B222D9558000C7515 /* libvulkan.1.1.85.dylib in CopyFiles */,
 				B19A0485222C83A2004D513A /* Shaders in CopyFiles */,
 				B19A0483222C8395004D513A /* Images in CopyFiles */,
 			);
@@ -199,8 +203,6 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		71410318222D9356000C7515 /* libvulkan.1.1.85.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libvulkan.1.1.85.dylib; path = "Deps/vulkansdk-macos-1.1.85.0/macOS/lib/libvulkan.1.1.85.dylib"; sourceTree = "<group>"; };
-		7141031A222D9558000C7515 /* libvulkan.1.1.85.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libvulkan.1.1.85.dylib; path = "Deps/vulkansdk-macos-1.1.85.0/macOS/lib/libvulkan.1.1.85.dylib"; sourceTree = "<group>"; };
 		7141031C222D95D8000C7515 /* glslangValidator */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.executable"; name = glslangValidator; path = Deps/glslang/build/StandAlone/glslangValidator; sourceTree = "<group>"; };
 		B11D4A00222C6869007D5D40 /* libImGUI.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libImGUI.a; path = Deps/imgui/libImGUI.a; sourceTree = "<group>"; };
 		B11D4A02222C688E007D5D40 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
@@ -215,6 +217,9 @@
 		B11D4A17222C76BD007D5D40 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		B11D4A19222C7746007D5D40 /* libMoltenVK.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libMoltenVK.dylib; path = "Deps/vulkansdk-macos-1.1.85.0/MoltenVK/macOS/libMoltenVK.dylib"; sourceTree = "<group>"; };
 		B11D4A1B222C7B5F007D5D40 /* libvulkan.1.1.85.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libvulkan.1.1.85.dylib; path = "Deps/vulkansdk-macos-1.1.85.0/macOS/lib/libvulkan.1.1.85.dylib"; sourceTree = "<group>"; };
+		B11ED6F022344C560039257D /* libvulkan.1.1.101.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libvulkan.1.1.101.dylib; path = "Deps/vulkansdk-macos-1.1.101.0/macOS/lib/libvulkan.1.1.101.dylib"; sourceTree = "<group>"; };
+		B11ED6F322344DE80039257D /* Vk.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = Vk.cpp; path = Sources/Core/Vulkan/Vk.cpp; sourceTree = "<group>"; };
+		B11ED6F422344E0B0039257D /* ProfilingSample.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = ProfilingSample.cpp; path = Sources/Core/Vulkan/ProfilingSample.cpp; sourceTree = "<group>"; };
 		B16B4C7C222C239100794EEC /* libLWGC.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libLWGC.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		B1741FA4222C578700A18DEE /* libglfw3.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libglfw3.a; path = Deps/glfw/src/libglfw3.a; sourceTree = "<group>"; };
 		B1741FAC222C5A4600A18DEE /* cube */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = cube; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -411,6 +416,9 @@
 		B174EDFA222C240900A18DEE /* Vector.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Vector.hpp; sourceTree = "<group>"; };
 		B174EDFB222C240900A18DEE /* Makefile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.make; path = Makefile; sourceTree = "<group>"; };
 		B174EDFC222C240900A18DEE /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		B18EDBF9223461B800C92221 /* VkExt.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = VkExt.hpp; sourceTree = "<group>"; };
+		B18EDBFA223461B800C92221 /* ProfilingSample.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = ProfilingSample.hpp; sourceTree = "<group>"; };
+		B18EDBFB223461B800C92221 /* VkExt.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VkExt.cpp; sourceTree = "<group>"; };
 		B19A0482222C8395004D513A /* Images */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Images; sourceTree = "<group>"; };
 		B19A0484222C83A2004D513A /* Shaders */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Shaders; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -427,7 +435,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B11D4A1C222C7B5F007D5D40 /* libvulkan.1.1.85.dylib in Frameworks */,
+				B11ED6F222344D9D0039257D /* libvulkan.1.1.101.dylib in Frameworks */,
 				B11D4A07222C68A5007D5D40 /* CoreVideo.framework in Frameworks */,
 				B11D4A05222C6899007D5D40 /* IOKit.framework in Frameworks */,
 				B11D4A03222C688E007D5D40 /* AppKit.framework in Frameworks */,
@@ -444,9 +452,10 @@
 		B16B4C73222C239100794EEC = {
 			isa = PBXGroup;
 			children = (
+				B11ED6F422344E0B0039257D /* ProfilingSample.cpp */,
+				B11ED6F322344DE80039257D /* Vk.cpp */,
+				B11ED6F022344C560039257D /* libvulkan.1.1.101.dylib */,
 				7141031C222D95D8000C7515 /* glslangValidator */,
-				71410318222D9356000C7515 /* libvulkan.1.1.85.dylib */,
-				7141031A222D9558000C7515 /* libvulkan.1.1.85.dylib */,
 				B19A0484222C83A2004D513A /* Shaders */,
 				B19A0482222C8395004D513A /* Images */,
 				B174ED30222C240900A18DEE /* Examples */,
@@ -814,6 +823,9 @@
 		B174EDD9222C240900A18DEE /* Vulkan */ = {
 			isa = PBXGroup;
 			children = (
+				B18EDBFA223461B800C92221 /* ProfilingSample.hpp */,
+				B18EDBFB223461B800C92221 /* VkExt.cpp */,
+				B18EDBF9223461B800C92221 /* VkExt.hpp */,
 				B174EDDA222C240900A18DEE /* CommandBufferPool.cpp */,
 				B174EDDB222C240900A18DEE /* CommandBufferPool.hpp */,
 				B174EDDC222C240900A18DEE /* Material.cpp */,
@@ -939,6 +951,8 @@
 				B174EE84222C240900A18DEE /* Transform.hpp in Headers */,
 				B174EE62222C240900A18DEE /* RenderMode.hpp in Headers */,
 				B1741F8F222C289500A18DEE /* ImGUIWrapper.hpp in Headers */,
+				B18EDBFC223461B800C92221 /* VkExt.hpp in Headers */,
+				B18EDBFD223461B800C92221 /* ProfilingSample.hpp in Headers */,
 				B174EE86222C240900A18DEE /* CommandBufferPool.hpp in Headers */,
 				B174EE7A222C240900A18DEE /* Texture3D.hpp in Headers */,
 			);
@@ -1034,7 +1048,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "EXECFILE=$BUILT_PRODUCTS_DIR/$EXECUTABLE_PATH\nLIBPATH=$BUILT_PRODUCTS_DIR/$FRAMEWORKS_FOLDER_PATH\nNEWLIBPATH=$PROJECT_DIR\"/Deps/vulkansdk-macos-1.1.85.0/macOS/lib/libvulkan.1.dylib\"\n\ninstall_name_tool -change \"@rpath/libvulkan.1.dylib\" \"$NEWLIBPATH\" \"$EXECFILE\"\n\nln -sf $BUILT_PRODUCTS_DIR/libvulkan.1.1.85.dylib $BUILT_PRODUCTS_DIR/libvulkan.1.dylib\n";
+			shellScript = "EXECFILE=$BUILT_PRODUCTS_DIR/$EXECUTABLE_PATH\nLIBPATH=$BUILT_PRODUCTS_DIR/$FRAMEWORKS_FOLDER_PATH\nNEWLIBPATH=$PROJECT_DIR\"/Deps/vulkansdk-macos-1.1.101.0/macOS/lib/libvulkan.1.dylib\"\n\ninstall_name_tool -change \"@rpath/libvulkan.1.dylib\" \"$NEWLIBPATH\" \"$EXECFILE\"\n\nln -sf $BUILT_PRODUCTS_DIR/libvulkan.1.1.101.dylib $BUILT_PRODUCTS_DIR/libvulkan.1.dylib\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -1043,6 +1057,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B11ED6F522344E0B0039257D /* ProfilingSample.cpp in Sources */,
+				B174EE8E222C240900A18DEE /* Vk.cpp in Sources */,
 				B174EE41222C240900A18DEE /* HandleManager.cpp in Sources */,
 				B174EE85222C240900A18DEE /* CommandBufferPool.cpp in Sources */,
 				B174EE6F222C240900A18DEE /* ShaderProgram.cpp in Sources */,
@@ -1061,6 +1077,7 @@
 				B174EE24222C240900A18DEE /* ProceduralRenderer.cpp in Sources */,
 				B174EE81222C240900A18DEE /* Time.cpp in Sources */,
 				B174EE65222C240900A18DEE /* RenderPipelineManager.cpp in Sources */,
+				B18EDBFE223461B800C92221 /* VkExt.cpp in Sources */,
 				B174EE52222C240900A18DEE /* MaterialTable.cpp in Sources */,
 				B174EE14222C240900A18DEE /* Component.cpp in Sources */,
 				B174EE2D222C240900A18DEE /* GameObject.cpp in Sources */,
@@ -1081,7 +1098,6 @@
 				B174EE47222C240900A18DEE /* Selection.cpp in Sources */,
 				B174EE6D222C240900A18DEE /* ShaderBindingTable.cpp in Sources */,
 				B174EE5D222C240900A18DEE /* ForwardRenderPipeline.cpp in Sources */,
-				B174EE8E222C240900A18DEE /* Vk.cpp in Sources */,
 				B174EE26222C240900A18DEE /* Renderer.cpp in Sources */,
 				B174EE7D222C240900A18DEE /* TextureCubeArray.cpp in Sources */,
 				B174EE60222C240900A18DEE /* PipelineCommandBuffer.cpp in Sources */,
@@ -1157,7 +1173,7 @@
 				CLANG_CXX_LANGUAGE_STANDARD = "c++17";
 				MACOSX_DEPLOYMENT_TARGET = 10.12;
 				PRODUCT_NAME = LWGC;
-				USER_HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/Sources $(PROJECT_DIR)/Deps/vulkansdk-macos-1.1.85.0/macOS/include $(PROJECT_DIR)/Deps/assimp/include";
+				USER_HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/Sources $(PROJECT_DIR)/Deps/vulkansdk-macos-1.1.101.0/macOS/include $(PROJECT_DIR)/Deps/assimp/include";
 				USE_HEADERMAP = NO;
 			};
 			name = Debug;
@@ -1168,7 +1184,7 @@
 				CLANG_CXX_LANGUAGE_STANDARD = "c++17";
 				MACOSX_DEPLOYMENT_TARGET = 10.12;
 				PRODUCT_NAME = LWGC;
-				USER_HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/Sources $(PROJECT_DIR)/Deps/vulkansdk-macos-1.1.85.0/macOS/include $(PROJECT_DIR)/Deps/assimp/include";
+				USER_HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/Sources $(PROJECT_DIR)/Deps/vulkansdk-macos-1.1.101.0/macOS/include $(PROJECT_DIR)/Deps/assimp/include";
 				USE_HEADERMAP = NO;
 			};
 			name = Release;
@@ -1208,8 +1224,8 @@
 				ENABLE_TESTABILITY = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(PROJECT_DIR)/Deps/vulkansdk-macos-1.1.85.0/macOS/Frameworks",
-					"$(PROJECT_DIR)/Deps/vulkansdk-macos-1.1.85.0/MoltenVK/macOS",
+					"$(PROJECT_DIR)/Deps/vulkansdk-macos-1.1.101.0/macOS/Frameworks",
+					"$(PROJECT_DIR)/Deps/vulkansdk-macos-1.1.101.0/MoltenVK/macOS",
 				);
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_DYNAMIC_NO_PIC = NO;
@@ -1230,16 +1246,16 @@
 					"$(PROJECT_DIR)/Deps/glfw/src",
 					"$(PROJECT_DIR)/Deps/imgui",
 					"$(PROJECT_DIR)/Deps/SPIRV-Cross",
-					"$(PROJECT_DIR)/Deps/vulkansdk-macos-1.1.85.0/MoltenVK/macOS",
-					"$(PROJECT_DIR)/Deps/vulkansdk-macos-1.1.85.0/macOS/lib",
+					"$(PROJECT_DIR)/Deps/vulkansdk-macos-1.1.101.0/MoltenVK/macOS",
+					"$(PROJECT_DIR)/Deps/vulkansdk-macos-1.1.101.0/macOS/lib",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.12;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
-				SYSTEM_HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/Deps/vulkansdk-macos-1.1.85.0/macOS/include";
-				USER_HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/Deps/vulkansdk-macos-1.1.85.0/macOS/include $(PROJECT_DIR)/Sources";
+				SYSTEM_HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/Deps/vulkansdk-macos-1.1.101.0/macOS/include";
+				USER_HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/Deps/vulkansdk-macos-1.1.101.0/macOS/include $(PROJECT_DIR)/Sources";
 				USE_HEADERMAP = NO;
 			};
 			name = Debug;
@@ -1279,8 +1295,8 @@
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(PROJECT_DIR)/Deps/vulkansdk-macos-1.1.85.0/macOS/Frameworks",
-					"$(PROJECT_DIR)/Deps/vulkansdk-macos-1.1.85.0/MoltenVK/macOS",
+					"$(PROJECT_DIR)/Deps/vulkansdk-macos-1.1.101.0/macOS/Frameworks",
+					"$(PROJECT_DIR)/Deps/vulkansdk-macos-1.1.101.0/MoltenVK/macOS",
 				);
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -1295,15 +1311,15 @@
 					"$(PROJECT_DIR)/Deps/glfw/src",
 					"$(PROJECT_DIR)/Deps/imgui",
 					"$(PROJECT_DIR)/Deps/SPIRV-Cross",
-					"$(PROJECT_DIR)/Deps/vulkansdk-macos-1.1.85.0/MoltenVK/macOS",
-					"$(PROJECT_DIR)/Deps/vulkansdk-macos-1.1.85.0/macOS/lib",
+					"$(PROJECT_DIR)/Deps/vulkansdk-macos-1.1.101.0/MoltenVK/macOS",
+					"$(PROJECT_DIR)/Deps/vulkansdk-macos-1.1.101.0/macOS/lib",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.12;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
-				SYSTEM_HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/Deps/vulkansdk-macos-1.1.85.0/macOS/include";
-				USER_HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/Deps/vulkansdk-macos-1.1.85.0/macOS/include $(PROJECT_DIR)/Sources";
+				SYSTEM_HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/Deps/vulkansdk-macos-1.1.101.0/macOS/include";
+				USER_HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/Deps/vulkansdk-macos-1.1.101.0/macOS/include $(PROJECT_DIR)/Sources";
 				USE_HEADERMAP = NO;
 			};
 			name = Release;
