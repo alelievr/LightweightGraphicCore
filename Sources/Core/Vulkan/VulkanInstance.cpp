@@ -527,6 +527,8 @@ VKAPI_ATTR VkBool32 VKAPI_CALL messageCallback(
 	const char* pMsg,
 	void* pUserData)
 {
+	(void)pUserData, (void)location, (void)srcObject, (void)objType;
+
 	// Select prefix depending on flags passed to the callback
 	// Note that multiple flags may be set for a single validation message
 	std::string prefix("");
@@ -591,14 +593,7 @@ VKAPI_ATTR VkBool32 VKAPI_CALL messageCallback(
 
 void		VulkanInstance::SetupDebugCallbacks(void) noexcept
 {
-	if (_enableValidationLayers)
-	{
-	}
-
-	std::cout << "Debug loaded: " << VkExt::AreDebugMarkersAvailable() << std::endl;
-
 	// TODO: setup the DebugReportMessageFunction as well (VK_EXT_debug_report)
-
 	if (VkExt::AreDebugLayerAvailable())
 	{
 		VkDebugUtilsMessengerCreateInfoEXT createInfo = {};

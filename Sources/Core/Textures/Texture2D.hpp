@@ -36,7 +36,7 @@ namespace LWGC
 			void	SetPixel(int x, int y);
 			void	GetPixel(int x, int y);
 
-			virtual void	SetName(const std::string & name) override;
+			void	SetName(const std::string & name) override;
 	};
 
 	std::ostream &	operator<<(std::ostream & o, Texture2D const & r);
