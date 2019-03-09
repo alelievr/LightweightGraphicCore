@@ -10,6 +10,7 @@
 #include VULKAN_INCLUDE
 
 #include STB_INCLUDE_IMAGE
+#include GLM_INCLUDE
 
 namespace LWGC
 {
@@ -33,8 +34,8 @@ namespace LWGC
 			int					maxMipLevel;
 			
 			void			AllocateImage(VkImageViewType viewType);
-			void			UploadImage(stbi_uc * pixels, VkDeviceSize imageSize, int32_t offsetX = 0, int32_t offsetY = 0, int32_t offsetZ = 0);
-			void			UploadImageWithMips(VkImage image, VkFormat format, stbi_uc * pixels, VkDeviceSize imageSize, int32_t offsetX = 0, int32_t offsetY = 0, int32_t offsetZ = 0);
+			void			UploadImage(stbi_uc * pixels, VkDeviceSize deviceSize, glm::ivec3 imageSize, glm::ivec3 offset = {0, 0, 0});
+			void			UploadImageWithMips(VkImage image, VkFormat format, stbi_uc * pixels, VkDeviceSize deviceSize, glm::ivec3 imageSize, glm::ivec3 offset = {0, 0, 0});
 			void			TransitionImageLayout(VkImage image, VkImageLayout oldLayout, VkImageLayout newLayout);
 			stbi_uc *		LoadFromFile(const std::string & fileName, int & width, int & height);
 			void			GenerateMipMaps(VkImage image, VkFormat format, int32_t width, int32_t height);

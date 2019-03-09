@@ -39,7 +39,9 @@ Rect Texture2DAtlas::Fit(std::string fileName)
 
 	_pixels = LoadFromFile(fileName, width, height);
 	Rect rect = _nodetree.Allocate(width, height);
-	UploadImage(_pixels, width * height * 4, rect.GetMinX(), rect.GetMinY());
+	glm::ivec3 imgSize = glm::ivec3(width ,height, 1);
+	glm::ivec3 offset = glm::ivec3(rect.GetMinX(), rect.GetMinY(), 0);
+	UploadImage(_pixels, width * height * 4, imgSize, offset);
 
 	stbi_image_free(_pixels);
 	return rect;

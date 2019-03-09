@@ -119,7 +119,7 @@ void			Vk::CopyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size)
 	graphicCommandBufferPool->EndSingle(commandBuffer);
 }
 
-void			Vk::CopyBufferToImage(VkBuffer buffer, VkImage image, uint32_t width, uint32_t height, uint32_t depth, int32_t offsetX, int32_t offsetY, int32_t offsetZ)
+void			Vk::CopyBufferToImage(VkBuffer buffer, VkImage image, glm::ivec3 imageSize, glm::ivec3 offset)
 {
 	const auto & graphicCommandBufferPool = VulkanInstance::Get()->GetCommandBufferPool();
 	VkCommandBuffer commandBuffer = graphicCommandBufferPool->BeginSingle();
@@ -133,11 +133,11 @@ void			Vk::CopyBufferToImage(VkBuffer buffer, VkImage image, uint32_t width, uin
 	region.imageSubresource.baseArrayLayer = 0;
 	region.imageSubresource.layerCount = 1;
 
-	region.imageOffset = {offsetX, offsetY, offsetZ};
+	region.imageOffset = {offset.x, offset.y, offset.z};
 	region.imageExtent = {
-		width,
-		height,
-		depth
+		static_cast<uint32_t>(imageSize.x),
+		static_cast<uint32_t>(imageSize.y),
+		static_cast<uint32_t>(imageSize.z)
 	};
 
 	vkCmdCopyBufferToImage(

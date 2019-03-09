@@ -23,9 +23,9 @@ Texture2D::Texture2D(const std::string fileName, VkFormat format, int usage, boo
 
 	AllocateImage(VK_IMAGE_VIEW_TYPE_2D);
 
-    // UploadImage(_pixels, this->width * this->height * 4);
-
-	UploadImageWithMips(image, format, _pixels, this->width * this->height * 4);
+	// UploadImage(_pixels, this->width * this->height * 4);
+	glm::ivec3 imgSize = glm::ivec3(this->width, this->height, 1);
+	UploadImageWithMips(image, format, _pixels, this->width * this->height * 4, imgSize);
 
 	stbi_image_free(_pixels);
 }

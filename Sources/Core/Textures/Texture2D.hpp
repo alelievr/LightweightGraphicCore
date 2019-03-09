@@ -8,6 +8,7 @@
 #include "Core/Vulkan/Vk.hpp"
 
 #include VULKAN_INCLUDE
+#include GLM_INCLUDE
 
 namespace LWGC
 {
