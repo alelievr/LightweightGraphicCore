@@ -20,11 +20,11 @@ namespace LWGC
 
 			Object &	operator=(Object const & src);
 
-			std::string	GetName(void) const;
-			void		SetName(std::string newName);
-			
-			int			GetFlags(void) const;
-			void		SetFlags(int tmp);
+			std::string			GetName(void) const;
+			virtual void		SetName(const std::string & newName);
+
+			int					GetFlags(void) const;
+			virtual void		SetFlags(int tmp);
 	};
 
 	std::ostream &	operator<<(std::ostream & o, Object const & r);

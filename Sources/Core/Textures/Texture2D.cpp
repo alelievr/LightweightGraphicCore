@@ -2,6 +2,8 @@
 #include <cmath>
 
 #include "Core/Application.hpp"
+#include "Utils/Utils.hpp"
+#include "Core/Vulkan/VkExt.hpp"
 
 using namespace LWGC;
 
@@ -26,6 +28,8 @@ Texture2D::Texture2D(const std::string fileName, VkFormat format, int usage, boo
 	UploadImageWithMips(image, format, _pixels, this->width * this->height * 4);
 
 	stbi_image_free(_pixels);
+
+	SetName(GetFileNameWithoutExtension(fileName));
 }
 
 Texture2D::Texture2D(unsigned width, unsigned height, VkFormat format, int usage, void *data, unsigned size, bool generateMips)
@@ -95,6 +99,12 @@ Texture2D::~Texture2D(void) {}
 // {
 
 // }
+
+void		Texture2D::SetName(const std::string & name)
+{
+	if (VkExt::AreDebugMarkersAvailable())
+		Vk::SetImageDebugName(name, image);
+}
 
 Texture2D &	Texture2D::operator=(Texture2D const & src)
 {

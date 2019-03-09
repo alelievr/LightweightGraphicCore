@@ -2,12 +2,20 @@
 
 #include "Core/Application.hpp"
 
+// STB has some unused parameters, os we ignore them
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wunused-parameter"
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wunused-parameter"
 #define STB_IMAGE_IMPLEMENTATION
 #include STB_INCLUDE_IMAGE
+#pragma GCC diagnostic pop
+#pragma clang diagnostic pop
 
 using namespace LWGC;
 
-Texture::Texture(void) : width(0), height(0), depth(1), arraySize(1), autoGenerateMips(false), usage(0), allocated(false), maxMipLevel(1)
+Texture::Texture(void) : width(0), height(0), depth(1), arraySize(1), autoGenerateMips(false), usage(0),
+	allocated(false), maxMipLevel(1), image(VK_NULL_HANDLE), memory(VK_NULL_HANDLE), view(VK_NULL_HANDLE)
 {
 	instance = VulkanInstance::Get();
 	device = instance->GetDevice();

@@ -58,8 +58,10 @@ SOURCES		=	Core/Application.cpp \
 				Core/Vulkan/RenderPass.cpp \
 				Core/Vulkan/SwapChain.cpp \
 				Core/Vulkan/Vk.cpp \
+				Core/Vulkan/VkExt.cpp \
 				Core/Vulkan/VulkanInstance.cpp \
 				Core/Vulkan/VulkanSurface.cpp \
+				Core/Vulkan/ProfilingSample.cpp \
 				Core/Textures/Texture.cpp \
 				Core/Textures/Texture2D.cpp \
 				Core/Textures/Texture2DArray.cpp \
@@ -176,9 +178,9 @@ endif
 ifeq "$(OS)" "Darwin"
 	CFLAGS			+= "-ferror-limit=999"
 	MoltenTar		= moltenVK.tar.gz
-	MoltentUrl		= https://sdk.lunarg.com/sdk/download/1.1.85.0/mac/vulkansdk-macos-1.1.85.0.tar.gz?Human=true
+	MoltentUrl		= https://sdk.lunarg.com/sdk/download/1.1.101.0/mac/vulkansdk-macos-1.1.101.0.tar.gz?Human=true
 	DOWNLOAD_VULKAN = curl -o $(MoltenTar) $(MoltentUrl) && tar -xf $(MoltenTar) -C Deps/
-	VULKAN_SDK		= $(shell pwd)/Deps/vulkansdk-macos-1.1.85.0/macOS
+	VULKAN_SDK		= $(shell pwd)/Deps/vulkansdk-macos-1.1.101.0/macOS
 	LD_LIBRARY_PATH	= $(VULKAN_SDK)/lib
 	VK_ICD_FILENAMES= $(VULKAN_SDK)/etc/vulkan/icd.d/MoltenVK_icd.json
 	INCDIRS			+= $(VULKAN_SDK)/include

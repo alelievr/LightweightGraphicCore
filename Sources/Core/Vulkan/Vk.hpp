@@ -1,8 +1,10 @@
 #pragma once
 
-#include "IncludeDeps.hpp"
-#include VULKAN_INCLUDE
 #include "VulkanInstance.hpp"
+#include "IncludeDeps.hpp"
+#include "Utils/Color.hpp"
+
+#include VULKAN_INCLUDE
 
 namespace LWGC
 {
@@ -47,5 +49,29 @@ namespace LWGC
 			static VkDescriptorSetLayoutBinding	CreateDescriptorSetLayoutBinding(TextureBinding binding, VkDescriptorType descriptorType, VkShaderStageFlagBits stageFlags);
 			static void			CreateDescriptorSetLayout(std::vector< VkDescriptorSetLayoutBinding > bindings, VkDescriptorSetLayout & layout);
 			static void			UploadToMemory(VkDeviceMemory memory, void * data, size_t size);
+
+			static void			SetDebugName(const std::string & name, uint64_t vulkanObject, VkDebugReportObjectTypeEXT objectType);
+			// Utils functions headers to directly set vulkan objects without specifying the debug object type:
+			static void			SetImageDebugName(const std::string & name, VkImage image);
+			static void			SetImageViewDebugName(const std::string & name, VkImageView imageView);
+			static void			SetCommandBufferDebugName(const std::string & name, VkCommandBuffer cmd);
+			static void			SetQueueDebugName(const std::string & name, VkQueue queue);
+			static void			SetSamplerDebugName(const std::string & name, VkSampler sampler);
+			static void			SetBufferDebugName(const std::string & name, VkBuffer buffer);
+			static void			SetDeviceMemoryDebugName(const std::string & name, VkDeviceMemory deviceMemory);
+			static void			SetShaderModuleDebugName(const std::string & name, VkShaderModule shaderModule);
+			static void			SetPipelineDebugName(const std::string & name, VkPipeline pipeline);
+			static void			SetPipelineLayoutDebugName(const std::string & name, VkPipelineLayout pipelineLayout);
+			static void			SetRenderPassDebugName(const std::string & name, VkRenderPass renderPass);
+			static void			SetFramebufferDebugName(const std::string & name, VkFramebuffer frameBuffer);
+			static void			SetDescriptorSetLayoutDebugName(const std::string & name, VkDescriptorSetLayout descriptorSetLayout);
+			static void			SetDescriptorSetDebugName(const std::string & name, VkDescriptorSet descriptorSet);
+			static void			SetSemaphoreDebugName(const std::string & name, VkSemaphore semaphore);
+			static void			SetFenceDebugName(const std::string & name, VkFence fence);
+			static void			SetEventDebugName(const std::string & name, VkEvent event);
+
+			static void			BeginProfilingSample(VkCommandBuffer cmd, const std::string & debugSampleName, const Color & color);
+			static void			InsertProfilingSample(VkCommandBuffer cmd, const std::string & debugSampleName, const Color & color);
+			static void			EndProfilingSample(VkCommandBuffer cmd);
 	};
 }
