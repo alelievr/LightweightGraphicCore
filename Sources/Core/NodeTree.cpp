@@ -28,10 +28,7 @@ Rect	NodeTree::Allocate(int w, int h)
 		Node *tmp = _node;
 		Rect ret = FindNode(tmp, w ,h);
 		if (ret == Rect::Invalid)
-		{
-			// std::cout << "ERROR PANIC" << std::endl;
 			throw std::runtime_error("No space left in texture2DAtlas");
-		}
 		return (ret);
 	}
 }
