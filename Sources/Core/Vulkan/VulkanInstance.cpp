@@ -5,6 +5,7 @@
 #include <algorithm>
 #include <iostream>
 #include <sstream>
+#include <algorithm>
 
 #include GLFW_INCLUDE
 #include "Vk.hpp"
@@ -231,11 +232,13 @@ DeviceCapability			VulkanInstance::GetDeviceCapability(VkPhysicalDevice physical
 		vkGetPhysicalDeviceSurfaceSupportKHR(physicalDevice, index, _surface, &presentSupport);
 
 		capability.queues.push_back(DeviceQueue{
-			index++,
+			static_cast<uint32_t>(index),
 			VK_NULL_HANDLE,
 			presentSupport == true,
 			(queueFamily.queueFlags & VK_QUEUE_COMPUTE_BIT) != 0
 		});
+		index++;
+
 		auto g = queueFamily.minImageTransferGranularity;
 		std::cout << "queue count:" << queueFamily.queueCount << ", flags: "
 			<< queueFamily.queueFlags << ", memory granularity: "
@@ -326,27 +329,29 @@ void			VulkanInstance::ChoosePhysicalDevice(void)
 		return c1.GetGPUScore() < c2.GetGPUScore();
 	});
 
-	if (deviceCapabilities[0].GetGPUScore() == -1)
+	auto & bestDevice = deviceCapabilities[0];
+
+	if (bestDevice.GetGPUScore() == -1)
 		throw std::runtime_error("Can't find a GPU that met requirement");
 
 	// setup choosen device
-	_physicalDevice = deviceCapabilities[0].physicalDevice;
-	_queueIndex = deviceCapabilities[0].queues[0].index;
+	_physicalDevice = bestDevice.physicalDevice;
+	_availableQueues = bestDevice.queues;
 
-	std::cout << "Choosed " << deviceCapabilities[0].deviceName << " as the best GPU on your machine." << std::endl;
+	std::cout << "Choosed " << bestDevice.deviceName << " as the best GPU on your machine." << std::endl;
 }
 
 void			VulkanInstance::CreateLogicalDevice(void)
 {
 	std::vector<VkDeviceQueueCreateInfo> queueCreateInfos;
-	std::set<uint32_t> uniqueQueueFamilies = {_queueIndex};
+	std::set<uint32_t> uniqueQueueFamilies = {_availableQueues[0].index};
 
 	float queuePriority = 1.0f;
-	for (uint32_t queueFamily : uniqueQueueFamilies)
+	for (DeviceQueue deviceQueue : _availableQueues)
 	{
 	    VkDeviceQueueCreateInfo queueCreateInfo = {};
 	    queueCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
-	    queueCreateInfo.queueFamilyIndex = queueFamily;
+	    queueCreateInfo.queueFamilyIndex = deviceQueue.index;
 	    queueCreateInfo.queueCount = 1;
 	    queueCreateInfo.pQueuePriorities = &queuePriority;
 	    queueCreateInfos.push_back(queueCreateInfo);
@@ -384,26 +389,42 @@ void			VulkanInstance::CreateLogicalDevice(void)
 	    throw std::runtime_error("failed to create logical device!");
 	}
 
-	vkGetDeviceQueue(_device, _queueIndex, 0, &_queue);
-	// vkGetDeviceQueue(_device, _graphicQueueIndex, 0, &_graphicQueue);
-	// vkGetDeviceQueue(_device, _presentQueueIndex, 0, &_presentQueue);
-	// vkGetDeviceQueue(_device, _computeQueueIndex, 0, &_computeQueue);
+	AllocateDeviceQueue(_mainQueue.queue, _mainQueue.index);
 
 	printf("Create logical device !\n");
 }
 
-VkQueue			VulkanInstance::AllocateDeviceQueue(void)
+void			VulkanInstance::AllocateDeviceQueue(VkQueue & queue, uint32_t & queueIndex)
 {
-	VkQueue queue;
+	auto unallocatedDeviceQueue = std::find_if(_availableQueues.begin(), _availableQueues.end(), [](const auto & deviceQueue){
+		return deviceQueue.queue == VK_NULL_HANDLE;
+	});
 
-	vkGetDeviceQueue(_device, _queueIndex, 0, &queue);
+	// If all the device queue have been allocated, we just return the main queue
+	if (unallocatedDeviceQueue == _availableQueues.end())
+	{
+		std::cout << "Warning: too many allocated queues, returning the main queue." << std::endl;
+		queue = _mainQueue.queue;
+		queueIndex = _mainQueue.index;
+		return ;
+	}
 
-	return queue;
+	vkGetDeviceQueue(_device, unallocatedDeviceQueue->index, 0, &unallocatedDeviceQueue->queue);
+
+	queue = unallocatedDeviceQueue->queue;
+	queueIndex = unallocatedDeviceQueue->index;
+}
+
+uint32_t		VulkanInstance::GetAvailableDevceQueueCount(void)
+{
+	return std::count_if(_availableQueues.begin(), _availableQueues.end(), [](const DeviceQueue & deviceQueue) {
+		return deviceQueue.queue != VK_NULL_HANDLE;
+	});
 }
 
 void			VulkanInstance::CreateCommandBufferPools(void) noexcept
 {
-	_commandBufferPool.Initialize();
+	_commandBufferPool.Initialize(_mainQueue.queue, _mainQueue.index);
 }
 
 bool			VulkanInstance::AreExtensionsSupportedForPhysicalDevice(VkPhysicalDevice physicalDevice) noexcept
@@ -478,17 +499,9 @@ void		VulkanInstance::SetApplicationName(const std::string & applicationName) no
 
 VkInstance	VulkanInstance::GetInstance(void) const noexcept { return (this->_instance); }
 
-VkQueue		VulkanInstance::GetQueue(void) const noexcept { return (this->_queue); }
-// Only one GPU supported
-// VkQueue		VulkanInstance::GetGraphicQueue(void) const noexcept { return (this->_graphicQueue); }
-// VkQueue		VulkanInstance::GetPresentQueue(void) const noexcept { return (this->_presentQueue); }
-// VkQueue		VulkanInstance::GetComputeQueue(void) const noexcept { return (this->_computeQueue); }
+VkQueue		VulkanInstance::GetQueue(void) const noexcept { return (this->_mainQueue.queue); }
 
-uint32_t	VulkanInstance::GetQueueIndex(void) const noexcept { return (this->_queueIndex); }
-// Only one GPU supported
-// uint32_t	VulkanInstance::GetGraphicQueueIndex(void) const noexcept { return (this->_graphicQueueIndex); }
-// uint32_t	VulkanInstance::GetPresentQueueIndex(void) const noexcept { return (this->_presentQueueIndex); }
-// uint32_t	VulkanInstance::GetComputeQueueIndex(void) const noexcept { return (this->_computeQueueIndex); }
+uint32_t	VulkanInstance::GetQueueIndex(void) const noexcept { return (this->_mainQueue.index); }
 
 const std::vector< VkSurfaceFormatKHR >	VulkanInstance::GetSupportedSurfaceFormats(void) const noexcept { return (this->_surfaceFormats); }
 const std::vector< VkPresentModeKHR >	VulkanInstance::GetSupportedPresentModes(void) const noexcept { return (this->_surfacePresentModes); }
@@ -498,8 +511,6 @@ VkPhysicalDevice	VulkanInstance::GetPhysicalDevice(void) const noexcept { return
 VkDevice			VulkanInstance::GetDevice(void) const noexcept { return (this->_device); }
 
 CommandBufferPool *	VulkanInstance::GetCommandBufferPool(void) noexcept { return &this->_commandBufferPool; }
-// CommandBufferPool *	VulkanInstance::GetGraphicCommandBufferPool(void) noexcept { return &this->_graphicCommandBufferPool; }
-// CommandBufferPool *	VulkanInstance::GetComputeCommandBufferPool(void) noexcept { return &this->_computeCommandBufferPool; }
 
 VkDescriptorPool	VulkanInstance::GetDescriptorPool(void) const noexcept
 {
@@ -634,9 +645,9 @@ void		VulkanInstance::DestroyDebugUtilsMessengerEXT(VkDebugUtilsMessengerEXT cal
 
 int			DeviceCapability::GetGPUScore(void) const
 {
-	if (!supportedFeatures || !supportExtensions || !supportSurface)
+	if (!supportedFeatures || !supportExtensions || !supportSurface || queues.size() <= 1)
 	{
-		std::cout << "supported features: " << supportedFeatures << ", " << supportExtensions << ", " << supportSurface << std::endl;
+		std::cout << "supported features: " << supportedFeatures << ", " << supportExtensions << ", " << supportSurface << ", " << queues.size() << std::endl;
 		return -1;
 	}
 

@@ -24,12 +24,17 @@ void			ComputeDispatcher::Initialize(void) noexcept
 	_computeCommandBuffer = VulkanInstance::Get()->GetCommandBufferPool()->Allocate(VK_COMMAND_BUFFER_LEVEL_SECONDARY);
 	_material->GetComputeWorkSize(_workGroupWidth, _workGroupHeight, _workGroupDepth);
 
-	if (_width % _workGroupWidth != 0 || _height % _workGroupHeight != 0 || _depth % _workGroupDepth != 0)
+	if (!CheckWorkSize())
 	{
 		std::cout << "Dispatch size for compute shader is not multiple of his work group size: "
 			<< _workGroupWidth << ", " << _workGroupHeight << ", " << _workGroupDepth << std::endl;
 		return ;
 	}
+}
+
+bool			ComputeDispatcher::CheckWorkSize(void) noexcept
+{
+	return (_width % _workGroupWidth != 0 || _height % _workGroupHeight != 0 || _depth % _workGroupDepth != 0);
 }
 
 void			ComputeDispatcher::RecordCommands(VkCommandBuffer cmd)
@@ -47,6 +52,19 @@ void			ComputeDispatcher::OnDisable() noexcept
 {
 	Component::OnDisable();
 	hierarchy->UnregisterComponentInRenderContext(GetType(), _renderContextIndex);
+}
+
+void			ComputeDispatcher::SetDispatchSize(const glm::ivec3 & size, bool checkSize)
+{
+	_width = size.x;
+	_height = size.y;
+	_depth = size.z;
+
+	if (checkSize && !CheckWorkSize())
+	{
+		std::cout << "Dispatch size for compute shader is not multiple of his work group size: "
+			<< _workGroupWidth << ", " << _workGroupHeight << ", " << _workGroupDepth << std::endl;
+	}
 }
 
 Material *	ComputeDispatcher::GetMaterial(void)

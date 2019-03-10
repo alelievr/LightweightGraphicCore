@@ -73,5 +73,7 @@ namespace LWGC
 			static void			BeginProfilingSample(VkCommandBuffer cmd, const std::string & debugSampleName, const Color & color);
 			static void			InsertProfilingSample(VkCommandBuffer cmd, const std::string & debugSampleName, const Color & color);
 			static void			EndProfilingSample(VkCommandBuffer cmd);
+
+			static VkFence		CreateFence(bool signaled = false);
 	};
 }

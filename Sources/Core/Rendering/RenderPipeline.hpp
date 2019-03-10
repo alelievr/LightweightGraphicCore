@@ -63,7 +63,6 @@ namespace LWGC
 			void				EndRenderPass(void);
 			virtual void		RecreateSwapChain(void);
 			virtual void		Render(const std::vector< Camera * > & cameras, RenderContext * context) = 0;
-			virtual void		CreateDescriptorSets(void);
 			virtual void		InitializeHandles(void) noexcept;
 			virtual void		PresentFrame(void);
 			virtual void		Initialize(SwapChain * swapChain);

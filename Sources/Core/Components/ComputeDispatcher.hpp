@@ -28,6 +28,8 @@ namespace LWGC
 			void			OnEnable(void) noexcept override;
 			void			OnDisable(void) noexcept override;
 
+			bool			CheckWorkSize(void) noexcept;
+
 		public:
 			ComputeDispatcher(void) = delete;
 			ComputeDispatcher(Material * material, int width, int height, int depth = 1);
@@ -37,6 +39,8 @@ namespace LWGC
 			ComputeDispatcher &	operator=(ComputeDispatcher const & src) = delete;
 
 			void				RecordCommands(VkCommandBuffer cmd);
+
+			void				SetDispatchSize(const glm::ivec3 & size, bool checkSize = true);
 
 			Material *			GetMaterial(void);
 			VkCommandBuffer		GetCommandBuffer(void);

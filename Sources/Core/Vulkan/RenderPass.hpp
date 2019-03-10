@@ -54,8 +54,8 @@ namespace LWGC
 			void	AddDependency(const VkSubpassDependency & dependency) noexcept;
 			bool	BindDescriptorSet(const std::string & name, VkDescriptorSet set);
 			void	BindMaterial(Material * material);
-			void	BeginFrame(VkCommandBuffer commandBuffer, VkFramebuffer framebuffer, const std::string & passName);
-			void	EndFrame(void);
+			void	Begin(VkCommandBuffer commandBuffer, VkFramebuffer framebuffer, const std::string & passName);
+			void	End(void);
 			void	BeginSecondaryCommandBuffer(VkCommandBuffer cmd, VkCommandBufferUsageFlagBits commandBufferUsage);
 			void	ExecuteCommandBuffer(VkCommandBuffer cmd);
 			void	Cleanup(void) noexcept;

@@ -101,7 +101,7 @@ void	RenderPass::BindMaterial(Material * material)
 		b.second.hasChanged = true;
 }
 
-void	RenderPass::BeginFrame(VkCommandBuffer commandBuffer, VkFramebuffer framebuffer, const std::string & passName)
+void	RenderPass::Begin(VkCommandBuffer commandBuffer, VkFramebuffer framebuffer, const std::string & passName)
 {
 	_commandBuffer = commandBuffer;
 	_framebuffer = framebuffer;
@@ -112,7 +112,7 @@ void	RenderPass::BeginFrame(VkCommandBuffer commandBuffer, VkFramebuffer framebu
 	}
 }
 
-void	RenderPass::EndFrame(void)
+void	RenderPass::End(void)
 {
 	if (VkExt::AreDebugMarkersAvailable())
 	{

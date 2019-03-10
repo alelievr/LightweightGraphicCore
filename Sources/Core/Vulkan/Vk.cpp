@@ -377,3 +377,15 @@ void			Vk::EndProfilingSample(VkCommandBuffer cmd)
 
 	VkExt::CmdDebugMarkerEndFunction(cmd);
 }
+
+VkFence			Vk::CreateFence(bool signaled)
+{
+	VkDevice			device = VulkanInstance::Get()->GetDevice();
+	VkFence				fence;
+	VkFenceCreateInfo	fenceInfo = {};
+	fenceInfo.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
+	fenceInfo.flags = (signaled) ? VK_FENCE_CREATE_SIGNALED_BIT : 0;
+
+	vkCreateFence(device, &fenceInfo, nullptr, &fence);
+	return fence;
+}

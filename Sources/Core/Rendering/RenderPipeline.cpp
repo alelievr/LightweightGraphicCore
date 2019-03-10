@@ -51,7 +51,6 @@ void                RenderPipeline::Initialize(SwapChain * swapChain)
 	// Allocate LWGC_PerFrame uniform buffer
 	Vk::CreateBuffer(sizeof(LWGC_PerFrame), VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, _uniformPerFrame.buffer, _uniformPerFrame.memory);
 
-	CreateDescriptorSets();
 	CreatePerFrameDescriptorSet();
 
 	// InitializeHandles();
@@ -65,8 +64,6 @@ void				RenderPipeline::InitializeHandles(void) noexcept
 	Tools::Initialize();
 	HandleManager::Initialize();
 }
-
-void				RenderPipeline::CreateDescriptorSets(void) {}
 
 void				RenderPipeline::CreatePerFrameDescriptorSet(void)
 {
@@ -137,7 +134,7 @@ void			RenderPipeline::BeginRenderPass(RenderContext * context)
 
 	framebuffer = swapChain->GetFramebuffers()[currentFrame]; // TODO: simplify this
 
-	renderPass.BeginFrame(frameCommandBuffers[0], framebuffer, "Main Pass");
+	renderPass.Begin(frameCommandBuffers[0], framebuffer, "Main Pass");
 
 	// Run all compute shaders before begin render pass:
 	std::unordered_set< ComputeDispatcher * >	computeDispatchers;
@@ -178,7 +175,7 @@ void			RenderPipeline::BeginRenderPass(RenderContext * context)
 
 void			RenderPipeline::EndRenderPass(void)
 {
-	renderPass.EndFrame();
+	renderPass.End();
 
 	vkCmdEndRenderPass(frameCommandBuffers[0]);
 

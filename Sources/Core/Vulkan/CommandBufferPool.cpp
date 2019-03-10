@@ -8,6 +8,7 @@ CommandBufferPool::CommandBufferPool(void)
 {
 	this->_instance = VK_NULL_HANDLE;
 	this->_commandPool = VK_NULL_HANDLE;
+	this->_queue = VK_NULL_HANDLE;
 	this->_queueIndex = -1;
 }
 
@@ -20,11 +21,11 @@ CommandBufferPool::~CommandBufferPool(void)
 	}
 }
 
-void				CommandBufferPool::Initialize(void)
+void				CommandBufferPool::Initialize(VkQueue queue, int queueIndex)
 {
 	_instance = VulkanInstance::Get();
-	_queue = _instance->GetQueue();
-	_queueIndex = _instance->GetQueueIndex();
+	_queue = queue;
+	_queueIndex = queueIndex;
 
 	VkCommandPoolCreateInfo poolInfo = {};
 	poolInfo.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
@@ -84,7 +85,7 @@ VkCommandBuffer		CommandBufferPool::BeginSingle(VkCommandBufferLevel level) noex
 	return commandBuffer;
 }
 
-void		CommandBufferPool::EndSingle(VkCommandBuffer commandBuffer) noexcept
+void		CommandBufferPool::EndSingle(VkCommandBuffer commandBuffer, VkFence fence) noexcept
 {
 	Vk::CheckResult(vkEndCommandBuffer(commandBuffer), "End command buffer failed");
 
@@ -93,7 +94,7 @@ void		CommandBufferPool::EndSingle(VkCommandBuffer commandBuffer) noexcept
 	submitInfo.commandBufferCount = 1;
 	submitInfo.pCommandBuffers = &commandBuffer;
 
-	Vk::CheckResult(vkQueueSubmit(_queue, 1, &submitInfo, VK_NULL_HANDLE), "Queue submit failed");
+	Vk::CheckResult(vkQueueSubmit(_queue, 1, &submitInfo, fence), "Queue submit failed");
 	Vk::CheckResult(vkQueueWaitIdle(_queue), "QueueWait Idle failed");
 
 	vkFreeCommandBuffers(_instance->GetDevice(), _commandPool, 1, &commandBuffer);
