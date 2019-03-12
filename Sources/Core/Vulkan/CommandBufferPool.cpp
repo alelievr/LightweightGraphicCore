@@ -14,11 +14,14 @@ CommandBufferPool::CommandBufferPool(void)
 
 CommandBufferPool::~CommandBufferPool(void)
 {
-	if (_commandPool != VK_NULL_HANDLE)
-	{
-		vkDestroyCommandPool(_instance->GetDevice(), _commandPool, nullptr);
-		_commandPool = VK_NULL_HANDLE;
-	}
+	if (_commandPool == VK_NULL_HANDLE)
+		return ;
+
+	if (_frameCommandBuffers.size() > 0)
+		FreeCommandBuffers(_frameCommandBuffers);
+
+	vkDestroyCommandPool(_instance->GetDevice(), _commandPool, nullptr);
+	_commandPool = VK_NULL_HANDLE;
 }
 
 void				CommandBufferPool::Initialize(VkQueue queue, int queueIndex)
@@ -49,6 +52,21 @@ void				CommandBufferPool::Allocate(VkCommandBufferLevel level, std::vector< VkC
 
 	if (vkAllocateCommandBuffers(_instance->GetDevice(), &allocInfo, commandBuffers.data()) != VK_SUCCESS)
 		throw std::runtime_error("Failed to allocate command buffers !");
+}
+
+void				CommandBufferPool::AllocateFrameCommandBuffers(size_t frameBufferCount)
+{
+	Allocate(VK_COMMAND_BUFFER_LEVEL_PRIMARY, _frameCommandBuffers, frameBufferCount);
+}
+
+VkCommandBuffer		CommandBufferPool::GetFrameCommandBuffer(size_t frameIndex)
+{
+	return _frameCommandBuffers[frameIndex];
+}
+
+void				CommandBufferPool::ResetCommandBuffer(size_t frameIndex)
+{
+	vkResetCommandBuffer(_frameCommandBuffers[frameIndex], 0);
 }
 
 VkCommandBuffer		CommandBufferPool::Allocate(VkCommandBufferLevel level)

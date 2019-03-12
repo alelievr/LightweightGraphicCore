@@ -27,7 +27,7 @@ namespace LWGC
 			ComputeShader &	operator=(ComputeShader const & src) = delete;
 
 			void	LoadShader(const std::string & shaderPath);
-			void	Dispatch(VkCommandBuffer cmd, glm::ivec3 dispatchSize);
+			void	Dispatch(VkCommandBuffer cmd, int width, int height, int depth) noexcept;
 	};
 
 	std::ostream &	operator<<(std::ostream & o, ComputeShader const & r);

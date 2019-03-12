@@ -42,11 +42,12 @@ void                RenderPipeline::Initialize(SwapChain * swapChain)
     this->instance = VulkanInstance::Get();
 	this->device = instance->GetDevice();
     this->swapChain = swapChain;
+	this->mainCommandPool = instance->GetCommandBufferPool();
 	renderPass.Initialize();
 	CreateRenderPass();
 
-	// Allocate primary command buffers
-	instance->GetCommandBufferPool()->Allocate(VK_COMMAND_BUFFER_LEVEL_PRIMARY, _swapChainCommandBuffers, swapChain->GetImageCount());
+	// Allocate primary command buffers used for frame rendering
+	this->mainCommandPool->AllocateFrameCommandBuffers(swapChain->GetImageCount());
 
 	// Allocate LWGC_PerFrame uniform buffer
 	Vk::CreateBuffer(sizeof(LWGC_PerFrame), VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, _uniformPerFrame.buffer, _uniformPerFrame.memory);
@@ -269,8 +270,12 @@ void			RenderPipeline::RenderInternal(const std::vector< Camera * > & cameras, R
 		throw std::runtime_error("failed to acquire swap chain image!");
 	}
 
+	// reset the current command buffer so that old commands aren't re-executed
+	mainCommandPool->ResetCommandBuffer(currentFrame);
+
+	// each frame we recreate the list of primary command buffers used to render a frame
 	frameCommandBuffers.clear();
-	frameCommandBuffers.push_back(_swapChainCommandBuffers[_imageIndex]);
+	frameCommandBuffers.push_back(GetCurrentFrameCommandBuffer());
 
 	currentCamera = (cameras.size() == 0) ? nullptr : cameras[0];
 
@@ -367,6 +372,40 @@ void	RenderPipeline::Render(const std::vector< Camera * > & cameras, RenderConte
 	EndRenderPass();
 
 	renderPass.ClearBindings();
+}
+
+void			RenderPipeline::RecordAllComputeDispatches(VkCommandBuffer cmd, RenderContext * context)
+{
+	std::unordered_set< ComputeDispatcher * >	computeDispatchers;
+
+	context->GetComputeDispatchers(computeDispatchers);
+
+	for (auto compute : computeDispatchers)
+	{
+		compute->RecordCommands(cmd);
+	}
+}
+
+void			RenderPipeline::RecordAllMeshRenderers(VkCommandBuffer cmd, RenderContext * context)
+{
+	std::unordered_set< Renderer * >	renderers;
+
+	context->GetRenderers(renderers);
+
+	for (auto renderer : renderers)
+	{
+		renderer->RecordCommands(cmd);
+	}
+}
+
+VkCommandBuffer	RenderPipeline::GetCurrentFrameCommandBuffer(void)
+{
+	return mainCommandPool->GetFrameCommandBuffer(currentFrame);
+}
+
+void			RenderPipeline::SetLastRenderPass(const RenderPass & renderPass)
+{
+	swapChain->CreateFrameBuffers(renderPass);
 }
 
 void			RenderPipeline::EnqueueFrameCommandBuffer(VkCommandBuffer cmd)

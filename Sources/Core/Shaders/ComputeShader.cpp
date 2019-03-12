@@ -2,12 +2,12 @@
 
 using namespace LWGC;
 
-ComputeShader::ComputeShader(void) : _material(nullptr)
+ComputeShader::ComputeShader(void) : _material(nullptr), _dispatcher(nullptr, 1, 1, 1)
 {
 
 }
 
-ComputeShader::ComputeShader(const std::string & shaderPath)
+ComputeShader::ComputeShader(const std::string & shaderPath) : ComputeShader()
 {
 	LoadShader(shaderPath);
 }
@@ -15,22 +15,13 @@ ComputeShader::ComputeShader(const std::string & shaderPath)
 void		ComputeShader::LoadShader(const std::string & shaderPath)
 {
 	_material = Material::Create(shaderPath, VK_SHADER_STAGE_COMPUTE_BIT);
-	_dispatcher = ComputeDispatcher(_material, 64, 64, 64); // Default compute dispatch size
+	_dispatcher._material = _material;
 }
 
-void		ComputeShader::Dispatch(VkCommandBuffer cmd, glm::ivec3 dispatchSize) noexcept
+void		ComputeShader::Dispatch(VkCommandBuffer cmd, int width, int height, int depth) noexcept
 {
-	_dispatcher.SetDispatchSize(dispatchSize);
+	_dispatcher.SetDispatchSize(glm::ivec3(width, height, depth));
 	_dispatcher.RecordCommands(cmd);
-}
-
-ComputeShader &	ComputeShader::operator=(ComputeShader const & src)
-{
-	std::cout << "Assignment operator of ComputeShader called" << std::endl;
-
-	if (this != &src) {
-	}
-	return (*this);
 }
 
 std::ostream &	LWGC::operator<<(std::ostream & o, ComputeShader const & r)

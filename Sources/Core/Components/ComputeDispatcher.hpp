@@ -13,8 +13,10 @@ namespace LWGC
 {
 	class		ComputeDispatcher : public Component
 	{
+		friend class ComputeShader;
+
 		private:
-			Material *	_material;
+			Material *					_material;
 			int							_width;
 			int							_height;
 			int							_depth;

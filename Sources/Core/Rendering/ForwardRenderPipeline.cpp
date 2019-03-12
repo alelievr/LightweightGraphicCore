@@ -49,7 +49,9 @@ void	ForwardRenderPipeline::SetupRenderPasses()
 	forwardPass.AddDependency(dependency);
 
 	forwardPass.Create();
-	swapChain->CreateFrameBuffers(forwardPass); // Must be the last renderpass before the final blit (which contains the framebuffer attachements)
+
+	// Must be the last renderpass before the final blit (which contains the framebuffer attachements)
+	SetLastRenderPass(forwardPass);
 }
 
 void	ForwardRenderPipeline::Render(const std::vector< Camera * > & cameras, RenderContext * context)
@@ -58,19 +60,24 @@ void	ForwardRenderPipeline::Render(const std::vector< Camera * > & cameras, Rend
 
 	if (vkGetFenceStatus(device, heavyComputeFence) == VK_SUCCESS)
 	{
-		std::cout << "Finished the compute heavy task, running another one !" << std::endl;
+		// std::cout << "Finished the compute heavy task, running another one !" << std::endl;
 
-		auto computeCmd = asyncComputePool.BeginSingle();
-		heavyComputeShader.Dispatch(computeCmd, 1024, 1024, 1);
-		asyncComputePool.EndSingle(computeCmd, heavyComputeFence);
+		// TODO: make this work
+		// auto computeCmd = asyncComputePool.BeginSingle();
+		// printf("computeCMd: %p\n", computeCmd);
+		// heavyComputeShader.Dispatch(computeCmd, 1024, 1024, 1);
+		// asyncComputePool.EndSingle(computeCmd, heavyComputeFence);
 	}
 
-	computePass.Begin();
-	RenderPipeline::RecordAllComputeDispatches(cmd);
+	computePass.Begin(cmd, VK_NULL_HANDLE, "All Computes");
+	RenderPipeline::RecordAllComputeDispatches(cmd, context);
 	computePass.End();
 
-	forwardPass.Begin();
-	RenderPipeline::RecordAllMeshRenderers(cmd);
+	// In OSX, we don't need to provide the framebuffer to the renderpass
+	// Will remove when we swap to primary command buffer recording
+	forwardPass.Begin(cmd, VK_NULL_HANDLE, "All Meshes");
+	RenderPipeline::RecordAllMeshRenderers(cmd, context);
+	forwardPass.End();
 
 	// Process the compute shader before everything:
 	RenderPipeline::

@@ -9,6 +9,7 @@
 #include "Core/Vulkan/Material.hpp"
 #include "Core/Vulkan/VulkanInstance.hpp"
 #include "Core/Mesh.hpp"
+#include "Core/Vulkan/CommandBufferPool.hpp"
 
 #include IMGUI_INCLUDE
 
@@ -32,7 +33,6 @@ namespace LWGC
 				glm::vec4	time;
 			};
 
-			std::vector< VkCommandBuffer >	_swapChainCommandBuffers;
 			LWGC_PerFrame					_perFrame;
 			UniformBuffer					_uniformPerFrame;
 			VkDescriptorSet					_perFrameDescriptorSet;
@@ -55,12 +55,18 @@ namespace LWGC
 			VkFramebuffer					framebuffer;
 			SwapChain *						swapChain;
 			std::vector< VkCommandBuffer >	frameCommandBuffers;
+			CommandBufferPool *				mainCommandPool;
 			bool							framebufferResized;
 			Camera *						currentCamera;
 
-			virtual void		CreateRenderPass(void);
+			// TODO: move to the renderpass
 			void				BeginRenderPass(RenderContext * context);
 			void				EndRenderPass(void);
+
+			void				SetLastRenderPass(const RenderPass & renderPass);
+			VkCommandBuffer		GetCurrentFrameCommandBuffer(void);
+
+			virtual void		CreateRenderPass(void);
 			virtual void		RecreateSwapChain(void);
 			virtual void		Render(const std::vector< Camera * > & cameras, RenderContext * context) = 0;
 			virtual void		InitializeHandles(void) noexcept;
@@ -68,6 +74,11 @@ namespace LWGC
 			virtual void		Initialize(SwapChain * swapChain);
 			virtual void		CreateSyncObjects(void);
 			virtual void		RenderGUI(RenderContext * context) noexcept;
+
+			// API to record command on predefined objevct lists
+			void				RecordAllComputeDispatches(VkCommandBuffer cmd, RenderContext * context);
+			void				RecordAllMeshRenderers(VkCommandBuffer cmd, RenderContext * context);
+
 
 		public:
 			RenderPipeline(void);
