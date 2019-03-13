@@ -5,6 +5,7 @@
 #include <unordered_map>
 
 #include "VulkanInstance.hpp"
+#include "Utils/Color.hpp"
 
 namespace LWGC
 {
@@ -37,6 +38,8 @@ namespace LWGC
 			VkCommandBuffer							_commandBuffer;
 			DescriptorBindings						_currentBindings;
 			Material * 								_currentMaterial;
+			std::vector< VkClearValue >				_clearValues;
+			SwapChain *								_swapChain;
 
 			void	UpdateDescriptorBindings(VkCommandBuffer cmd);
 			bool	BindDescriptorSet(const uint32_t binding, VkDescriptorSet set);
@@ -48,7 +51,7 @@ namespace LWGC
 
 			RenderPass &	operator=(RenderPass const & src) = delete;
 
-			void	Initialize(void) noexcept;
+			void	Initialize(SwapChain * swapChain) noexcept;
 			void	AddAttachment(const VkAttachmentDescription & attachment, VkImageLayout finalLayout) noexcept;
 			void	SetDepthAttachment(const VkAttachmentDescription & attachment, VkImageLayout layout) noexcept;
 			void	AddDependency(const VkSubpassDependency & dependency) noexcept;
@@ -61,6 +64,7 @@ namespace LWGC
 			void	Cleanup(void) noexcept;
 			void	Create(void);
 			void	ClearBindings(void);
+			void	SetClearColor(const Color & color, float depth, uint32_t stencil);
 
 			VkRenderPass	GetRenderPass(void) const noexcept;
 

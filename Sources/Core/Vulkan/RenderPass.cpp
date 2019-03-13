@@ -17,8 +17,9 @@ RenderPass::~RenderPass(void)
 	Cleanup();
 }
 
-void		RenderPass::Initialize(void) noexcept
+void		RenderPass::Initialize(SwapChain * swapChain) noexcept
 {
+	_swapChain = swapChain;
 	_instance = VulkanInstance::Get();
 }
 
@@ -110,6 +111,26 @@ void	RenderPass::Begin(VkCommandBuffer commandBuffer, VkFramebuffer framebuffer,
 	{
 		Vk::BeginProfilingSample(_commandBuffer, passName, Color::Blue);
 	}
+
+	VkCommandBufferBeginInfo beginInfo = {};
+	beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+	// beginInfo.flags = VK_COMMAND_BUFFER_USAGE_SIMULTANEOUS_USE_BIT; // humm...
+	Vk::CheckResult(vkBeginCommandBuffer(_commandBuffer, &beginInfo), "Failed to begin recording of command buffer!");
+
+	// If there is no framebuffer to bind, it means we're in a compute shader pass
+	if (framebuffer != VK_NULL_HANDLE)
+	{
+		VkRenderPassBeginInfo renderPassInfo = {};
+		renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
+		renderPassInfo.renderPass = _renderPass;
+		renderPassInfo.framebuffer = framebuffer;
+		renderPassInfo.renderArea.offset = {0, 0};
+		renderPassInfo.renderArea.extent = _swapChain->GetExtent();
+		renderPassInfo.clearValueCount = _clearValues.size();
+		renderPassInfo.pClearValues = _clearValues.data();
+
+		vkCmdBeginRenderPass(commandBuffer, &renderPassInfo, VK_SUBPASS_CONTENTS_SECONDARY_COMMAND_BUFFERS);
+	}
 }
 
 void	RenderPass::End(void)
@@ -118,6 +139,13 @@ void	RenderPass::End(void)
 	{
 		Vk::EndProfilingSample(_commandBuffer);
 	}
+
+	if (_framebuffer != VK_NULL_HANDLE)
+	{
+		vkCmdEndRenderPass(_commandBuffer);
+	}
+
+	Vk::CheckResult(vkEndCommandBuffer(_commandBuffer), "Failed to record command buffer!");
 }
 
 void	RenderPass::UpdateDescriptorBindings(VkCommandBuffer cmd)
@@ -184,6 +212,13 @@ void	RenderPass::ExecuteCommandBuffer(VkCommandBuffer cmd)
 void	RenderPass::ClearBindings(void)
 {
 	_currentBindings.clear();
+}
+
+void	RenderPass::SetClearColor(const Color & color, float depth, uint32_t stencil)
+{
+	_clearValues.resize(2);
+	_clearValues[0].color = {{color.r, color.g, color.b, color.a}};
+	_clearValues[1].depthStencil = {depth, stencil};
 }
 
 VkAttachmentDescription RenderPass::GetDefaultColorAttachment(VkFormat format) noexcept

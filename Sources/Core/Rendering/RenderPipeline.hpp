@@ -35,8 +35,6 @@ namespace LWGC
 
 			LWGC_PerFrame					_perFrame;
 			UniformBuffer					_uniformPerFrame;
-			VkDescriptorSet					_perFrameDescriptorSet;
-			VkDescriptorSetLayout			_perFrameDescriptorSetLayout;
 			uint32_t						_imageIndex;
 			bool							_initialized;
 
@@ -58,6 +56,8 @@ namespace LWGC
 			CommandBufferPool *				mainCommandPool;
 			bool							framebufferResized;
 			Camera *						currentCamera;
+			VkDescriptorSet					perFrameDescriptorSet;
+			VkDescriptorSetLayout			perFrameDescriptorSetLayout;
 
 			// TODO: move to the renderpass
 			void				BeginRenderPass(RenderContext * context);
@@ -65,6 +65,7 @@ namespace LWGC
 
 			void				SetLastRenderPass(const RenderPass & renderPass);
 			VkCommandBuffer		GetCurrentFrameCommandBuffer(void);
+			VkFramebuffer		GetCurrentFrameBuffer(void);
 
 			virtual void		CreateRenderPass(void);
 			virtual void		RecreateSwapChain(void);
