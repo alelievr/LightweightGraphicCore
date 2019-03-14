@@ -532,6 +532,33 @@ void				Material::BindDescriptorSets(RenderPass * renderPass)
 		renderPass->BindDescriptorSet(k.second.name, k.second.set);
 }
 
+void				Material::BindPipeline(VkCommandBuffer cmd)
+{
+	vkCmdBindPipeline(
+		cmd,
+		IsCompute() ? VK_PIPELINE_BIND_POINT_COMPUTE : VK_PIPELINE_BIND_POINT_GRAPHICS,
+		_pipeline
+	);
+}
+
+void				Material::BindProperties(VkCommandBuffer cmd)
+{
+	// Bind the material descriptor sets:
+	for (const auto & k : _setTable)
+	{
+		// TODO: store the index directly in the DescriptorSet table
+		int bindingIndex = _bindingTable->GetDescriptorSetBinding(k.second.name);
+		vkCmdBindDescriptorSets(
+			cmd,
+			IsCompute() ? VK_PIPELINE_BIND_POINT_COMPUTE : VK_PIPELINE_BIND_POINT_GRAPHICS,
+			GetPipelineLayout(),
+			bindingIndex,
+			1, &k.second.set,
+			0, nullptr
+		);
+	}
+}
+
 void				Material::SetVertexInputState(VkPipelineVertexInputStateCreateInfo info) { _vertexInputState = info; }
 void				Material::SetInputAssemblyState(VkPipelineInputAssemblyStateCreateInfo info) { _inputAssemblyState = info; }
 void				Material::SetDepthStencilState(VkPipelineDepthStencilStateCreateInfo info) { _depthStencilState = info; }

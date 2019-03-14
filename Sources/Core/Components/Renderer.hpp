@@ -58,7 +58,7 @@ namespace LWGC
 			Material *	GetMaterial(void) const;
 			void	SetMaterial(Material * tmp);
 
-			VkDescriptorSet		GetDescriptorSet(void) const;
+			VkDescriptorSet		GetDescriptorSet(void);
 
 			virtual uint32_t	GetType(void) const noexcept override = 0;
 	};

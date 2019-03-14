@@ -114,7 +114,7 @@ void	RenderPass::Begin(VkCommandBuffer commandBuffer, VkFramebuffer framebuffer,
 
 	VkCommandBufferBeginInfo beginInfo = {};
 	beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
-	// beginInfo.flags = VK_COMMAND_BUFFER_USAGE_SIMULTANEOUS_USE_BIT; // humm...
+	beginInfo.flags = VK_COMMAND_BUFFER_USAGE_SIMULTANEOUS_USE_BIT; // humm...
 	Vk::CheckResult(vkBeginCommandBuffer(_commandBuffer, &beginInfo), "Failed to begin recording of command buffer!");
 
 	// If there is no framebuffer to bind, it means we're in a compute shader pass

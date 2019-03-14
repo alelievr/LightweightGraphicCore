@@ -41,7 +41,7 @@ VulkanInstance::~VulkanInstance(void)
 {
 	std::cout << "desctroyed instance !\n";
 	// Manually destroy command buffers so we don't use a freed device
-	_commandBufferPool.~CommandBufferPool();
+	// _commandBufferPool.~CommandBufferPool();
 	// _graphicCommandBufferPool.~CommandBufferPool();
 	// _computeCommandBufferPool.~CommandBufferPool();
 

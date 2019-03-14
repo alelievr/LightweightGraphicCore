@@ -36,11 +36,11 @@ CPPVERSION	=	c++1z
 #Example $> make DEBUG=2 will set debuglevel to 2
 
 #	Includes
-INCDIRS		=	Deps/imgui Deps/glfw/include gl3w/include Deps/vulkansdk-macos-1.1.85.0/macOS/include/
+INCDIRS		=	Deps/imgui Deps/glfw/include ${VULKAN_SDK}/include/
 
 #	Libraries
-LIBDIRS		=	
-LDLIBS		=	
+LIBDIRS		=
+LDLIBS		=
 
 #	Output
 NAME		=	Deps/imgui/libImGUI.a
@@ -83,20 +83,19 @@ CNORM_OK	=	"231m"
 
 OS			:=	$(shell uname -s)
 PROC		:=	$(shell uname -p)
-DEBUGFLAGS	=	
-LINKDEBUG	=	
-OPTFLAGS	=	
-#COMPILATION	=	
+DEBUGFLAGS	=
+LINKDEBUG	=
+OPTFLAGS	=
+#COMPILATION	=
 
 ifeq "$(OS)" "Windows_NT"
 endif
 ifeq "$(OS)" "Linux"
-	LDLIBS		+= 
+	LDLIBS		+=
 	DEBUGFLAGS	+= -fsanitize=memory -fsanitize-memory-use-after-dtor -fsanitize=thread
 	INCDIRS			+= $(VULKAN_SDK)/include
 endif
 ifeq "$(OS)" "Darwin"
-	VULKAN_SDK		= $(shell pwd)/Deps/vulkansdk-macos-1.1.85.0/macOS
 	LD_LIBRARY_PATH	= $(VULKAN_SDK)/lib
 	VK_ICD_FILENAMES= $(VULKAN_SDK)/etc/vulkan/icd.d/MoltenVK_icd.json
 	INCDIRS			+= $(VULKAN_SDK)/include
@@ -162,11 +161,11 @@ ifneq ($(filter 2,$(strip $(DEBUGLEVEL)) ${DEBUG}),)
 endif
 
 ifneq ($(filter 1,$(strip $(OPTLEVEL)) ${OPTI}),)
-	DEBUGFLAGS = 
+	DEBUGFLAGS =
 	OPTFLAGS = $(OPTFLAGS1)
 endif
 ifneq ($(filter 2,$(strip $(OPTLEVEL)) ${OPTI}),)
-	DEBUGFLAGS = 
+	DEBUGFLAGS =
 	OPTFLAGS = $(OPTFLAGS1) $(OPTFLAGS2)
 endif
 
@@ -175,7 +174,7 @@ ifndef $(CXX)
 endif
 
 ifdef ${NOWERROR}
-	WERROR = 
+	WERROR =
 endif
 
 ifeq "$(strip $(LIBFT))" "2"

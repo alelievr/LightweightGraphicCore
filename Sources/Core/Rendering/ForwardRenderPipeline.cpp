@@ -71,32 +71,25 @@ void	ForwardRenderPipeline::Render(const std::vector< Camera * > & cameras, Rend
 		// asyncComputePool.EndSingle(computeCmd, heavyComputeFence);
 	}
 
-
-
 	// Process the compute shader before everything:
 	computePass.Begin(cmd, VK_NULL_HANDLE, "All Computes");
 	computePass.BindDescriptorSet(LWGCBinding::Frame, perFrameDescriptorSet);
 	RenderPipeline::RecordAllComputeDispatches(cmd, context);
 	computePass.End();
 
-
-	// Remove this once we have the renderpass improvement
-	std::unordered_set< Renderer * >	renderers;
-	context->GetRenderers(renderers);
-
 	// In OSX, we don't need to provide the framebuffer to the renderpass
 	// Will remove when we swap to primary command buffer recording
-	forwardPass.Begin(cmd, GetCurrentFrameBuffer(), "All Meshes");
-	Renderer * meshRenderer = *renderers.begin();
-	forwardPass.BindDescriptorSet(LWGCBinding::Frame, perFrameDescriptorSet);
-	forwardPass.BindMaterial(meshRenderer->GetMaterial());
-	RenderPipeline::RecordAllMeshRenderers(cmd, context);
-			// VkCommandBuffer drawMeshBuffer = meshRenderer->GetCommandBuffer(currentFrame);
-			// forwardPass.BeginSecondaryCommandBuffer(drawMeshBuffer, VK_COMMAND_BUFFER_USAGE_RENDER_PASS_CONTINUE_BIT);
-			// meshRenderer->RecordCommands(drawMeshBuffer);
-			// forwardPass.ExecuteCommandBuffer(drawMeshBuffer);
-	forwardPass.End();
+	forwardPass.Begin(cmd, GetCurrentFrameBuffer(), "All Cameras");
+	// Useless in the current design
+	// forwardPass.BindDescriptorSet(LWGCBinding::Frame, perFrameDescriptorSet);
+	for (const auto camera : cameras)
+	{
+		beginCameraRendering.Invoke(camera);
 
-	RenderPipeline::PresentFrame();
-	// RenderPipeline::Render(cameras, context);
+		// TODO: temporary camera in parameter here
+		RenderPipeline::RecordAllMeshRenderers(cmd, context, camera);
+
+		endCameraRendering.Invoke(camera);
+	}
+	forwardPass.End();
 }

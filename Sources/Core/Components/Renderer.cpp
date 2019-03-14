@@ -127,7 +127,7 @@ void		Renderer::RecordCommands(VkCommandBuffer cmd)
 Material *	Renderer::GetMaterial(void) const { return (this->_material); }
 void						Renderer::SetMaterial(Material * tmp) { this->_material = tmp; }
 
-VkDescriptorSet				Renderer::GetDescriptorSet(void) const { return _descriptorSet; }
+VkDescriptorSet				Renderer::GetDescriptorSet(void) { return _descriptorSet; }
 
 std::ostream &	operator<<(std::ostream & o, Renderer const & r)
 {

@@ -282,7 +282,11 @@ void			RenderPipeline::RenderInternal(const std::vector< Camera * > & cameras, R
 	if (cameras.empty())
 		throw std::runtime_error("No camera for rendering !");
 
-	Render(cameras, context);
+	beginFrameRendering.Invoke();
+	{
+		Render(cameras, context);
+	}
+	endFrameRendering.Invoke();
 }
 
 void	RenderPipeline::PresentFrame(void)
@@ -340,8 +344,6 @@ void	RenderPipeline::Render(const std::vector< Camera * > & cameras, RenderConte
 
 	renderPass.BindDescriptorSet(LWGCBinding::Frame, perFrameDescriptorSet);
 
-	beginFrameRendering.Invoke();
-
 	for (const auto camera : cameras)
 	{
 		beginCameraRendering.Invoke(camera);
@@ -367,8 +369,6 @@ void	RenderPipeline::Render(const std::vector< Camera * > & cameras, RenderConte
 		endCameraRendering.Invoke(camera);
 	}
 
-	endFrameRendering.Invoke();
-
 	EndRenderPass();
 
 	renderPass.ClearBindings();
@@ -382,11 +382,15 @@ void			RenderPipeline::RecordAllComputeDispatches(VkCommandBuffer cmd, RenderCon
 
 	for (auto compute : computeDispatchers)
 	{
+		auto material = compute->GetMaterial();
+
+		material->BindPipeline(cmd);
+		material->BindProperties(cmd);
 		compute->RecordCommands(cmd);
 	}
 }
 
-void			RenderPipeline::RecordAllMeshRenderers(VkCommandBuffer cmd, RenderContext * context)
+void			RenderPipeline::RecordAllMeshRenderers(VkCommandBuffer cmd, RenderContext * context, Camera * cam)
 {
 	std::unordered_set< Renderer * >	renderers;
 
@@ -394,6 +398,35 @@ void			RenderPipeline::RecordAllMeshRenderers(VkCommandBuffer cmd, RenderContext
 
 	for (auto renderer : renderers)
 	{
+		auto material = renderer->GetMaterial();
+		// TODO: optimize this when doing the renderqueues (sort materials and avoid pipeline switches)
+		material->BindPipeline(cmd);
+		material->BindProperties(cmd);
+
+		// TODO: simplify this ! (maybe do the big object buffer for this as optimization)
+		// Bind the per object buffer
+		uint32_t setPosition = material->GetDescriptorSetBinding(LWGCBinding::Object);
+		VkDescriptorSet set = renderer->GetDescriptorSet();
+		vkCmdBindDescriptorSets(
+			cmd,
+			VK_PIPELINE_BIND_POINT_GRAPHICS,
+			material->GetPipelineLayout(),
+			setPosition,
+			1, &set,
+			0, nullptr
+		);
+
+		setPosition = material->GetDescriptorSetBinding(LWGCBinding::Camera);
+		set = cam->GetDescriptorSet();
+		vkCmdBindDescriptorSets(
+			cmd,
+			VK_PIPELINE_BIND_POINT_GRAPHICS,
+			material->GetPipelineLayout(),
+			setPosition,
+			1, &set,
+			0, nullptr
+		);
+
 		renderer->RecordCommands(cmd);
 	}
 }
