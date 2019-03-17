@@ -77,8 +77,8 @@ namespace LWGC
 			virtual void		RenderGUI(RenderContext * context) noexcept;
 
 			// API to record command on predefined objevct lists
-			void				RecordAllComputeDispatches(VkCommandBuffer cmd, RenderContext * context);
-			void				RecordAllMeshRenderers(VkCommandBuffer cmd, RenderContext * context, Camera * cam);
+			void				RecordAllComputeDispatches(RenderPass & pass, RenderContext * context);
+			void				RecordAllMeshRenderers(RenderPass & pass, RenderContext * context);
 
 
 		public:

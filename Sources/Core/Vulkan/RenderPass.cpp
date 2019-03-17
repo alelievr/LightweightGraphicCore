@@ -51,8 +51,14 @@ void		RenderPass::AddDependency(const VkSubpassDependency & dependency) noexcept
 	_dependencies.push_back(dependency);
 }
 
-void		RenderPass::Create(void)
+void		RenderPass::Create(bool computeOnly)
 {
+	if (computeOnly)
+	{
+		std::cerr << "For compute we don't need to call Create on renderpass because we don't need one to run a compute shader" << std::endl;
+		return ;
+	}
+	
 	VkSubpassDescription subpass = {};
 	subpass.pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS;
 	subpass.colorAttachmentCount = _references.size();
@@ -95,9 +101,11 @@ void	RenderPass::BindMaterial(Material * material)
 {
 	_currentMaterial = material;
 
-	material->BindDescriptorSets(this);
+	// material->BindDescriptorSets(this);
 
 	// mark all bindings to changed set they're all rebinded to the new material
+	// TODO: only do this when the pipeline layout changes, if only the shader changes we just have to update
+	// the descriptor that are not at the same index / new ones
 	for (auto & b : _currentBindings)
 		b.second.hasChanged = true;
 }
@@ -112,11 +120,6 @@ void	RenderPass::Begin(VkCommandBuffer commandBuffer, VkFramebuffer framebuffer,
 		Vk::BeginProfilingSample(_commandBuffer, passName, Color::Blue);
 	}
 
-	VkCommandBufferBeginInfo beginInfo = {};
-	beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
-	beginInfo.flags = VK_COMMAND_BUFFER_USAGE_SIMULTANEOUS_USE_BIT; // humm...
-	Vk::CheckResult(vkBeginCommandBuffer(_commandBuffer, &beginInfo), "Failed to begin recording of command buffer!");
-
 	// If there is no framebuffer to bind, it means we're in a compute shader pass
 	if (framebuffer != VK_NULL_HANDLE)
 	{
@@ -129,7 +132,7 @@ void	RenderPass::Begin(VkCommandBuffer commandBuffer, VkFramebuffer framebuffer,
 		renderPassInfo.clearValueCount = _clearValues.size();
 		renderPassInfo.pClearValues = _clearValues.data();
 
-		vkCmdBeginRenderPass(commandBuffer, &renderPassInfo, VK_SUBPASS_CONTENTS_SECONDARY_COMMAND_BUFFERS);
+		vkCmdBeginRenderPass(commandBuffer, &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
 	}
 }
 
@@ -144,11 +147,9 @@ void	RenderPass::End(void)
 	{
 		vkCmdEndRenderPass(_commandBuffer);
 	}
-
-	Vk::CheckResult(vkEndCommandBuffer(_commandBuffer), "Failed to record command buffer!");
 }
 
-void	RenderPass::UpdateDescriptorBindings(VkCommandBuffer cmd)
+void	RenderPass::UpdateDescriptorBindings(void)
 {
 	// Bind all descriptor that have changed
 	for (auto & b : _currentBindings)
@@ -160,7 +161,7 @@ void	RenderPass::UpdateDescriptorBindings(VkCommandBuffer cmd)
 			if (firstSet != -1u)
 			{
 				vkCmdBindDescriptorSets(
-					cmd,
+					_commandBuffer,
 					_currentMaterial->IsCompute() ?	VK_PIPELINE_BIND_POINT_COMPUTE : VK_PIPELINE_BIND_POINT_GRAPHICS,
 					_currentMaterial->GetPipelineLayout(),
 					firstSet,
@@ -170,43 +171,6 @@ void	RenderPass::UpdateDescriptorBindings(VkCommandBuffer cmd)
 			}
 		}
 	}
-}
-
-void	RenderPass::BeginSecondaryCommandBuffer(VkCommandBuffer cmd, VkCommandBufferUsageFlagBits commandBufferUsage)
-{
-	VkCommandBufferInheritanceInfo inheritanceInfo = {};
-	inheritanceInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_INHERITANCE_INFO;
-	inheritanceInfo.renderPass = _renderPass;
-	inheritanceInfo.framebuffer = _framebuffer;
-
-	VkCommandBufferBeginInfo beginInfo = {};
-	beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
-	beginInfo.flags = commandBufferUsage | VK_COMMAND_BUFFER_USAGE_SIMULTANEOUS_USE_BIT;
-	beginInfo.pInheritanceInfo = &inheritanceInfo;
-
-	if (vkBeginCommandBuffer(cmd, &beginInfo) != VK_SUCCESS)
-	{
-		throw std::runtime_error("failed to begin recording command buffer!");
-	}
-
-	// The bind pipelines should be sorted to avoid unnecessary pipeline switch
-	vkCmdBindPipeline(
-		cmd,
-		_currentMaterial->IsCompute() ? VK_PIPELINE_BIND_POINT_COMPUTE : VK_PIPELINE_BIND_POINT_GRAPHICS,
-		_currentMaterial->GetPipeline()
-	);
-
-	UpdateDescriptorBindings(cmd);
-}
-
-void	RenderPass::ExecuteCommandBuffer(VkCommandBuffer cmd)
-{
-	if (vkEndCommandBuffer(cmd) != VK_SUCCESS)
-	{
-		throw std::runtime_error("failed to record command buffer!");
-	}
-
-	vkCmdExecuteCommands(_commandBuffer, 1, &cmd);
 }
 
 void	RenderPass::ClearBindings(void)
@@ -252,6 +216,7 @@ VkAttachmentDescription RenderPass::GetDefaultDepthAttachment(VkFormat format) n
 }
 
 VkRenderPass	RenderPass::GetRenderPass(void) const noexcept { return (this->_renderPass); }
+VkCommandBuffer	RenderPass::GetCommandBuffer(void) const noexcept { return (this->_commandBuffer); }
 
 std::ostream &	operator<<(std::ostream & o, RenderPass const & r)
 {

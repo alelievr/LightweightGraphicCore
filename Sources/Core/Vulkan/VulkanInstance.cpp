@@ -40,10 +40,6 @@ VulkanInstance::VulkanInstance(const std::string & applicationName, const std::v
 VulkanInstance::~VulkanInstance(void)
 {
 	std::cout << "desctroyed instance !\n";
-	// Manually destroy command buffers so we don't use a freed device
-	// _commandBufferPool.~CommandBufferPool();
-	// _graphicCommandBufferPool.~CommandBufferPool();
-	// _computeCommandBufferPool.~CommandBufferPool();
 
 	if (_enableValidationLayers)
 	{
@@ -70,21 +66,25 @@ void			VulkanInstance::Initialize(void)
 
 void			VulkanInstance::InitializeVulkanFunctions(void) noexcept
 {
-	// Debug report (validation layers) exntension
-	VkExt::CreateDebugUtilsMessengerFunction = reinterpret_cast<PFN_vkCreateDebugUtilsMessengerEXT>(glfwGetInstanceProcAddress(_instance, "vkCreateDebugUtilsMessengerEXT"));
-	VkExt::DestroyDebugUtilMessengerFunction = reinterpret_cast<PFN_vkDestroyDebugUtilsMessengerEXT>(glfwGetInstanceProcAddress(_instance, "vkDestroyDebugUtilsMessengerEXT"));
-	VkExt::CreateDebugReportCallbackFunction = reinterpret_cast<PFN_vkCreateDebugReportCallbackEXT>(glfwGetInstanceProcAddress(_instance, "vkCreateDebugReportCallbackEXT"));
-	VkExt::DestroyDebugReportCallbackFunction = reinterpret_cast<PFN_vkDestroyDebugReportCallbackEXT>(glfwGetInstanceProcAddress(_instance, "vkDestroyDebugReportCallbackEXT"));
-	VkExt::DebugReportMessageFunction = reinterpret_cast<PFN_vkDebugReportMessageEXT>(glfwGetInstanceProcAddress(_instance, "vkDebugReportMessageEXT"));
+	// Debug report (validation layers) extension
+	if (std::find(_deviceExtensions.begin(), _deviceExtensions.end(), VK_EXT_DEBUG_UTILS_EXTENSION_NAME) != _deviceExtensions.end())
+	{
+		VkExt::CreateDebugUtilsMessengerFunction = reinterpret_cast<PFN_vkCreateDebugUtilsMessengerEXT>(glfwGetInstanceProcAddress(_instance, "vkCreateDebugUtilsMessengerEXT"));
+		VkExt::DestroyDebugUtilMessengerFunction = reinterpret_cast<PFN_vkDestroyDebugUtilsMessengerEXT>(glfwGetInstanceProcAddress(_instance, "vkDestroyDebugUtilsMessengerEXT"));
+		VkExt::CreateDebugReportCallbackFunction = reinterpret_cast<PFN_vkCreateDebugReportCallbackEXT>(glfwGetInstanceProcAddress(_instance, "vkCreateDebugReportCallbackEXT"));
+		VkExt::DestroyDebugReportCallbackFunction = reinterpret_cast<PFN_vkDestroyDebugReportCallbackEXT>(glfwGetInstanceProcAddress(_instance, "vkDestroyDebugReportCallbackEXT"));
+		VkExt::DebugReportMessageFunction = reinterpret_cast<PFN_vkDebugReportMessageEXT>(glfwGetInstanceProcAddress(_instance, "vkDebugReportMessageEXT"));
+	}
 
-#ifdef DEBUG
-	// Debug maker extension:
-	VkExt::DebugMarkerSetObjectTagFunction = reinterpret_cast<PFN_vkDebugMarkerSetObjectTagEXT>(glfwGetInstanceProcAddress(_instance, "vkDebugMarkerSetObjectTagEXT"));
-	VkExt::DebugMarkerSetObjectNameFunction = reinterpret_cast<PFN_vkDebugMarkerSetObjectNameEXT>(glfwGetInstanceProcAddress(_instance, "vkDebugMarkerSetObjectNameEXT"));
-	VkExt::CmdDebugMarkerBeginFunction = reinterpret_cast<PFN_vkCmdDebugMarkerBeginEXT>(glfwGetInstanceProcAddress(_instance, "vkCmdDebugMarkerBeginEXT"));
-	VkExt::CmdDebugMarkerEndFunction = reinterpret_cast<PFN_vkCmdDebugMarkerEndEXT>(glfwGetInstanceProcAddress(_instance, "vkCmdDebugMarkerEndEXT"));
-	VkExt::CmdDebugMarkerInsertFunction = reinterpret_cast<PFN_vkCmdDebugMarkerInsertEXT>(glfwGetInstanceProcAddress(_instance, "vkCmdDebugMarkerInsertEXT"));
-#endif
+	if (std::find(_deviceExtensions.begin(), _deviceExtensions.end(), VK_EXT_DEBUG_MARKER_EXTENSION_NAME) != _deviceExtensions.end())
+	{
+		// Debug maker extension:
+		VkExt::DebugMarkerSetObjectTagFunction = reinterpret_cast<PFN_vkDebugMarkerSetObjectTagEXT>(glfwGetInstanceProcAddress(_instance, "vkDebugMarkerSetObjectTagEXT"));
+		VkExt::DebugMarkerSetObjectNameFunction = reinterpret_cast<PFN_vkDebugMarkerSetObjectNameEXT>(glfwGetInstanceProcAddress(_instance, "vkDebugMarkerSetObjectNameEXT"));
+		VkExt::CmdDebugMarkerBeginFunction = reinterpret_cast<PFN_vkCmdDebugMarkerBeginEXT>(glfwGetInstanceProcAddress(_instance, "vkCmdDebugMarkerBeginEXT"));
+		VkExt::CmdDebugMarkerEndFunction = reinterpret_cast<PFN_vkCmdDebugMarkerEndEXT>(glfwGetInstanceProcAddress(_instance, "vkCmdDebugMarkerEndEXT"));
+		VkExt::CmdDebugMarkerInsertFunction = reinterpret_cast<PFN_vkCmdDebugMarkerInsertEXT>(glfwGetInstanceProcAddress(_instance, "vkCmdDebugMarkerInsertEXT"));
+	}
 }
 
 void			VulkanInstance::InitializeSurface(VkSurfaceKHR surface)
@@ -106,7 +106,8 @@ void			VulkanInstance::CreateDescriptorPool(void) noexcept
 	if (_descriptorPool != VK_NULL_HANDLE)
 		return ;
 
-	std::array<VkDescriptorPoolSize, 4> poolSizes = {};
+	// TODO: refactor this
+	std::array<VkDescriptorPoolSize, 5> poolSizes = {};
 	poolSizes[0].type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
 	poolSizes[0].descriptorCount = 1000u;
 	poolSizes[1].type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC;
@@ -115,6 +116,8 @@ void			VulkanInstance::CreateDescriptorPool(void) noexcept
 	poolSizes[2].descriptorCount = 6u;
 	poolSizes[3].type = VK_DESCRIPTOR_TYPE_SAMPLER;
 	poolSizes[3].descriptorCount = 4u;
+	poolSizes[4].type = VK_DESCRIPTOR_TYPE_STORAGE_IMAGE;
+	poolSizes[4].descriptorCount = 2u;
 
 	VkDescriptorPoolCreateInfo poolInfo = {};
 	poolInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
@@ -378,6 +381,11 @@ void			VulkanInstance::CreateLogicalDevice(void)
 	createInfo.enabledExtensionCount = static_cast<uint32_t>(_deviceExtensions.size());
 	createInfo.ppEnabledExtensionNames = _deviceExtensions.data();
 
+	std::cout << "Enabled vulkan extensions: ";
+	for (auto extension : _deviceExtensions)
+		std::cout << extension << ((extension != _deviceExtensions.back()) ? ", " : "");
+	std::cout << std::endl;
+
 	if (_enableValidationLayers) {
 	    createInfo.enabledLayerCount = static_cast<uint32_t>(_validationLayers.size());
 	    createInfo.ppEnabledLayerNames = _validationLayers.data();
@@ -437,8 +445,16 @@ bool			VulkanInstance::AreExtensionsSupportedForPhysicalDevice(VkPhysicalDevice 
 
 	std::set< std::string > requiredExtensions(_deviceExtensions.begin(), _deviceExtensions.end());
 
-	for (const auto& extension : availableExtensions)
+	for (const auto & extension : availableExtensions)
 		requiredExtensions.erase(extension.extensionName);
+
+	if (requiredExtensions.size() != 0)
+	{
+		std::cout << "Missing required extensions: ";
+		for (const auto & extension : requiredExtensions)
+			std::cout << extension << ", ";
+		std::cout << std::endl;
+	}
 
 	return requiredExtensions.empty();
 }

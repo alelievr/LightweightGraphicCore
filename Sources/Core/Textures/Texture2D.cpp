@@ -57,9 +57,12 @@ Texture2D::Texture2D(std::size_t width, std::size_t height, VkFormat format, int
     this->arraySize = 1;
     this->usage = usage;
 
-	maxMipLevel = (allocateMips) ? static_cast<uint32_t>(std::floor(std::log2(std::max(width, height)))) + 1 : 0;
+	maxMipLevel = (allocateMips) ? static_cast<uint32_t>(std::floor(std::log2(std::max(width, height)))) + 1 : 1;
 
     AllocateImage(VK_IMAGE_VIEW_TYPE_2D);
+
+	// By default we set empty images to general layout
+	TransitionImageLayout(image, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_GENERAL);
 }
 
 Texture2D::Texture2D(Texture2D const & src)

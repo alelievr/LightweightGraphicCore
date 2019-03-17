@@ -23,7 +23,7 @@ void	ForwardRenderPipeline::SetupRenderPasses()
 	// Compute pass (for each frame)
 	computePass.Initialize(swapChain);
 	// We don't have any attachements for the compute pass
-	computePass.Create();
+	computePass.Create(true);
 
 	// Forward pass (render all objects into the framebuffer)
 	forwardPass.Initialize(swapChain);
@@ -62,7 +62,7 @@ void	ForwardRenderPipeline::Render(const std::vector< Camera * > & cameras, Rend
 
 	if (vkGetFenceStatus(device, heavyComputeFence) == VK_SUCCESS)
 	{
-		// std::cout << "Finished the compute heavy task, running another one !" << std::endl;
+		std::cout << "Finished the compute heavy task, running another one !" << std::endl;
 
 		// TODO: make this work
 		// auto computeCmd = asyncComputePool.BeginSingle();
@@ -73,23 +73,25 @@ void	ForwardRenderPipeline::Render(const std::vector< Camera * > & cameras, Rend
 
 	// Process the compute shader before everything:
 	computePass.Begin(cmd, VK_NULL_HANDLE, "All Computes");
-	computePass.BindDescriptorSet(LWGCBinding::Frame, perFrameDescriptorSet);
-	RenderPipeline::RecordAllComputeDispatches(cmd, context);
+	{
+		computePass.BindDescriptorSet(LWGCBinding::Frame, perFrameDescriptorSet);
+		RenderPipeline::RecordAllComputeDispatches(computePass, context);
+	}
 	computePass.End();
 
-	// In OSX, we don't need to provide the framebuffer to the renderpass
-	// Will remove when we swap to primary command buffer recording
 	forwardPass.Begin(cmd, GetCurrentFrameBuffer(), "All Cameras");
-	// Useless in the current design
-	// forwardPass.BindDescriptorSet(LWGCBinding::Frame, perFrameDescriptorSet);
-	for (const auto camera : cameras)
 	{
-		beginCameraRendering.Invoke(camera);
+		forwardPass.BindDescriptorSet(LWGCBinding::Frame, perFrameDescriptorSet);
+		for (const auto camera : cameras)
+		{
 
-		// TODO: temporary camera in parameter here
-		RenderPipeline::RecordAllMeshRenderers(cmd, context, camera);
+			beginCameraRendering.Invoke(camera);
+			forwardPass.BindDescriptorSet(LWGCBinding::Camera, camera->GetDescriptorSet());
 
-		endCameraRendering.Invoke(camera);
+			RenderPipeline::RecordAllMeshRenderers(forwardPass, context);
+
+			endCameraRendering.Invoke(camera);
+		}
 	}
 	forwardPass.End();
 }

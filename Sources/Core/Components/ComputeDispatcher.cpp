@@ -40,6 +40,48 @@ bool			ComputeDispatcher::CheckWorkSize(void) noexcept
 void			ComputeDispatcher::RecordCommands(VkCommandBuffer cmd)
 {
 	vkCmdDispatch(cmd, _width / _workGroupWidth, _height / _workGroupHeight, _depth / _workGroupDepth);
+
+	// Image barriers
+	for (const auto & imageBarrierInfo : _imageBarriers)
+	{
+		vkCmdPipelineBarrier(
+			cmd,
+			VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT,
+			imageBarrierInfo.second,
+			0,										// Dependency flags
+			0, nullptr,
+			0, nullptr,
+			1, &imageBarrierInfo.first              // pImageMemoryBarriers
+		);
+	}
+	
+	// Memory barriers
+	for (const auto & memoryBarrierInfo : _memoryBarriers)
+	{
+		vkCmdPipelineBarrier(
+			cmd,
+			VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT,
+			memoryBarrierInfo.second,
+			0,										// Dependency flags
+			1, &memoryBarrierInfo.first,
+			0, nullptr,
+			0, nullptr
+		);
+	}
+	
+	// Buffer barriers
+	for (const auto & bufferBarrierInfo : _bufferBarriers)
+	{
+		vkCmdPipelineBarrier(
+			cmd,
+			VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT,
+			bufferBarrierInfo.second,
+			0,										// Dependency flags
+			0, nullptr,
+			1, &bufferBarrierInfo.first,
+			0, nullptr
+		);
+	}
 }
 
 void			ComputeDispatcher::OnEnable() noexcept
@@ -67,12 +109,28 @@ void			ComputeDispatcher::SetDispatchSize(const glm::ivec3 & size, bool checkSiz
 	}
 }
 
-Material *	ComputeDispatcher::GetMaterial(void)
+void			ComputeDispatcher::AddMemoryBarrier(VkMemoryBarrier barrier, VkPipelineStageFlags destinationStageMask)
+{
+	_memoryBarriers.push_back({barrier, destinationStageMask});
+}
+
+void			ComputeDispatcher::AddBufferBarrier(VkBufferMemoryBarrier barrier, VkPipelineStageFlags destinationStageMask)
+{
+	_bufferBarriers.push_back({barrier, destinationStageMask});
+}
+
+void			ComputeDispatcher::AddImageBarrier(VkImageMemoryBarrier barrier, VkPipelineStageFlags destinationStageMask)
+{
+	_imageBarriers.push_back({barrier, destinationStageMask});
+}
+
+
+Material *		ComputeDispatcher::GetMaterial(void)
 {
 	return _material;
 }
 
-VkCommandBuffer				ComputeDispatcher::GetCommandBuffer(void)
+VkCommandBuffer	ComputeDispatcher::GetCommandBuffer(void)
 {
 	return _computeCommandBuffer;
 }

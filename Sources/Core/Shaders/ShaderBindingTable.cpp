@@ -85,7 +85,7 @@ void					ShaderBindingTable::GenerateSetLayouts()
 			{
 				// TODO: only report this error when the property is set from the material
 				if (std::find(indices.begin(), indices.end(), j) == indices.end())
-					std::cerr << "Error in shader scriptor set layout #" << i << ", Binding #" << j << " does not exists (but another binding with a greater index exists)" << std::endl;
+					std::cerr << "Error in shader descriptor set layout #" << i << ", Binding #" << j << " does not exists (but another binding with a greater index exists)" << std::endl;
 			}
 		}
 	}

@@ -26,7 +26,8 @@ ShaderProgram::~ShaderProgram(void)
 
 void		ShaderProgram::CompileAndLink(void)
 {
-	_bindingTable.SetStage(IsCompute() ? VK_SHADER_STAGE_COMPUTE_BIT : VK_SHADER_STAGE_ALL_GRAPHICS);
+	// Temporary workaround to be able to bind frame in compute shaders
+	_bindingTable.SetStage(IsCompute() ? VK_SHADER_STAGE_ALL : VK_SHADER_STAGE_ALL_GRAPHICS);
 	if (!_isUpdateBound)
 	{
 		_updateIndex = Application::update.AddListener(std::bind(&ShaderProgram::Update, this));
