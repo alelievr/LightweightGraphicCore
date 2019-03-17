@@ -25,7 +25,7 @@ void			ComputeDispatcher::Initialize(void) noexcept
 
 	if (!CheckWorkSize())
 	{
-		std::cout << "Dispatch size for compute shader is not multiple of his work group size: "
+		std::cout << "Dispatch size (" << _width << ", " << _height << ", " << _depth << ") for compute shader is not multiple of his work group size: "
 			<< _workGroupWidth << ", " << _workGroupHeight << ", " << _workGroupDepth << std::endl;
 		return ;
 	}
@@ -33,7 +33,7 @@ void			ComputeDispatcher::Initialize(void) noexcept
 
 bool			ComputeDispatcher::CheckWorkSize(void) noexcept
 {
-	return (_width % _workGroupWidth != 0 || _height % _workGroupHeight != 0 || _depth % _workGroupDepth != 0);
+	return (_width % _workGroupWidth == 0 && _height % _workGroupHeight == 0 && _depth % _workGroupDepth == 0);
 }
 
 void			ComputeDispatcher::RecordCommands(VkCommandBuffer cmd)
@@ -103,7 +103,7 @@ void			ComputeDispatcher::SetDispatchSize(const glm::ivec3 & size, bool checkSiz
 
 	if (checkSize && !CheckWorkSize())
 	{
-		std::cout << "Dispatch size for compute shader is not multiple of his work group size: "
+		std::cout << "Dispatch size (" << _width << ", " << _height << ", " << _depth << ") for compute shader is not multiple of his work group size: "
 			<< _workGroupWidth << ", " << _workGroupHeight << ", " << _workGroupDepth << std::endl;
 	}
 }

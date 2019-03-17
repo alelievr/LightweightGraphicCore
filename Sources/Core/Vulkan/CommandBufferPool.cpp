@@ -113,9 +113,15 @@ void		CommandBufferPool::EndSingle(VkCommandBuffer commandBuffer, VkFence fence)
 	submitInfo.pCommandBuffers = &commandBuffer;
 
 	Vk::CheckResult(vkQueueSubmit(_queue, 1, &submitInfo, fence), "Queue submit failed");
-	Vk::CheckResult(vkQueueWaitIdle(_queue), "QueueWait Idle failed");
 
-	vkFreeCommandBuffers(_instance->GetDevice(), _commandPool, 1, &commandBuffer);
+	// if there is no fence, we block until it's finished
+	if (fence == VK_NULL_HANDLE)
+	{
+		Vk::CheckResult(vkQueueWaitIdle(_queue), "QueueWait Idle failed");
+		vkFreeCommandBuffers(_instance->GetDevice(), _commandPool, 1, &commandBuffer);
+	}
+
+	// TODO: when we're running a command with a fence, we need to keep track of the command buffer so we can free it when the fence is signaled
 }
 
 std::ostream &	operator<<(std::ostream & o, CommandBufferPool const & r)

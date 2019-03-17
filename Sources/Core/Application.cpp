@@ -54,9 +54,10 @@ void			Application::Init(void) noexcept
 #endif
 	_instance.SetDeviceExtensions({
 #ifdef DEBUG
-		// VK_EXT_DEBUG_MARKER_EXTENSION_NAME, // TODO: enable the extension in the vulkan layer
+		VK_EXT_DEBUG_MARKER_EXTENSION_NAME, // TODO: enable the extension in the vulkan layer
 #endif
 		VK_KHR_SWAPCHAIN_EXTENSION_NAME,
+		// VK_NV_RAY_TRACING_EXTENSION_NAME,
 	});
 	_instance.SetApplicationName("LWGC"); // This should be the application name but for the moment we'll keep it like this
 

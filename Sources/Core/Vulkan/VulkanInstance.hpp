@@ -26,10 +26,10 @@ namespace LWGC
 	struct DeviceCapability
 	{
 		bool				supportedFeatures;
-		bool				supportExtensions;
 		bool				supportSurface;
 		VkPhysicalDevice	physicalDevice;
 		std::vector< DeviceQueue >	queues;
+		std::vector< std::string >	enabledExtensions;
 		std::string			deviceName;
 
 		int		GetGPUScore(void) const;
@@ -60,7 +60,7 @@ namespace LWGC
 			std::vector< VkPresentModeKHR >		_surfacePresentModes;
 
 			std::vector< const char * >	_validationLayers;
-			std::vector< const char * >	_deviceExtensions;
+			std::vector< std::string >	_deviceExtensions;
 
 			CommandBufferPool			_commandBufferPool;
 
@@ -71,7 +71,7 @@ namespace LWGC
 			void		ChoosePhysicalDevice(void);
 			DeviceCapability	IsPhysicalDeviceSuitable(VkPhysicalDevice physicalDevice) noexcept;
 			void		InitQueueIndicesForPhysicalDevice(VkPhysicalDevice device) noexcept;
-			bool		AreExtensionsSupportedForPhysicalDevice(VkPhysicalDevice physicalDevice) noexcept;
+			std::vector< std::string >	AreExtensionsSupportedForPhysicalDevice(VkPhysicalDevice physicalDevice) noexcept;
 			void		CreateInstance(void);
 			void		CreateLogicalDevice(void);
 			void		CreateCommandBufferPools(void) noexcept;
@@ -88,14 +88,14 @@ namespace LWGC
 		public:
 			VulkanInstance(void);
 			VulkanInstance(const std::string & applicationName);
-			VulkanInstance(const std::string & applicationName, const std::vector< const char * > validationLayers, const std::vector< const char * > deviceExtensions);
+			VulkanInstance(const std::string & applicationName, const std::vector< const char * > validationLayers, const std::vector< std::string > deviceExtensions);
 			VulkanInstance(const VulkanInstance &) = delete;
 			virtual ~VulkanInstance(void);
 
 			VulkanInstance &	operator=(VulkanInstance const & src) = delete;
 
 			void		SetValidationLayers(const std::vector< const char * > validationLayers) noexcept;
-			void		SetDeviceExtensions(const std::vector< const char * > deviceExtensions) noexcept;
+			void		SetDeviceExtensions(const std::vector< std::string > deviceExtensions) noexcept;
 			void		SetApplicationName(const std::string & applicationName) noexcept;
 
 			void		Initialize(void);

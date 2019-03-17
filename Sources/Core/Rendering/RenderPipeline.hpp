@@ -76,7 +76,7 @@ namespace LWGC
 			virtual void		CreateSyncObjects(void);
 			virtual void		RenderGUI(RenderContext * context) noexcept;
 
-			// API to record command on predefined objevct lists
+			// API to record command on predefined object lists
 			void				RecordAllComputeDispatches(RenderPass & pass, RenderContext * context);
 			void				RecordAllMeshRenderers(RenderPass & pass, RenderContext * context);
 

@@ -3,6 +3,8 @@
 
 using namespace LWGC;
 
+Texture2D * fractalTexture;
+
 void	ForwardRenderPipeline::Initialize(SwapChain * swapChain)
 {
 	RenderPipeline::Initialize(swapChain);
@@ -14,6 +16,9 @@ void	ForwardRenderPipeline::Initialize(SwapChain * swapChain)
 	instance->AllocateDeviceQueue(asyncComputeQueue, asyncComputeQueueIndex);
 	asyncComputePool.Initialize(asyncComputeQueue, asyncComputeQueueIndex);
 
+	fractalTexture = Texture2D::Create(2048, 2048, VK_FORMAT_R8G8B8A8_SNORM, VK_IMAGE_USAGE_STORAGE_BIT | VK_IMAGE_USAGE_SAMPLED_BIT);
+	heavyComputeShader.SetTexture("fractal", fractalTexture, VK_IMAGE_LAYOUT_GENERAL, VK_DESCRIPTOR_TYPE_STORAGE_IMAGE);
+
 	// Setup the render passes we uses:
 	SetupRenderPasses();
 }
@@ -22,8 +27,7 @@ void	ForwardRenderPipeline::SetupRenderPasses()
 {
 	// Compute pass (for each frame)
 	computePass.Initialize(swapChain);
-	// We don't have any attachements for the compute pass
-	computePass.Create(true);
+	// For compute we don't need to call Create on renderpass because we don't need one to run a compute shader
 
 	// Forward pass (render all objects into the framebuffer)
 	forwardPass.Initialize(swapChain);
@@ -60,15 +64,22 @@ void	ForwardRenderPipeline::Render(const std::vector< Camera * > & cameras, Rend
 {
 	VkCommandBuffer cmd = GetCurrentFrameCommandBuffer();
 
-	if (vkGetFenceStatus(device, heavyComputeFence) == VK_SUCCESS)
+	VkResult heavyComputeResult = vkGetFenceStatus(device, heavyComputeFence);
+	if (heavyComputeResult == VK_SUCCESS)
 	{
 		std::cout << "Finished the compute heavy task, running another one !" << std::endl;
 
-		// TODO: make this work
-		// auto computeCmd = asyncComputePool.BeginSingle();
-		// printf("computeCMd: %p\n", computeCmd);
-		// heavyComputeShader.Dispatch(computeCmd, 1024, 1024, 1);
-		// asyncComputePool.EndSingle(computeCmd, heavyComputeFence);
+		vkResetFences(device, 1, &heavyComputeFence);
+
+		auto computeCmd = asyncComputePool.BeginSingle();
+		heavyComputeShader.Dispatch(computeCmd, 2048, 2048, 1);
+		asyncComputePool.EndSingle(computeCmd, heavyComputeFence);
+	} else if (heavyComputeResult == VK_NOT_READY) {
+		// std::cout << "Not ready !\n";
+	}
+	else
+	{
+		std::cerr << "Device lost error !\n";
 	}
 
 	// Process the compute shader before everything:

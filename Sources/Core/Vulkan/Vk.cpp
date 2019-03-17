@@ -158,7 +158,43 @@ void			Vk::CheckResult(VkResult result, const std::string & errorMessage)
 	if (result == 0)
 		return;
 
-	std::cout << "Vulkan error [" << result << "]: " << errorMessage << std::endl;
+	std::unordered_map< int, std::string > errorCodeMap;
+	errorCodeMap[0] = "VK_SUCCESS";
+	errorCodeMap[1] = "VK_NOT_READY";
+	errorCodeMap[2] = "VK_TIMEOUT";
+	errorCodeMap[3] = "VK_EVENT_SET";
+	errorCodeMap[4] = "VK_EVENT_RESET";
+	errorCodeMap[5] = "VK_INCOMPLETE";
+	errorCodeMap[-1] = "VK_ERROR_OUT_OF_HOST_MEMORY";
+	errorCodeMap[-2] = "VK_ERROR_OUT_OF_DEVICE_MEMORY";
+	errorCodeMap[-3] = "VK_ERROR_INITIALIZATION_FAILED";
+	errorCodeMap[-4] = "VK_ERROR_DEVICE_LOST";
+	errorCodeMap[-5] = "VK_ERROR_MEMORY_MAP_FAILED";
+	errorCodeMap[-6] = "VK_ERROR_LAYER_NOT_PRESENT";
+	errorCodeMap[-7] = "VK_ERROR_EXTENSION_NOT_PRESENT";
+	errorCodeMap[-8] = "VK_ERROR_FEATURE_NOT_PRESENT";
+	errorCodeMap[-9] = "VK_ERROR_INCOMPATIBLE_DRIVER";
+	errorCodeMap[-10] = "VK_ERROR_TOO_MANY_OBJECTS";
+	errorCodeMap[-11] = "VK_ERROR_FORMAT_NOT_SUPPORTED";
+	errorCodeMap[-12] = "VK_ERROR_FRAGMENTED_POOL";
+	errorCodeMap[-1000069000] = "VK_ERROR_OUT_OF_POOL_MEMORY";
+	errorCodeMap[-1000072003] = "VK_ERROR_INVALID_EXTERNAL_HANDLE";
+	errorCodeMap[-1000000000] = "VK_ERROR_SURFACE_LOST_KHR";
+	errorCodeMap[-1000000001] = "VK_ERROR_NATIVE_WINDOW_IN_USE_KHR";
+	errorCodeMap[1000001003] = "VK_SUBOPTIMAL_KHR";
+	errorCodeMap[-1000001004] = "VK_ERROR_OUT_OF_DATE_KHR";
+	errorCodeMap[-1000003001] = "VK_ERROR_INCOMPATIBLE_DISPLAY_KHR";
+	errorCodeMap[-1000011001] = "VK_ERROR_VALIDATION_FAILED_EXT";
+	errorCodeMap[-1000012000] = "VK_ERROR_INVALID_SHADER_NV";
+	errorCodeMap[-1000158000] = "VK_ERROR_INVALID_DRM_FORMAT_MODIFIER_PLANE_LAYOUT_EXT";
+	errorCodeMap[-1000161000] = "VK_ERROR_FRAGMENTATION_EXT";
+	errorCodeMap[-1000174001] = "VK_ERROR_NOT_PERMITTED_EXT";
+	errorCodeMap[-1000244000] = "VK_ERROR_INVALID_DEVICE_ADDRESS_EXT";
+	errorCodeMap[-1000255000] = "VK_ERROR_FULL_SCREEN_EXCLUSIVE_MODE_LOST_EXT";
+	errorCodeMap[-1000069000] = "VK_ERROR_OUT_OF_POOL_MEMORY_KHR";
+	errorCodeMap[-1000072003] = "VK_ERROR_INVALID_EXTERNAL_HANDLE_KHR";
+
+	std::cout << "Vulkan error [" << errorCodeMap[result] << "]: " << errorMessage << std::endl;
 
     if (result < 0)
 		abort();

@@ -101,8 +101,6 @@ void	RenderPass::BindMaterial(Material * material)
 {
 	_currentMaterial = material;
 
-	// material->BindDescriptorSets(this);
-
 	// mark all bindings to changed set they're all rebinded to the new material
 	// TODO: only do this when the pipeline layout changes, if only the shader changes we just have to update
 	// the descriptor that are not at the same index / new ones

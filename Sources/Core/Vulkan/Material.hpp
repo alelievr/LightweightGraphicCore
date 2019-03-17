@@ -118,8 +118,6 @@ namespace LWGC
 			void		CompileShaders(void);
 			void		CreateGraphicPipeline(void);
 			void		CreateComputePipeline(void);
-			// TODO: remove me !
-			void		BindDescriptorSets(RenderPass * renderPass);
 			void		SetupDefaultSettings(void);
 			bool		DescriptorSetExists(const std::string & bindingName, bool silent);
 			void		InitMaterialIfPossible(void);

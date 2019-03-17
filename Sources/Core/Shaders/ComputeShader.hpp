@@ -4,6 +4,7 @@
 #include <string>
 
 #include "Core/Vulkan/Material.hpp"
+#include "Core/Vulkan/RenderPass.hpp"
 #include "Core/Components/ComputeDispatcher.hpp"
 
 #include "IncludeDeps.hpp"
@@ -17,6 +18,7 @@ namespace LWGC
 		private:
 			Material *			_material;
 			ComputeDispatcher	_dispatcher;
+			RenderPass			_renderPass;
 
 		public:
 			ComputeShader(void);
@@ -28,6 +30,10 @@ namespace LWGC
 
 			void	LoadShader(const std::string & shaderPath);
 			void	Dispatch(VkCommandBuffer cmd, int width, int height, int depth) noexcept;
+
+			void				SetBuffer(const std::string & bindingName, VkBuffer buffer, size_t size, VkDescriptorType descriptorType, bool silent = false);
+			void				SetTexture(const std::string & bindingName, const Texture * texture, VkImageLayout imageLayout, VkDescriptorType descriptorType, bool silent = false);
+			void				SetSampler(const std::string & bindingName, VkSampler sampler, bool silent = false);
 	};
 
 	std::ostream &	operator<<(std::ostream & o, ComputeShader const & r);

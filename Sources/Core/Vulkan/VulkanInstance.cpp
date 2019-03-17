@@ -31,7 +31,7 @@ VulkanInstance::VulkanInstance(const std::string & applicationName) : _applicati
 	_applicationName = applicationName;
 }
 
-VulkanInstance::VulkanInstance(const std::string & applicationName, const std::vector< const char * > validationLayers, const std::vector< const char * > deviceExtensions) : VulkanInstance(applicationName)
+VulkanInstance::VulkanInstance(const std::string & applicationName, const std::vector< const char * > validationLayers, const std::vector< std::string > deviceExtensions) : VulkanInstance(applicationName)
 {
 	SetDeviceExtensions(deviceExtensions);
 	SetValidationLayers(validationLayers);
@@ -59,8 +59,6 @@ void			VulkanInstance::Initialize(void)
 {
 	_instanceSingleton = this;
 	CreateInstance();
-	InitializeVulkanFunctions();
-	SetupDebugCallbacks();
 }
 
 
@@ -93,6 +91,8 @@ void			VulkanInstance::InitializeSurface(VkSurfaceKHR surface)
 
 	ChoosePhysicalDevice();
 	CreateLogicalDevice();
+	InitializeVulkanFunctions();
+	SetupDebugCallbacks();
 	CreateCommandBufferPools();
 	CreateDescriptorPool();
 
@@ -284,7 +284,7 @@ DeviceCapability			VulkanInstance::IsPhysicalDeviceSuitable(VkPhysicalDevice phy
 {
 	DeviceCapability capability = GetDeviceCapability(physicalDevice);
 
-	capability.supportExtensions = AreExtensionsSupportedForPhysicalDevice(physicalDevice);
+	capability.enabledExtensions = AreExtensionsSupportedForPhysicalDevice(physicalDevice);
 
 	InitSurfaceForPhysicalDevice(physicalDevice);
 	capability.supportSurface = !_surfaceFormats.empty() && !_surfacePresentModes.empty();
@@ -346,24 +346,30 @@ void			VulkanInstance::ChoosePhysicalDevice(void)
 	// setup choosen device
 	_physicalDevice = bestDevice.physicalDevice;
 	_availableQueues = bestDevice.queues;
+	_deviceExtensions = bestDevice.enabledExtensions;
 
 	std::cout << "Choosed " << bestDevice.deviceName << " as the best GPU on your machine." << std::endl;
 }
 
+#include <algorithm>
 void			VulkanInstance::CreateLogicalDevice(void)
 {
-	std::vector<VkDeviceQueueCreateInfo> queueCreateInfos;
+	std::vector< VkDeviceQueueCreateInfo > queueCreateInfos;
+	std::vector< float >  queuePriorities;
 
-	float queuePriority = 1.0f;
 	for (DeviceQueue deviceQueue : _availableQueues)
 	{
+		queuePriorities.resize(fmaxf(queuePriorities.size(), deviceQueue.count));
 	    VkDeviceQueueCreateInfo queueCreateInfo = {};
 	    queueCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
 	    queueCreateInfo.queueFamilyIndex = deviceQueue.index;
 	    queueCreateInfo.queueCount = deviceQueue.count;
-	    queueCreateInfo.pQueuePriorities = &queuePriority;
+	    queueCreateInfo.pQueuePriorities = queuePriorities.data();
 	    queueCreateInfos.push_back(queueCreateInfo);
 	}
+
+	for (auto & priority : queuePriorities)
+		priority = 1.0f;
 
 	VkPhysicalDeviceFeatures deviceFeatures = {};
 
@@ -384,7 +390,10 @@ void			VulkanInstance::CreateLogicalDevice(void)
 	createInfo.pEnabledFeatures = &deviceFeatures;
 
 	createInfo.enabledExtensionCount = static_cast<uint32_t>(_deviceExtensions.size());
-	createInfo.ppEnabledExtensionNames = _deviceExtensions.data();
+	std::vector< const char * > enabledExtensionsName;
+	for (const auto & n : _deviceExtensions)
+		enabledExtensionsName.push_back(n.c_str());
+	createInfo.ppEnabledExtensionNames = enabledExtensionsName.data();
 
 	std::cout << "Enabled vulkan extensions: ";
 	for (auto extension : _deviceExtensions)
@@ -449,7 +458,7 @@ void			VulkanInstance::CreateCommandBufferPools(void) noexcept
 	_commandBufferPool.Initialize(_mainQueue.queues[0], _mainQueue.index);
 }
 
-bool			VulkanInstance::AreExtensionsSupportedForPhysicalDevice(VkPhysicalDevice physicalDevice) noexcept
+std::vector< std::string >	VulkanInstance::AreExtensionsSupportedForPhysicalDevice(VkPhysicalDevice physicalDevice) noexcept
 {
 	uint32_t extensionCount;
 	vkEnumerateDeviceExtensionProperties(physicalDevice, nullptr, &extensionCount, nullptr);
@@ -457,20 +466,25 @@ bool			VulkanInstance::AreExtensionsSupportedForPhysicalDevice(VkPhysicalDevice 
 	std::vector<VkExtensionProperties> availableExtensions(extensionCount);
 	vkEnumerateDeviceExtensionProperties(physicalDevice, nullptr, &extensionCount, availableExtensions.data());
 
-	std::set< std::string > requiredExtensions(_deviceExtensions.begin(), _deviceExtensions.end());
+	std::set< std::string > requestedExtensions(_deviceExtensions.begin(), _deviceExtensions.end());
+	std::vector< std::string > enabledExtensions;
 
 	for (const auto & extension : availableExtensions)
-		requiredExtensions.erase(extension.extensionName);
+		if (requestedExtensions.find(extension.extensionName) != requestedExtensions.end())
+		{
+			enabledExtensions.push_back(extension.extensionName);
+			requestedExtensions.erase(extension.extensionName);
+		}
 
-	if (requiredExtensions.size() != 0)
+	if (requestedExtensions.size() != 0)
 	{
-		std::cout << "Missing required extensions: ";
-		for (const auto & extension : requiredExtensions)
+		std::cout << "Missing extensions: ";
+		for (const auto & extension : requestedExtensions)
 			std::cout << extension << ", ";
-		std::cout << std::endl;
+		std::cout << "the application will (try to) run without them" << std::endl;
 	}
 
-	return requiredExtensions.empty();
+	return enabledExtensions;
 }
 
 uint32_t		VulkanInstance::FindMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties)
@@ -517,7 +531,7 @@ void		VulkanInstance::SetValidationLayers(const std::vector< const char * > vali
 	_enableValidationLayers = true;
 }
 
-void		VulkanInstance::SetDeviceExtensions(const std::vector< const char * > deviceExtensions) noexcept
+void		VulkanInstance::SetDeviceExtensions(const std::vector< std::string > deviceExtensions) noexcept
 {
 	_deviceExtensions = deviceExtensions;
 }
@@ -675,9 +689,9 @@ void		VulkanInstance::DestroyDebugUtilsMessengerEXT(VkDebugUtilsMessengerEXT cal
 
 int			DeviceCapability::GetGPUScore(void) const
 {
-	if (!supportedFeatures || !supportExtensions || !supportSurface || queues.size() <= 1)
+	if (!supportedFeatures || !supportSurface || queues.size() <= 1)
 	{
-		std::cout << "supported features: " << supportedFeatures << ", " << supportExtensions << ", " << supportSurface << ", " << queues.size() << std::endl;
+		std::cout << "supported features: " << supportedFeatures << ", " << supportSurface << ", " << queues.size() << std::endl;
 		return -1;
 	}
 

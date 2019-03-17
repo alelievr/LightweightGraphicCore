@@ -526,12 +526,6 @@ void				Material::SetSampler(const std::string & bindingName, VkSampler sampler,
 	vkUpdateDescriptorSets(_device, static_cast<uint32_t>(descriptorWrites.size()), descriptorWrites.data(), 0, nullptr);
 }
 
-void				Material::BindDescriptorSets(RenderPass * renderPass)
-{
-	for (const auto & k : _setTable)
-		renderPass->BindDescriptorSet(k.second.name, k.second.set);
-}
-
 void				Material::BindPipeline(VkCommandBuffer cmd)
 {
 	vkCmdBindPipeline(
