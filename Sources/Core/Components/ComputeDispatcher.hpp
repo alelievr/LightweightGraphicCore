@@ -56,7 +56,6 @@ namespace LWGC
 			void				AddImageBarrier(VkImageMemoryBarrier barrier, VkPipelineStageFlags destinationStageMask);
 
 			Material *			GetMaterial(void);
-			VkCommandBuffer		GetCommandBuffer(void);
 
 			virtual uint32_t	GetType(void) const noexcept override;
 	};

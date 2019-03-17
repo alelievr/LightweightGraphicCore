@@ -8,11 +8,10 @@
 #include "Core/Vulkan/Material.hpp"
 #include "Core/Vulkan/UniformBuffer.hpp"
 #include "Component.hpp"
-#include "Core/Rendering/PipelineCommandBuffer.hpp"
 
 namespace LWGC
 {
-	class		Renderer : public Object, public Component, public PipelineCommandBuffer
+	class		Renderer : public Object, public Component
 	{
 		private:
 			struct LWGC_PerObject
@@ -43,17 +42,15 @@ namespace LWGC
 			Renderer(void);
 			Renderer(Material * material);
 			Renderer(const Renderer &) = delete;
-
 			virtual ~Renderer(void);
 
 			Renderer &	operator=(Renderer const & src) = delete;
 
 			virtual Bounds	GetBounds(void) noexcept;
+			virtual void	RecordCommands(VkCommandBuffer cmd);
 
 			void	OnEnable(void) noexcept override;
 			void	OnDisable(void) noexcept override;
-
-			void	RecordCommands(VkCommandBuffer cmd) override;
 
 			Material *	GetMaterial(void) const;
 			void	SetMaterial(Material * tmp);

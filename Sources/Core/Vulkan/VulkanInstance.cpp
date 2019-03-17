@@ -234,12 +234,18 @@ DeviceCapability			VulkanInstance::GetDeviceCapability(VkPhysicalDevice physical
 		VkBool32 presentSupport = false;
 		vkGetPhysicalDeviceSurfaceSupportKHR(physicalDevice, index, _surface, &presentSupport);
 
-		capability.queues.push_back(DeviceQueue{
+		auto deviceQueue = DeviceQueue{
 			static_cast<uint32_t>(index),
-			VK_NULL_HANDLE,
+			{},
+			queueFamily.queueCount,
+			0,
 			presentSupport == true,
 			(queueFamily.queueFlags & VK_QUEUE_COMPUTE_BIT) != 0
-		});
+		};
+
+		deviceQueue.queues.resize(queueFamily.queueCount);
+
+		capability.queues.push_back(deviceQueue);
 		index++;
 
 		auto g = queueFamily.minImageTransferGranularity;
@@ -347,7 +353,6 @@ void			VulkanInstance::ChoosePhysicalDevice(void)
 void			VulkanInstance::CreateLogicalDevice(void)
 {
 	std::vector<VkDeviceQueueCreateInfo> queueCreateInfos;
-	std::set<uint32_t> uniqueQueueFamilies = {_availableQueues[0].index};
 
 	float queuePriority = 1.0f;
 	for (DeviceQueue deviceQueue : _availableQueues)
@@ -355,7 +360,7 @@ void			VulkanInstance::CreateLogicalDevice(void)
 	    VkDeviceQueueCreateInfo queueCreateInfo = {};
 	    queueCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
 	    queueCreateInfo.queueFamilyIndex = deviceQueue.index;
-	    queueCreateInfo.queueCount = 1;
+	    queueCreateInfo.queueCount = deviceQueue.count;
 	    queueCreateInfo.pQueuePriorities = &queuePriority;
 	    queueCreateInfos.push_back(queueCreateInfo);
 	}
@@ -397,42 +402,51 @@ void			VulkanInstance::CreateLogicalDevice(void)
 	    throw std::runtime_error("failed to create logical device!");
 	}
 
-	AllocateDeviceQueue(_mainQueue.queue, _mainQueue.index);
+	_mainQueue.queues.resize(1);
+	AllocateDeviceQueue(_mainQueue.queues[0], _mainQueue.index);
 
 	printf("Create logical device !\n");
 }
 
+// TODO: put the a queue capability to request by capability
 void			VulkanInstance::AllocateDeviceQueue(VkQueue & queue, uint32_t & queueIndex)
 {
 	auto unallocatedDeviceQueue = std::find_if(_availableQueues.begin(), _availableQueues.end(), [](const auto & deviceQueue){
-		return deviceQueue.queue == VK_NULL_HANDLE;
+		return deviceQueue.count > deviceQueue.allocatedQueueCount;
 	});
 
 	// If all the device queue have been allocated, we just return the main queue
 	if (unallocatedDeviceQueue == _availableQueues.end())
 	{
 		std::cout << "Warning: too many allocated queues, returning the main queue." << std::endl;
-		queue = _mainQueue.queue;
+		queue = _mainQueue.queues[0];
 		queueIndex = _mainQueue.index;
 		return ;
 	}
 
-	vkGetDeviceQueue(_device, unallocatedDeviceQueue->index, 0, &unallocatedDeviceQueue->queue);
+	vkGetDeviceQueue(_device,
+		unallocatedDeviceQueue->index,
+		unallocatedDeviceQueue->allocatedQueueCount,
+		&unallocatedDeviceQueue->queues[unallocatedDeviceQueue->allocatedQueueCount]
+	);
 
-	queue = unallocatedDeviceQueue->queue;
+	queue = unallocatedDeviceQueue->queues[unallocatedDeviceQueue->allocatedQueueCount];
 	queueIndex = unallocatedDeviceQueue->index;
+
+	size_t index = std::distance(_availableQueues.begin(), unallocatedDeviceQueue);
+	_availableQueues[index].allocatedQueueCount++;
 }
 
 uint32_t		VulkanInstance::GetAvailableDevceQueueCount(void)
 {
 	return std::count_if(_availableQueues.begin(), _availableQueues.end(), [](const DeviceQueue & deviceQueue) {
-		return deviceQueue.queue != VK_NULL_HANDLE;
+		return deviceQueue.count > deviceQueue.allocatedQueueCount;
 	});
 }
 
 void			VulkanInstance::CreateCommandBufferPools(void) noexcept
 {
-	_commandBufferPool.Initialize(_mainQueue.queue, _mainQueue.index);
+	_commandBufferPool.Initialize(_mainQueue.queues[0], _mainQueue.index);
 }
 
 bool			VulkanInstance::AreExtensionsSupportedForPhysicalDevice(VkPhysicalDevice physicalDevice) noexcept
@@ -515,7 +529,7 @@ void		VulkanInstance::SetApplicationName(const std::string & applicationName) no
 
 VkInstance	VulkanInstance::GetInstance(void) const noexcept { return (this->_instance); }
 
-VkQueue		VulkanInstance::GetQueue(void) const noexcept { return (this->_mainQueue.queue); }
+VkQueue		VulkanInstance::GetQueue(void) const noexcept { return (this->_mainQueue.queues[0]); }
 
 uint32_t	VulkanInstance::GetQueueIndex(void) const noexcept { return (this->_mainQueue.index); }
 

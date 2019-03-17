@@ -35,8 +35,6 @@ void		Renderer::Initialize(void) noexcept
 
 	_material->MarkAsReady();
 
-	PipelineCommandBuffer::Allocate(Application::Get()->GetSwapChain()->GetImageCount());
-
 	if (_descriptorSetLayout == VK_NULL_HANDLE)
 		CreateGraphicDescriptorSetLayout();
 

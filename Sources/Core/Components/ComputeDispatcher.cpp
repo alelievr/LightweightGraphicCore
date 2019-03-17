@@ -21,7 +21,6 @@ void			ComputeDispatcher::Initialize(void) noexcept
 
 	_material->MarkAsReady();
 
-	_computeCommandBuffer = VulkanInstance::Get()->GetCommandBufferPool()->Allocate(VK_COMMAND_BUFFER_LEVEL_SECONDARY);
 	_material->GetComputeWorkSize(_workGroupWidth, _workGroupHeight, _workGroupDepth);
 
 	if (!CheckWorkSize())
@@ -128,11 +127,6 @@ void			ComputeDispatcher::AddImageBarrier(VkImageMemoryBarrier barrier, VkPipeli
 Material *		ComputeDispatcher::GetMaterial(void)
 {
 	return _material;
-}
-
-VkCommandBuffer	ComputeDispatcher::GetCommandBuffer(void)
-{
-	return _computeCommandBuffer;
 }
 
 uint32_t		ComputeDispatcher::GetType(void) const noexcept

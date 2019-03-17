@@ -15,10 +15,12 @@ namespace LWGC
 
 	struct DeviceQueue
 	{
-		uint32_t	index; // aka queue family index
-		VkQueue		queue;
-		bool		supportPresent;
-		bool		supportCompute;
+		uint32_t				index;					// aka queue family index
+		std::vector< VkQueue >	queues;
+		uint32_t				count;					// number of available queue of this family
+		uint32_t				allocatedQueueCount;
+		bool					supportPresent;
+		bool					supportCompute;
 	};
 
 	struct DeviceCapability

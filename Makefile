@@ -48,7 +48,6 @@ SOURCES		=	Core/Application.cpp \
 				Core/Rendering/RenderTarget.cpp \
 				Core/Rendering/RenderPipeline.cpp \
 				Core/Rendering/RenderPipelineManager.cpp \
-				Core/Rendering/PipelineCommandBuffer.cpp \
 				Core/Shaders/ShaderProgram.cpp \
 				Core/Shaders/ShaderSource.cpp \
 				Core/Shaders/BuiltinShaders.cpp \
