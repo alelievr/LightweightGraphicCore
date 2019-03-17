@@ -78,6 +78,11 @@ void	Texture2DAtlas::UploadAtlasDatas(void)
 	std::cout << _atlasSize << std::endl;
 }
 
+void	Texture2DAtlas::Clear(void)
+{
+	_nodetree.Clear();
+}
+
 VkBuffer	Texture2DAtlas::GetSizeOffsetBuffer() { return _sizeOffsetsBuffer; }
 VkBuffer	Texture2DAtlas::GetAtlasSizeBuffer() { return _atlasSizeBuffer; }
 size_t		Texture2DAtlas::GetSizeOffsetBufferSize() { return _sizeOffsets.size() * sizeof(glm::vec4); }

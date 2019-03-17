@@ -54,6 +54,7 @@ int			main(void)
 	// textureMaterial->SetBuffer("atlasSize", atlas->GetAtlasSizeBuffer(), atlas->GetAtlasSizeBufferSize(), VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER);
 
 	ProcessEvent(es, app);
+	atlas->Clear();
 	while (app.ShouldNotQuit())
 		app.Update();
 	return (0);

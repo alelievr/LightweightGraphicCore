@@ -34,6 +34,7 @@ namespace LWGC
 			Rect	SearchNode(Node *node, int w, int h, int X, int Y);
 			Rect	Allocate(int w, int h);
 			void	CreateNodes(Node *node);
+			void	ClearTree(Node *node);
 			void	Clear(void);
 	};
 

@@ -4,6 +4,8 @@ using namespace LWGC;
 
 NodeTree::NodeTree(int width, int height) : _width(width), _height(height), _node(nullptr)
 {
+	Rect area = Rect(0, 0, 0, 0);
+	_node = new Node{ area, false, nullptr, nullptr};
 }
 
 NodeTree::~NodeTree(void)
@@ -13,24 +15,21 @@ NodeTree::~NodeTree(void)
 
 Rect	NodeTree::Allocate(int w, int h)
 {
-	if (_node == nullptr)
-	{
-		if (w > _width || h > _height)
-			throw std::runtime_error("Texture is bigger than the texture2DAtlas");
+	if (w > _width || h > _height)
+		throw std::runtime_error("Texture is bigger than the texture2DAtlas");
 
-		Rect area = Rect(w, h, 0, 0);
-		_node = new Node{ area, true, nullptr, nullptr};
-		CreateNodes(_node);
-		return (_node->area);
-	}
+	Rect ret;
+	Node *tmp = _node;
+
+	if (!tmp->haveTexture)
+		ret = SearchNode(tmp, w, h, tmp->area.GetMaxX(), tmp->area.GetMinY());
 	else
-	{
-		Node *tmp = _node;
-		Rect ret = FindNode(tmp, w ,h);
-		if (ret == Rect::Invalid)
-			throw std::runtime_error("No space left in texture2DAtlas");
-		return (ret);
-	}
+		ret = FindNode(tmp, w ,h);
+
+	if (ret == Rect::Invalid)
+		throw std::runtime_error("No space left in texture2DAtlas");
+
+	return (ret);
 }
 
 Rect	NodeTree::SearchNode(Node *node, int w, int h, int X, int Y)
@@ -80,6 +79,22 @@ void	NodeTree::CreateNodes(Node *node)
 		node->NodeDown = new Node{ Rect(0, 0, static_cast<int>(node->area.GetMinX()), static_cast<int>(node->area.GetMaxY())), false, nullptr, nullptr };
 }
 
+
+void	NodeTree::ClearTree(Node *node)
+{
+	if (node->NodeRight != nullptr)
+		ClearTree(node->NodeRight);
+	if (node->NodeDown != nullptr)
+		ClearTree(node->NodeDown);
+	if (!node->NodeRight && !node->NodeDown)
+	{
+		delete node;
+		node = nullptr;
+	}
+}
+
 void	NodeTree::Clear(void)
 {
+	if (_node)
+		ClearTree(_node);
 }

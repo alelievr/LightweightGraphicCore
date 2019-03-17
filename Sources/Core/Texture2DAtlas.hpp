@@ -45,6 +45,7 @@ namespace LWGC
 			VkBuffer				GetAtlasSizeBuffer(void);
 			size_t					GetSizeOffsetBufferSize();
 			size_t					GetAtlasSizeBufferSize();
+			void					Clear(void);
 
 			Texture2DAtlas &	operator=(Texture2DAtlas const & src) = delete;
 	};
