@@ -53,7 +53,7 @@ void			ComputeDispatcher::RecordCommands(VkCommandBuffer cmd)
 			1, &imageBarrierInfo.first              // pImageMemoryBarriers
 		);
 	}
-	
+
 	// Memory barriers
 	for (const auto & memoryBarrierInfo : _memoryBarriers)
 	{
@@ -67,7 +67,7 @@ void			ComputeDispatcher::RecordCommands(VkCommandBuffer cmd)
 			0, nullptr
 		);
 	}
-	
+
 	// Buffer barriers
 	for (const auto & bufferBarrierInfo : _bufferBarriers)
 	{
