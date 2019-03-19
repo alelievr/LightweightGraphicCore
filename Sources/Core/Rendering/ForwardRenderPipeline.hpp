@@ -18,6 +18,7 @@ namespace LWGC
 			uint32_t			asyncComputeQueueIndex;
 
 			CommandBufferPool	asyncComputePool;
+			VkCommandBuffer		asyncCommandBuffer;
 
 			ComputeShader		heavyComputeShader;
 			VkFence				heavyComputeFence;

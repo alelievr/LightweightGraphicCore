@@ -292,7 +292,7 @@ void			RenderPipeline::RenderInternal(const std::vector< Camera * > & cameras, R
 		Render(cameras, context);
 	}
 	endFrameRendering.Invoke();
-	
+
 	Vk::CheckResult(vkEndCommandBuffer(GetCurrentFrameCommandBuffer()), "Failed to record command buffer!");
 }
 
@@ -396,7 +396,7 @@ void			RenderPipeline::RecordAllComputeDispatches(RenderPass & pass, RenderConte
 		material->BindPipeline(cmd);
 		material->BindProperties(cmd);
 
-		// Bind everything we need for the folowing dispatches 
+		// Bind everything we need for the folowing dispatches
 		pass.UpdateDescriptorBindings();
 		compute->RecordCommands(cmd);
 	}
@@ -413,7 +413,7 @@ void			RenderPipeline::RecordAllMeshRenderers(RenderPass & pass, RenderContext *
 	{
 		auto material = renderer->GetMaterial();
 		pass.BindMaterial(material);
-		
+
 		// TODO: optimize this when doing the renderqueues (sort materials and avoid pipeline switches)
 		material->BindPipeline(cmd);
 		material->BindProperties(cmd);

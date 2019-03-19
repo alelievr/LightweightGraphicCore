@@ -1,6 +1,6 @@
 #include "Shaders/Common/InputCompute.hlsl"
 
-#define ITER 2
+#define ITER 1
 
 // auto generate bindings ?
 RWTexture2D<half4>	fractal;
@@ -30,6 +30,8 @@ float noise(float2 p)
 void main(ComputeInput input)
 {
 	float2 uv = input.dispatchThreadId.xy / 2048.0;
+	// uint2 id = input.dispatchThreadId;
+	// fractal[id.xy] = float4(id.x & id.y, (id.x & 15)/15.0, (id.y & 15)/15.0, 0.0);
 	for (int i = 0; i < ITER; i++)
 	{
 		fractal[input.dispatchThreadId.xy] = half4(

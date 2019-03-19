@@ -58,7 +58,7 @@ void		RenderPass::Create(bool computeOnly)
 		std::cerr << "For compute we don't need to call Create on renderpass because we don't need one to run a compute shader" << std::endl;
 		return ;
 	}
-	
+
 	VkSubpassDescription subpass = {};
 	subpass.pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS;
 	subpass.colorAttachmentCount = _references.size();

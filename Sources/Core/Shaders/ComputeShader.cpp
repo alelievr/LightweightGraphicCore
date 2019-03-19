@@ -15,12 +15,12 @@ ComputeShader::ComputeShader(const std::string & shaderPath) : ComputeShader()
 void		ComputeShader::LoadShader(const std::string & shaderPath)
 {
 	_material = Material::Create(shaderPath, VK_SHADER_STAGE_COMPUTE_BIT);
+	_renderPass.Initialize(nullptr);
 	_dispatcher._material = _material;
 }
 
 void		ComputeShader::Dispatch(VkCommandBuffer cmd, int width, int height, int depth) noexcept
 {
-	_renderPass.Initialize(nullptr);
 	_renderPass.Begin(cmd, VK_NULL_HANDLE, "TODO: Dispatch compute name");
 	{
 		_renderPass.BindMaterial(_material);

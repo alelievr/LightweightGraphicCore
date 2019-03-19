@@ -15,6 +15,7 @@ void	ForwardRenderPipeline::Initialize(SwapChain * swapChain)
 	// Allocate an async command queue (the device must have more than one queue to run the application)
 	instance->AllocateDeviceQueue(asyncComputeQueue, asyncComputeQueueIndex);
 	asyncComputePool.Initialize(asyncComputeQueue, asyncComputeQueueIndex);
+	asyncCommandBuffer = asyncComputePool.Allocate(VK_COMMAND_BUFFER_LEVEL_PRIMARY);
 
 	fractalTexture = Texture2D::Create(2048, 2048, VK_FORMAT_R8G8B8A8_SNORM, VK_IMAGE_USAGE_STORAGE_BIT | VK_IMAGE_USAGE_SAMPLED_BIT);
 	heavyComputeShader.SetTexture("fractal", fractalTexture, VK_IMAGE_LAYOUT_GENERAL, VK_DESCRIPTOR_TYPE_STORAGE_IMAGE);
@@ -67,13 +68,30 @@ void	ForwardRenderPipeline::Render(const std::vector< Camera * > & cameras, Rend
 	VkResult heavyComputeResult = vkGetFenceStatus(device, heavyComputeFence);
 	if (heavyComputeResult == VK_SUCCESS)
 	{
-		std::cout << "Finished the compute heavy task, running another one !" << std::endl;
+		// std::cout << "Finished the compute heavy task, running another one !" << std::endl;
 
-		vkResetFences(device, 1, &heavyComputeFence);
+		// VkCommandBufferBeginInfo beginInfo = {};
+		// beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+		// beginInfo.flags = VK_COMMAND_BUFFER_USAGE_SIMULTANEOUS_USE_BIT;
 
-		auto computeCmd = asyncComputePool.BeginSingle();
-		heavyComputeShader.Dispatch(computeCmd, 2048, 2048, 1);
-		asyncComputePool.EndSingle(computeCmd, heavyComputeFence);
+		// if (vkBeginCommandBuffer(asyncCommandBuffer, &beginInfo) != VK_SUCCESS)
+		// 	throw std::runtime_error("failed to begin recording command buffer!");
+
+		// heavyComputeShader.Dispatch(asyncCommandBuffer, 512, 512, 1);
+
+		// if (vkEndCommandBuffer(asyncCommandBuffer) != VK_SUCCESS)
+		// 	throw std::runtime_error("failed to record command buffer!");
+
+		// VkSubmitInfo submitInfo = {};
+		// submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+
+		// submitInfo.commandBufferCount = 1;
+		// submitInfo.pCommandBuffers = &asyncCommandBuffer;
+
+		// vkResetFences(device, 1, &heavyComputeFence);
+
+		// Vk::CheckResult(vkQueueSubmit(asyncComputeQueue, 1, &submitInfo, heavyComputeFence), "Failed to submit queue");
+
 	} else if (heavyComputeResult == VK_NOT_READY) {
 		// std::cout << "Not ready !\n";
 	}
