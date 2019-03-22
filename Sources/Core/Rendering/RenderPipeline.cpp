@@ -122,70 +122,6 @@ void				RenderPipeline::CreateRenderPass(void)
 	swapChain->CreateFrameBuffers(renderPass);
 }
 
-void			RenderPipeline::BeginRenderPass(RenderContext * context)
-{
-	VkCommandBufferBeginInfo beginInfo = {};
-	beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
-	beginInfo.flags = VK_COMMAND_BUFFER_USAGE_SIMULTANEOUS_USE_BIT;
-
-	if (vkBeginCommandBuffer(frameCommandBuffers[0], &beginInfo) != VK_SUCCESS)
-	{
-		throw std::runtime_error("failed to begin recording command buffer!");
-	}
-
-	framebuffer = GetCurrentFrameBuffer();
-
-	renderPass.Begin(frameCommandBuffers[0], framebuffer, "Main Pass");
-
-	// Run all compute shaders before begin render pass:
-	std::unordered_set< ComputeDispatcher * >	computeDispatchers;
-	context->GetComputeDispatchers(computeDispatchers);
-
-	// Bind frame infos for compute shaders
-	// renderPass.BindDescriptorSet(LWGCBinding::Frame, perFrameDescriptorSet);
-
-	// for (auto & compute : computeDispatchers)
-	// {
-	// 	auto m = compute->GetMaterial();
-
-	// 	renderPass.BindMaterial(m);
-
-	// 	auto cmd = compute->GetCommandBuffer();
-	// 	renderPass.BeginSecondaryCommandBuffer(cmd, VK_COMMAND_BUFFER_USAGE_SIMULTANEOUS_USE_BIT);
-	// 	compute->RecordCommands(cmd);
-	// 	renderPass.ExecuteCommandBuffer(cmd);
-	// }
-
-	renderPass.ClearBindings();
-
-	std::array<VkClearValue, 2> clearValues = {};
-	clearValues[0].color = {{0.0f, 0.0f, 0.0f, 1.0f}};
-	clearValues[1].depthStencil = {1.0f, 0};
-
-	VkRenderPassBeginInfo renderPassInfo = {};
-	renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
-	renderPassInfo.renderPass = renderPass.GetRenderPass();
-	renderPassInfo.framebuffer = framebuffer;
-	renderPassInfo.renderArea.offset = {0, 0};
-	renderPassInfo.renderArea.extent = swapChain->GetExtent();
-	renderPassInfo.clearValueCount = static_cast<uint32_t>(clearValues.size());
-	renderPassInfo.pClearValues = clearValues.data();
-
-	vkCmdBeginRenderPass(frameCommandBuffers[0], &renderPassInfo, VK_SUBPASS_CONTENTS_SECONDARY_COMMAND_BUFFERS);
-}
-
-void			RenderPipeline::EndRenderPass(void)
-{
-	renderPass.End();
-
-	vkCmdEndRenderPass(frameCommandBuffers[0]);
-
-	if (vkEndCommandBuffer(frameCommandBuffers[0]) != VK_SUCCESS)
-	{
-		throw std::runtime_error("failed to record command buffer!");
-	}
-}
-
 void			RenderPipeline::RenderGUI(RenderContext * context) noexcept
 {
 	std::unordered_set< ImGUIPanel * >	imGUIPanels;
@@ -343,42 +279,6 @@ void	RenderPipeline::PresentFrame(void)
 	}
 
 	currentFrame = (currentFrame + 1) % swapChain->GetImageCount();
-}
-
-void	RenderPipeline::Render(const std::vector< Camera * > & cameras, RenderContext * context)
-{
-	BeginRenderPass(context);
-
-	renderPass.BindDescriptorSet(LWGCBinding::Frame, perFrameDescriptorSet);
-
-	for (const auto camera : cameras)
-	{
-		beginCameraRendering.Invoke(camera);
-		std::unordered_set< Renderer * >	renderers;
-
-		renderPass.BindDescriptorSet(LWGCBinding::Camera, camera->GetDescriptorSet());
-
-		context->GetRenderers(renderers);
-
-		// for (const auto & meshRenderer : renderers)
-		// {
-		// 	auto m = meshRenderer->GetMaterial();
-		// 	renderPass.BindDescriptorSet(LWGCBinding::Object, meshRenderer->GetDescriptorSet());
-		// 	renderPass.BindMaterial(m);
-
-		// 	// Get the command buffer, should be empty at this state
-		// 	VkCommandBuffer drawMeshBuffer = meshRenderer->GetCommandBuffer(currentFrame);
-		// 	renderPass.BeginSecondaryCommandBuffer(drawMeshBuffer, VK_COMMAND_BUFFER_USAGE_RENDER_PASS_CONTINUE_BIT);
-		// 	meshRenderer->RecordCommands(drawMeshBuffer);
-		// 	renderPass.ExecuteCommandBuffer(drawMeshBuffer);
-		// }
-
-		endCameraRendering.Invoke(camera);
-	}
-
-	EndRenderPass();
-
-	renderPass.ClearBindings();
 }
 
 void			RenderPipeline::RecordAllComputeDispatches(RenderPass & pass, RenderContext * context)

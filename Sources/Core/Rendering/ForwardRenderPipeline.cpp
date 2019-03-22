@@ -68,29 +68,27 @@ void	ForwardRenderPipeline::Render(const std::vector< Camera * > & cameras, Rend
 	VkResult heavyComputeResult = vkGetFenceStatus(device, heavyComputeFence);
 	if (heavyComputeResult == VK_SUCCESS)
 	{
-		// std::cout << "Finished the compute heavy task, running another one !" << std::endl;
+		VkCommandBufferBeginInfo beginInfo = {};
+		beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+		beginInfo.flags = VK_COMMAND_BUFFER_USAGE_SIMULTANEOUS_USE_BIT;
 
-		// VkCommandBufferBeginInfo beginInfo = {};
-		// beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
-		// beginInfo.flags = VK_COMMAND_BUFFER_USAGE_SIMULTANEOUS_USE_BIT;
+		if (vkBeginCommandBuffer(asyncCommandBuffer, &beginInfo) != VK_SUCCESS)
+			throw std::runtime_error("failed to begin recording command buffer!");
 
-		// if (vkBeginCommandBuffer(asyncCommandBuffer, &beginInfo) != VK_SUCCESS)
-		// 	throw std::runtime_error("failed to begin recording command buffer!");
+		heavyComputeShader.Dispatch(asyncCommandBuffer, 512, 512, 1);
 
-		// heavyComputeShader.Dispatch(asyncCommandBuffer, 512, 512, 1);
+		if (vkEndCommandBuffer(asyncCommandBuffer) != VK_SUCCESS)
+			throw std::runtime_error("failed to record command buffer!");
 
-		// if (vkEndCommandBuffer(asyncCommandBuffer) != VK_SUCCESS)
-		// 	throw std::runtime_error("failed to record command buffer!");
+		VkSubmitInfo submitInfo = {};
+		submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
 
-		// VkSubmitInfo submitInfo = {};
-		// submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+		submitInfo.commandBufferCount = 1;
+		submitInfo.pCommandBuffers = &asyncCommandBuffer;
 
-		// submitInfo.commandBufferCount = 1;
-		// submitInfo.pCommandBuffers = &asyncCommandBuffer;
+		vkResetFences(device, 1, &heavyComputeFence);
 
-		// vkResetFences(device, 1, &heavyComputeFence);
-
-		// Vk::CheckResult(vkQueueSubmit(asyncComputeQueue, 1, &submitInfo, heavyComputeFence), "Failed to submit queue");
+		Vk::CheckResult(vkQueueSubmit(asyncComputeQueue, 1, &submitInfo, heavyComputeFence), "Failed to submit queue");
 
 	} else if (heavyComputeResult == VK_NOT_READY) {
 		// std::cout << "Not ready !\n";

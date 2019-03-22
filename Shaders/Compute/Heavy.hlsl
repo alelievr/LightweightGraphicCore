@@ -1,6 +1,6 @@
 #include "Shaders/Common/InputCompute.hlsl"
 
-#define ITER 1
+#define ITER 20
 
 // auto generate bindings ?
 RWTexture2D<half4>	fractal;

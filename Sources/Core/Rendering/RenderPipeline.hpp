@@ -59,10 +59,6 @@ namespace LWGC
 			VkDescriptorSet					perFrameDescriptorSet;
 			VkDescriptorSetLayout			perFrameDescriptorSetLayout;
 
-			// TODO: move to the renderpass
-			void				BeginRenderPass(RenderContext * context);
-			void				EndRenderPass(void);
-
 			void				SetLastRenderPass(const RenderPass & renderPass);
 			VkCommandBuffer		GetCurrentFrameCommandBuffer(void);
 			VkFramebuffer		GetCurrentFrameBuffer(void);
