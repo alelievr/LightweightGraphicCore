@@ -1,6 +1,6 @@
 #include "Shaders/Common/InputCompute.hlsl"
 
-#define ITER 20
+#define ITER 200
 
 // auto generate bindings ?
 RWTexture2D<half4>	fractal;
@@ -26,19 +26,21 @@ float noise(float2 p)
 }
 
 // Warning: OSX can't have local work group greater than 1024 threads
-[numthreads(1, 1, 1)]
+[numthreads(16, 16, 1)]
 void main(ComputeInput input)
 {
-	float2 uv = input.dispatchThreadId.xy / 2048.0;
+	float2 uv = input.dispatchThreadId.xy / 4096.0;
 	// uint2 id = input.dispatchThreadId;
 	// fractal[id.xy] = float4(id.x & id.y, (id.x & 15)/15.0, (id.y & 15)/15.0, 0.0);
+	float4 acc = 0;
 	for (int i = 0; i < ITER; i++)
 	{
-		fractal[input.dispatchThreadId.xy] = half4(
+		acc += half4(
 			noise(uv * 10),
 			noise(uv * 20),
 			noise(uv * 30),
 			1
 		);
 	}
+	fractal[input.dispatchThreadId.xy] = acc;
 }

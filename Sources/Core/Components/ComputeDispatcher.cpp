@@ -123,7 +123,6 @@ void			ComputeDispatcher::AddImageBarrier(VkImageMemoryBarrier barrier, VkPipeli
 	_imageBarriers.push_back({barrier, destinationStageMask});
 }
 
-
 Material *		ComputeDispatcher::GetMaterial(void)
 {
 	return _material;

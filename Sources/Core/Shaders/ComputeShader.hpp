@@ -31,9 +31,12 @@ namespace LWGC
 			void	LoadShader(const std::string & shaderPath);
 			void	Dispatch(VkCommandBuffer cmd, int width, int height, int depth) noexcept;
 
-			void				SetBuffer(const std::string & bindingName, VkBuffer buffer, size_t size, VkDescriptorType descriptorType, bool silent = false);
-			void				SetTexture(const std::string & bindingName, const Texture * texture, VkImageLayout imageLayout, VkDescriptorType descriptorType, bool silent = false);
-			void				SetSampler(const std::string & bindingName, VkSampler sampler, bool silent = false);
+			void	SetBuffer(const std::string & bindingName, VkBuffer buffer, size_t size, VkDescriptorType descriptorType, bool silent = false);
+			void	SetTexture(const std::string & bindingName, const Texture * texture, VkImageLayout imageLayout, VkDescriptorType descriptorType, bool silent = false);
+			void	SetSampler(const std::string & bindingName, VkSampler sampler, bool silent = false);
+			void	AddMemoryBarrier(VkMemoryBarrier barrier, VkPipelineStageFlags destinationStageMask);
+			void	AddBufferBarrier(VkBufferMemoryBarrier barrier, VkPipelineStageFlags destinationStageMask);
+			void	AddImageBarrier(VkImageMemoryBarrier barrier, VkPipelineStageFlags destinationStageMask);
 	};
 
 	std::ostream &	operator<<(std::ostream & o, ComputeShader const & r);

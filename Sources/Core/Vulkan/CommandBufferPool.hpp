@@ -15,12 +15,12 @@ namespace LWGC
 	{
 		private:
 			VulkanInstance *				_instance;
-			VkCommandPool					_commandPool;
 			uint32_t						_queueIndex;
 			VkQueue							_queue;
 			std::vector< VkCommandBuffer >	_frameCommandBuffers;
 
 		public:
+			VkCommandPool					_commandPool;
 			CommandBufferPool(void);
 			CommandBufferPool(const CommandBufferPool &) = delete;
 			virtual ~CommandBufferPool(void);

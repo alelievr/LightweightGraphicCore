@@ -48,6 +48,20 @@ void		ComputeShader::SetSampler(const std::string & bindingName, VkSampler sampl
 	_material->SetSampler(bindingName, sampler, silent);
 }
 
+void		ComputeShader::AddMemoryBarrier(VkMemoryBarrier barrier, VkPipelineStageFlags destinationStageMask)
+{
+	_dispatcher.AddMemoryBarrier(barrier, destinationStageMask);
+}
+
+void		ComputeShader::AddBufferBarrier(VkBufferMemoryBarrier barrier, VkPipelineStageFlags destinationStageMask)
+{
+	_dispatcher.AddBufferBarrier(barrier, destinationStageMask);
+}
+
+void		ComputeShader::AddImageBarrier(VkImageMemoryBarrier barrier, VkPipelineStageFlags destinationStageMask)
+{
+	_dispatcher.AddImageBarrier(barrier, destinationStageMask);
+}
 
 std::ostream &	LWGC::operator<<(std::ostream & o, ComputeShader const & r)
 {

@@ -23,6 +23,9 @@ namespace LWGC
 			ComputeShader		heavyComputeShader;
 			VkFence				heavyComputeFence;
 
+			VkDescriptorSet			asyncComputeSet;
+			VkDescriptorSetLayout	asyncComputeLayoutSet;
+
 			void	SetupRenderPasses(void);
 
 		protected:

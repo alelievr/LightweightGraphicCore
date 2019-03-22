@@ -115,7 +115,7 @@ void	RenderPass::Begin(VkCommandBuffer commandBuffer, VkFramebuffer framebuffer,
 
 	if (VkExt::AreDebugMarkersAvailable())
 	{
-		Vk::BeginProfilingSample(_commandBuffer, passName, Color::Blue);
+		Vk::BeginProfilingSample(_commandBuffer, passName, Color::Cyan);
 	}
 
 	// If there is no framebuffer to bind, it means we're in a compute shader pass

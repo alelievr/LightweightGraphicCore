@@ -20,6 +20,25 @@ void	ForwardRenderPipeline::Initialize(SwapChain * swapChain)
 	fractalTexture = Texture2D::Create(2048, 2048, VK_FORMAT_R8G8B8A8_SNORM, VK_IMAGE_USAGE_STORAGE_BIT | VK_IMAGE_USAGE_SAMPLED_BIT);
 	heavyComputeShader.SetTexture("fractal", fractalTexture, VK_IMAGE_LAYOUT_GENERAL, VK_DESCRIPTOR_TYPE_STORAGE_IMAGE);
 
+	VkImageMemoryBarrier barrier = {};
+	barrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
+    barrier.oldLayout = VK_IMAGE_LAYOUT_GENERAL;
+    barrier.newLayout = VK_IMAGE_LAYOUT_GENERAL;
+    barrier.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+    barrier.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+    barrier.image = fractalTexture->GetImage();
+
+	barrier.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+    barrier.subresourceRange.baseMipLevel = 0;
+    barrier.subresourceRange.levelCount = 1;
+    barrier.subresourceRange.baseArrayLayer = 0;
+    barrier.subresourceRange.layerCount = 1;
+
+	barrier.srcAccessMask = 0;
+	barrier.dstAccessMask = 0;
+
+	heavyComputeShader.AddImageBarrier(barrier, VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT);
+
 	// Setup the render passes we uses:
 	SetupRenderPasses();
 }
@@ -68,28 +87,18 @@ void	ForwardRenderPipeline::Render(const std::vector< Camera * > & cameras, Rend
 	VkResult heavyComputeResult = vkGetFenceStatus(device, heavyComputeFence);
 	if (heavyComputeResult == VK_SUCCESS)
 	{
-		VkCommandBufferBeginInfo beginInfo = {};
-		beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
-		beginInfo.flags = VK_COMMAND_BUFFER_USAGE_SIMULTANEOUS_USE_BIT;
+		auto asyncCmd = asyncComputePool.BeginSingle();
 
-		if (vkBeginCommandBuffer(asyncCommandBuffer, &beginInfo) != VK_SUCCESS)
-			throw std::runtime_error("failed to begin recording command buffer!");
-
-		heavyComputeShader.Dispatch(asyncCommandBuffer, 512, 512, 1);
-
-		if (vkEndCommandBuffer(asyncCommandBuffer) != VK_SUCCESS)
-			throw std::runtime_error("failed to record command buffer!");
-
-		VkSubmitInfo submitInfo = {};
-		submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
-
-		submitInfo.commandBufferCount = 1;
-		submitInfo.pCommandBuffers = &asyncCommandBuffer;
+		heavyComputeShader.Dispatch(asyncCmd, 4096, 4096, 1);
 
 		vkResetFences(device, 1, &heavyComputeFence);
 
-		Vk::CheckResult(vkQueueSubmit(asyncComputeQueue, 1, &submitInfo, heavyComputeFence), "Failed to submit queue");
+		asyncComputePool.EndSingle(asyncCmd); // fence
 
+		// TODO: test this !
+		// vkWaitForFences(device, 1, &heavyComputeFence, VK_TRUE, -1);
+		// vkQueueWaitIdle(asyncComputeQueue);
+		// vkFreeCommandBuffers(device, asyncComputePool._commandPool, 1, &asyncCmd);
 	} else if (heavyComputeResult == VK_NOT_READY) {
 		// std::cout << "Not ready !\n";
 	}
@@ -111,7 +120,6 @@ void	ForwardRenderPipeline::Render(const std::vector< Camera * > & cameras, Rend
 		forwardPass.BindDescriptorSet(LWGCBinding::Frame, perFrameDescriptorSet);
 		for (const auto camera : cameras)
 		{
-
 			beginCameraRendering.Invoke(camera);
 			forwardPass.BindDescriptorSet(LWGCBinding::Camera, camera->GetDescriptorSet());
 
