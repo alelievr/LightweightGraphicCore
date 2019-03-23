@@ -15,7 +15,7 @@ void	ProcessEvent(EventSystem * es, Application & app)
 
 Material *		CreateFullscreenMaterial(void)
 {
-	auto		fullScreenMaterial = Material::Create(BuiltinShaders::Standard, BuiltinShaders::FullScreenQuad);
+	auto		fullScreenMaterial = Material::Create("Shaders/Debug/AsyncComputeDraw.hlsl", BuiltinShaders::FullScreenQuad);
 
 	// Setup material to display the procedural texture:
 	VkPipelineInputAssemblyStateCreateInfo inputAssemblyInfo = {};
@@ -63,19 +63,40 @@ int			main(void)
 	auto	writeProceduralTexture = Material::Create("Shaders/Compute/ProceduralTexture.hlsl", VK_SHADER_STAGE_COMPUTE_BIT);
 	auto	displayProceduralTexture = CreateFullscreenMaterial();
 
-	auto proceduralTexture = Texture2D::Create(512, 512, VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_USAGE_STORAGE_BIT | VK_IMAGE_USAGE_SAMPLED_BIT, false);
+	auto	proceduralTexture = Texture2D::Create(512, 512, VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_USAGE_STORAGE_BIT | VK_IMAGE_USAGE_SAMPLED_BIT, false);
 
 	InitCamera(hierarchy);
 
-	auto computeProcessor = new GameObject(new ComputeDispatcher(writeProceduralTexture, 512, 512));
+	auto noiseCompute = new ComputeDispatcher(writeProceduralTexture, 512, 512);
+	auto computeProcessor = new GameObject(noiseCompute);
 	hierarchy->AddGameObject(computeProcessor);
+
+	VkImageMemoryBarrier barrier = {};
+	barrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
+    barrier.oldLayout = VK_IMAGE_LAYOUT_GENERAL;
+    barrier.newLayout = VK_IMAGE_LAYOUT_GENERAL;
+    barrier.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+    barrier.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+    barrier.image = proceduralTexture->GetImage();
+
+	barrier.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+    barrier.subresourceRange.baseMipLevel = 0;
+    barrier.subresourceRange.levelCount = 1;
+    barrier.subresourceRange.baseArrayLayer = 0;
+    barrier.subresourceRange.layerCount = 1;
+
+	barrier.srcAccessMask = 0;
+	barrier.dstAccessMask = 0;
+
+	noiseCompute->AddImageBarrier(barrier, VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT);
 
 	// fullscreen compute display
 	hierarchy->AddGameObject(new GameObject(new ProceduralRenderer(displayProceduralTexture, 4)));
 
 	// Reserve memory so we don't have to allocate and bind the descriptor set
 	writeProceduralTexture->SetTexture("proceduralTexture", proceduralTexture, VK_IMAGE_LAYOUT_GENERAL, VK_DESCRIPTOR_TYPE_STORAGE_IMAGE);
-	displayProceduralTexture->SetTexture(TextureBinding::Albedo, proceduralTexture, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE);
+	displayProceduralTexture->SetTexture(TextureBinding::Albedo, proceduralTexture, VK_IMAGE_LAYOUT_GENERAL, VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE);
+	// TODO: profile how using VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL in the memory barrier affects the performances
 
 	ProcessEvent(es, app);
 	while (app.ShouldNotQuit())

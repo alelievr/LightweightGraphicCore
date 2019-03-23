@@ -40,7 +40,7 @@ void		ImGUIWrapper::Initialize(SwapChain * swapChain, VulkanSurface * surface)
 void		ImGUIWrapper::InitImGUI(void)
 {
 	VkPhysicalDevice	physicalDevice = _instance->GetPhysicalDevice();
-	_renderPass.Initialize();
+	_renderPass.Initialize(_swapChain);
 
 	InitImGUIFrameDatas();
 	_wd.Surface = _surface->GetSurface();

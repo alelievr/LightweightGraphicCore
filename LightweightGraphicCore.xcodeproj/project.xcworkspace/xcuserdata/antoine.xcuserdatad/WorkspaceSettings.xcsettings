@@ -4,5 +4,17 @@
 <dict>
 	<key>BuildLocationStyle</key>
 	<string>UseTargetSettings</string>
+	<key>BuildSystemType</key>
+	<string>Original</string>
+	<key>CustomBuildLocationType</key>
+	<string>RelativeToDerivedData</string>
+	<key>DerivedDataLocationStyle</key>
+	<string>Default</string>
+	<key>EnabledFullIndexStoreVisibility</key>
+	<false/>
+	<key>IssueFilterStyle</key>
+	<string>ShowActiveSchemeOnly</string>
+	<key>LiveSourceIssuesEnabled</key>
+	<true/>
 </dict>
 </plist>

@@ -52,12 +52,13 @@ void			Application::Init(void) noexcept
 		"VK_LAYER_LUNARG_standard_validation",
 	});
 #endif
-#ifdef DEBUG
 	_instance.SetDeviceExtensions({
-		"VK_EXT_debug_marker"
-	});
+#ifdef DEBUG
+		VK_EXT_DEBUG_MARKER_EXTENSION_NAME, // TODO: enable the extension in the vulkan layer
 #endif
-	_instance.SetDeviceExtensions({VK_KHR_SWAPCHAIN_EXTENSION_NAME});
+		VK_KHR_SWAPCHAIN_EXTENSION_NAME,
+		// VK_NV_RAY_TRACING_EXTENSION_NAME,
+	});
 	_instance.SetApplicationName("LWGC"); // This should be the application name but for the moment we'll keep it like this
 
 	_instance.Initialize();
@@ -89,7 +90,7 @@ void		Application::FramebufferResizeCallback(GLFWwindow *window, int width, int 
 void			Application::UpdateRenderPipeline(void)
 {
 	// By setting this to null we ensure that the first time the function is called,
-// we initialize the materials using the renderpipeline (is there is one)
+	// we initialize the materials using the renderpipeline (is there is one)
 	static RenderPipeline *	lastFramePipeline = nullptr;
 	auto currentPipe = RenderPipelineManager::currentRenderPipeline;
 

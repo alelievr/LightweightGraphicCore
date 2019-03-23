@@ -5,6 +5,7 @@
 #include <algorithm>
 #include <iostream>
 #include <sstream>
+#include <algorithm>
 
 #include GLFW_INCLUDE
 #include "Vk.hpp"
@@ -30,7 +31,7 @@ VulkanInstance::VulkanInstance(const std::string & applicationName) : _applicati
 	_applicationName = applicationName;
 }
 
-VulkanInstance::VulkanInstance(const std::string & applicationName, const std::vector< const char * > validationLayers, const std::vector< const char * > deviceExtensions) : VulkanInstance(applicationName)
+VulkanInstance::VulkanInstance(const std::string & applicationName, const std::vector< const char * > validationLayers, const std::vector< std::string > deviceExtensions) : VulkanInstance(applicationName)
 {
 	SetDeviceExtensions(deviceExtensions);
 	SetValidationLayers(validationLayers);
@@ -39,10 +40,6 @@ VulkanInstance::VulkanInstance(const std::string & applicationName, const std::v
 VulkanInstance::~VulkanInstance(void)
 {
 	std::cout << "desctroyed instance !\n";
-	// Manually destroy command buffers so we don't use a freed device
-	_commandBufferPool.~CommandBufferPool();
-	// _graphicCommandBufferPool.~CommandBufferPool();
-	// _computeCommandBufferPool.~CommandBufferPool();
 
 	if (_enableValidationLayers)
 	{
@@ -62,28 +59,30 @@ void			VulkanInstance::Initialize(void)
 {
 	_instanceSingleton = this;
 	CreateInstance();
-	InitializeVulkanFunctions();
-	SetupDebugCallbacks();
 }
 
 
 void			VulkanInstance::InitializeVulkanFunctions(void) noexcept
 {
-	// Debug report (validation layers) exntension
-	VkExt::CreateDebugUtilsMessengerFunction = reinterpret_cast<PFN_vkCreateDebugUtilsMessengerEXT>(glfwGetInstanceProcAddress(_instance, "vkCreateDebugUtilsMessengerEXT"));
-	VkExt::DestroyDebugUtilMessengerFunction = reinterpret_cast<PFN_vkDestroyDebugUtilsMessengerEXT>(glfwGetInstanceProcAddress(_instance, "vkDestroyDebugUtilsMessengerEXT"));
-	VkExt::CreateDebugReportCallbackFunction = reinterpret_cast<PFN_vkCreateDebugReportCallbackEXT>(glfwGetInstanceProcAddress(_instance, "vkCreateDebugReportCallbackEXT"));
-	VkExt::DestroyDebugReportCallbackFunction = reinterpret_cast<PFN_vkDestroyDebugReportCallbackEXT>(glfwGetInstanceProcAddress(_instance, "vkDestroyDebugReportCallbackEXT"));
-	VkExt::DebugReportMessageFunction = reinterpret_cast<PFN_vkDebugReportMessageEXT>(glfwGetInstanceProcAddress(_instance, "vkDebugReportMessageEXT"));
+	// Debug report (validation layers) extension
+	if (std::find(_deviceExtensions.begin(), _deviceExtensions.end(), VK_EXT_DEBUG_UTILS_EXTENSION_NAME) != _deviceExtensions.end())
+	{
+		VkExt::CreateDebugUtilsMessengerFunction = reinterpret_cast<PFN_vkCreateDebugUtilsMessengerEXT>(glfwGetInstanceProcAddress(_instance, "vkCreateDebugUtilsMessengerEXT"));
+		VkExt::DestroyDebugUtilMessengerFunction = reinterpret_cast<PFN_vkDestroyDebugUtilsMessengerEXT>(glfwGetInstanceProcAddress(_instance, "vkDestroyDebugUtilsMessengerEXT"));
+		VkExt::CreateDebugReportCallbackFunction = reinterpret_cast<PFN_vkCreateDebugReportCallbackEXT>(glfwGetInstanceProcAddress(_instance, "vkCreateDebugReportCallbackEXT"));
+		VkExt::DestroyDebugReportCallbackFunction = reinterpret_cast<PFN_vkDestroyDebugReportCallbackEXT>(glfwGetInstanceProcAddress(_instance, "vkDestroyDebugReportCallbackEXT"));
+		VkExt::DebugReportMessageFunction = reinterpret_cast<PFN_vkDebugReportMessageEXT>(glfwGetInstanceProcAddress(_instance, "vkDebugReportMessageEXT"));
+	}
 
-#ifdef DEBUG
-	// Debug maker extension:
-	VkExt::DebugMarkerSetObjectTagFunction = reinterpret_cast<PFN_vkDebugMarkerSetObjectTagEXT>(glfwGetInstanceProcAddress(_instance, "vkDebugMarkerSetObjectTagEXT"));
-	VkExt::DebugMarkerSetObjectNameFunction = reinterpret_cast<PFN_vkDebugMarkerSetObjectNameEXT>(glfwGetInstanceProcAddress(_instance, "vkDebugMarkerSetObjectNameEXT"));
-	VkExt::CmdDebugMarkerBeginFunction = reinterpret_cast<PFN_vkCmdDebugMarkerBeginEXT>(glfwGetInstanceProcAddress(_instance, "vkCmdDebugMarkerBeginEXT"));
-	VkExt::CmdDebugMarkerEndFunction = reinterpret_cast<PFN_vkCmdDebugMarkerEndEXT>(glfwGetInstanceProcAddress(_instance, "vkCmdDebugMarkerEndEXT"));
-	VkExt::CmdDebugMarkerInsertFunction = reinterpret_cast<PFN_vkCmdDebugMarkerInsertEXT>(glfwGetInstanceProcAddress(_instance, "vkCmdDebugMarkerInsertEXT"));
-#endif
+	if (std::find(_deviceExtensions.begin(), _deviceExtensions.end(), VK_EXT_DEBUG_MARKER_EXTENSION_NAME) != _deviceExtensions.end())
+	{
+		// Debug maker extension:
+		VkExt::DebugMarkerSetObjectTagFunction = reinterpret_cast<PFN_vkDebugMarkerSetObjectTagEXT>(glfwGetInstanceProcAddress(_instance, "vkDebugMarkerSetObjectTagEXT"));
+		VkExt::DebugMarkerSetObjectNameFunction = reinterpret_cast<PFN_vkDebugMarkerSetObjectNameEXT>(glfwGetInstanceProcAddress(_instance, "vkDebugMarkerSetObjectNameEXT"));
+		VkExt::CmdDebugMarkerBeginFunction = reinterpret_cast<PFN_vkCmdDebugMarkerBeginEXT>(glfwGetInstanceProcAddress(_instance, "vkCmdDebugMarkerBeginEXT"));
+		VkExt::CmdDebugMarkerEndFunction = reinterpret_cast<PFN_vkCmdDebugMarkerEndEXT>(glfwGetInstanceProcAddress(_instance, "vkCmdDebugMarkerEndEXT"));
+		VkExt::CmdDebugMarkerInsertFunction = reinterpret_cast<PFN_vkCmdDebugMarkerInsertEXT>(glfwGetInstanceProcAddress(_instance, "vkCmdDebugMarkerInsertEXT"));
+	}
 }
 
 void			VulkanInstance::InitializeSurface(VkSurfaceKHR surface)
@@ -92,6 +91,8 @@ void			VulkanInstance::InitializeSurface(VkSurfaceKHR surface)
 
 	ChoosePhysicalDevice();
 	CreateLogicalDevice();
+	InitializeVulkanFunctions();
+	SetupDebugCallbacks();
 	CreateCommandBufferPools();
 	CreateDescriptorPool();
 
@@ -105,7 +106,8 @@ void			VulkanInstance::CreateDescriptorPool(void) noexcept
 	if (_descriptorPool != VK_NULL_HANDLE)
 		return ;
 
-	std::array<VkDescriptorPoolSize, 6> poolSizes = {};
+	// TODO: refactor this
+	std::array<VkDescriptorPoolSize, 7> poolSizes = {};
 	poolSizes[0].type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
 	poolSizes[0].descriptorCount = 1000u;
 	poolSizes[1].type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC;
@@ -114,10 +116,12 @@ void			VulkanInstance::CreateDescriptorPool(void) noexcept
 	poolSizes[2].descriptorCount = 6u;
 	poolSizes[3].type = VK_DESCRIPTOR_TYPE_SAMPLER;
 	poolSizes[3].descriptorCount = 4u;
-	poolSizes[4].type = VK_DESCRIPTOR_TYPE_UNIFORM_TEXEL_BUFFER;
-	poolSizes[4].descriptorCount = 10u;
-	poolSizes[5].type = VK_DESCRIPTOR_TYPE_STORAGE_TEXEL_BUFFER;
+	poolSizes[4].type = VK_DESCRIPTOR_TYPE_STORAGE_IMAGE;
+	poolSizes[4].descriptorCount = 2u;
+	poolSizes[5].type = VK_DESCRIPTOR_TYPE_UNIFORM_TEXEL_BUFFER;
 	poolSizes[5].descriptorCount = 10u;
+	poolSizes[6].type = VK_DESCRIPTOR_TYPE_STORAGE_TEXEL_BUFFER;
+	poolSizes[6].descriptorCount = 10u;
 
 	VkDescriptorPoolCreateInfo poolInfo = {};
 	poolInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
@@ -234,12 +238,20 @@ DeviceCapability			VulkanInstance::GetDeviceCapability(VkPhysicalDevice physical
 		VkBool32 presentSupport = false;
 		vkGetPhysicalDeviceSurfaceSupportKHR(physicalDevice, index, _surface, &presentSupport);
 
-		capability.queues.push_back(DeviceQueue{
-			index++,
-			VK_NULL_HANDLE,
+		auto deviceQueue = DeviceQueue{
+			static_cast<uint32_t>(index),
+			{},
+			queueFamily.queueCount,
+			0,
 			presentSupport == true,
 			(queueFamily.queueFlags & VK_QUEUE_COMPUTE_BIT) != 0
-		});
+		};
+
+		deviceQueue.queues.resize(queueFamily.queueCount);
+
+		capability.queues.push_back(deviceQueue);
+		index++;
+
 		auto g = queueFamily.minImageTransferGranularity;
 		std::cout << "queue count:" << queueFamily.queueCount << ", flags: "
 			<< queueFamily.queueFlags << ", memory granularity: "
@@ -276,7 +288,7 @@ DeviceCapability			VulkanInstance::IsPhysicalDeviceSuitable(VkPhysicalDevice phy
 {
 	DeviceCapability capability = GetDeviceCapability(physicalDevice);
 
-	capability.supportExtensions = AreExtensionsSupportedForPhysicalDevice(physicalDevice);
+	capability.enabledExtensions = AreExtensionsSupportedForPhysicalDevice(physicalDevice);
 
 	InitSurfaceForPhysicalDevice(physicalDevice);
 	capability.supportSurface = !_surfaceFormats.empty() && !_surfacePresentModes.empty();
@@ -330,31 +342,38 @@ void			VulkanInstance::ChoosePhysicalDevice(void)
 		return c1.GetGPUScore() < c2.GetGPUScore();
 	});
 
-	if (deviceCapabilities[0].GetGPUScore() == -1)
+	auto & bestDevice = deviceCapabilities[0];
+
+	if (bestDevice.GetGPUScore() == -1)
 		throw std::runtime_error("Can't find a GPU that met requirement");
 
 	// setup choosen device
-	_physicalDevice = deviceCapabilities[0].physicalDevice;
-	_queueIndex = deviceCapabilities[0].queues[0].index;
+	_physicalDevice = bestDevice.physicalDevice;
+	_availableQueues = bestDevice.queues;
+	_deviceExtensions = bestDevice.enabledExtensions;
 
-	std::cout << "Choosed " << deviceCapabilities[0].deviceName << " as the best GPU on your machine." << std::endl;
+	std::cout << "Choosed " << bestDevice.deviceName << " as the best GPU on your machine." << std::endl;
 }
 
+#include <algorithm>
 void			VulkanInstance::CreateLogicalDevice(void)
 {
-	std::vector<VkDeviceQueueCreateInfo> queueCreateInfos;
-	std::set<uint32_t> uniqueQueueFamilies = {_queueIndex};
+	std::vector< VkDeviceQueueCreateInfo > queueCreateInfos;
+	std::vector< float >  queuePriorities;
 
-	float queuePriority = 1.0f;
-	for (uint32_t queueFamily : uniqueQueueFamilies)
+	for (DeviceQueue deviceQueue : _availableQueues)
 	{
+		queuePriorities.resize(fmaxf(queuePriorities.size(), deviceQueue.count));
 	    VkDeviceQueueCreateInfo queueCreateInfo = {};
 	    queueCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
-	    queueCreateInfo.queueFamilyIndex = queueFamily;
-	    queueCreateInfo.queueCount = 1;
-	    queueCreateInfo.pQueuePriorities = &queuePriority;
+	    queueCreateInfo.queueFamilyIndex = deviceQueue.index;
+	    queueCreateInfo.queueCount = deviceQueue.count;
+	    queueCreateInfo.pQueuePriorities = queuePriorities.data();
 	    queueCreateInfos.push_back(queueCreateInfo);
 	}
+
+	for (auto & priority : queuePriorities)
+		priority = 1.0f;
 
 	VkPhysicalDeviceFeatures deviceFeatures = {};
 
@@ -375,7 +394,15 @@ void			VulkanInstance::CreateLogicalDevice(void)
 	createInfo.pEnabledFeatures = &deviceFeatures;
 
 	createInfo.enabledExtensionCount = static_cast<uint32_t>(_deviceExtensions.size());
-	createInfo.ppEnabledExtensionNames = _deviceExtensions.data();
+	std::vector< const char * > enabledExtensionsName;
+	for (const auto & n : _deviceExtensions)
+		enabledExtensionsName.push_back(n.c_str());
+	createInfo.ppEnabledExtensionNames = enabledExtensionsName.data();
+
+	std::cout << "Enabled vulkan extensions: ";
+	for (auto extension : _deviceExtensions)
+		std::cout << extension << ((extension != _deviceExtensions.back()) ? ", " : "");
+	std::cout << std::endl;
 
 	if (_enableValidationLayers) {
 	    createInfo.enabledLayerCount = static_cast<uint32_t>(_validationLayers.size());
@@ -388,29 +415,54 @@ void			VulkanInstance::CreateLogicalDevice(void)
 	    throw std::runtime_error("failed to create logical device!");
 	}
 
-	vkGetDeviceQueue(_device, _queueIndex, 0, &_queue);
-	// vkGetDeviceQueue(_device, _graphicQueueIndex, 0, &_graphicQueue);
-	// vkGetDeviceQueue(_device, _presentQueueIndex, 0, &_presentQueue);
-	// vkGetDeviceQueue(_device, _computeQueueIndex, 0, &_computeQueue);
+	_mainQueue.queues.resize(1);
+	AllocateDeviceQueue(_mainQueue.queues[0], _mainQueue.index);
 
 	printf("Create logical device !\n");
 }
 
-VkQueue			VulkanInstance::AllocateDeviceQueue(void)
+// TODO: put the a queue capability to request by capability
+void			VulkanInstance::AllocateDeviceQueue(VkQueue & queue, uint32_t & queueIndex)
 {
-	VkQueue queue;
+	auto unallocatedDeviceQueue = std::find_if(_availableQueues.begin(), _availableQueues.end(), [](const auto & deviceQueue){
+		return deviceQueue.count > deviceQueue.allocatedQueueCount;
+	});
 
-	vkGetDeviceQueue(_device, _queueIndex, 0, &queue);
+	// If all the device queue have been allocated, we just return the main queue
+	if (unallocatedDeviceQueue == _availableQueues.end())
+	{
+		std::cout << "Warning: too many allocated queues, returning the main queue." << std::endl;
+		queue = _mainQueue.queues[0];
+		queueIndex = _mainQueue.index;
+		return ;
+	}
 
-	return queue;
+	vkGetDeviceQueue(_device,
+		unallocatedDeviceQueue->index,
+		unallocatedDeviceQueue->allocatedQueueCount,
+		&unallocatedDeviceQueue->queues[unallocatedDeviceQueue->allocatedQueueCount]
+	);
+
+	queue = unallocatedDeviceQueue->queues[unallocatedDeviceQueue->allocatedQueueCount];
+	queueIndex = unallocatedDeviceQueue->index;
+
+	size_t index = std::distance(_availableQueues.begin(), unallocatedDeviceQueue);
+	_availableQueues[index].allocatedQueueCount++;
+}
+
+uint32_t		VulkanInstance::GetAvailableDevceQueueCount(void)
+{
+	return std::count_if(_availableQueues.begin(), _availableQueues.end(), [](const DeviceQueue & deviceQueue) {
+		return deviceQueue.count > deviceQueue.allocatedQueueCount;
+	});
 }
 
 void			VulkanInstance::CreateCommandBufferPools(void) noexcept
 {
-	_commandBufferPool.Initialize();
+	_commandBufferPool.Initialize(_mainQueue.queues[0], _mainQueue.index);
 }
 
-bool			VulkanInstance::AreExtensionsSupportedForPhysicalDevice(VkPhysicalDevice physicalDevice) noexcept
+std::vector< std::string >	VulkanInstance::AreExtensionsSupportedForPhysicalDevice(VkPhysicalDevice physicalDevice) noexcept
 {
 	uint32_t extensionCount;
 	vkEnumerateDeviceExtensionProperties(physicalDevice, nullptr, &extensionCount, nullptr);
@@ -418,12 +470,25 @@ bool			VulkanInstance::AreExtensionsSupportedForPhysicalDevice(VkPhysicalDevice 
 	std::vector<VkExtensionProperties> availableExtensions(extensionCount);
 	vkEnumerateDeviceExtensionProperties(physicalDevice, nullptr, &extensionCount, availableExtensions.data());
 
-	std::set< std::string > requiredExtensions(_deviceExtensions.begin(), _deviceExtensions.end());
+	std::set< std::string > requestedExtensions(_deviceExtensions.begin(), _deviceExtensions.end());
+	std::vector< std::string > enabledExtensions;
 
-	for (const auto& extension : availableExtensions)
-		requiredExtensions.erase(extension.extensionName);
+	for (const auto & extension : availableExtensions)
+		if (requestedExtensions.find(extension.extensionName) != requestedExtensions.end())
+		{
+			enabledExtensions.push_back(extension.extensionName);
+			requestedExtensions.erase(extension.extensionName);
+		}
 
-	return requiredExtensions.empty();
+	if (requestedExtensions.size() != 0)
+	{
+		std::cout << "Missing extensions: ";
+		for (const auto & extension : requestedExtensions)
+			std::cout << extension << ", ";
+		std::cout << "the application will (try to) run without them" << std::endl;
+	}
+
+	return enabledExtensions;
 }
 
 uint32_t		VulkanInstance::FindMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties)
@@ -470,7 +535,7 @@ void		VulkanInstance::SetValidationLayers(const std::vector< const char * > vali
 	_enableValidationLayers = true;
 }
 
-void		VulkanInstance::SetDeviceExtensions(const std::vector< const char * > deviceExtensions) noexcept
+void		VulkanInstance::SetDeviceExtensions(const std::vector< std::string > deviceExtensions) noexcept
 {
 	_deviceExtensions = deviceExtensions;
 }
@@ -482,17 +547,9 @@ void		VulkanInstance::SetApplicationName(const std::string & applicationName) no
 
 VkInstance	VulkanInstance::GetInstance(void) const noexcept { return (this->_instance); }
 
-VkQueue		VulkanInstance::GetQueue(void) const noexcept { return (this->_queue); }
-// Only one GPU supported
-// VkQueue		VulkanInstance::GetGraphicQueue(void) const noexcept { return (this->_graphicQueue); }
-// VkQueue		VulkanInstance::GetPresentQueue(void) const noexcept { return (this->_presentQueue); }
-// VkQueue		VulkanInstance::GetComputeQueue(void) const noexcept { return (this->_computeQueue); }
+VkQueue		VulkanInstance::GetQueue(void) const noexcept { return (this->_mainQueue.queues[0]); }
 
-uint32_t	VulkanInstance::GetQueueIndex(void) const noexcept { return (this->_queueIndex); }
-// Only one GPU supported
-// uint32_t	VulkanInstance::GetGraphicQueueIndex(void) const noexcept { return (this->_graphicQueueIndex); }
-// uint32_t	VulkanInstance::GetPresentQueueIndex(void) const noexcept { return (this->_presentQueueIndex); }
-// uint32_t	VulkanInstance::GetComputeQueueIndex(void) const noexcept { return (this->_computeQueueIndex); }
+uint32_t	VulkanInstance::GetQueueIndex(void) const noexcept { return (this->_mainQueue.index); }
 
 const std::vector< VkSurfaceFormatKHR >	VulkanInstance::GetSupportedSurfaceFormats(void) const noexcept { return (this->_surfaceFormats); }
 const std::vector< VkPresentModeKHR >	VulkanInstance::GetSupportedPresentModes(void) const noexcept { return (this->_surfacePresentModes); }
@@ -502,8 +559,6 @@ VkPhysicalDevice	VulkanInstance::GetPhysicalDevice(void) const noexcept { return
 VkDevice			VulkanInstance::GetDevice(void) const noexcept { return (this->_device); }
 
 CommandBufferPool *	VulkanInstance::GetCommandBufferPool(void) noexcept { return &this->_commandBufferPool; }
-// CommandBufferPool *	VulkanInstance::GetGraphicCommandBufferPool(void) noexcept { return &this->_graphicCommandBufferPool; }
-// CommandBufferPool *	VulkanInstance::GetComputeCommandBufferPool(void) noexcept { return &this->_computeCommandBufferPool; }
 
 VkDescriptorPool	VulkanInstance::GetDescriptorPool(void) const noexcept
 {
@@ -638,9 +693,9 @@ void		VulkanInstance::DestroyDebugUtilsMessengerEXT(VkDebugUtilsMessengerEXT cal
 
 int			DeviceCapability::GetGPUScore(void) const
 {
-	if (!supportedFeatures || !supportExtensions || !supportSurface)
+	if (!supportedFeatures || !supportSurface || queues.size() <= 1)
 	{
-		std::cout << "supported features: " << supportedFeatures << ", " << supportExtensions << ", " << supportSurface << std::endl;
+		std::cout << "supported features: " << supportedFeatures << ", " << supportSurface << ", " << queues.size() << std::endl;
 		return -1;
 	}
 

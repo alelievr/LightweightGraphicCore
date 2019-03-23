@@ -118,7 +118,6 @@ namespace LWGC
 			void		CompileShaders(void);
 			void		CreateGraphicPipeline(void);
 			void		CreateComputePipeline(void);
-			void		BindDescriptorSets(RenderPass * renderPass);
 			void		SetupDefaultSettings(void);
 			bool		DescriptorSetExists(const std::string & bindingName, bool silent);
 			void		InitMaterialIfPossible(void);
@@ -150,6 +149,8 @@ namespace LWGC
 			bool				IsCompute(void) const;
 			bool				IsReady(void) const noexcept;
 			bool				IsCompiled(void) const noexcept;
+			void				BindProperties(VkCommandBuffer cmd);
+			void				BindPipeline(VkCommandBuffer cmd);
 
 			void				ReloadShaders(void) noexcept;
 

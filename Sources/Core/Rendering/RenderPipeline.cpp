@@ -42,16 +42,16 @@ void                RenderPipeline::Initialize(SwapChain * swapChain)
     this->instance = VulkanInstance::Get();
 	this->device = instance->GetDevice();
     this->swapChain = swapChain;
-	renderPass.Initialize();
+	this->mainCommandPool = instance->GetCommandBufferPool();
+	renderPass.Initialize(swapChain);
 	CreateRenderPass();
 
-	// Allocate primary command buffers
-	instance->GetCommandBufferPool()->Allocate(VK_COMMAND_BUFFER_LEVEL_PRIMARY, _swapChainCommandBuffers, swapChain->GetImageCount());
+	// Allocate primary command buffers used for frame rendering
+	this->mainCommandPool->AllocateFrameCommandBuffers(swapChain->GetImageCount());
 
 	// Allocate LWGC_PerFrame uniform buffer
 	Vk::CreateBuffer(sizeof(LWGC_PerFrame), VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, _uniformPerFrame.buffer, _uniformPerFrame.memory);
 
-	CreateDescriptorSets();
 	CreatePerFrameDescriptorSet();
 
 	// InitializeHandles();
@@ -66,20 +66,18 @@ void				RenderPipeline::InitializeHandles(void) noexcept
 	HandleManager::Initialize();
 }
 
-void				RenderPipeline::CreateDescriptorSets(void) {}
-
 void				RenderPipeline::CreatePerFrameDescriptorSet(void)
 {
 	auto layoutBinding = Vk::CreateDescriptorSetLayoutBinding(0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_ALL);
-	Vk::CreateDescriptorSetLayout({layoutBinding}, _perFrameDescriptorSetLayout);
+	Vk::CreateDescriptorSetLayout({layoutBinding}, perFrameDescriptorSetLayout);
 
 	VkDescriptorSetAllocateInfo allocInfo = {};
 	allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
 	allocInfo.descriptorPool = instance->GetDescriptorPool();
 	allocInfo.descriptorSetCount = 1u;
-	allocInfo.pSetLayouts = &_perFrameDescriptorSetLayout; // First layout set is per frame cbuffer
+	allocInfo.pSetLayouts = &perFrameDescriptorSetLayout; // First layout set is per frame cbuffer
 
-	if (vkAllocateDescriptorSets(device, &allocInfo, &_perFrameDescriptorSet) != VK_SUCCESS)
+	if (vkAllocateDescriptorSets(device, &allocInfo, &perFrameDescriptorSet) != VK_SUCCESS)
 		throw std::runtime_error("failed to allocate descriptor sets!");
 
 	VkDescriptorBufferInfo bufferInfo = {};
@@ -89,7 +87,7 @@ void				RenderPipeline::CreatePerFrameDescriptorSet(void)
 
 	VkWriteDescriptorSet descriptorWrite = {};
 	descriptorWrite.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-	descriptorWrite.dstSet = _perFrameDescriptorSet;
+	descriptorWrite.dstSet = perFrameDescriptorSet;
 	descriptorWrite.dstBinding = 0;
 	descriptorWrite.dstArrayElement = 0;
 	descriptorWrite.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
@@ -122,70 +120,6 @@ void				RenderPipeline::CreateRenderPass(void)
 
 	renderPass.Create();
 	swapChain->CreateFrameBuffers(renderPass);
-}
-
-void			RenderPipeline::BeginRenderPass(RenderContext * context)
-{
-	VkCommandBufferBeginInfo beginInfo = {};
-	beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
-	beginInfo.flags = VK_COMMAND_BUFFER_USAGE_SIMULTANEOUS_USE_BIT;
-
-	if (vkBeginCommandBuffer(frameCommandBuffers[0], &beginInfo) != VK_SUCCESS)
-	{
-		throw std::runtime_error("failed to begin recording command buffer!");
-	}
-
-	framebuffer = swapChain->GetFramebuffers()[currentFrame]; // TODO: simplify this
-
-	renderPass.BeginFrame(frameCommandBuffers[0], framebuffer, "Main Pass");
-
-	// Run all compute shaders before begin render pass:
-	std::unordered_set< ComputeDispatcher * >	computeDispatchers;
-	context->GetComputeDispatchers(computeDispatchers);
-
-	// Bind frame infos for compute shaders
-	renderPass.BindDescriptorSet(LWGCBinding::Frame, _perFrameDescriptorSet);
-
-	for (auto & compute : computeDispatchers)
-	{
-		auto m = compute->GetMaterial();
-
-		renderPass.BindMaterial(m);
-
-		auto cmd = compute->GetCommandBuffer();
-		renderPass.BeginSecondaryCommandBuffer(cmd, VK_COMMAND_BUFFER_USAGE_SIMULTANEOUS_USE_BIT);
-		compute->RecordCommands(cmd);
-		renderPass.ExecuteCommandBuffer(cmd);
-	}
-
-	renderPass.ClearBindings();
-
-	std::array<VkClearValue, 2> clearValues = {};
-	clearValues[0].color = {{0.0f, 0.0f, 0.0f, 1.0f}};
-	clearValues[1].depthStencil = {1.0f, 0};
-
-	VkRenderPassBeginInfo renderPassInfo = {};
-	renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
-	renderPassInfo.renderPass = renderPass.GetRenderPass();
-	renderPassInfo.framebuffer = framebuffer;
-	renderPassInfo.renderArea.offset = {0, 0};
-	renderPassInfo.renderArea.extent = swapChain->GetExtent();
-	renderPassInfo.clearValueCount = static_cast<uint32_t>(clearValues.size());
-	renderPassInfo.pClearValues = clearValues.data();
-
-	vkCmdBeginRenderPass(frameCommandBuffers[0], &renderPassInfo, VK_SUBPASS_CONTENTS_SECONDARY_COMMAND_BUFFERS);
-}
-
-void			RenderPipeline::EndRenderPass(void)
-{
-	renderPass.EndFrame();
-
-	vkCmdEndRenderPass(frameCommandBuffers[0]);
-
-	if (vkEndCommandBuffer(frameCommandBuffers[0]) != VK_SUCCESS)
-	{
-		throw std::runtime_error("failed to record command buffer!");
-	}
 }
 
 void			RenderPipeline::RenderGUI(RenderContext * context) noexcept
@@ -272,12 +206,30 @@ void			RenderPipeline::RenderInternal(const std::vector< Camera * > & cameras, R
 		throw std::runtime_error("failed to acquire swap chain image!");
 	}
 
+	// reset the current command buffer so that old commands aren't re-executed
+	mainCommandPool->ResetCommandBuffer(currentFrame);
+
+	// each frame we recreate the list of primary command buffers used to render a frame
 	frameCommandBuffers.clear();
-	frameCommandBuffers.push_back(_swapChainCommandBuffers[_imageIndex]);
+	frameCommandBuffers.push_back(GetCurrentFrameCommandBuffer());
 
 	currentCamera = (cameras.size() == 0) ? nullptr : cameras[0];
 
-	Render(cameras, context);
+	if (cameras.empty())
+		throw std::runtime_error("No camera for rendering !");
+
+	VkCommandBufferBeginInfo beginInfo = {};
+	beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+	beginInfo.flags = VK_COMMAND_BUFFER_USAGE_SIMULTANEOUS_USE_BIT; // humm...
+	Vk::CheckResult(vkBeginCommandBuffer(GetCurrentFrameCommandBuffer(), &beginInfo), "Failed to begin recording of frame command buffer!");
+
+	beginFrameRendering.Invoke();
+	{
+		Render(cameras, context);
+	}
+	endFrameRendering.Invoke();
+
+	Vk::CheckResult(vkEndCommandBuffer(GetCurrentFrameCommandBuffer()), "Failed to record command buffer!");
 }
 
 void	RenderPipeline::PresentFrame(void)
@@ -329,47 +281,65 @@ void	RenderPipeline::PresentFrame(void)
 	currentFrame = (currentFrame + 1) % swapChain->GetImageCount();
 }
 
-void	RenderPipeline::Render(const std::vector< Camera * > & cameras, RenderContext * context)
+void			RenderPipeline::RecordAllComputeDispatches(RenderPass & pass, RenderContext * context)
 {
-	if (cameras.empty())
-		throw std::runtime_error("No camera for rendering !");
+	std::unordered_set< ComputeDispatcher * >	computeDispatchers;
+	VkCommandBuffer cmd = pass.GetCommandBuffer();
 
-	BeginRenderPass(context);
+	context->GetComputeDispatchers(computeDispatchers);
 
-	renderPass.BindDescriptorSet(LWGCBinding::Frame, _perFrameDescriptorSet);
-
-	beginFrameRendering.Invoke();
-
-	for (const auto camera : cameras)
+	for (auto compute : computeDispatchers)
 	{
-		beginCameraRendering.Invoke(camera);
-		std::unordered_set< Renderer * >	renderers;
+		auto material = compute->GetMaterial();
+		pass.BindMaterial(material);
 
-		renderPass.BindDescriptorSet(LWGCBinding::Camera, camera->GetDescriptorSet());
+		material->BindPipeline(cmd);
+		material->BindProperties(cmd);
 
-		context->GetRenderers(renderers);
-
-		for (const auto & meshRenderer : renderers)
-		{
-			auto m = meshRenderer->GetMaterial();
-			renderPass.BindDescriptorSet(LWGCBinding::Object, meshRenderer->GetDescriptorSet());
-			renderPass.BindMaterial(m);
-
-			// Get the command buffer, should be empty at this state
-			VkCommandBuffer drawMeshBuffer = meshRenderer->GetCommandBuffer(currentFrame);
-			renderPass.BeginSecondaryCommandBuffer(drawMeshBuffer, VK_COMMAND_BUFFER_USAGE_RENDER_PASS_CONTINUE_BIT);
-			meshRenderer->RecordCommands(drawMeshBuffer);
-			renderPass.ExecuteCommandBuffer(drawMeshBuffer);
-		}
-
-		endCameraRendering.Invoke(camera);
+		// Bind everything we need for the folowing dispatches
+		pass.UpdateDescriptorBindings();
+		compute->RecordCommands(cmd);
 	}
+}
 
-	endFrameRendering.Invoke();
+void			RenderPipeline::RecordAllMeshRenderers(RenderPass & pass, RenderContext * context)
+{
+	std::unordered_set< Renderer * >	renderers;
+	VkCommandBuffer cmd = pass.GetCommandBuffer();
 
-	EndRenderPass();
+	context->GetRenderers(renderers);
 
-	renderPass.ClearBindings();
+	for (auto renderer : renderers)
+	{
+		auto material = renderer->GetMaterial();
+		pass.BindMaterial(material);
+
+		// TODO: optimize this when doing the renderqueues (sort materials and avoid pipeline switches)
+		material->BindPipeline(cmd);
+		material->BindProperties(cmd);
+
+		pass.BindDescriptorSet(LWGCBinding::Object, renderer->GetDescriptorSet());
+
+		// We bind / rebind everything we need for the folowing draws
+		pass.UpdateDescriptorBindings();
+
+		renderer->RecordCommands(cmd);
+	}
+}
+
+VkCommandBuffer	RenderPipeline::GetCurrentFrameCommandBuffer(void)
+{
+	return mainCommandPool->GetFrameCommandBuffer(currentFrame);
+}
+
+VkFramebuffer	RenderPipeline::GetCurrentFrameBuffer(void)
+{
+	return swapChain->GetFramebuffers()[currentFrame];
+}
+
+void			RenderPipeline::SetLastRenderPass(const RenderPass & renderPass)
+{
+	swapChain->CreateFrameBuffers(renderPass);
 }
 
 void			RenderPipeline::EnqueueFrameCommandBuffer(VkCommandBuffer cmd)

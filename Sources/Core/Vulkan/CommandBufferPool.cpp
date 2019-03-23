@@ -8,23 +8,27 @@ CommandBufferPool::CommandBufferPool(void)
 {
 	this->_instance = VK_NULL_HANDLE;
 	this->_commandPool = VK_NULL_HANDLE;
+	this->_queue = VK_NULL_HANDLE;
 	this->_queueIndex = -1;
 }
 
 CommandBufferPool::~CommandBufferPool(void)
 {
-	if (_commandPool != VK_NULL_HANDLE)
-	{
-		vkDestroyCommandPool(_instance->GetDevice(), _commandPool, nullptr);
-		_commandPool = VK_NULL_HANDLE;
-	}
+	if (_commandPool == VK_NULL_HANDLE)
+		return ;
+
+	if (_frameCommandBuffers.size() > 0)
+		FreeCommandBuffers(_frameCommandBuffers);
+
+	vkDestroyCommandPool(_instance->GetDevice(), _commandPool, nullptr);
+	_commandPool = VK_NULL_HANDLE;
 }
 
-void				CommandBufferPool::Initialize(void)
+void				CommandBufferPool::Initialize(VkQueue queue, int queueIndex)
 {
 	_instance = VulkanInstance::Get();
-	_queue = _instance->GetQueue();
-	_queueIndex = _instance->GetQueueIndex();
+	_queue = queue;
+	_queueIndex = queueIndex;
 
 	VkCommandPoolCreateInfo poolInfo = {};
 	poolInfo.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
@@ -48,6 +52,21 @@ void				CommandBufferPool::Allocate(VkCommandBufferLevel level, std::vector< VkC
 
 	if (vkAllocateCommandBuffers(_instance->GetDevice(), &allocInfo, commandBuffers.data()) != VK_SUCCESS)
 		throw std::runtime_error("Failed to allocate command buffers !");
+}
+
+void				CommandBufferPool::AllocateFrameCommandBuffers(size_t frameBufferCount)
+{
+	Allocate(VK_COMMAND_BUFFER_LEVEL_PRIMARY, _frameCommandBuffers, frameBufferCount);
+}
+
+VkCommandBuffer		CommandBufferPool::GetFrameCommandBuffer(size_t frameIndex)
+{
+	return _frameCommandBuffers[frameIndex];
+}
+
+void				CommandBufferPool::ResetCommandBuffer(size_t frameIndex)
+{
+	vkResetCommandBuffer(_frameCommandBuffers[frameIndex], 0);
 }
 
 VkCommandBuffer		CommandBufferPool::Allocate(VkCommandBufferLevel level)
@@ -84,7 +103,7 @@ VkCommandBuffer		CommandBufferPool::BeginSingle(VkCommandBufferLevel level) noex
 	return commandBuffer;
 }
 
-void		CommandBufferPool::EndSingle(VkCommandBuffer commandBuffer) noexcept
+void		CommandBufferPool::EndSingle(VkCommandBuffer commandBuffer, VkFence fence) noexcept
 {
 	Vk::CheckResult(vkEndCommandBuffer(commandBuffer), "End command buffer failed");
 
@@ -93,10 +112,16 @@ void		CommandBufferPool::EndSingle(VkCommandBuffer commandBuffer) noexcept
 	submitInfo.commandBufferCount = 1;
 	submitInfo.pCommandBuffers = &commandBuffer;
 
-	Vk::CheckResult(vkQueueSubmit(_queue, 1, &submitInfo, VK_NULL_HANDLE), "Queue submit failed");
-	Vk::CheckResult(vkQueueWaitIdle(_queue), "QueueWait Idle failed");
+	Vk::CheckResult(vkQueueSubmit(_queue, 1, &submitInfo, fence), "Queue submit failed");
 
-	vkFreeCommandBuffers(_instance->GetDevice(), _commandPool, 1, &commandBuffer);
+	// if there is no fence, we block until it's finished
+	if (fence == VK_NULL_HANDLE)
+	{
+		Vk::CheckResult(vkQueueWaitIdle(_queue), "QueueWait Idle failed");
+		vkFreeCommandBuffers(_instance->GetDevice(), _commandPool, 1, &commandBuffer);
+	}
+
+	// TODO: when we're running a command with a fence, we need to keep track of the command buffer so we can free it when the fence is signaled
 }
 
 std::ostream &	operator<<(std::ostream & o, CommandBufferPool const & r)

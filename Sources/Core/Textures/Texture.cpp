@@ -15,7 +15,8 @@
 using namespace LWGC;
 
 Texture::Texture(void) : width(0), height(0), depth(1), arraySize(1), autoGenerateMips(false), usage(0),
-	allocated(false), maxMipLevel(1), image(VK_NULL_HANDLE), memory(VK_NULL_HANDLE), view(VK_NULL_HANDLE)
+	allocated(false), maxMipLevel(1), image(VK_NULL_HANDLE), memory(VK_NULL_HANDLE), view(VK_NULL_HANDLE),
+	layout(VK_IMAGE_LAYOUT_UNDEFINED)
 {
 	instance = VulkanInstance::Get();
 	device = instance->GetDevice();
@@ -124,6 +125,12 @@ void		Texture::TransitionImageLayout(VkImage image, VkImageLayout oldLayout, VkI
 
         sourceStage = VK_PIPELINE_STAGE_TRANSFER_BIT;
         destinationStage = VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT;
+	} else if (oldLayout == VK_IMAGE_LAYOUT_UNDEFINED && newLayout == VK_IMAGE_LAYOUT_GENERAL) {
+        barrier.srcAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
+        barrier.dstAccessMask = VK_ACCESS_SHADER_WRITE_BIT;
+
+        sourceStage = VK_PIPELINE_STAGE_TRANSFER_BIT;
+        destinationStage = VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT;
     } else {
         throw std::invalid_argument("unsupported layout transition!");
     }
@@ -136,6 +143,8 @@ void		Texture::TransitionImageLayout(VkImage image, VkImageLayout oldLayout, VkI
             0, nullptr,
             1, &barrier
         	);
+
+	layout = newLayout;
 
 	graphicCommandBufferPool->EndSingle(commandBuffer);
 }
@@ -252,6 +261,7 @@ int				Texture::GetHeight(void) const noexcept { return (this->height); }
 int				Texture::GetDepth(void) const noexcept { return (this->depth); }
 VkImageView		Texture::GetView(void) const noexcept { return this->view; }
 VkImage			Texture::GetImage(void) const noexcept { return this->image; }
+VkImageLayout	Texture::GetLayout(void) const noexcept { return this->layout; }
 bool			Texture::GetAutoGenerateMips(void) const noexcept { return this->autoGenerateMips; }
 
 std::ostream &	operator<<(std::ostream & o, Texture const & r)

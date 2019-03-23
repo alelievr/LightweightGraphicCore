@@ -9,6 +9,11 @@
 			<key>orderHint</key>
 			<integer>0</integer>
 		</dict>
+		<key>compute.xcscheme_^#shared#^_</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>2</integer>
+		</dict>
 		<key>cube.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
@@ -17,6 +22,16 @@
 	</dict>
 	<key>SuppressBuildableAutocreation</key>
 	<dict>
+		<key>71C02953223FC4960086693D</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>B16B4C7B222C239100794EEC</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
 		<key>B1741FAB222C5A4600A18DEE</key>
 		<dict>
 			<key>primary</key>

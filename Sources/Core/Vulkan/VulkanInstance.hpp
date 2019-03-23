@@ -15,19 +15,21 @@ namespace LWGC
 
 	struct DeviceQueue
 	{
-		int		index;
-		VkQueue	queue;
-		bool	supportPresent;
-		bool	supportCompute;
+		uint32_t				index;					// aka queue family index
+		std::vector< VkQueue >	queues;
+		uint32_t				count;					// number of available queue of this family
+		uint32_t				allocatedQueueCount;
+		bool					supportPresent;
+		bool					supportCompute;
 	};
 
 	struct DeviceCapability
 	{
 		bool				supportedFeatures;
-		bool				supportExtensions;
 		bool				supportSurface;
 		VkPhysicalDevice	physicalDevice;
 		std::vector< DeviceQueue >	queues;
+		std::vector< std::string >	enabledExtensions;
 		std::string			deviceName;
 
 		int		GetGPUScore(void) const;
@@ -47,18 +49,10 @@ namespace LWGC
 			VkDebugReportCallbackEXT	_debugReportCallback;
 			VkDescriptorPool			_descriptorPool;
 
-			// uint32_t					_graphicQueueIndex;
-			// VkQueue						_graphicQueue;
-			// uint32_t					_presentQueueIndex;
-			// VkQueue						_presentQueue;
-			// uint32_t					_computeQueueIndex;
-			// VkQueue						_computeQueue;
-			uint32_t					_queueIndex;
 			VkQueue						_queue;
 
 			DeviceQueue					_mainQueue;
-			DeviceQueue					_transfertQueue;
-			std::vector< DeviceQueue >	_concurrentQueues;
+			std::vector< DeviceQueue >	_availableQueues;
 
 			VkSurfaceKHR				_surface;
 			VkSurfaceCapabilitiesKHR	_surfaceCapabilities;
@@ -66,11 +60,9 @@ namespace LWGC
 			std::vector< VkPresentModeKHR >		_surfacePresentModes;
 
 			std::vector< const char * >	_validationLayers;
-			std::vector< const char * >	_deviceExtensions;
+			std::vector< std::string >	_deviceExtensions;
 
 			CommandBufferPool			_commandBufferPool;
-			// CommandBufferPool			_graphicCommandBufferPool;
-			// CommandBufferPool			_computeCommandBufferPool;
 
 			static VulkanInstance *		_instanceSingleton;
 
@@ -79,7 +71,7 @@ namespace LWGC
 			void		ChoosePhysicalDevice(void);
 			DeviceCapability	IsPhysicalDeviceSuitable(VkPhysicalDevice physicalDevice) noexcept;
 			void		InitQueueIndicesForPhysicalDevice(VkPhysicalDevice device) noexcept;
-			bool		AreExtensionsSupportedForPhysicalDevice(VkPhysicalDevice physicalDevice) noexcept;
+			std::vector< std::string >	AreExtensionsSupportedForPhysicalDevice(VkPhysicalDevice physicalDevice) noexcept;
 			void		CreateInstance(void);
 			void		CreateLogicalDevice(void);
 			void		CreateCommandBufferPools(void) noexcept;
@@ -96,14 +88,14 @@ namespace LWGC
 		public:
 			VulkanInstance(void);
 			VulkanInstance(const std::string & applicationName);
-			VulkanInstance(const std::string & applicationName, const std::vector< const char * > validationLayers, const std::vector< const char * > deviceExtensions);
+			VulkanInstance(const std::string & applicationName, const std::vector< const char * > validationLayers, const std::vector< std::string > deviceExtensions);
 			VulkanInstance(const VulkanInstance &) = delete;
 			virtual ~VulkanInstance(void);
 
 			VulkanInstance &	operator=(VulkanInstance const & src) = delete;
 
 			void		SetValidationLayers(const std::vector< const char * > validationLayers) noexcept;
-			void		SetDeviceExtensions(const std::vector< const char * > deviceExtensions) noexcept;
+			void		SetDeviceExtensions(const std::vector< std::string > deviceExtensions) noexcept;
 			void		SetApplicationName(const std::string & applicationName) noexcept;
 
 			void		Initialize(void);
@@ -112,18 +104,9 @@ namespace LWGC
 			VkInstance	GetInstance(void) const noexcept;
 
 			VkQueue		GetQueue(void) const noexcept;
-			// VkQueue		GetGraphicQueue(void) const noexcept;
-			// VkQueue		GetPresentQueue(void) const noexcept;
-			// VkQueue		GetComputeQueue(void) const noexcept;
-
 			uint32_t	GetQueueIndex(void) const noexcept;
-			// uint32_t	GetGraphicQueueIndex(void) const noexcept;
-			// uint32_t	GetPresentQueueIndex(void) const noexcept;
-			// uint32_t	GetComputeQueueIndex(void) const noexcept;
 
 			CommandBufferPool *	GetCommandBufferPool(void) noexcept;
-			// CommandBufferPool *	GetGraphicCommandBufferPool(void) noexcept;
-			// CommandBufferPool *	GetComputeCommandBufferPool(void) noexcept;
 
 			const std::vector< VkSurfaceFormatKHR >	GetSupportedSurfaceFormats(void) const noexcept;
 			const std::vector< VkPresentModeKHR >	GetSupportedPresentModes(void) const noexcept;
@@ -138,7 +121,8 @@ namespace LWGC
 			uint32_t	FindMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties);
 			VkFormat	FindSupportedFormat(const std::vector< VkFormat > & candidates, VkImageTiling tiling, VkFormatFeatureFlags features);
 			VkFormat	FindDepthFormat(void);
-			VkQueue		AllocateDeviceQueue(void);
+			uint32_t	GetAvailableDevceQueueCount(void);
+			void		AllocateDeviceQueue(VkQueue & queue, uint32_t & queueIndex);
 
 			// Instance singleton
 			static VulkanInstance *		Get(void);
