@@ -6,7 +6,7 @@
 /*   By: amerelo <amerelo@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/08/27 21:37:58 by alelievr          #+#    #+#             */
-/*   Updated: 2019/01/13 15:53:46 by amerelo          ###   ########.fr       */
+/*   Updated: 2019/03/03 17:21:10 by amerelo          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,8 @@
 #include "Core/Transform.hpp"
 #include "Core/GameObject.hpp"
 #include "Core/Time.hpp"
+#include "Core/Texture2DAtlas.hpp"
+#include "Core/NodeTree.hpp"
 
 // Event System
 #include "Core/EventSystem.hpp"

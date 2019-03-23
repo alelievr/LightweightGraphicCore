@@ -5,6 +5,8 @@
 #include "Utils/Color.hpp"
 
 #include VULKAN_INCLUDE
+#include "VulkanInstance.hpp"
+#include GLM_INCLUDE
 
 namespace LWGC
 {
@@ -41,7 +43,8 @@ namespace LWGC
 			static bool			HasStencilComponent(VkFormat format);
 			static void			CreateBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer & buffer, VkDeviceMemory & bufferMemory);
 			static void			CopyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size);
-			static void			CopyBufferToImage(VkBuffer buffer, VkImage image, uint32_t width, uint32_t height, uint32_t depth = 1);
+			static VkBufferView	CreateBufferView(VkBuffer buffer, VkFormat format, VkDeviceSize offset = 0, VkDeviceSize range = VK_WHOLE_SIZE);
+			static void			CopyBufferToImage(VkBuffer buffer, VkImage image, glm::ivec3 imageSize, glm::ivec3 offset = {0, 0, 0});
 			static void			CheckResult(VkResult result, const std::string & errorMessage);
 			static VkSampler	CreateSampler(VkFilter filter, VkSamplerAddressMode addressMode, uint32_t maxAniso = 0);
 			static VkSampler	CreateCompSampler(VkFilter filter, VkSamplerAddressMode addressMode, VkCompareOp compareOp);

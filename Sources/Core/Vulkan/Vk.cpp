@@ -120,7 +120,7 @@ void			Vk::CopyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size)
 	graphicCommandBufferPool->EndSingle(commandBuffer);
 }
 
-void			Vk::CopyBufferToImage(VkBuffer buffer, VkImage image, uint32_t width, uint32_t height, uint32_t depth)
+void			Vk::CopyBufferToImage(VkBuffer buffer, VkImage image, glm::ivec3 imageSize, glm::ivec3 offset)
 {
 	const auto & graphicCommandBufferPool = VulkanInstance::Get()->GetCommandBufferPool();
 	VkCommandBuffer commandBuffer = graphicCommandBufferPool->BeginSingle();
@@ -134,11 +134,11 @@ void			Vk::CopyBufferToImage(VkBuffer buffer, VkImage image, uint32_t width, uin
 	region.imageSubresource.baseArrayLayer = 0;
 	region.imageSubresource.layerCount = 1;
 
-	region.imageOffset = {0, 0, 0};
+	region.imageOffset = {offset.x, offset.y, offset.z};
 	region.imageExtent = {
-		width,
-		height,
-		depth
+		static_cast<uint32_t>(imageSize.x),
+		static_cast<uint32_t>(imageSize.y),
+		static_cast<uint32_t>(imageSize.z)
 	};
 
 	vkCmdCopyBufferToImage(
@@ -152,6 +152,23 @@ void			Vk::CopyBufferToImage(VkBuffer buffer, VkImage image, uint32_t width, uin
 
 	graphicCommandBufferPool->EndSingle(commandBuffer);
 }
+
+VkBufferView	Vk::CreateBufferView(VkBuffer buffer, VkFormat format, VkDeviceSize offset, VkDeviceSize range)
+{
+	VkDevice				device = VulkanInstance::Get()->GetDevice();
+	VkBufferView 			pView;
+	VkBufferViewCreateInfo	pCreateInfo = {};
+
+	pCreateInfo.sType = VK_STRUCTURE_TYPE_BUFFER_VIEW_CREATE_INFO;
+	pCreateInfo.buffer = buffer;
+	pCreateInfo.format = format;
+	pCreateInfo.offset = offset;
+	pCreateInfo.range = range;
+
+	vkCreateBufferView(device, &pCreateInfo, nullptr, &pView);
+	return pView;
+}
+
 
 void			Vk::CheckResult(VkResult result, const std::string & errorMessage)
 {

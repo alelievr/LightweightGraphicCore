@@ -107,7 +107,7 @@ void			VulkanInstance::CreateDescriptorPool(void) noexcept
 		return ;
 
 	// TODO: refactor this
-	std::array<VkDescriptorPoolSize, 5> poolSizes = {};
+	std::array<VkDescriptorPoolSize, 7> poolSizes = {};
 	poolSizes[0].type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
 	poolSizes[0].descriptorCount = 1000u;
 	poolSizes[1].type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC;
@@ -118,12 +118,16 @@ void			VulkanInstance::CreateDescriptorPool(void) noexcept
 	poolSizes[3].descriptorCount = 4u;
 	poolSizes[4].type = VK_DESCRIPTOR_TYPE_STORAGE_IMAGE;
 	poolSizes[4].descriptorCount = 2u;
+	poolSizes[5].type = VK_DESCRIPTOR_TYPE_UNIFORM_TEXEL_BUFFER;
+	poolSizes[5].descriptorCount = 10u;
+	poolSizes[6].type = VK_DESCRIPTOR_TYPE_STORAGE_TEXEL_BUFFER;
+	poolSizes[6].descriptorCount = 10u;
 
 	VkDescriptorPoolCreateInfo poolInfo = {};
 	poolInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
 	poolInfo.poolSizeCount = static_cast<uint32_t>(poolSizes.size());
 	poolInfo.pPoolSizes = poolSizes.data();
-	poolInfo.maxSets = 1012u;
+	poolInfo.maxSets = 1032u;
 
 	if (vkCreateDescriptorPool(_device, &poolInfo, nullptr, &_descriptorPool) != VK_SUCCESS)
 	    throw std::runtime_error("failed to create descriptor pool!");

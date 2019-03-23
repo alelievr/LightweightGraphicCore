@@ -28,9 +28,9 @@ void					DescriptorSet::AddBinding(uint32_t index, Texture * texture, VkDescript
 	imageInfo.sampler = 0;
 
 	_bindingInfos[index] = BindingInfo{
-		imageInfo, VK_TRUE,
-		{}, VK_FALSE,
-		{}, VK_FALSE,
+		imageInfo,
+		{},
+		{},
 		descriptorType
 	};
 }

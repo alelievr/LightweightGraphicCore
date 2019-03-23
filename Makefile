@@ -6,7 +6,7 @@
 #    By: amerelo <amerelo@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2014/07/15 15:13:38 by alelievr          #+#    #+#              #
-#    Updated: 2019/03/03 00:37:13 by alelievr         ###   ########.fr        #
+#    Updated: 2019/03/23 18:43:44 by amerelo          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -43,6 +43,8 @@ SOURCES		=	Core/Application.cpp \
 				Core/ComputeDispatcher.cpp \
 				Core/ShaderCache.cpp \
 				Core/Object.cpp \
+				Core/Texture2DAtlas.cpp \
+				Core/NodeTree.cpp \
 				Core/PrimitiveMeshFactory.cpp \
 				Core/Rendering/ForwardRenderPipeline.cpp \
 				Core/Rendering/RenderTarget.cpp \
