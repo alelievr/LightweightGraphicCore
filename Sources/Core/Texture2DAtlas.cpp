@@ -37,7 +37,6 @@ Texture2DAtlas::Texture2DAtlas(uint32_t w, uint32_t h, VkFormat format, int usag
 
 Texture2DAtlas::~Texture2DAtlas(void)
 {
-	std::cout << "Destructor of Texture2DAtlas called" << std::endl;
 }
 
 Texture2DAtlas *Texture2DAtlas::Create(uint32_t w, uint32_t h, VkFormat format, int usage, bool allocateMips)
