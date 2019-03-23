@@ -32,6 +32,7 @@ namespace LWGC
 			VulkanInstance *	instance;
 			VkDevice			device;
 			CommandBufferPool *	graphicCommandBufferPool;
+			VkImageLayout		layout;
 
 			void			AllocateImage(VkImageViewType viewType);
 			void			UploadImage(void * pixels, VkDeviceSize imageSize);
@@ -54,6 +55,7 @@ namespace LWGC
 			VkImageView		GetView(void) const noexcept;
 			VkImage			GetImage(void) const noexcept;
 			bool			GetAutoGenerateMips(void) const noexcept;
+			VkImageLayout	GetLayout(void) const noexcept;
 			void			Destroy(void) noexcept;
 	};
 

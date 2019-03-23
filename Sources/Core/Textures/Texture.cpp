@@ -15,7 +15,8 @@
 using namespace LWGC;
 
 Texture::Texture(void) : width(0), height(0), depth(1), arraySize(1), autoGenerateMips(false), usage(0),
-	allocated(false), maxMipLevel(1), image(VK_NULL_HANDLE), memory(VK_NULL_HANDLE), view(VK_NULL_HANDLE)
+	allocated(false), maxMipLevel(1), image(VK_NULL_HANDLE), memory(VK_NULL_HANDLE), view(VK_NULL_HANDLE),
+	layout(VK_IMAGE_LAYOUT_UNDEFINED)
 {
 	instance = VulkanInstance::Get();
 	device = instance->GetDevice();
@@ -144,6 +145,8 @@ void		Texture::TransitionImageLayout(VkImage image, VkImageLayout oldLayout, VkI
             1, &barrier
         	);
 
+	layout = newLayout;
+
 	graphicCommandBufferPool->EndSingle(commandBuffer);
 }
 
@@ -259,6 +262,7 @@ int				Texture::GetHeight(void) const noexcept { return (this->height); }
 int				Texture::GetDepth(void) const noexcept { return (this->depth); }
 VkImageView		Texture::GetView(void) const noexcept { return this->view; }
 VkImage			Texture::GetImage(void) const noexcept { return this->image; }
+VkImageLayout	Texture::GetLayout(void) const noexcept { return this->layout; }
 bool			Texture::GetAutoGenerateMips(void) const noexcept { return this->autoGenerateMips; }
 
 std::ostream &	operator<<(std::ostream & o, Texture const & r)

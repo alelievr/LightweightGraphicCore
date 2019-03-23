@@ -97,6 +97,11 @@ bool	RenderPass::BindDescriptorSet(const std::string & name, VkDescriptorSet set
 	return true;
 }
 
+bool	RenderPass::BindDescriptorSet(const std::string & name, DescriptorSet & set)
+{
+	return BindDescriptorSet(name, set.GetDescriptorSet());
+}
+
 void	RenderPass::BindMaterial(Material * material)
 {
 	_currentMaterial = material;

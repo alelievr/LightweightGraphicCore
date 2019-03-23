@@ -2,9 +2,9 @@
 
 using namespace LWGC;
 
-DescriptorSet::DescriptorSet(VkShaderStageFlagBits stageFlags) :
+DescriptorSet::DescriptorSet(void) :
 	_descriptorSetLayout(VK_NULL_HANDLE), _descriptorSet(VK_NULL_HANDLE),
-	_created(false), _stageFlags(stageFlags)
+	_created(false), _stageFlags(VK_SHADER_STAGE_ALL)
 {
 }
 
@@ -13,11 +13,25 @@ DescriptorSet::~DescriptorSet(void)
 	std::cout << "Destructor of DescriptorSet called" << std::endl;
 }
 
-void					DescriptorSet::AddBinding(uint32_t index, const Texture & texture, VkDescriptorType descriptorType)
+void					DescriptorSet::SetStage(VkShaderStageFlagBits stageFlags)
+{
+	_stageFlags = stageFlags;
+}
+
+void					DescriptorSet::AddBinding(uint32_t index, Texture * texture, VkDescriptorType descriptorType)
 {
 	_layoutBinding.push_back(Vk::CreateDescriptorSetLayoutBinding(index, descriptorType, _stageFlags));
-	_bindingInfos[index] = BindingInfo{
 
+	VkDescriptorImageInfo imageInfo = {};
+	imageInfo.imageLayout = texture->GetLayout();
+	imageInfo.imageView = texture->GetView();
+	imageInfo.sampler = 0;
+
+	_bindingInfos[index] = BindingInfo{
+		imageInfo, VK_TRUE,
+		{}, VK_FALSE,
+		{}, VK_FALSE,
+		descriptorType
 	};
 }
 
@@ -28,7 +42,6 @@ void					DescriptorSet::CreateBindings(void)
 	// TODO: pool the descriptor set layouts so we can reuse them if we have multiple DescriptroSet of the same type
 	Vk::CreateDescriptorSetLayout(_layoutBinding, _descriptorSetLayout);
 
-	// TODO: allocate the descriptor set and upload all the datas
 	VkDescriptorSetAllocateInfo allocInfo = {};
 	allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
 	allocInfo.descriptorPool = VulkanInstance::Get()->GetDescriptorPool();
@@ -41,18 +54,23 @@ void					DescriptorSet::CreateBindings(void)
 	std::vector< VkWriteDescriptorSet > descriptorWrites;
 	for (const auto & bindingInfo : _bindingInfos)
 	{
+		VkWriteDescriptorSet descriptorWrite = {};
+		descriptorWrite.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+		descriptorWrite.dstSet = _descriptorSet;
+		descriptorWrite.dstBinding = bindingInfo.first;
+		descriptorWrite.dstArrayElement = 0;
+		descriptorWrite.descriptorType = bindingInfo.second.descriptorType;
+		descriptorWrite.descriptorCount = 1;
+		descriptorWrite.pBufferInfo = &bindingInfo.second.bufferInfo;
+		descriptorWrite.pImageInfo = &bindingInfo.second.imageInfo;
+		descriptorWrite.pTexelBufferView = &bindingInfo.second.viewInfo;
 
+		descriptorWrites.push_back(descriptorWrite);
 	}
-	VkWriteDescriptorSet descriptorWrite = {};
-	descriptorWrite.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-	descriptorWrite.dstSet = _descriptorSet;
-	descriptorWrite.dstBinding = 0;
-	descriptorWrite.dstArrayElement = 0;
-	descriptorWrite.descriptorType = descriptorType;
-	descriptorWrite.descriptorCount = 1;
-	descriptorWrite.pBufferInfo = &bufferInfo;
 
-	vkUpdateDescriptorSets(device, 1, &descriptorWrite, 0, nullptr);
+	vkUpdateDescriptorSets(device, descriptorWrites.size(), descriptorWrites.data(), 0, nullptr);
+
+	_created = true;
 }
 
 VkDescriptorSetLayout	DescriptorSet::GetDescriptorSetLayout(void)

@@ -25,24 +25,12 @@ namespace LWGC
 	class RenderPipeline
 	{
 		friend class Application;
-
-		// The private part is only used as internal render-pipeline setup and should be overwritten by a custom render pipeline
-		private:
+		protected:
 			struct LWGC_PerFrame
 			{
 				glm::vec4	time;
 			};
 
-			LWGC_PerFrame					_perFrame;
-			UniformBuffer					_uniformPerFrame;
-			uint32_t						_imageIndex;
-			bool							_initialized;
-
-			void				RenderInternal(const std::vector< Camera * > & cameras, RenderContext * context);
-			void				UpdatePerframeUnformBuffer(void) noexcept;
-			void				CreatePerFrameDescriptorSet(void);
-
-		protected:
 			std::vector< VkSemaphore >		imageAvailableSemaphores;
 			std::vector< VkSemaphore >		renderFinishedSemaphores;
 			std::vector< VkFence >			inFlightFences;
@@ -58,6 +46,7 @@ namespace LWGC
 			Camera *						currentCamera;
 			VkDescriptorSet					perFrameDescriptorSet;
 			VkDescriptorSetLayout			perFrameDescriptorSetLayout;
+			UniformBuffer					_uniformPerFrame;
 
 			void				SetLastRenderPass(const RenderPass & renderPass);
 			VkCommandBuffer		GetCurrentFrameCommandBuffer(void);
@@ -76,6 +65,15 @@ namespace LWGC
 			void				RecordAllComputeDispatches(RenderPass & pass, RenderContext * context);
 			void				RecordAllMeshRenderers(RenderPass & pass, RenderContext * context);
 
+		// The private part is only used as internal render-pipeline setup and should be overwritten by a custom render pipeline
+		private:
+			LWGC_PerFrame					_perFrame;
+			uint32_t						_imageIndex;
+			bool							_initialized;
+
+			void				RenderInternal(const std::vector< Camera * > & cameras, RenderContext * context);
+			void				UpdatePerframeUnformBuffer(void) noexcept;
+			void				CreatePerFrameDescriptorSet(void);
 
 		public:
 			RenderPipeline(void);

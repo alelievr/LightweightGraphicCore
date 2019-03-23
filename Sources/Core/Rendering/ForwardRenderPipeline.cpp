@@ -19,6 +19,7 @@ void	ForwardRenderPipeline::Initialize(SwapChain * swapChain)
 
 	fractalTexture = Texture2D::Create(2048, 2048, VK_FORMAT_R8G8B8A8_SNORM, VK_IMAGE_USAGE_STORAGE_BIT | VK_IMAGE_USAGE_SAMPLED_BIT);
 	heavyComputeShader.SetTexture("fractal", fractalTexture, VK_IMAGE_LAYOUT_GENERAL, VK_DESCRIPTOR_TYPE_STORAGE_IMAGE);
+	heavyComputeShader.SetBuffer(LWGCBinding::Frame, _uniformPerFrame.buffer, sizeof(LWGC_PerFrame), VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER);
 
 	VkImageMemoryBarrier barrier = {};
 	barrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
@@ -39,6 +40,7 @@ void	ForwardRenderPipeline::Initialize(SwapChain * swapChain)
 
 	heavyComputeShader.AddImageBarrier(barrier, VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT);
 
+	// By default the descriptor set is created with stage all flags
 	asyncComputeSet.AddBinding(0, fractalTexture, VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE);
 
 	// Setup the render passes we uses:
@@ -87,11 +89,11 @@ void	ForwardRenderPipeline::Render(const std::vector< Camera * > & cameras, Rend
 	VkCommandBuffer cmd = GetCurrentFrameCommandBuffer();
 
 	VkResult heavyComputeResult = vkGetFenceStatus(device, heavyComputeFence);
-	if (heavyComputeResult == VK_SUCCESS)
+	// if (heavyComputeResult == VK_SUCCESS)
 	{
 		auto asyncCmd = asyncComputePool.BeginSingle();
 
-		heavyComputeShader.Dispatch(asyncCmd, 4096, 4096, 1);
+		heavyComputeShader.Dispatch(asyncCmd, 256, 256, 1);
 
 		vkResetFences(device, 1, &heavyComputeFence);
 
@@ -101,13 +103,13 @@ void	ForwardRenderPipeline::Render(const std::vector< Camera * > & cameras, Rend
 		// vkWaitForFences(device, 1, &heavyComputeFence, VK_TRUE, -1);
 		// vkQueueWaitIdle(asyncComputeQueue);
 		// vkFreeCommandBuffers(device, asyncComputePool._commandPool, 1, &asyncCmd);
-	} else if (heavyComputeResult == VK_NOT_READY) {
+	// } else if (heavyComputeResult == VK_NOT_READY) {
 		// std::cout << "Not ready !\n";
 	}
-	else
-	{
-		std::cerr << "Device lost error !\n";
-	}
+	// else
+	// {
+	// 	std::cerr << "Device lost error !\n";
+	// }
 
 	// Process the compute shader before everything:
 	computePass.Begin(cmd, VK_NULL_HANDLE, "All Computes");

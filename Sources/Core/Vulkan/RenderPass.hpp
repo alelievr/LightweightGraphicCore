@@ -5,6 +5,7 @@
 #include <unordered_map>
 
 #include "VulkanInstance.hpp"
+#include "Core/Vulkan/DescriptorSet.hpp"
 #include "Utils/Color.hpp"
 
 namespace LWGC
@@ -18,13 +19,13 @@ namespace LWGC
 		friend class Material; // For binding
 
 		private:
-			struct DescriptorSet
+			struct DescriptorSetInfo
 			{
 				VkDescriptorSet	set;
 				bool			hasChanged;
 			};
 
-			using DescriptorBindings = std::unordered_map< std::string, DescriptorSet >;
+			using DescriptorBindings = std::unordered_map< std::string, DescriptorSetInfo >;
 
 			VkRenderPass							_renderPass;
 			VkFramebuffer							_framebuffer;
@@ -54,7 +55,7 @@ namespace LWGC
 			void	Initialize(SwapChain * swapChain) noexcept;
 			void	Create(bool computeOnly = false);
 			void	Cleanup(void) noexcept;
-			
+
 			// attachments
 			void	AddAttachment(const VkAttachmentDescription & attachment, VkImageLayout finalLayout) noexcept;
 			void	SetDepthAttachment(const VkAttachmentDescription & attachment, VkImageLayout layout) noexcept;
@@ -62,11 +63,12 @@ namespace LWGC
 
 			// Bindings
 			bool	BindDescriptorSet(const std::string & name, VkDescriptorSet set);
+			bool	BindDescriptorSet(const std::string & name, DescriptorSet & set);
 			void	BindMaterial(Material * material);
 			void	ClearBindings(void);
 			void	SetClearColor(const Color & color, float depth, uint32_t stencil);
 			void	UpdateDescriptorBindings(void);
-			
+
 			// API
 			void	Begin(VkCommandBuffer commandBuffer, VkFramebuffer framebuffer, const std::string & passName);
 			void	End(void);

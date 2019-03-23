@@ -1,8 +1,13 @@
 #include "Shaders/Common/InputCompute.hlsl"
+#include "Shaders/Common/UniformStructs.hlsl"
 
-#define ITER 200
+[[vk::binding(0, 0)]]
+ConstantBuffer< LWGC_PerFrame >	frame;
+
+#define ITER 50
 
 // auto generate bindings ?
+[vk::binding(1, 0)]
 RWTexture2D<half4>	fractal;
 
 float2 hash(float2 x)
@@ -29,7 +34,11 @@ float noise(float2 p)
 [numthreads(16, 16, 1)]
 void main(ComputeInput input)
 {
-	float2 uv = input.dispatchThreadId.xy / 4096.0;
+	uint2 size;
+	uint mips;
+	fractal.GetDimensions(0, size.x, size.y, mips);
+	size = 2048; // GetDimensions is not supported on all platforms so we hardcode the texture size
+	float2 uv = input.dispatchThreadId.xy / float2(size) + frame.time.x / 10;
 	// uint2 id = input.dispatchThreadId;
 	// fractal[id.xy] = float4(id.x & id.y, (id.x & 15)/15.0, (id.y & 15)/15.0, 0.0);
 	float4 acc = 0;
@@ -42,5 +51,5 @@ void main(ComputeInput input)
 			1
 		);
 	}
-	fractal[input.dispatchThreadId.xy] = acc;
+	fractal[input.dispatchThreadId.xy] = acc / ITER;
 }

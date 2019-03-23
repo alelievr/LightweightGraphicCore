@@ -21,9 +21,9 @@ namespace LWGC
 				VkDescriptorImageInfo	imageInfo;
 				VkDescriptorBufferInfo	bufferInfo;
 				VkBufferView			viewInfo;
+				VkDescriptorType		descriptorType;
 			};
 
-			UniformBuffer			_buffer;
 			VkDescriptorSetLayout	_descriptorSetLayout;
 			VkDescriptorSet			_descriptorSet;
 			std::vector< VkDescriptorSetLayoutBinding >	_layoutBinding;
@@ -34,15 +34,18 @@ namespace LWGC
 			void					CreateBindings(void);
 
 		public:
-			DescriptorSet(void) = delete;
-			DescriptorSet(VkShaderStageFlagBits stageFlags);
+			DescriptorSet(void);
 			DescriptorSet(const DescriptorSet &) = delete;
 			virtual ~DescriptorSet(void);
 
 			DescriptorSet &	operator=(DescriptorSet const & src) = delete;
 
-			void					AddBinding(uint32_t index, const Texture & texture, VkDescriptorType descriptorType);
-			// TODO: bindings for buffers and samplers
+			void					SetStage(VkShaderStageFlagBits stageFlags);
+
+			void					AddBinding(uint32_t index, Texture * texture, VkDescriptorType descriptorType);
+			// TODO: bindings for buffers, samplers and texel buffers
+
+			// TODO: function to change the values within the descriptor sets
 
 			VkDescriptorSetLayout	GetDescriptorSetLayout(void);
 			VkDescriptorSet			GetDescriptorSet(void);
