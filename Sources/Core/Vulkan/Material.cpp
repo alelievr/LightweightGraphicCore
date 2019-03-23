@@ -129,6 +129,22 @@ void					Material::SetupDefaultSettings(void)
 	_rasterizationState.cullMode = VK_CULL_MODE_BACK_BIT;
 	_rasterizationState.frontFace = VK_FRONT_FACE_CLOCKWISE;
 	_rasterizationState.depthBiasEnable = VK_FALSE;
+
+	VkPipelineColorBlendAttachmentState colorBlendAttachment = {};
+	colorBlendAttachment.colorWriteMask = VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT;
+	colorBlendAttachment.blendEnable = VK_FALSE;
+
+	_colorBlendState = {};
+	_colorBlendState.sType = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO;
+	_colorBlendState.logicOpEnable = VK_FALSE;
+	_colorBlendState.logicOp = VK_LOGIC_OP_COPY;
+	_colorBlendState.attachmentCount = 1;
+	_colorBlendState.pAttachments = &colorBlendAttachment;
+	_colorBlendState.blendConstants[0] = 0.0f;
+	_colorBlendState.blendConstants[1] = 0.0f;
+	_colorBlendState.blendConstants[2] = 0.0f;
+	_colorBlendState.blendConstants[3] = 0.0f;
+
 	Application::Get()->_materialTable.RegsiterObject(this);
 }
 
@@ -271,21 +287,6 @@ void					Material::CreateGraphicPipeline(void)
 	multisampling.sampleShadingEnable = VK_FALSE;
 	multisampling.rasterizationSamples = VK_SAMPLE_COUNT_1_BIT;
 
-	VkPipelineColorBlendAttachmentState colorBlendAttachment = {};
-	colorBlendAttachment.colorWriteMask = VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT;
-	colorBlendAttachment.blendEnable = VK_FALSE;
-
-	VkPipelineColorBlendStateCreateInfo colorBlending = {};
-	colorBlending.sType = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO;
-	colorBlending.logicOpEnable = VK_FALSE;
-	colorBlending.logicOp = VK_LOGIC_OP_COPY;
-	colorBlending.attachmentCount = 1;
-	colorBlending.pAttachments = &colorBlendAttachment;
-	colorBlending.blendConstants[0] = 0.0f;
-	colorBlending.blendConstants[1] = 0.0f;
-	colorBlending.blendConstants[2] = 0.0f;
-	colorBlending.blendConstants[3] = 0.0f;
-
 	VkGraphicsPipelineCreateInfo pipelineInfo = {};
 	pipelineInfo.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
 	pipelineInfo.stageCount = 2;
@@ -295,7 +296,7 @@ void					Material::CreateGraphicPipeline(void)
 	pipelineInfo.pViewportState = &viewportState;
 	pipelineInfo.pRasterizationState = &_rasterizationState;
 	pipelineInfo.pMultisampleState = &multisampling;
-	pipelineInfo.pColorBlendState = &colorBlending;
+	pipelineInfo.pColorBlendState = &_colorBlendState;
 	pipelineInfo.layout = _pipelineLayout;
 	pipelineInfo.renderPass = _renderPass->GetRenderPass();
 	pipelineInfo.subpass = 0;
@@ -574,6 +575,8 @@ void				Material::SetVertexInputState(VkPipelineVertexInputStateCreateInfo info)
 void				Material::SetInputAssemblyState(VkPipelineInputAssemblyStateCreateInfo info) { _inputAssemblyState = info; }
 void				Material::SetDepthStencilState(VkPipelineDepthStencilStateCreateInfo info) { _depthStencilState = info; }
 void				Material::SetRasterizationState(VkPipelineRasterizationStateCreateInfo info) { _rasterizationState = info; }
+void				Material::SetColorBlendState(VkPipelineColorBlendStateCreateInfo info) { _colorBlendState = info; }
+bool				Material::IsTransparent(void) const noexcept { return _colorBlendState.pAttachments->blendEnable; }
 
 bool				Material::IsReady(void) const noexcept { return _isReady; }
 

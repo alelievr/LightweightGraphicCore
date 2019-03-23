@@ -31,7 +31,6 @@ namespace LWGC
 			virtual void	CreateDescriptorSet(void);
 
 		protected:
-			Material *	_material;
 
 			void			Initialize(void) noexcept override;
 			virtual void	RecordDrawCommand(VkCommandBuffer cmd) noexcept = 0;
@@ -39,6 +38,7 @@ namespace LWGC
 			void			Update(void) noexcept override;
 
 		public:
+			Material *	_material;
 			Renderer(void);
 			Renderer(Material * material);
 			Renderer(const Renderer &) = delete;
@@ -52,7 +52,7 @@ namespace LWGC
 			void	OnEnable(void) noexcept override;
 			void	OnDisable(void) noexcept override;
 
-			Material *	GetMaterial(void) const;
+			Material *	GetMaterial(void);
 			void	SetMaterial(Material * tmp);
 
 			VkDescriptorSet		GetDescriptorSet(void);

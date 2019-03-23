@@ -7,6 +7,11 @@
 
 namespace LWGC
 {
+	using BeginFrameRenderingDelegate = Delegate< void(void) >;
+	using BeginCameraRenderingDelegate = Delegate< void(Camera *) >;
+	using EndCameraRenderingDelegate = Delegate< void(Camera *) >;
+	using EndFrameRenderingDelegate = Delegate< void(void) >;
+
 	class		RenderPipelineManager
 	{
 		private:
@@ -20,5 +25,10 @@ namespace LWGC
 
 			static void		SetCurrentRenderPipeline(RenderPipeline * newPipeline);
 			static void		ReleaseAllPipelines(void);
+
+			static BeginFrameRenderingDelegate		beginFrameRendering;
+			static BeginCameraRenderingDelegate		beginCameraRendering;
+			static EndCameraRenderingDelegate		endCameraRendering;
+			static EndFrameRenderingDelegate		endFrameRendering;
 	};
 }

@@ -122,7 +122,7 @@ void		Renderer::RecordCommands(VkCommandBuffer cmd)
 	RecordDrawCommand(cmd);
 }
 
-Material *	Renderer::GetMaterial(void) const { return (this->_material); }
+Material *	Renderer::GetMaterial(void) { return (this->_material); }
 void						Renderer::SetMaterial(Material * tmp) { this->_material = tmp; }
 
 VkDescriptorSet				Renderer::GetDescriptorSet(void) { return _descriptorSet; }

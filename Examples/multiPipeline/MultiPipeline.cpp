@@ -13,21 +13,21 @@ void	ProcessEvent(EventSystem * es, Application & app)
 	);
 }
 
-class FirstPipeline : public RenderPipeline
+class FirstPipeline : public ForwardRenderPipeline
 {
 	public:
 		void	Render(const std::vector< Camera * > & cameras, RenderContext * context) override
 		{
-			RenderPipeline::Render(cameras, context);
+			ForwardRenderPipeline::Render(cameras, context);
 		}
 };
 
-class SecondPipeline : public RenderPipeline
+class SecondPipeline : public ForwardRenderPipeline
 {
 	public:
 		void	Render(const std::vector< Camera * > & cameras, RenderContext * context) override
 		{
-			RenderPipeline::Render(cameras, context);
+			ForwardRenderPipeline::Render(cameras, context);
 		}
 };
 

@@ -15,7 +15,7 @@
 
 using namespace LWGC;
 
-RenderPipeline::RenderPipeline(void) : _initialized(false), framebufferResized(false)
+RenderPipeline::RenderPipeline(void) : framebufferResized(false), _initialized(false)
 {
 	swapChain = VK_NULL_HANDLE;
 	instance = VK_NULL_HANDLE;
@@ -223,11 +223,11 @@ void			RenderPipeline::RenderInternal(const std::vector< Camera * > & cameras, R
 	beginInfo.flags = VK_COMMAND_BUFFER_USAGE_SIMULTANEOUS_USE_BIT; // humm...
 	Vk::CheckResult(vkBeginCommandBuffer(GetCurrentFrameCommandBuffer(), &beginInfo), "Failed to begin recording of frame command buffer!");
 
-	beginFrameRendering.Invoke();
+	RenderPipelineManager::beginFrameRendering.Invoke();
 	{
 		Render(cameras, context);
 	}
-	endFrameRendering.Invoke();
+	RenderPipelineManager::endFrameRendering.Invoke();
 
 	Vk::CheckResult(vkEndCommandBuffer(GetCurrentFrameCommandBuffer()), "Failed to record command buffer!");
 }
@@ -304,26 +304,29 @@ void			RenderPipeline::RecordAllComputeDispatches(RenderPass & pass, RenderConte
 
 void			RenderPipeline::RecordAllMeshRenderers(RenderPass & pass, RenderContext * context)
 {
-	std::unordered_set< Renderer * >	renderers;
+	auto renderQueue = context->GetRenderQueue();
 	VkCommandBuffer cmd = pass.GetCommandBuffer();
 
-	context->GetRenderers(renderers);
-
-	for (auto renderer : renderers)
+	for (uint32_t i = 0; i < renderQueue->GetQueueCount(); i++)
 	{
-		auto material = renderer->GetMaterial();
-		pass.BindMaterial(material);
+		const auto & renderers = renderQueue->GetRenderersForQueue(i);
 
-		// TODO: optimize this when doing the renderqueues (sort materials and avoid pipeline switches)
-		material->BindPipeline(cmd);
-		material->BindProperties(cmd);
+		for (auto renderer : renderers)
+		{
+			auto material = renderer->GetMaterial();
+			pass.BindMaterial(material);
 
-		pass.BindDescriptorSet(LWGCBinding::Object, renderer->GetDescriptorSet());
+			// TODO: optimize this when doing the renderqueues (sort materials and avoid pipeline switches)
+			material->BindPipeline(cmd);
+			material->BindProperties(cmd);
 
-		// We bind / rebind everything we need for the folowing draws
-		pass.UpdateDescriptorBindings();
+			pass.BindDescriptorSet(LWGCBinding::Object, renderer->GetDescriptorSet());
 
-		renderer->RecordCommands(cmd);
+			// We bind / rebind everything we need for the folowing draws
+			pass.UpdateDescriptorBindings();
+
+			renderer->RecordCommands(cmd);
+		}
 	}
 }
 

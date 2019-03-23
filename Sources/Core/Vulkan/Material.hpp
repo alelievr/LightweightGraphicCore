@@ -107,6 +107,7 @@ namespace LWGC
 			VkPipelineInputAssemblyStateCreateInfo	_inputAssemblyState;
 			VkPipelineDepthStencilStateCreateInfo	_depthStencilState;
 			VkPipelineRasterizationStateCreateInfo	_rasterizationState;
+			VkPipelineColorBlendStateCreateInfo		_colorBlendState;
 
 			Material(void);
 			Material(const std::string & shader, VkShaderStageFlagBits stage);
@@ -149,6 +150,7 @@ namespace LWGC
 			bool				IsCompute(void) const;
 			bool				IsReady(void) const noexcept;
 			bool				IsCompiled(void) const noexcept;
+			bool				IsTransparent(void) const noexcept;
 			void				BindProperties(VkCommandBuffer cmd);
 			void				BindPipeline(VkCommandBuffer cmd);
 
@@ -163,6 +165,7 @@ namespace LWGC
 			void				SetInputAssemblyState(VkPipelineInputAssemblyStateCreateInfo info);
 			void				SetDepthStencilState(VkPipelineDepthStencilStateCreateInfo info);
 			void				SetRasterizationState(VkPipelineRasterizationStateCreateInfo info);
+			void				SetColorBlendState(VkPipelineColorBlendStateCreateInfo info);
 	};
 
 	std::ostream &	operator<<(std::ostream & o, Material const & r);

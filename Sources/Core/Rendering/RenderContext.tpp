@@ -7,6 +7,8 @@
 #include "Core/Components/Renderer.hpp"
 #include "Core/Components/ComputeDispatcher.hpp"
 #include "Core/Components/Component.hpp"
+#include "Core/Rendering/DefaultRenderQueue.hpp"
+#include "Core/Rendering/IRenderQueue.hpp"
 
 namespace LWGC
 {
@@ -19,10 +21,20 @@ namespace LWGC
     {
         friend class Hierarchy;
 
+        private:
+            IRenderQueue *          _renderQueue;
+
         public:
-            RenderContext(void) = default;
+            RenderContext(void)
+            {
+                _renderQueue = new DefaultRenderQueue();
+            }
+
             RenderContext(const RenderContext &rc) = delete;
-            virtual ~RenderContext(void) = default;
+            virtual ~RenderContext(void)
+            {
+                delete _renderQueue;
+            }
 
             RenderContext operator=(const RenderContext &rhs) = delete;
 
@@ -62,5 +74,24 @@ namespace LWGC
             void GetLights(std::unordered_set< Light * > &lights) { return GetComponentSet< Light * >(static_cast< uint32_t >(ComponentType::Light), lights); }
             void GetRenderers(std::unordered_set< Renderer * > &renderers) { return GetComponentSet< Renderer * >(renderers); }
             void GetComputeDispatchers(std::unordered_set< ComputeDispatcher * > &computeDispatchers) { return GetComponentSet< ComputeDispatcher * >(static_cast< uint32_t >(ComponentType::ComputeDispatcher), computeDispatchers); }
+
+            ComponentIndex   InsertComponent(uint32_t componentType, Component * component)
+            {
+                Renderer * renderer = dynamic_cast< Renderer * >(component);
+
+                if (renderer != nullptr)
+                {
+                    _renderQueue->AddRenderer(renderer);
+                }
+
+                return renderComponents[componentType].insert(component).first;
+            }
+
+            void                        RemoveComponent(uint32_t componentType, const ComponentIndex & key)
+            {
+                renderComponents[componentType].erase(key);
+            }
+
+            IRenderQueue *    GetRenderQueue(void) noexcept { return _renderQueue; }
     };
 }

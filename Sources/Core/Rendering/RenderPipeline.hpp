@@ -10,6 +10,7 @@
 #include "Core/Vulkan/VulkanInstance.hpp"
 #include "Core/Mesh.hpp"
 #include "Core/Vulkan/CommandBufferPool.hpp"
+#include "Core/Rendering/IRenderQueue.hpp"
 
 #include IMGUI_INCLUDE
 
@@ -17,11 +18,6 @@
 
 namespace LWGC
 {
-	using BeginFrameRenderingDelegate = Delegate< void(void) >;
-	using BeginCameraRenderingDelegate = Delegate< void(Camera *) >;
-	using EndCameraRenderingDelegate = Delegate< void(Camera *) >;
-	using EndFrameRenderingDelegate = Delegate< void(void) >;
-
 	class RenderPipeline
 	{
 		friend class Application;
@@ -87,11 +83,6 @@ namespace LWGC
 			bool			IsInitialized(void);
 
 			void			EnqueueFrameCommandBuffer(VkCommandBuffer cmd);
-
-			BeginFrameRenderingDelegate		beginFrameRendering;
-			BeginCameraRenderingDelegate	beginCameraRendering;
-			EndCameraRenderingDelegate		endCameraRendering;
-			EndFrameRenderingDelegate		endFrameRendering;
 
 			static RenderPipeline *	Get();
 	};

@@ -1,5 +1,6 @@
 #include "ForwardRenderPipeline.hpp"
 #include "Core/Vulkan/Vk.hpp"
+#include "Core/Rendering/RenderPipelineManager.hpp"
 
 using namespace LWGC;
 
@@ -88,28 +89,11 @@ void	ForwardRenderPipeline::Render(const std::vector< Camera * > & cameras, Rend
 {
 	VkCommandBuffer cmd = GetCurrentFrameCommandBuffer();
 
-	VkResult heavyComputeResult = vkGetFenceStatus(device, heavyComputeFence);
-	// if (heavyComputeResult == VK_SUCCESS)
+	auto asyncCmd = asyncComputePool.BeginSingle();
 	{
-		auto asyncCmd = asyncComputePool.BeginSingle();
-
 		heavyComputeShader.Dispatch(asyncCmd, 256, 256, 1);
-
-		vkResetFences(device, 1, &heavyComputeFence);
-
-		asyncComputePool.EndSingle(asyncCmd); // fence
-
-		// TODO: test this !
-		// vkWaitForFences(device, 1, &heavyComputeFence, VK_TRUE, -1);
-		// vkQueueWaitIdle(asyncComputeQueue);
-		// vkFreeCommandBuffers(device, asyncComputePool._commandPool, 1, &asyncCmd);
-	// } else if (heavyComputeResult == VK_NOT_READY) {
-		// std::cout << "Not ready !\n";
 	}
-	// else
-	// {
-	// 	std::cerr << "Device lost error !\n";
-	// }
+	asyncComputePool.EndSingle(asyncCmd); // fence
 
 	// Process the compute shader before everything:
 	computePass.Begin(cmd, VK_NULL_HANDLE, "All Computes");
@@ -125,12 +109,12 @@ void	ForwardRenderPipeline::Render(const std::vector< Camera * > & cameras, Rend
 		forwardPass.BindDescriptorSet("asyncTexture", asyncComputeSet);
 		for (const auto camera : cameras)
 		{
-			beginCameraRendering.Invoke(camera);
+			RenderPipelineManager::beginCameraRendering.Invoke(camera);
 			forwardPass.BindDescriptorSet(LWGCBinding::Camera, camera->GetDescriptorSet());
 
 			RenderPipeline::RecordAllMeshRenderers(forwardPass, context);
 
-			endCameraRendering.Invoke(camera);
+			RenderPipelineManager::endCameraRendering.Invoke(camera);
 		}
 	}
 	forwardPass.End();

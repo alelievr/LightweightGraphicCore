@@ -74,14 +74,12 @@ std::vector< Camera * >	Hierarchy::GetCameras(void) noexcept
 
 const ComponentIndex Hierarchy::RegisterComponentInRenderContext(uint32_t componentType, Component * component) noexcept
 {
-	const auto & kp = _renderContext.renderComponents[componentType].insert(component);
-
-	return kp.first;
+	return _renderContext.InsertComponent(componentType, component);
 }
 
 void Hierarchy::UnregisterComponentInRenderContext(uint32_t componentType, const ComponentIndex & index) noexcept
 {
-	_renderContext.renderComponents[componentType].erase(index);
+	_renderContext.RemoveComponent(componentType, index);
 }
 
 RenderContext *	Hierarchy::GetRenderContext(void)

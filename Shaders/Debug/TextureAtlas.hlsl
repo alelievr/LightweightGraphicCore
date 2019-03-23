@@ -31,7 +31,7 @@ FragmentOutput main(FragmentInput i)
 
 	// o.color = float4(1, 1, 0, 1);
 	float2 atlasUVs = UvToAtlas(i.uv, sizeOffset);
-	o.color = float4(albedoMap.SampleLevel(trilinearClamp, atlasUVs, 0));
+	o.color = float4(albedoMap.SampleLevel(trilinearClamp, atlasUVs, 0).rgb, 0.5);
 
 	return o;
 }
