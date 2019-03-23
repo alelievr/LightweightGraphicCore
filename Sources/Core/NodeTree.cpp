@@ -10,7 +10,6 @@ NodeTree::NodeTree(int width, int height) : _width(width), _height(height), _nod
 
 NodeTree::~NodeTree(void)
 {
-	std::cout << "Destructor of NodeTree called" << std::endl;
 }
 
 Rect	NodeTree::Allocate(int w, int h)
