@@ -152,6 +152,23 @@ void			Vk::CopyBufferToImage(VkBuffer buffer, VkImage image, glm::ivec3 imageSiz
 	graphicCommandBufferPool->EndSingle(commandBuffer);
 }
 
+VkBufferView	Vk::CreateBufferView(VkBuffer buffer, VkFormat format, VkDeviceSize offset, VkDeviceSize range)
+{
+	VkDevice				device = VulkanInstance::Get()->GetDevice();
+	VkBufferView 			pView;
+	VkBufferViewCreateInfo	pCreateInfo = {};
+
+	pCreateInfo.sType = VK_STRUCTURE_TYPE_BUFFER_VIEW_CREATE_INFO;
+	pCreateInfo.buffer = buffer;
+	pCreateInfo.format = format;
+	pCreateInfo.offset = offset;
+	pCreateInfo.range = range;
+
+	vkCreateBufferView(device, &pCreateInfo, nullptr, &pView);
+	return pView;
+}
+
+
 void			Vk::CheckResult(VkResult result, const std::string & errorMessage)
 {
 	if (result == 0)

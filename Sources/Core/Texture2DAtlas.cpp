@@ -73,6 +73,8 @@ void	Texture2DAtlas::UploadAtlasDatas(void)
 		this->_sizeOffsetsBuffer,
 		this->_sizeOffsetsMemory
 	);
+
+	// this->_sizeOffsetBufferView = Vk::CreateBufferView(this->_sizeOffsetsBuffer, VK_FORMAT_R32G32B32A32_SFLOAT);
 	Vk::UploadToMemory(_sizeOffsetsMemory, _sizeOffsets.data(), GetSizeOffsetBufferSize());
 	Vk::UploadToMemory(_atlasSizeMemory, &_atlasSize, GetAtlasSizeBufferSize());
 	std::cout << _atlasSize << std::endl;
@@ -83,10 +85,11 @@ void	Texture2DAtlas::Clear(void)
 	_nodetree.Clear();
 }
 
-VkBuffer	Texture2DAtlas::GetSizeOffsetBuffer() { return _sizeOffsetsBuffer; }
-VkBuffer	Texture2DAtlas::GetAtlasSizeBuffer() { return _atlasSizeBuffer; }
-size_t		Texture2DAtlas::GetSizeOffsetBufferSize() { return _sizeOffsets.size() * sizeof(glm::vec4); }
-size_t		Texture2DAtlas::GetAtlasSizeBufferSize() { return sizeof(glm::vec4); }
+VkBuffer		Texture2DAtlas::GetAtlasSizeBuffer() { return _atlasSizeBuffer; }
+VkBuffer		Texture2DAtlas::GetSizeOffsetBuffer() { return _sizeOffsetsBuffer; }
+VkBufferView	Texture2DAtlas::GetSizeOffsetBufferView() { return _sizeOffsetBufferView; }
+size_t			Texture2DAtlas::GetAtlasSizeBufferSize() { return sizeof(glm::vec4); }
+size_t			Texture2DAtlas::GetSizeOffsetBufferSize() {return _sizeOffsets.size() * sizeof(glm::vec4); }
 
 std::ostream &	operator<<(std::ostream & o, Texture2DAtlas const & r)
 {

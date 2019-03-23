@@ -148,8 +148,8 @@ void		ShaderSource::GenerateBindingTable(ShaderBindingTable & bindingTable)
 
 	spirv_cross::ShaderResources resources = reflection->get_shader_resources();
 
-	// Warning: currently no differenciation between Buffer/Texture2D and RWBuffer/RWTexture2D is done
 	const auto & addBinding = [&](const spirv_cross::Resource & resource, const VkDescriptorType descriptorType) {
+	
 		unsigned set = reflection->get_decoration(resource.id, spv::DecorationDescriptorSet);
 		unsigned binding = reflection->get_decoration(resource.id, spv::DecorationBinding);
 		const spirv_cross::SPIRType & type = reflection->get_type(resource.type_id);
@@ -175,6 +175,22 @@ void		ShaderSource::GenerateBindingTable(ShaderBindingTable & bindingTable)
 	// Samplers
 	for (auto & resource : resources.separate_samplers)
 		addBinding(resource, VK_DESCRIPTOR_TYPE_SAMPLER);
+
+	// Buffers read-only
+	for (auto & resource : resources.storage_buffers)
+	{
+		const spirv_cross::SPIRType & type = reflection->get_type(resource.type_id);
+		if (type.image.dim == spv::Dim::DimBuffer)
+			addBinding(resource, VK_DESCRIPTOR_TYPE_UNIFORM_TEXEL_BUFFER);
+	}
+
+	// Buffers RW
+	for (auto & resource : resources.storage_buffers)
+	{
+		const spirv_cross::SPIRType & type = reflection->get_type(resource.type_id);
+		if (type.image.dim == spv::Dim::DimBuffer)
+			addBinding(resource, VK_DESCRIPTOR_TYPE_STORAGE_TEXEL_BUFFER);
+	}
 
 	// StructedBuffers RW and read-only
 	for (auto & resource : resources.storage_buffers)

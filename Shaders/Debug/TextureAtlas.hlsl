@@ -20,7 +20,7 @@ struct Atlas
 [vk::binding(0, 4)]
 StructuredBuffer< SizeOffset >	sizeOffsets;
 [vk::binding(1, 4)]
-StructuredBuffer< Atlas >	atlas;
+ConstantBuffer< Atlas >	atlas;
 
 FragmentOutput main(FragmentInput i)
 {

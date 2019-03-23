@@ -462,6 +462,26 @@ void				Material::SetSampler(const std::string & bindingName, VkSampler sampler,
 	vkUpdateDescriptorSets(_device, static_cast<uint32_t>(descriptorWrites.size()), descriptorWrites.data(), 0, nullptr);
 }
 
+void				Material::SetTexelBuffer(const std::string & bindingName, VkBufferView bufferView, VkDescriptorType descriptorType, bool silent)
+{
+	if (!DescriptorSetExists(bindingName, silent))
+		return ;
+
+	VkWriteDescriptorSet descriptorWrite = {};
+
+	descriptorWrite.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+	descriptorWrite.dstSet = _setTable.at(_bindingTable->GetDescriptorSetBinding(bindingName)).set;
+	descriptorWrite.dstBinding = _bindingTable->GetDescriptorIndex(bindingName);
+	descriptorWrite.dstArrayElement = 0;
+	descriptorWrite.descriptorType = descriptorType;
+	descriptorWrite.descriptorCount = 1;
+	descriptorWrite.pTexelBufferView = &bufferView;
+
+	vkUpdateDescriptorSets(_device, 1, &descriptorWrite, 0, nullptr);
+}
+
+
+
 void				Material::BindDescriptorSets(RenderPass * renderPass)
 {
 	for (const auto & k : _setTable)

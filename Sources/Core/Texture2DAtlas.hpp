@@ -24,12 +24,14 @@ namespace LWGC
 			std::vector< glm::vec4 >	_sizeOffsets; // xy: size, zw: offset (UV space)
 			glm::vec4					_atlasSize;
 
-			VkBuffer	_sizeOffsetsBuffer;
-			VkBuffer	_atlasSizeBuffer;
+			VkBuffer		_sizeOffsetsBuffer;
+			VkBuffer		_atlasSizeBuffer;
+			VkBufferView	_sizeOffsetBufferView;
 
 			VkDeviceMemory	_sizeOffsetsMemory;
 			VkDeviceMemory	_atlasSizeMemory;
 
+// CreateBufferView
 		public:
 			Texture2DAtlas(void) = delete;
 			Texture2DAtlas(const Texture2DAtlas&) = delete;
@@ -41,10 +43,11 @@ namespace LWGC
 			Rect					Fit(std::string fileName);
 			void					UploadAtlasDatas(void);
 
-			VkBuffer				GetSizeOffsetBuffer(void);
 			VkBuffer				GetAtlasSizeBuffer(void);
-			size_t					GetSizeOffsetBufferSize();
-			size_t					GetAtlasSizeBufferSize();
+			VkBuffer				GetSizeOffsetBuffer(void);
+			VkBufferView			GetSizeOffsetBufferView(void);
+			size_t					GetAtlasSizeBufferSize(void);
+			size_t					GetSizeOffsetBufferSize(void);
 			void					Clear(void);
 
 			Texture2DAtlas &	operator=(Texture2DAtlas const & src) = delete;

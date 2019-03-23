@@ -40,6 +40,7 @@ namespace LWGC
 			static bool			HasStencilComponent(VkFormat format);
 			static void			CreateBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer & buffer, VkDeviceMemory & bufferMemory);
 			static void			CopyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size);
+			static VkBufferView	CreateBufferView(VkBuffer buffer, VkFormat format, VkDeviceSize offset = 0, VkDeviceSize range = VK_WHOLE_SIZE);
 			static void			CopyBufferToImage(VkBuffer buffer, VkImage image, glm::ivec3 imageSize, glm::ivec3 offset = {0, 0, 0});
 			static void			CheckResult(VkResult result, const std::string & errorMessage);
 			static VkSampler	CreateSampler(VkFilter filter, VkSamplerAddressMode addressMode, uint32_t maxAniso = 0);
