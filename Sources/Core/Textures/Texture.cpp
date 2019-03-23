@@ -76,16 +76,15 @@ stbi_uc *		Texture::LoadFromFile(const std::string & fileName, int & width, int 
 	return pixels;
 }
 
-void			Texture::UploadImage(void * pixels, VkDeviceSize imageSize)
+void			Texture::UploadImage(stbi_uc * pixels, VkDeviceSize devizeSize, glm::ivec3 imageSize, glm::ivec3 offset)
 {
 	VkBuffer stagingBuffer;
 	VkDeviceMemory stagingBufferMemory;
-	Vk::CreateBuffer(imageSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, stagingBuffer, stagingBufferMemory);
-
-	Vk::UploadToMemory(stagingBufferMemory, pixels, imageSize);
+	Vk::CreateBuffer(devizeSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, stagingBuffer, stagingBufferMemory);
+	Vk::UploadToMemory(stagingBufferMemory, pixels, devizeSize);
 
 	TransitionImageLayout(image, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
-	Vk::CopyBufferToImage(stagingBuffer, image, static_cast<uint32_t>(width), static_cast<uint32_t>(height));
+	Vk::CopyBufferToImage(stagingBuffer, image, imageSize, offset);
 	TransitionImageLayout(image, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
 
 	vkDestroyBuffer(device, stagingBuffer, nullptr);
@@ -141,16 +140,16 @@ void		Texture::TransitionImageLayout(VkImage image, VkImageLayout oldLayout, VkI
 	graphicCommandBufferPool->EndSingle(commandBuffer);
 }
 
-void			Texture::UploadImageWithMips(VkImage image, VkFormat format, void * pixels, VkDeviceSize imageSize)
+void			Texture::UploadImageWithMips(VkImage image, VkFormat format, void * pixels, VkDeviceSize devizeSize, glm::ivec3 imageSize, glm::ivec3 offset)
 {
 	VkBuffer stagingBuffer;
 	VkDeviceMemory stagingBufferMemory;
-	Vk::CreateBuffer(imageSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, stagingBuffer, stagingBufferMemory);
+	Vk::CreateBuffer(devizeSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, stagingBuffer, stagingBufferMemory);
 
-	Vk::UploadToMemory(stagingBufferMemory, pixels, imageSize);
+	Vk::UploadToMemory(stagingBufferMemory, pixels, devizeSize);
 
 	TransitionImageLayout(image, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
-    Vk::CopyBufferToImage(stagingBuffer, image, static_cast<uint32_t>(width), static_cast<uint32_t>(height));
+    Vk::CopyBufferToImage(stagingBuffer, image, imageSize, offset);
 
 	vkDestroyBuffer(device, stagingBuffer, nullptr);
 	vkFreeMemory(device, stagingBufferMemory, nullptr);

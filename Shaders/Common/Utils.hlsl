@@ -7,3 +7,12 @@ float3 GetViewDirection(float2 cameraUV, float4x4 inverseCameraView)
     eyeDirection.zw = float2(1, 0);
     return normalize(inverseCameraView * eyeDirection);
 }
+
+// sizeOffset must be in format: xy size in uv space, zw: offset in uv space
+float2 UvToAtlas(float2 uv, float4 sizeOffset)
+{
+    float2 size = sizeOffset.xy;
+    float2 offset = sizeOffset.zw;
+
+    return size * uv + offset; // mad
+}

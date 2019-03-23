@@ -11,6 +11,7 @@
 #include VULKAN_INCLUDE
 
 #include STB_INCLUDE_IMAGE
+#include GLM_INCLUDE
 
 namespace LWGC
 {
@@ -34,8 +35,8 @@ namespace LWGC
 			CommandBufferPool *	graphicCommandBufferPool;
 
 			void			AllocateImage(VkImageViewType viewType);
-			void			UploadImage(void * pixels, VkDeviceSize imageSize);
-			void			UploadImageWithMips(VkImage image, VkFormat format, void * pixels, VkDeviceSize imageSize);
+			void			UploadImage(stbi_uc * pixels, VkDeviceSize deviceSize, glm::ivec3 imageSize, glm::ivec3 offset = {0, 0, 0});
+			void			UploadImageWithMips(VkImage image, VkFormat format, void * pixels, VkDeviceSize deviceSize, glm::ivec3 imageSize, glm::ivec3 offset = {0, 0, 0});
 			void			TransitionImageLayout(VkImage image, VkImageLayout oldLayout, VkImageLayout newLayout);
 			stbi_uc *		LoadFromFile(const std::string & fileName, int & width, int & height);
 			void			GenerateMipMaps(VkImage image, VkFormat format, int32_t width, int32_t height);
