@@ -10,7 +10,6 @@ DescriptorSet::DescriptorSet(void) :
 
 DescriptorSet::~DescriptorSet(void)
 {
-	std::cout << "Destructor of DescriptorSet called" << std::endl;
 }
 
 void					DescriptorSet::SetStage(VkShaderStageFlagBits stageFlags)
