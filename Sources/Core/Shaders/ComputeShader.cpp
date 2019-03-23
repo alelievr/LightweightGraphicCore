@@ -2,10 +2,7 @@
 
 using namespace LWGC;
 
-ComputeShader::ComputeShader(void) : _material(nullptr), _dispatcher(nullptr, 1, 1, 1)
-{
-
-}
+ComputeShader::ComputeShader(void) : _material(nullptr), _dispatcher(nullptr, 1, 1, 1) {}
 
 ComputeShader::ComputeShader(const std::string & shaderPath) : ComputeShader()
 {
