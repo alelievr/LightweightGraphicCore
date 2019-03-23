@@ -155,7 +155,6 @@ void		ShaderSource::GenerateBindingTable(ShaderBindingTable & bindingTable)
 	spirv_cross::ShaderResources resources = reflection->get_shader_resources();
 
 	const auto & addBinding = [&](const spirv_cross::Resource & resource, const VkDescriptorType descriptorType) {
-	
 		unsigned set = reflection->get_decoration(resource.id, spv::DecorationDescriptorSet);
 		unsigned binding = reflection->get_decoration(resource.id, spv::DecorationBinding);
 		const spirv_cross::SPIRType & type = reflection->get_type(resource.type_id);

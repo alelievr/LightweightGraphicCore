@@ -459,7 +459,6 @@ void				Material::SetBuffer(const std::string & bindingName, VkBuffer buffer, si
 
 void				Material::SetTexture(const std::string & bindingName, const Texture * texture, VkImageLayout imageLayout, VkDescriptorType descriptorType, bool silent)
 {
-
 	_materialProperties[bindingName] = MaterialProperty{
 		MaterialPropertyType::Texture,
 		descriptorType,
