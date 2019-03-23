@@ -31,7 +31,6 @@ namespace LWGC
 			VkDeviceMemory	_sizeOffsetsMemory;
 			VkDeviceMemory	_atlasSizeMemory;
 
-// CreateBufferView
 		public:
 			Texture2DAtlas(void) = delete;
 			Texture2DAtlas(const Texture2DAtlas&) = delete;
