@@ -39,6 +39,8 @@ void	ForwardRenderPipeline::Initialize(SwapChain * swapChain)
 
 	heavyComputeShader.AddImageBarrier(barrier, VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT);
 
+	asyncComputeSet.AddBinding(0, fractalTexture, VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE);
+
 	// Setup the render passes we uses:
 	SetupRenderPasses();
 }
@@ -118,6 +120,7 @@ void	ForwardRenderPipeline::Render(const std::vector< Camera * > & cameras, Rend
 	forwardPass.Begin(cmd, GetCurrentFrameBuffer(), "All Cameras");
 	{
 		forwardPass.BindDescriptorSet(LWGCBinding::Frame, perFrameDescriptorSet);
+		forwardPass.BindDescriptorSet("asyncTexture", asyncComputeSet);
 		for (const auto camera : cameras)
 		{
 			beginCameraRendering.Invoke(camera);

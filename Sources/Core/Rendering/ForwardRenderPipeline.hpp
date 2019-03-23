@@ -5,6 +5,7 @@
 
 #include "RenderPipeline.hpp"
 #include "Core/Shaders/ComputeShader.hpp"
+#include "Core/Vulkan/DescriptorSet.hpp"
 
 namespace LWGC
 {
@@ -23,8 +24,7 @@ namespace LWGC
 			ComputeShader		heavyComputeShader;
 			VkFence				heavyComputeFence;
 
-			VkDescriptorSet			asyncComputeSet;
-			VkDescriptorSetLayout	asyncComputeLayoutSet;
+			DescriptorSet		asyncComputeSet;
 
 			void	SetupRenderPasses(void);
 

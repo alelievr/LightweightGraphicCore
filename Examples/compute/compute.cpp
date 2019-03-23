@@ -15,7 +15,7 @@ void	ProcessEvent(EventSystem * es, Application & app)
 
 Material *		CreateFullscreenMaterial(void)
 {
-	auto		fullScreenMaterial = Material::Create(BuiltinShaders::Standard, BuiltinShaders::FullScreenQuad);
+	auto		fullScreenMaterial = Material::Create("Shaders/Debug/AsyncComputeDraw.hlsl", BuiltinShaders::FullScreenQuad);
 
 	// Setup material to display the procedural texture:
 	VkPipelineInputAssemblyStateCreateInfo inputAssemblyInfo = {};

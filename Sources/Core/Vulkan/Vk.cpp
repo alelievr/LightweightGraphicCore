@@ -281,7 +281,6 @@ void			Vk::Release(void)
 
 VkDescriptorSetLayoutBinding	Vk::CreateDescriptorSetLayoutBinding(uint32_t binding, VkDescriptorType descriptorType, VkShaderStageFlagBits stageFlags)
 {
-	// LWGC per frame cbuffer layout
 	VkDescriptorSetLayoutBinding layoutBinding = {};
 	layoutBinding.binding = binding;
 	layoutBinding.descriptorCount = 1;
@@ -380,7 +379,7 @@ void			Vk::BeginProfilingSample(VkCommandBuffer cmd, const std::string & debugSa
 	markerInfo.sType = VK_STRUCTURE_TYPE_DEBUG_MARKER_MARKER_INFO_EXT;
 	memcpy(markerInfo.color, &color.r, sizeof(float) * 4);
 	markerInfo.pMarkerName = debugSampleName.c_str();
-	
+
 	printf("ptr: %s\n", markerInfo.pMarkerName);
 
 	VkExt::CmdDebugMarkerBeginFunction(cmd, &markerInfo);
