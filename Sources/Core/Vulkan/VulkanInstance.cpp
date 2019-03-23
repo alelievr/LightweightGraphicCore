@@ -2,11 +2,13 @@
 
 #include <set>
 #include <array>
-#include <string.h>
 #include <algorithm>
+#include <iostream>
+#include <sstream>
 
 #include GLFW_INCLUDE
 #include "Vk.hpp"
+#include "VkExt.hpp"
 
 using namespace LWGC;
 
@@ -44,7 +46,8 @@ VulkanInstance::~VulkanInstance(void)
 
 	if (_enableValidationLayers)
 	{
-		DestroyDebugUtilsMessengerEXT(_callback, nullptr);
+		DestroyDebugUtilsMessengerEXT(_debugUtilsMessengerCallback, nullptr);
+		VkExt::DestroyDebugReportCallbackFunction(_instance, _debugReportCallback, nullptr);
 	}
 
 	vkDestroyDescriptorPool(_device, _descriptorPool, nullptr);
@@ -59,7 +62,28 @@ void			VulkanInstance::Initialize(void)
 {
 	_instanceSingleton = this;
 	CreateInstance();
+	InitializeVulkanFunctions();
 	SetupDebugCallbacks();
+}
+
+
+void			VulkanInstance::InitializeVulkanFunctions(void) noexcept
+{
+	// Debug report (validation layers) exntension
+	VkExt::CreateDebugUtilsMessengerFunction = reinterpret_cast<PFN_vkCreateDebugUtilsMessengerEXT>(glfwGetInstanceProcAddress(_instance, "vkCreateDebugUtilsMessengerEXT"));
+	VkExt::DestroyDebugUtilMessengerFunction = reinterpret_cast<PFN_vkDestroyDebugUtilsMessengerEXT>(glfwGetInstanceProcAddress(_instance, "vkDestroyDebugUtilsMessengerEXT"));
+	VkExt::CreateDebugReportCallbackFunction = reinterpret_cast<PFN_vkCreateDebugReportCallbackEXT>(glfwGetInstanceProcAddress(_instance, "vkCreateDebugReportCallbackEXT"));
+	VkExt::DestroyDebugReportCallbackFunction = reinterpret_cast<PFN_vkDestroyDebugReportCallbackEXT>(glfwGetInstanceProcAddress(_instance, "vkDestroyDebugReportCallbackEXT"));
+	VkExt::DebugReportMessageFunction = reinterpret_cast<PFN_vkDebugReportMessageEXT>(glfwGetInstanceProcAddress(_instance, "vkDebugReportMessageEXT"));
+
+#ifdef DEBUG
+	// Debug maker extension:
+	VkExt::DebugMarkerSetObjectTagFunction = reinterpret_cast<PFN_vkDebugMarkerSetObjectTagEXT>(glfwGetInstanceProcAddress(_instance, "vkDebugMarkerSetObjectTagEXT"));
+	VkExt::DebugMarkerSetObjectNameFunction = reinterpret_cast<PFN_vkDebugMarkerSetObjectNameEXT>(glfwGetInstanceProcAddress(_instance, "vkDebugMarkerSetObjectNameEXT"));
+	VkExt::CmdDebugMarkerBeginFunction = reinterpret_cast<PFN_vkCmdDebugMarkerBeginEXT>(glfwGetInstanceProcAddress(_instance, "vkCmdDebugMarkerBeginEXT"));
+	VkExt::CmdDebugMarkerEndFunction = reinterpret_cast<PFN_vkCmdDebugMarkerEndEXT>(glfwGetInstanceProcAddress(_instance, "vkCmdDebugMarkerEndEXT"));
+	VkExt::CmdDebugMarkerInsertFunction = reinterpret_cast<PFN_vkCmdDebugMarkerInsertEXT>(glfwGetInstanceProcAddress(_instance, "vkCmdDebugMarkerInsertEXT"));
+#endif
 }
 
 void			VulkanInstance::InitializeSurface(VkSurfaceKHR surface)
@@ -496,38 +520,120 @@ static VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(VkDebugUtilsMessageSeverityF
 	return VK_FALSE;
 }
 
+// Message callback debug from Sascha Willems: https://github.com/SaschaWillems/Vulkan/blob/master/base/VulkanDebug.cpp
+VKAPI_ATTR VkBool32 VKAPI_CALL messageCallback(
+	VkDebugReportFlagsEXT flags,
+	VkDebugReportObjectTypeEXT objType,
+	uint64_t srcObject,
+	size_t location,
+	int32_t msgCode,
+	const char* pLayerPrefix,
+	const char* pMsg,
+	void* pUserData)
+{
+	(void)pUserData, (void)location, (void)srcObject, (void)objType;
+
+	// Select prefix depending on flags passed to the callback
+	// Note that multiple flags may be set for a single validation message
+	std::string prefix("");
+
+	// Error that may result in undefined behaviour
+	if (flags & VK_DEBUG_REPORT_ERROR_BIT_EXT)
+	{
+		prefix += "ERROR:";
+	};
+	// Warnings may hint at unexpected / non-spec API usage
+	if (flags & VK_DEBUG_REPORT_WARNING_BIT_EXT)
+	{
+		prefix += "WARNING:";
+	};
+	// May indicate sub-optimal usage of the API
+	if (flags & VK_DEBUG_REPORT_PERFORMANCE_WARNING_BIT_EXT)
+	{
+		prefix += "PERFORMANCE:";
+	};
+	// Informal messages that may become handy during debugging
+	if (flags & VK_DEBUG_REPORT_INFORMATION_BIT_EXT)
+	{
+		prefix += "INFO:";
+	}
+	// Diagnostic info from the Vulkan loader and layers
+	// Usually not helpful in terms of API usage, but may help to debug layer and loader problems
+	if (flags & VK_DEBUG_REPORT_DEBUG_BIT_EXT)
+	{
+		prefix += "DEBUG:";
+	}
+
+	// Display message to default output (console/logcat)
+	std::stringstream debugMessage;
+	debugMessage << prefix << " [" << pLayerPrefix << "] Code " << msgCode << " : " << pMsg;
+
+#if defined(__ANDROID__)
+	if (flags & VK_DEBUG_REPORT_ERROR_BIT_EXT) {
+		LOGE("%s", debugMessage.str().c_str());
+	}
+	else {
+		LOGD("%s", debugMessage.str().c_str());
+	}
+#else
+	if (flags & VK_DEBUG_REPORT_ERROR_BIT_EXT) {
+		std::cerr << debugMessage.str() << "\n";
+	}
+	else {
+		std::cout << debugMessage.str() << "\n";
+	}
+#endif
+
+	fflush(stdout);
+
+	// The return value of this callback controls wether the Vulkan call that caused
+	// the validation message will be aborted or not
+	// We return VK_FALSE as we DON'T want Vulkan calls that cause a validation message
+	// (and return a VkResult) to abort
+	// If you instead want to have calls abort, pass in VK_TRUE and the function will
+	// return VK_ERROR_VALIDATION_FAILED_EXT
+	return VK_FALSE;
+}
+
 void		VulkanInstance::SetupDebugCallbacks(void) noexcept
 {
-	if (!_enableValidationLayers)
-		return;
+	// TODO: setup the DebugReportMessageFunction as well (VK_EXT_debug_report)
+	if (VkExt::AreDebugLayerAvailable())
+	{
+		VkDebugUtilsMessengerCreateInfoEXT createInfo = {};
+		createInfo.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT;
+		createInfo.messageSeverity = VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT;
+		createInfo.messageType = VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT;
+		createInfo.pfnUserCallback = debugCallback;
 
-	VkDebugUtilsMessengerCreateInfoEXT createInfo = {};
-	createInfo.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT;
-	createInfo.messageSeverity = VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT;
-	createInfo.messageType = VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT;
-	createInfo.pfnUserCallback = debugCallback;
+		Vk::CheckResult(CreateDebugUtilsMessengerEXT(&createInfo, nullptr, &_debugUtilsMessengerCallback), "Failed to set up debug callback!");
 
-	if (CreateDebugUtilsMessengerEXT(&createInfo, nullptr, &_callback) != VK_SUCCESS) {
-		throw std::runtime_error("Failed to set up debug callback!");
+		VkDebugReportCallbackCreateInfoEXT dbgCreateInfo = {};
+		dbgCreateInfo.sType = VK_STRUCTURE_TYPE_DEBUG_REPORT_CREATE_INFO_EXT;
+		dbgCreateInfo.pfnCallback = (PFN_vkDebugReportCallbackEXT)messageCallback;
+		dbgCreateInfo.flags = VK_DEBUG_REPORT_ERROR_BIT_EXT | VK_DEBUG_REPORT_WARNING_BIT_EXT
+			| VK_DEBUG_REPORT_DEBUG_BIT_EXT | VK_DEBUG_REPORT_PERFORMANCE_WARNING_BIT_EXT;
+
+		Vk::CheckResult(VkExt::CreateDebugReportCallbackFunction(
+			_instance,
+			&dbgCreateInfo,
+			nullptr,
+			&_debugReportCallback), "Failed to register the debug report callback");
 	}
 }
 
 VkResult	VulkanInstance::CreateDebugUtilsMessengerEXT(const VkDebugUtilsMessengerCreateInfoEXT* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkDebugUtilsMessengerEXT* pCallback) noexcept
 {
-	auto func = (PFN_vkCreateDebugUtilsMessengerEXT) vkGetInstanceProcAddr(_instance, "vkCreateDebugUtilsMessengerEXT");
-
-	if (func != nullptr)
-	    return func(_instance, pCreateInfo, pAllocator, pCallback);
+	if (VkExt::CreateDebugUtilsMessengerFunction != nullptr)
+	    return VkExt::CreateDebugUtilsMessengerFunction(_instance, pCreateInfo, pAllocator, pCallback);
 	else
 	    return VK_ERROR_EXTENSION_NOT_PRESENT;
 }
 
 void		VulkanInstance::DestroyDebugUtilsMessengerEXT(VkDebugUtilsMessengerEXT callback, const VkAllocationCallbacks* pAllocator)
 {
-	auto func = (PFN_vkDestroyDebugUtilsMessengerEXT) vkGetInstanceProcAddr(_instance, "vkDestroyDebugUtilsMessengerEXT");
-
-	if (func != nullptr)
-		func(_instance, callback, pAllocator);
+	if (VkExt::DestroyDebugUtilMessengerFunction != nullptr)
+		VkExt::DestroyDebugUtilMessengerFunction(_instance, callback, pAllocator);
 }
 
 int			DeviceCapability::GetGPUScore(void) const

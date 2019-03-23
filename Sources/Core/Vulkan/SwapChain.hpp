@@ -13,7 +13,7 @@ namespace LWGC
 {
 	class		SwapChain
 	{
-		friend class VulkanRenderPipeline;
+		friend class RenderPipeline;
 	
 		private:
 			VkSwapchainKHR					_swapChain;
@@ -39,7 +39,7 @@ namespace LWGC
 			VkSurfaceFormatKHR	ChooseSurfaceFormat(void) noexcept;
 			VkPresentModeKHR	ChoosePresentMode(void) noexcept;
 			// Must be called from the RenderPass class as it depends from it
-			void				CreateFrameBuffers(const RenderPass & renderPass) noexcept;
+			void				CreateFrameBuffers(const RenderPass & renderPass);
 			void				CreateDepthResources(void);
 			void				TransitionDepthImageLayout(VkImage image, VkFormat format, VkImageLayout oldLayout, VkImageLayout newLayout);
 			void				Initialize(void);

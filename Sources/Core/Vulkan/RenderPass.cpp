@@ -1,6 +1,7 @@
 #include "RenderPass.hpp"
 
 #include "Core/Vulkan/Material.hpp"
+#include "Core/Vulkan/VkExt.hpp"
 
 using namespace LWGC;
 
@@ -100,10 +101,23 @@ void	RenderPass::BindMaterial(Material * material)
 		b.second.hasChanged = true;
 }
 
-void	RenderPass::BeginFrame(VkCommandBuffer commandBuffer, VkFramebuffer framebuffer)
+void	RenderPass::BeginFrame(VkCommandBuffer commandBuffer, VkFramebuffer framebuffer, const std::string & passName)
 {
 	_commandBuffer = commandBuffer;
 	_framebuffer = framebuffer;
+
+	if (VkExt::AreDebugMarkersAvailable())
+	{
+		Vk::BeginProfilingSample(_commandBuffer, passName, Color::Blue);
+	}
+}
+
+void	RenderPass::EndFrame(void)
+{
+	if (VkExt::AreDebugMarkersAvailable())
+	{
+		Vk::EndProfilingSample(_commandBuffer);
+	}
 }
 
 void	RenderPass::UpdateDescriptorBindings(VkCommandBuffer cmd)

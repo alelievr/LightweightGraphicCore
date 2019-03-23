@@ -16,7 +16,12 @@
 
 namespace LWGC
 {
-	class VulkanRenderPipeline
+	using BeginFrameRenderingDelegate = Delegate< void(void) >;
+	using BeginCameraRenderingDelegate = Delegate< void(Camera *) >;
+	using EndCameraRenderingDelegate = Delegate< void(Camera *) >;
+	using EndFrameRenderingDelegate = Delegate< void(void) >;
+
+	class RenderPipeline
 	{
 		friend class Application;
 
@@ -27,13 +32,13 @@ namespace LWGC
 				glm::vec4	time;
 			};
 
-			static VulkanRenderPipeline *	_pipelineInstance;
 			std::vector< VkCommandBuffer >	_swapChainCommandBuffers;
 			LWGC_PerFrame					_perFrame;
 			UniformBuffer					_uniformPerFrame;
 			VkDescriptorSet					_perFrameDescriptorSet;
 			VkDescriptorSetLayout			_perFrameDescriptorSetLayout;
 			uint32_t						_imageIndex;
+			bool							_initialized;
 
 			void				RenderInternal(const std::vector< Camera * > & cameras, RenderContext * context);
 			void				UpdatePerframeUnformBuffer(void) noexcept;
@@ -66,17 +71,23 @@ namespace LWGC
 			virtual void		RenderGUI(RenderContext * context) noexcept;
 
 		public:
-			VulkanRenderPipeline(void);
-			VulkanRenderPipeline(const VulkanRenderPipeline & p) = delete;
-			virtual			~VulkanRenderPipeline(void);
+			RenderPipeline(void);
+			RenderPipeline(const RenderPipeline & p) = delete;
+			virtual			~RenderPipeline(void);
 
-			VulkanRenderPipeline & operator=(const VulkanRenderPipeline & rhs) = delete;
+			RenderPipeline & operator=(const RenderPipeline & rhs) = delete;
 
-			SwapChain *		GetSwapChain(void);
 			RenderPass *	GetRenderPass(void);
 			Camera *		GetCurrentCamera(void);
+			bool			IsInitialized(void);
+
 			void			EnqueueFrameCommandBuffer(VkCommandBuffer cmd);
 
-			static VulkanRenderPipeline *	Get();
+			BeginFrameRenderingDelegate		beginFrameRendering;
+			BeginCameraRenderingDelegate	beginCameraRendering;
+			EndCameraRenderingDelegate		endCameraRendering;
+			EndFrameRenderingDelegate		endFrameRendering;
+
+			static RenderPipeline *	Get();
 	};
 }

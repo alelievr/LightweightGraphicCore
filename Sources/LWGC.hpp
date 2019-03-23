@@ -16,7 +16,7 @@
 #include "IncludeDeps.hpp"
 
 // Pipelines
-#include "Core/Rendering/VulkanRenderPipeline.hpp"
+#include "Core/Rendering/RenderPipeline.hpp"
 
 // Rendering
 #include "Core/Rendering/RenderTarget.hpp"

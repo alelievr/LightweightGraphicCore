@@ -1,7 +1,7 @@
 #include "ProceduralRenderer.hpp"
 #include "Core/PrimitiveMeshFactory.hpp"
 #include "Core/Hierarchy.hpp"
-#include "Core/Rendering/VulkanRenderPipeline.hpp"
+#include "Core/Rendering/RenderPipeline.hpp"
 #include "Core/Vulkan/VulkanInstance.hpp"
 
 using namespace LWGC;

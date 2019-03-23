@@ -1,6 +1,6 @@
 #include "ComputeDispatcher.hpp"
 
-#include "Core/Rendering/VulkanRenderPipeline.hpp"
+#include "Core/Rendering/RenderPipeline.hpp"
 #include "Core/Hierarchy.hpp"
 
 using namespace LWGC;

@@ -7,6 +7,7 @@
 #include "Core/Vulkan/Vk.hpp"
 #include "Core/Vulkan/VulkanInstance.hpp"
 #include "Core/Vulkan/CommandBufferPool.hpp"
+#include "Core/Object.hpp"
 #include VULKAN_INCLUDE
 
 #include STB_INCLUDE_IMAGE
@@ -14,7 +15,7 @@
 
 namespace LWGC
 {
-	class		Texture
+	class		Texture : public Object
 	{
 		protected:
 			int					width;
@@ -23,19 +24,19 @@ namespace LWGC
 			int					arraySize;
 			VkFormat			format;
 			bool				autoGenerateMips;
+			int					usage;
+			bool				allocated;
+			int					maxMipLevel;
 			VkImage				image;
 			VkDeviceMemory		memory;
 			VkImageView			view;
-			int					usage;
-			bool				allocated;
 			VulkanInstance *	instance;
 			VkDevice			device;
 			CommandBufferPool *	graphicCommandBufferPool;
-			int					maxMipLevel;
-			
+
 			void			AllocateImage(VkImageViewType viewType);
-			void			UploadImage(stbi_uc * pixels, VkDeviceSize deviceSize, glm::ivec3 imageSize, glm::ivec3 offset = {0, 0, 0});
-			void			UploadImageWithMips(VkImage image, VkFormat format, stbi_uc * pixels, VkDeviceSize deviceSize, glm::ivec3 imageSize, glm::ivec3 offset = {0, 0, 0});
+			void			UploadImage(void * pixels, VkDeviceSize imageSize);
+			void			UploadImageWithMips(VkImage image, VkFormat format, void * pixels, VkDeviceSize imageSize);
 			void			TransitionImageLayout(VkImage image, VkImageLayout oldLayout, VkImageLayout newLayout);
 			stbi_uc *		LoadFromFile(const std::string & fileName, int & width, int & height);
 			void			GenerateMipMaps(VkImage image, VkFormat format, int32_t width, int32_t height);

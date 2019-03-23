@@ -43,7 +43,8 @@ namespace LWGC
 			VkDevice					_device;
 			std::string					_applicationName;
 			bool						_enableValidationLayers;
-			VkDebugUtilsMessengerEXT	_callback;
+			VkDebugUtilsMessengerEXT	_debugUtilsMessengerCallback;
+			VkDebugReportCallbackEXT	_debugReportCallback;
 			VkDescriptorPool			_descriptorPool;
 
 			// uint32_t					_graphicQueueIndex;
@@ -90,6 +91,7 @@ namespace LWGC
 			void		DestroyDebugUtilsMessengerEXT(VkDebugUtilsMessengerEXT callback, const VkAllocationCallbacks* pAllocator);
 			void		InitializeSurface(VkSurfaceKHR surface);
 			void		InitSurfaceForPhysicalDevice(VkPhysicalDevice physicalDevice) noexcept;
+			void		InitializeVulkanFunctions(void) noexcept;
 
 		public:
 			VulkanInstance(void);

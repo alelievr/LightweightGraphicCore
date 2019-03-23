@@ -6,7 +6,7 @@
 #    By: amerelo <amerelo@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2014/07/15 15:13:38 by alelievr          #+#    #+#              #
-#    Updated: 2019/01/16 14:51:22 by amerelo          ###   ########.fr        #
+#    Updated: 2019/03/02 11:37:28 by alelievr         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -15,12 +15,14 @@ all:
 	@$(MAKE) -C basicTime
 	@$(MAKE) -C gizmos
 	@$(MAKE) -C compute
+	@$(MAKE) -C multiPipeline
 
 re:
 	@$(MAKE) re -C basic
 	@$(MAKE) re -C basicTime
 	@$(MAKE) re -C gizmos
 	@$(MAKE) re -C compute
+	@$(MAKE) re -C multiPipeline
 
 coffee:
 	@clear

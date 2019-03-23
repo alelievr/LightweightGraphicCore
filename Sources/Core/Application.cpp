@@ -1,4 +1,5 @@
 #include <memory>
+#include <unistd.h>
 
 #include "Core/Application.hpp"
 #include "Core/Rendering/ForwardRenderPipeline.hpp"
@@ -12,14 +13,13 @@ Application *				Application::_app = nullptr;
 Delegate< void(void) >		Application::update;
 Delegate< void(void) >		Application::lateUpdate;
 
-Application::Application(void) : _renderPipeline(nullptr), _window(nullptr), hierarchy(std::make_shared< Hierarchy >()), _shouldNotQuit(true)
+Application::Application(bool initDeafultRenderPipeline) : _window(nullptr), hierarchy(std::make_shared< Hierarchy >()), _shouldNotQuit(true)
 {
+	if (initDeafultRenderPipeline)
+	{
+		RenderPipelineManager::SetCurrentRenderPipeline(new ForwardRenderPipeline());
+	}
 	_app = this;
-}
-
-Application::Application(VulkanRenderPipeline * renderPipeline) : Application()
-{
-	this->_renderPipeline = renderPipeline;
 }
 
 Application::~Application(void)
@@ -27,7 +27,8 @@ Application::~Application(void)
 	_materialTable.DestroyObjects();
 	_textureTable.DestroyObjects();
 	Vk::Release();
-	delete _renderPipeline;
+
+	RenderPipelineManager::ReleaseAllPipelines();
 
 	if (_window != NULL)
 	{
@@ -46,12 +47,14 @@ void			Application::Init(void) noexcept
 	glfwSetErrorCallback(ErrorCallback);
 	glfwInit();
 
-	if (_renderPipeline == nullptr)
-		this->_renderPipeline = new ForwardRenderPipeline();
-
 #ifdef __unix__
 	_instance.SetValidationLayers({
-		"VK_LAYER_LUNARG_standard_validation"
+		"VK_LAYER_LUNARG_standard_validation",
+	});
+#endif
+#ifdef DEBUG
+	_instance.SetDeviceExtensions({
+		"VK_EXT_debug_marker"
 	});
 #endif
 	_instance.SetDeviceExtensions({VK_KHR_SWAPCHAIN_EXTENSION_NAME});
@@ -79,8 +82,46 @@ void		Application::FramebufferResizeCallback(GLFWwindow *window, int width, int 
 		glfwWaitEvents();
 	}
 
-	auto app = reinterpret_cast<VulkanRenderPipeline *>(glfwGetWindowUserPointer(window));
-	app->framebufferResized = true;
+	auto pipeline = reinterpret_cast< RenderPipeline * >(glfwGetWindowUserPointer(window));
+	pipeline->framebufferResized = true;
+}
+
+void			Application::UpdateRenderPipeline(void)
+{
+	// By setting this to null we ensure that the first time the function is called,
+// we initialize the materials using the renderpipeline (is there is one)
+	static RenderPipeline *	lastFramePipeline = nullptr;
+	auto currentPipe = RenderPipelineManager::currentRenderPipeline;
+
+	if (currentPipe != nullptr)
+	{
+		// Initialize the pipeline
+		if (!currentPipe->IsInitialized())
+		{
+			currentPipe->Initialize(&_swapChain);
+			currentPipe->CreateSyncObjects();
+		}
+
+		// Check if the pipeline have changed since the last frame
+		if (lastFramePipeline != currentPipe)
+		{
+			// In this case, we need to recreate all materials
+			_materialTable.SetRenderPass(currentPipe->GetRenderPass());
+
+			if (!_materialTable.IsInitialized())
+				_materialTable.Initialize(&_swapChain, currentPipe->GetRenderPass());
+
+			// We normaly need to upadte the renderpass of the materials if we change a pipeline
+			// else
+				// _materialTable.RecreateAll();
+
+			// TODO: Recreate ImGUI materials too
+			_imGUI.UpdatePipelineDependentDatas();
+
+			glfwSetWindowUserPointer(_window, currentPipe);
+			lastFramePipeline = currentPipe;
+		}
+	}
 }
 
 void			Application::Open(const std::string & name, const int width, const int height, const WindowFlag flags) noexcept
@@ -109,10 +150,11 @@ void			Application::Open(const std::string & name, const int width, const int he
 
 		// Vk needs logical device (which require surface for creation (due to swapchain support checks))
 		Vk::Initialize();
+		Time::Initialize();
 
-		_renderPipeline->Initialize(&_swapChain);
-		_renderPipeline->CreateSyncObjects();
-		_materialTable.Initialize(&_swapChain, _renderPipeline->GetRenderPass());
+		_imGUI.Initialize(&_swapChain, &_surface);
+		UpdateRenderPipeline();
+
 		hierarchy->Initialize();
 	} catch (const std::runtime_error & e) {
 		std::cout << "Error while initializing the render pipeline:" << std::endl << e.what() << std::endl;
@@ -124,16 +166,14 @@ void			Application::Open(const std::string & name, const int width, const int he
 		std::cout << "Unknown error while initializing the render pipeline !" << std::endl;
 	}
 
-	glfwSetWindowUserPointer(_window, &_renderPipeline);
 	glfwSetFramebufferSizeCallback(_window, FramebufferResizeCallback);
-
-	Time::Initialize();
-	_imGUI.Initialize(&_swapChain, &_surface);
 }
 #include <limits>
 
 void				Application::Update(void) noexcept
 {
+	UpdateRenderPipeline();
+
 	glfwPollEvents();
 	Time::BeginFrame();
 	Application::update.Invoke();
@@ -141,17 +181,26 @@ void				Application::Update(void) noexcept
 
 	//TODO: hierarchy get cameras
 	const auto cameras = hierarchy->GetCameras();
-	_renderPipeline->RenderInternal(cameras, hierarchy->GetRenderContext());
 
-	_imGUI.BeginFrame();
-	_renderPipeline->RenderGUI(hierarchy->GetRenderContext());
-	_imGUI.EndFrame();
+	auto currentPipe = RenderPipelineManager::currentRenderPipeline;
 
-	_renderPipeline->PresentFrame();
+	if (currentPipe != nullptr)
+	{
+		currentPipe->RenderInternal(cameras, hierarchy->GetRenderContext());
+
+		_imGUI.BeginFrame();
+		currentPipe->RenderGUI(hierarchy->GetRenderContext());
+		_imGUI.EndFrame();
+
+		currentPipe->PresentFrame();
+	}
+	else // When there is no pipeline graphic, we limit the application framerate to 60
+		usleep((1.0f / 60.0f) * 1000000.0f);
 
 	_shouldNotQuit = !glfwWindowShouldClose(_window);
 }
 
+SwapChain *			Application::GetSwapChain(void) noexcept { return &this->_swapChain; }
 EventSystem *		Application::GetEventSystem(void) noexcept { return &this->_eventSystem; }
 Hierarchy *			Application::GetHierarchy(void) noexcept { return this->hierarchy.get(); }
 MaterialTable *		Application::GetMaterialTable(void) noexcept { return &this->_materialTable; }

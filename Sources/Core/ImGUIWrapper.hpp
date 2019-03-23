@@ -39,6 +39,7 @@ namespace LWGC
 			void		Initialize(SwapChain * swapChain, VulkanSurface * surface);
 			void		BeginFrame(void);
 			void		EndFrame(void);
+			void		UpdatePipelineDependentDatas(void);
 
 			ImGUIWrapper &	operator=(ImGUIWrapper const & src) = delete;
 	};

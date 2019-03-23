@@ -173,7 +173,7 @@ void				SwapChain::CreateDepthResources(void)
 	TransitionDepthImageLayout(_depthImage, depthFormat, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL);
 }
 
-void				SwapChain::CreateFrameBuffers(const RenderPass & renderPass) noexcept
+void				SwapChain::CreateFrameBuffers(const RenderPass & renderPass)
 {
 	_framebuffers.resize(_imageViews.size());
 

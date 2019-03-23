@@ -6,6 +6,7 @@
 #include "Utils/Vector.hpp"
 #include "Core/Gizmos/Cone.hpp"
 #include "Core/Gizmos/GizmoBase.hpp"
+#include "Core/Rendering/RenderPipelineManager.hpp"
 #include "Utils/Color.hpp"
 
 using namespace LWGC;
@@ -34,7 +35,7 @@ void	Selection::Initialize(void) noexcept
 
 void	Selection::Update(void) noexcept
 {
-	Camera *		cam = VulkanRenderPipeline::Get()->GetCurrentCamera();
+	Camera *		cam = RenderPipelineManager::currentRenderPipeline->GetCurrentCamera();
 
 	// If there is no camera, we don't have to raycast
 	if (cam == nullptr)

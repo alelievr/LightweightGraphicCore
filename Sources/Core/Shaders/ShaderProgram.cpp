@@ -7,7 +7,7 @@
 
 using namespace LWGC;
 
-ShaderProgram::ShaderProgram(void) : _isUpdateBound(false), _threadWidth(1), _threadHeight(1), _threadDepth(1)
+ShaderProgram::ShaderProgram(void) : _threadWidth(1), _threadHeight(1), _threadDepth(1), _isUpdateBound(false)
 {
 }
 

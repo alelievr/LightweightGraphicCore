@@ -8,6 +8,7 @@
 #include "IncludeDeps.hpp"
 #include "Core/Rendering/RenderContext.tpp"
 #include "Utils/Bounds.hpp"
+#include "Core/Components/Camera.hpp"
 
 #include GLM_INCLUDE
 
