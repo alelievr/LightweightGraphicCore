@@ -184,6 +184,7 @@
 		B18EDBFC223461B800C92221 /* VkExt.hpp in Headers */ = {isa = PBXBuildFile; fileRef = B18EDBF9223461B800C92221 /* VkExt.hpp */; settings = {ATTRIBUTES = (Public, ); }; };
 		B18EDBFD223461B800C92221 /* ProfilingSample.hpp in Headers */ = {isa = PBXBuildFile; fileRef = B18EDBFA223461B800C92221 /* ProfilingSample.hpp */; settings = {ATTRIBUTES = (Public, ); }; };
 		B18EDBFE223461B800C92221 /* VkExt.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B18EDBFB223461B800C92221 /* VkExt.cpp */; };
+		B193649C22481A4700BA0F58 /* DefaultRenderQueue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B193649B22481A4600BA0F58 /* DefaultRenderQueue.cpp */; };
 		B19A0483222C8395004D513A /* Images in CopyFiles */ = {isa = PBXBuildFile; fileRef = B19A0482222C8395004D513A /* Images */; };
 		B19A0485222C83A2004D513A /* Shaders in CopyFiles */ = {isa = PBXBuildFile; fileRef = B19A0484222C83A2004D513A /* Shaders */; };
 		B1B426B922468BC500C2A254 /* DescriptorSet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B1B426B822468BC500C2A254 /* DescriptorSet.cpp */; };
@@ -454,6 +455,7 @@
 		B18EDBF9223461B800C92221 /* VkExt.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = VkExt.hpp; sourceTree = "<group>"; };
 		B18EDBFA223461B800C92221 /* ProfilingSample.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = ProfilingSample.hpp; sourceTree = "<group>"; };
 		B18EDBFB223461B800C92221 /* VkExt.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VkExt.cpp; sourceTree = "<group>"; };
+		B193649B22481A4600BA0F58 /* DefaultRenderQueue.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = DefaultRenderQueue.cpp; path = Sources/Core/Rendering/DefaultRenderQueue.cpp; sourceTree = "<group>"; };
 		B19A0482222C8395004D513A /* Images */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Images; sourceTree = "<group>"; };
 		B19A0484222C83A2004D513A /* Shaders */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Shaders; sourceTree = "<group>"; };
 		B1B426B822468BC500C2A254 /* DescriptorSet.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = DescriptorSet.cpp; path = Sources/Core/Vulkan/DescriptorSet.cpp; sourceTree = "<group>"; };
@@ -535,6 +537,7 @@
 		B1741FA2222C576D00A18DEE /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B193649B22481A4600BA0F58 /* DefaultRenderQueue.cpp */,
 				B11D4A1B222C7B5F007D5D40 /* libvulkan.1.1.85.dylib */,
 				B11D4A19222C7746007D5D40 /* libMoltenVK.dylib */,
 				B11D4A17222C76BD007D5D40 /* QuartzCore.framework */,
@@ -1154,6 +1157,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B193649C22481A4700BA0F58 /* DefaultRenderQueue.cpp in Sources */,
 				B1B426B922468BC500C2A254 /* DescriptorSet.cpp in Sources */,
 				71C0296D223FC6560086693D /* ComputeShader.cpp in Sources */,
 				B11ED6F522344E0B0039257D /* ProfilingSample.cpp in Sources */,

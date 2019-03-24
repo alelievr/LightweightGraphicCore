@@ -81,7 +81,6 @@ namespace LWGC
 
                 if (renderer != nullptr && renderer->GetMaterial() != nullptr)
                 {
-                    printf("type: %i\n", componentType);
                     _renderQueue->AddRenderer(renderer);
                 }
 

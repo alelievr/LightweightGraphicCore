@@ -67,7 +67,7 @@ namespace LWGC
 
 				return colorBlendAttachment;
 			}
-    
+
 			inline constexpr static VkPipelineColorBlendStateCreateInfo CreateColorBlendState(uint32_t blendAttachmentCount = 0, const VkPipelineColorBlendAttachmentState * blendAttachments = nullptr)
 			{
 				VkPipelineColorBlendStateCreateInfo colorBlendState = {};
@@ -134,7 +134,7 @@ namespace LWGC
 			inline static const VkPipelineDepthStencilStateCreateInfo	depthCompareNoWrite = CreateDepthState(VK_TRUE, VK_FALSE, VK_COMPARE_OP_LESS);
 
 			// color blend states
-			inline static const VkPipelineColorBlendStateCreateInfo		noColorBlendState = CreateColorBlendState(0, nullptr);
+			inline static const VkPipelineColorBlendStateCreateInfo		noColorBlendState = CreateColorBlendState(1, &noBlendAttachment); // we need at least one attachment for OSX
 			inline static const VkPipelineColorBlendStateCreateInfo		defaultColorBlendState = CreateColorBlendState(1, &defaultBlendAttachment);
 			inline static const VkPipelineColorBlendStateCreateInfo		additiveColorBlendState = CreateColorBlendState(1, &additiveBlendAttachment);
 
