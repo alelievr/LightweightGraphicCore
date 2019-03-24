@@ -9,6 +9,7 @@
 #include "Core/Textures/Texture2DArray.hpp"
 #include "Core/Rendering/RenderPipeline.hpp"
 #include "Core/Mesh.hpp"
+#include "Core/Vulkan/MaterialStates.hpp"
 #include "Core/Shaders/BuiltinShaders.hpp"
 #include "Core/Vulkan/SwapChain.hpp"
 #include "Core/Vulkan/RenderPass.hpp"
@@ -103,22 +104,9 @@ void					Material::SetupDefaultSettings(void)
 	_vertexInputState.pVertexBindingDescriptions = bindingDescription.data();
 	_vertexInputState.pVertexAttributeDescriptions = attributeDescriptions.data();
 
-	_inputAssemblyState = {};
-	_inputAssemblyState.sType = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO;
-	_inputAssemblyState.topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST;
-	_inputAssemblyState.primitiveRestartEnable = VK_FALSE;
+	_inputAssemblyState = MaterialState::triangleListState;
 
-	_depthStencilState = {};
-	_depthStencilState.sType = VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO;
-	_depthStencilState.depthTestEnable = VK_TRUE;
-	_depthStencilState.depthWriteEnable = VK_TRUE;
-	_depthStencilState.depthCompareOp = VK_COMPARE_OP_LESS;
-	_depthStencilState.depthBoundsTestEnable = VK_FALSE;
-	_depthStencilState.minDepthBounds = 0.0f; // Optional
-	_depthStencilState.maxDepthBounds = 1.0f; // Optional
-	_depthStencilState.stencilTestEnable = VK_FALSE;
-	_depthStencilState.front = {}; // Optional
-	_depthStencilState.back = {}; // Optional
+	_depthStencilState = MaterialState::depthCompareWrite;
 
 	_rasterizationState = {};
 	_rasterizationState.sType = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO;
@@ -130,20 +118,7 @@ void					Material::SetupDefaultSettings(void)
 	_rasterizationState.frontFace = VK_FRONT_FACE_CLOCKWISE;
 	_rasterizationState.depthBiasEnable = VK_FALSE;
 
-	VkPipelineColorBlendAttachmentState colorBlendAttachment = {};
-	colorBlendAttachment.colorWriteMask = VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT;
-	colorBlendAttachment.blendEnable = VK_FALSE;
-
-	_colorBlendState = {};
-	_colorBlendState.sType = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO;
-	_colorBlendState.logicOpEnable = VK_FALSE;
-	_colorBlendState.logicOp = VK_LOGIC_OP_COPY;
-	_colorBlendState.attachmentCount = 1;
-	_colorBlendState.pAttachments = &colorBlendAttachment;
-	_colorBlendState.blendConstants[0] = 0.0f;
-	_colorBlendState.blendConstants[1] = 0.0f;
-	_colorBlendState.blendConstants[2] = 0.0f;
-	_colorBlendState.blendConstants[3] = 0.0f;
+	_colorBlendState = MaterialState::noColorBlendState;
 
 	Application::Get()->_materialTable.RegsiterObject(this);
 }

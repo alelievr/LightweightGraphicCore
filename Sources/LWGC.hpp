@@ -27,6 +27,7 @@
 #include "Core/Textures/Texture3D.hpp"
 #include "Core/Vulkan/Material.hpp"
 #include "Core/Shaders/BuiltinShaders.hpp"
+#include "Core/Vulkan/MaterialStates.hpp"
 
 // App & core
 #include "Core/Application.hpp"
