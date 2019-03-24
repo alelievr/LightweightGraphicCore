@@ -10,9 +10,7 @@
 
 using namespace LWGC;
 
-VkDescriptorSetLayout Camera::_perCameraDescriptorSetLayout = VK_NULL_HANDLE;
-
-Camera::Camera(void) : _initDescriptorSetLayout(false)
+Camera::Camera(void)
 {
 	this->_target = new RenderTarget();
 	this->_viewportSize = glm::vec2(0, 0);
@@ -20,19 +18,11 @@ Camera::Camera(void) : _initDescriptorSetLayout(false)
 	this->_fov = 60;
 	this->_nearPlane = 0.1f;
 	this->_farPlane = 1e10;
-
-	if (_perCameraDescriptorSetLayout != VK_NULL_HANDLE)
-	{
-		_initDescriptorSetLayout = true;
-	}
 }
 
 Camera::~Camera(void)
 {
 	auto device = VulkanInstance::Get()->GetDevice();
-
-	if (_initDescriptorSetLayout)
-		vkDestroyDescriptorSetLayout(device, _perCameraDescriptorSetLayout, nullptr);
 
 	vkDestroyBuffer(device, _uniformCameraBuffer.buffer, nullptr);
 	vkFreeMemory(device, _uniformCameraBuffer.memory, nullptr);
@@ -77,9 +67,6 @@ void		Camera::Initialize(void) noexcept
 {
 	Component::Initialize();
 
-	if (_initDescriptorSetLayout == false)
-		CreateCameraDescriptorSetLayout();
-
 	Vk::CreateBuffer(
 		sizeof(LWGC_PerCamera),
 		VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
@@ -87,36 +74,8 @@ void		Camera::Initialize(void) noexcept
 		_uniformCameraBuffer.buffer,
 		_uniformCameraBuffer.memory
 	);
-
-	CreateDescriptorSet();
-}
-
-void					Camera::CreateDescriptorSet(void)
-{
-	VkDescriptorSetAllocateInfo allocInfo = {};
-	allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
-	allocInfo.descriptorPool = VulkanInstance::Get()->GetDescriptorPool();
-	allocInfo.descriptorSetCount = 1u;
-	allocInfo.pSetLayouts = &_perCameraDescriptorSetLayout;
-
-	if (vkAllocateDescriptorSets(device, &allocInfo, &_perCameraDescriptorSet) != VK_SUCCESS)
-		throw std::runtime_error("failed to allocate descriptor sets!");
-
-	VkDescriptorBufferInfo bufferInfo = {};
-	bufferInfo.buffer = _uniformCameraBuffer.buffer;
-	bufferInfo.offset = 0;
-	bufferInfo.range = sizeof(LWGC_PerCamera);
-
-	VkWriteDescriptorSet descriptorWrite = {};
-	descriptorWrite.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-	descriptorWrite.dstSet = _perCameraDescriptorSet;
-	descriptorWrite.dstBinding = 0;
-	descriptorWrite.dstArrayElement = 0;
-	descriptorWrite.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-	descriptorWrite.descriptorCount = 1;
-	descriptorWrite.pBufferInfo = &bufferInfo;
-
-	vkUpdateDescriptorSets(device, 1, &descriptorWrite, 0, nullptr);
+	
+	_perCameraSet.AddBinding(0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, _uniformCameraBuffer.buffer, sizeof(LWGC_PerCamera));
 }
 
 void					Camera::UpdateUniformData(void) noexcept
@@ -144,23 +103,9 @@ void					Camera::UpdateUniformData(void) noexcept
 	Vk::UploadToMemory(_uniformCameraBuffer.memory, &_perCamera, sizeof(_perCamera));
 }
 
-void					Camera::CreateCameraDescriptorSetLayout(void) noexcept
+VkDescriptorSet			Camera::GetDescriptorSet(void)
 {
-	auto binding = Vk::CreateDescriptorSetLayoutBinding(0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_ALL_GRAPHICS);
-	Vk::CreateDescriptorSetLayout({binding}, _perCameraDescriptorSetLayout);
-}
-
-VkDescriptorSet			Camera::GetDescriptorSet(void) const
-{
-	return _perCameraDescriptorSet;
-}
-
-VkDescriptorSetLayout	Camera::GetDescriptorSetLayout(void) noexcept
-{
-	if (_perCameraDescriptorSetLayout == VK_NULL_HANDLE)
-		CreateCameraDescriptorSetLayout();
-
-	return _perCameraDescriptorSetLayout;
+	return _perCameraSet.GetDescriptorSet();
 }
 
 uint32_t	Camera::GetType(void) const noexcept

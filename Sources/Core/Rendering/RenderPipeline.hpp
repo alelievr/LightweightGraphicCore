@@ -11,6 +11,7 @@
 #include "Core/Mesh.hpp"
 #include "Core/Vulkan/CommandBufferPool.hpp"
 #include "Core/Rendering/IRenderQueue.hpp"
+#include "Core/Vulkan/DescriptorSet.hpp"
 
 #include IMGUI_INCLUDE
 
@@ -40,8 +41,10 @@ namespace LWGC
 			CommandBufferPool *				mainCommandPool;
 			bool							framebufferResized;
 			Camera *						currentCamera;
-			VkDescriptorSet					perFrameDescriptorSet;
-			VkDescriptorSetLayout			perFrameDescriptorSetLayout;
+			DescriptorSet					perFrameSet;
+			// VkDescriptorSet					perFrameDescriptorSet;
+			// VkDescriptorSetLayout			perFrameDescriptorSetLayout;
+
 			UniformBuffer					_uniformPerFrame;
 
 			void				SetLastRenderPass(const RenderPass & renderPass);
@@ -68,8 +71,9 @@ namespace LWGC
 			bool							_initialized;
 
 			void				RenderInternal(const std::vector< Camera * > & cameras, RenderContext * context);
+			
 			void				UpdatePerframeUnformBuffer(void) noexcept;
-			void				CreatePerFrameDescriptorSet(void);
+			// void				CreatePerFrameDescriptorSet(void);
 
 		public:
 			RenderPipeline(void);

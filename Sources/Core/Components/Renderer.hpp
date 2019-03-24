@@ -8,6 +8,7 @@
 #include "Core/Vulkan/Material.hpp"
 #include "Core/Vulkan/UniformBuffer.hpp"
 #include "Component.hpp"
+#include "Core/Vulkan/DescriptorSet.hpp"
 
 namespace LWGC
 {
@@ -22,13 +23,7 @@ namespace LWGC
 			LWGC_PerObject		_perObject;
 			ComponentIndex		_renderContextIndex;
 			UniformBuffer		_uniformModelBuffer;
-			VkDescriptorSet		_descriptorSet;
-
-			static VkDescriptorSetLayout	_descriptorSetLayout;
-
-			static void		CreateGraphicDescriptorSetLayout(void) noexcept;
-
-			virtual void	CreateDescriptorSet(void);
+			DescriptorSet		_perRendererSet;
 
 		protected:
 

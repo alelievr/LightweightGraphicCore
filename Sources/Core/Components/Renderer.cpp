@@ -11,8 +11,6 @@
 
 using namespace LWGC;
 
-VkDescriptorSetLayout	Renderer::_descriptorSetLayout = VK_NULL_HANDLE;
-
 Renderer::Renderer(void)
 {
 	_material = Material::Create();
@@ -35,20 +33,6 @@ void		Renderer::Initialize(void) noexcept
 
 	_material->MarkAsReady();
 
-	if (_descriptorSetLayout == VK_NULL_HANDLE)
-		CreateGraphicDescriptorSetLayout();
-
-	CreateDescriptorSet();
-}
-
-void		Renderer::CreateGraphicDescriptorSetLayout(void) noexcept
-{
-	auto binding = Vk::CreateDescriptorSetLayoutBinding(0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_ALL_GRAPHICS);
-	Vk::CreateDescriptorSetLayout({binding}, _descriptorSetLayout);
-}
-
-void		Renderer::CreateDescriptorSet(void)
-{
 	Vk::CreateBuffer(
 		sizeof(LWGC_PerObject),
 		VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
@@ -57,31 +41,7 @@ void		Renderer::CreateDescriptorSet(void)
 		_uniformModelBuffer.memory
 	);
 
-	std::vector<VkDescriptorSetLayout> layouts(1, _descriptorSetLayout);
-	VkDescriptorSetAllocateInfo allocInfo = {};
-	allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
-	allocInfo.descriptorPool = VulkanInstance::Get()->GetDescriptorPool();
-	allocInfo.descriptorSetCount = 1u;
-	allocInfo.pSetLayouts = layouts.data();
-
-	if (vkAllocateDescriptorSets(device, &allocInfo, &_descriptorSet) != VK_SUCCESS)
-		throw std::runtime_error("failed to allocate descriptor sets!");
-
-	VkDescriptorBufferInfo bufferInfo = {};
-	bufferInfo.buffer = _uniformModelBuffer.buffer;
-	bufferInfo.offset = 0;
-	bufferInfo.range = sizeof(LWGC_PerObject);
-
-	VkWriteDescriptorSet descriptorWrite = {};
-	descriptorWrite.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-	descriptorWrite.dstSet = _descriptorSet;
-	descriptorWrite.dstBinding = 0;
-	descriptorWrite.dstArrayElement = 0;
-	descriptorWrite.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-	descriptorWrite.descriptorCount = 1;
-	descriptorWrite.pBufferInfo = &bufferInfo;
-
-	vkUpdateDescriptorSets(device, 1, &descriptorWrite, 0, nullptr);
+	_perRendererSet.AddBinding(0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, _uniformModelBuffer.buffer, sizeof(LWGC_PerObject));
 }
 
 void		Renderer::Update(void) noexcept
@@ -125,7 +85,7 @@ void		Renderer::RecordCommands(VkCommandBuffer cmd)
 Material *	Renderer::GetMaterial(void) { return (this->_material); }
 void						Renderer::SetMaterial(Material * tmp) { this->_material = tmp; }
 
-VkDescriptorSet				Renderer::GetDescriptorSet(void) { return _descriptorSet; }
+VkDescriptorSet				Renderer::GetDescriptorSet(void) { return _perRendererSet.GetDescriptorSet(); }
 
 std::ostream &	operator<<(std::ostream & o, Renderer const & r)
 {

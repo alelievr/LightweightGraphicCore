@@ -34,6 +34,23 @@ void					DescriptorSet::AddBinding(uint32_t index, Texture * texture, VkDescript
 	};
 }
 
+void					DescriptorSet::AddBinding(uint32_t index, VkDescriptorType descriptorType, VkBuffer buffer, VkDeviceSize range, VkDeviceSize offset)
+{
+	_layoutBinding.push_back(Vk::CreateDescriptorSetLayoutBinding(index, descriptorType, _stageFlags));
+
+	VkDescriptorBufferInfo bufferInfo = {};
+	bufferInfo.buffer = buffer;
+	bufferInfo.offset = offset;
+	bufferInfo.range = range;
+
+	_bindingInfos[index] = BindingInfo{
+		{},
+		bufferInfo,
+		{},
+		descriptorType
+	};
+}
+
 void					DescriptorSet::CreateBindings(void)
 {
 	VkDevice device = VulkanInstance::Get()->GetDevice();

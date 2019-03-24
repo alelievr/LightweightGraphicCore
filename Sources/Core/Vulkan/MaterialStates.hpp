@@ -67,14 +67,15 @@ namespace LWGC
 
 				return colorBlendAttachment;
 			}
-			inline constexpr static VkPipelineColorBlendStateCreateInfo CreateColorBlendState(uint32_t blendAttachmentCount = 0, const std::vector< VkPipelineColorBlendAttachmentState > & blendAttachments = {})
+    
+			inline constexpr static VkPipelineColorBlendStateCreateInfo CreateColorBlendState(uint32_t blendAttachmentCount = 0, const VkPipelineColorBlendAttachmentState * blendAttachments = nullptr)
 			{
 				VkPipelineColorBlendStateCreateInfo colorBlendState = {};
 				colorBlendState.sType = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO;
 				colorBlendState.logicOpEnable = VK_FALSE;
 				colorBlendState.logicOp = VK_LOGIC_OP_COPY;
 				colorBlendState.attachmentCount = blendAttachmentCount;
-				colorBlendState.pAttachments = blendAttachments.data();
+				colorBlendState.pAttachments = blendAttachments;
 				colorBlendState.blendConstants[0] = 0.0f;
 				colorBlendState.blendConstants[1] = 0.0f;
 				colorBlendState.blendConstants[2] = 0.0f;
@@ -133,9 +134,9 @@ namespace LWGC
 			inline static const VkPipelineDepthStencilStateCreateInfo	depthCompareNoWrite = CreateDepthState(VK_TRUE, VK_FALSE, VK_COMPARE_OP_LESS);
 
 			// color blend states
-			inline static const VkPipelineColorBlendStateCreateInfo		noColorBlendState = CreateColorBlendState(0, {});
-			inline static const VkPipelineColorBlendStateCreateInfo		defaultColorBlendState = CreateColorBlendState(1, {defaultBlendAttachment});
-			inline static const VkPipelineColorBlendStateCreateInfo		additiveColorBlendState = CreateColorBlendState(1, {additiveBlendAttachment});
+			inline static const VkPipelineColorBlendStateCreateInfo		noColorBlendState = CreateColorBlendState(0, nullptr);
+			inline static const VkPipelineColorBlendStateCreateInfo		defaultColorBlendState = CreateColorBlendState(1, &defaultBlendAttachment);
+			inline static const VkPipelineColorBlendStateCreateInfo		additiveColorBlendState = CreateColorBlendState(1, &additiveBlendAttachment);
 
 			// input assembly states
 			inline static const VkPipelineInputAssemblyStateCreateInfo	triangleListState = CreateInputAssemblyState(VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST, false);

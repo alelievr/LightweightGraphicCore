@@ -551,7 +551,7 @@ void				Material::SetInputAssemblyState(VkPipelineInputAssemblyStateCreateInfo i
 void				Material::SetDepthStencilState(VkPipelineDepthStencilStateCreateInfo info) { _depthStencilState = info; }
 void				Material::SetRasterizationState(VkPipelineRasterizationStateCreateInfo info) { _rasterizationState = info; }
 void				Material::SetColorBlendState(VkPipelineColorBlendStateCreateInfo info) { _colorBlendState = info; }
-bool				Material::IsTransparent(void) const noexcept { return _colorBlendState.pAttachments->blendEnable; }
+bool				Material::IsTransparent(void) const noexcept { return _colorBlendState.pAttachments != nullptr && _colorBlendState.pAttachments->blendEnable; }
 
 bool				Material::IsReady(void) const noexcept { return _isReady; }
 

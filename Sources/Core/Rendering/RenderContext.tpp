@@ -79,8 +79,9 @@ namespace LWGC
             {
                 Renderer * renderer = dynamic_cast< Renderer * >(component);
 
-                if (renderer != nullptr)
+                if (renderer != nullptr && renderer->GetMaterial() != nullptr)
                 {
+                    printf("type: %i\n", componentType);
                     _renderQueue->AddRenderer(renderer);
                 }
 
