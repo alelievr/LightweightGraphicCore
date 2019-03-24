@@ -48,6 +48,8 @@ namespace LWGC
 			void			RemoveComponent(Component * component) noexcept;
 			Component *		GetComponent(void) noexcept;
 
+			GameObject *	AddChild(GameObject * child) noexcept;
+
 			void			SetActive(bool active);
 			bool			IsActive(void) const;
 	};

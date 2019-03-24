@@ -102,6 +102,12 @@ bool			GameObject::IsActive(void) const
 	return true;
 }
 
+GameObject *	GameObject::AddChild(GameObject * child) noexcept
+{
+	transform->AddChild(child->transform);
+	return child;
+}
+
 std::ostream &	operator<<(std::ostream & o, GameObject const & r)
 {
 	o << "tostring of the class" << std::endl;

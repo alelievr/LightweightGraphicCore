@@ -24,6 +24,7 @@ namespace LWGC
 			MeshRenderer(void) = delete;
 			MeshRenderer(const MeshRenderer &) = delete;
 			MeshRenderer(const PrimitiveType prim, Material * material);
+			MeshRenderer(Mesh * mesh, Material * material);
 			// TODO: the primitiveType constructor must be into Mesh.cpp
 			// TODO: Add a constructor with a mesh and a material
 			MeshRenderer(const PrimitiveType primitiveType);

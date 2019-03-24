@@ -171,6 +171,8 @@ void			Transform::UpdateLocalToWorldMatrix(void) noexcept
 
 void			Transform::SetParent(Transform * tmp)
 {
+	_parent->RemoveChild(this);
+
 	this->_parent = tmp;
 
 	tmp->_childs.push_back(this);
@@ -206,6 +208,16 @@ glm::vec4		Transform::GetParentForward(void) const noexcept
 	if (_parent != nullptr)
 		return glm::vec4(_parent->GetForward(), 0);
 	return glm::vec4(0, 0, 1, 0);
+}
+
+void			Transform::AddChild(Transform * child)
+{
+	_childs.push_back(child);
+}
+
+void			Transform::RemoveChild(Transform * child)
+{
+	_childs.erase(std::remove(_childs.begin(), _childs.end(), child), _childs.end());
 }
 
 // homogenous coords for directions

@@ -42,8 +42,6 @@ namespace LWGC
 			bool							framebufferResized;
 			Camera *						currentCamera;
 			DescriptorSet					perFrameSet;
-			// VkDescriptorSet					perFrameDescriptorSet;
-			// VkDescriptorSetLayout			perFrameDescriptorSetLayout;
 
 			UniformBuffer					_uniformPerFrame;
 
@@ -71,9 +69,8 @@ namespace LWGC
 			bool							_initialized;
 
 			void				RenderInternal(const std::vector< Camera * > & cameras, RenderContext * context);
-			
+
 			void				UpdatePerframeUnformBuffer(void) noexcept;
-			// void				CreatePerFrameDescriptorSet(void);
 
 		public:
 			RenderPipeline(void);

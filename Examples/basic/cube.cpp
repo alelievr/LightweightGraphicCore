@@ -64,6 +64,9 @@ int			main(void)
 	hierarchy->AddGameObject(cube2);
 	hierarchy->AddGameObject(cam);
 
+	// auto model = ModelLoader::Load(@"Models/Heavy_FullMetal_Sword/Heavy Full Metal Sword.fbx");
+	// hierarchy->AddGameObject(model);
+
 	textureMaterial->SetTexture(TextureBinding::Albedo, atlas, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE);
 	textureMaterial->SetBuffer("sizeOffsets", atlas->GetSizeOffsetBuffer(), atlas->GetSizeOffsetBufferSize(), VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER);
 	// textureMaterial->SetBuffer("atlasSize", atlas->GetAtlasSizeBuffer(), atlas->GetAtlasSizeBufferSize(), VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER);

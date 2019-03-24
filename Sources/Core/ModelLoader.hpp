@@ -4,16 +4,17 @@
 #include <string>
 
 #include "IncludeDeps.hpp"
+#include "Core/Mesh.hpp"
+#include "Core/Textures/Texture.hpp"
+#include "Core/Vulkan/Material.hpp"
 
 #include "Core/GameObject.hpp"
-#include ASSIMP_SCENE_INCLUDE
 
 namespace LWGC
 {
 	class		ModelLoader
 	{
 		private:
-			static GameObject *	SceneToGameObject(const aiScene * scene);
 
 		public:
 			ModelLoader(void) = delete;

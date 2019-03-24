@@ -54,8 +54,6 @@ void                RenderPipeline::Initialize(SwapChain * swapChain)
 
 	perFrameSet.AddBinding(0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, _uniformPerFrame.buffer, sizeof(LWGC_PerFrame));
 
-	// CreatePerFrameDescriptorSet();
-
 	// InitializeHandles();
 
 	_initialized = true;
@@ -67,37 +65,6 @@ void				RenderPipeline::InitializeHandles(void) noexcept
 	Tools::Initialize();
 	HandleManager::Initialize();
 }
-
-// void				RenderPipeline::CreatePerFrameDescriptorSet(void)
-// {
-// 	auto layoutBinding = Vk::CreateDescriptorSetLayoutBinding(0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_ALL);
-// 	Vk::CreateDescriptorSetLayout({layoutBinding}, perFrameDescriptorSetLayout);
-
-// 	VkDescriptorSetAllocateInfo allocInfo = {};
-// 	allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
-// 	allocInfo.descriptorPool = instance->GetDescriptorPool();
-// 	allocInfo.descriptorSetCount = 1u;
-// 	allocInfo.pSetLayouts = &perFrameDescriptorSetLayout; // First layout set is per frame cbuffer
-
-// 	if (vkAllocateDescriptorSets(device, &allocInfo, &perFrameDescriptorSet) != VK_SUCCESS)
-// 		throw std::runtime_error("failed to allocate descriptor sets!");
-
-// 	VkDescriptorBufferInfo bufferInfo = {};
-// 	bufferInfo.buffer = _uniformPerFrame.buffer;
-// 	bufferInfo.offset = 0;
-// 	bufferInfo.range = sizeof(LWGC_PerFrame);
-
-// 	VkWriteDescriptorSet descriptorWrite = {};
-// 	descriptorWrite.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-// 	descriptorWrite.dstSet = perFrameDescriptorSet;
-// 	descriptorWrite.dstBinding = 0;
-// 	descriptorWrite.dstArrayElement = 0;
-// 	descriptorWrite.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-// 	descriptorWrite.descriptorCount = 1;
-// 	descriptorWrite.pBufferInfo = &bufferInfo;
-
-// 	vkUpdateDescriptorSets(device, 1, &descriptorWrite, 0, nullptr);
-// }
 
 void				RenderPipeline::CreateRenderPass(void)
 {
