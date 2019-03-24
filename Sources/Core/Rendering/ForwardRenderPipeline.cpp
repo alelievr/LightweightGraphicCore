@@ -98,14 +98,14 @@ void	ForwardRenderPipeline::Render(const std::vector< Camera * > & cameras, Rend
 	// Process the compute shader before everything:
 	computePass.Begin(cmd, VK_NULL_HANDLE, "All Computes");
 	{
-		computePass.BindDescriptorSet(LWGCBinding::Frame, perFrameDescriptorSet);
+		computePass.BindDescriptorSet(LWGCBinding::Frame, perFrameSet.GetDescriptorSet());
 		RenderPipeline::RecordAllComputeDispatches(computePass, context);
 	}
 	computePass.End();
 
 	forwardPass.Begin(cmd, GetCurrentFrameBuffer(), "All Cameras");
 	{
-		forwardPass.BindDescriptorSet(LWGCBinding::Frame, perFrameDescriptorSet);
+		forwardPass.BindDescriptorSet(LWGCBinding::Frame, perFrameSet.GetDescriptorSet());
 		forwardPass.BindDescriptorSet("asyncTexture", asyncComputeSet);
 		for (const auto camera : cameras)
 		{

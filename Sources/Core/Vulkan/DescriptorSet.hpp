@@ -43,6 +43,7 @@ namespace LWGC
 			void					SetStage(VkShaderStageFlagBits stageFlags);
 
 			void					AddBinding(uint32_t index, Texture * texture, VkDescriptorType descriptorType);
+			void					AddBinding(uint32_t index, VkDescriptorType descriptorType, VkBuffer buffer, VkDeviceSize range, VkDeviceSize offset = 0);
 			// TODO: bindings for buffers, samplers and texel buffers
 
 			// TODO: function to change the values within the descriptor sets

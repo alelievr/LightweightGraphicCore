@@ -9,6 +9,7 @@
 #include "Core/CameraType.hpp"
 #include "Core/GameObject.hpp"
 #include "Core/Vulkan/SwapChain.hpp"
+#include "Core/Vulkan/DescriptorSet.hpp"
 
 namespace LWGC
 {
@@ -30,15 +31,9 @@ namespace LWGC
 			float					_nearPlane;
 			float					_farPlane;
 			UniformBuffer			_uniformCameraBuffer;
-			VkDescriptorSet			_perCameraDescriptorSet;
-			bool					_initDescriptorSetLayout;
 			LWGC_PerCamera			_perCamera;
+			DescriptorSet			_perCameraSet;
 
-			static VkDescriptorSetLayout	_perCameraDescriptorSetLayout;
-
-			static void						CreateCameraDescriptorSetLayout(void) noexcept;
-			static VkDescriptorSetLayout	GetDescriptorSetLayout(void) noexcept;
-			void							CreateDescriptorSet(void);
 			void							UpdateUniformData(void) noexcept;
 			virtual void					Update(void) noexcept override;
 
@@ -78,7 +73,7 @@ namespace LWGC
 			glm::mat4	GetViewMatrix(void) const;
 			glm::mat4	GetProjectionMatrix(void) const;
 
-			VkDescriptorSet		GetDescriptorSet(void) const;
+			VkDescriptorSet		GetDescriptorSet(void);
 
 			virtual uint32_t	GetType(void) const noexcept override;
 

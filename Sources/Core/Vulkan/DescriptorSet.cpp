@@ -6,6 +6,7 @@ DescriptorSet::DescriptorSet(void) :
 	_descriptorSetLayout(VK_NULL_HANDLE), _descriptorSet(VK_NULL_HANDLE),
 	_created(false), _stageFlags(VK_SHADER_STAGE_ALL)
 {
+
 }
 
 DescriptorSet::~DescriptorSet(void)
@@ -29,6 +30,23 @@ void					DescriptorSet::AddBinding(uint32_t index, Texture * texture, VkDescript
 	_bindingInfos[index] = BindingInfo{
 		imageInfo,
 		{},
+		{},
+		descriptorType
+	};
+}
+
+void					DescriptorSet::AddBinding(uint32_t index, VkDescriptorType descriptorType, VkBuffer buffer, VkDeviceSize range, VkDeviceSize offset)
+{
+	_layoutBinding.push_back(Vk::CreateDescriptorSetLayoutBinding(index, descriptorType, _stageFlags));
+
+	VkDescriptorBufferInfo bufferInfo = {};
+	bufferInfo.buffer = buffer;
+	bufferInfo.offset = offset;
+	bufferInfo.range = range;
+
+	_bindingInfos[index] = BindingInfo{
+		{},
+		bufferInfo,
 		{},
 		descriptorType
 	};
