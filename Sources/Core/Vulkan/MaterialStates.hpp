@@ -67,7 +67,7 @@ namespace LWGC
 
 				return colorBlendAttachment;
 			}
-			
+    
 			inline constexpr static VkPipelineColorBlendStateCreateInfo CreateColorBlendState(uint32_t blendAttachmentCount = 0, const VkPipelineColorBlendAttachmentState * blendAttachments = nullptr)
 			{
 				VkPipelineColorBlendStateCreateInfo colorBlendState = {};

@@ -66,6 +66,7 @@ SOURCES		=	Core/Application.cpp \
 				Core/Vulkan/ProfilingSample.cpp \
 				Core/Vulkan/ComputeShader.cpp \
 				Core/Vulkan/DescriptorSet.cpp \
+				Core/Vulkan/MaterialStates.cpp \
 				Core/Textures/Texture.cpp \
 				Core/Textures/Texture2D.cpp \
 				Core/Textures/Texture2DArray.cpp \
