@@ -17,46 +17,8 @@ Material *	CreateTransparentMaterial(void)
 {
 	auto mat = Material::Create("Shaders/Debug/TextureAtlas.hlsl");
 
-	static VkPipelineColorBlendAttachmentState colorBlendAttachment = {};
-	colorBlendAttachment.colorWriteMask = VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT;
-	colorBlendAttachment.blendEnable = VK_TRUE;
-	// colorBlendAttachment.srcColorBlendFactor = VK_BLEND_FACTOR_SRC_ALPHA;
-	// colorBlendAttachment.dstColorBlendFactor = VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA;
-
-	// Additive:
-	colorBlendAttachment.srcColorBlendFactor = VK_BLEND_FACTOR_ONE;
-	colorBlendAttachment.dstColorBlendFactor = VK_BLEND_FACTOR_ONE;
-
-	colorBlendAttachment.colorBlendOp = VK_BLEND_OP_ADD;
-	colorBlendAttachment.srcAlphaBlendFactor = VK_BLEND_FACTOR_ONE;
-	colorBlendAttachment.dstAlphaBlendFactor = VK_BLEND_FACTOR_ZERO;
-	colorBlendAttachment.alphaBlendOp = VK_BLEND_OP_ADD;
-
-	static VkPipelineColorBlendStateCreateInfo colorBlendState = {};
-	colorBlendState.sType = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO;
-	colorBlendState.logicOpEnable = VK_FALSE;
-	colorBlendState.logicOp = VK_LOGIC_OP_COPY;
-	colorBlendState.attachmentCount = 1;
-	colorBlendState.pAttachments = &colorBlendAttachment;
-	colorBlendState.blendConstants[0] = 0.0f;
-	colorBlendState.blendConstants[1] = 0.0f;
-	colorBlendState.blendConstants[2] = 0.0f;
-	colorBlendState.blendConstants[3] = 0.0f;
-
-	VkPipelineDepthStencilStateCreateInfo depthStencilState = {};
-	depthStencilState.sType = VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO;
-	depthStencilState.depthTestEnable = VK_TRUE;
-	depthStencilState.depthWriteEnable = VK_FALSE;
-	depthStencilState.depthCompareOp = VK_COMPARE_OP_LESS;
-	depthStencilState.depthBoundsTestEnable = VK_FALSE;
-	depthStencilState.minDepthBounds = 0.0f; // Optional
-	depthStencilState.maxDepthBounds = 1.0f; // Optional
-	depthStencilState.stencilTestEnable = VK_FALSE;
-	depthStencilState.front = {}; // Optional
-	depthStencilState.back = {}; // Optional
-
-	mat->SetColorBlendState(colorBlendState);
-	mat->SetDepthStencilState(depthStencilState);
+	mat->SetColorBlendState(MaterialState::defaultColorBlendState);
+	mat->SetDepthStencilState(MaterialState::depthCompareNoWrite);
 
 	return mat;
 }

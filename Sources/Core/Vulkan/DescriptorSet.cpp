@@ -6,7 +6,6 @@ DescriptorSet::DescriptorSet(void) :
 	_descriptorSetLayout(VK_NULL_HANDLE), _descriptorSet(VK_NULL_HANDLE),
 	_created(false), _stageFlags(VK_SHADER_STAGE_ALL)
 {
-
 }
 
 DescriptorSet::~DescriptorSet(void)
