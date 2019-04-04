@@ -67,13 +67,13 @@ void	Texture2DAtlas::UploadAtlasDatas(void)
 {
 	Vk::CreateBuffer(
 		GetSizeOffsetBufferSize(),
-		VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
+		VK_BUFFER_USAGE_STORAGE_BUFFER_BIT, // StructuredBuffer are always in storage mode
 		VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
 		this->_sizeOffsetsBuffer,
 		this->_sizeOffsetsMemory
 	);
 
-	// this->_sizeOffsetBufferView = Vk::CreateBufferView(this->_sizeOffsetsBuffer, VK_FORMAT_R32G32B32A32_SFLOAT);
+	// this->_sizeOffsetBufferView = Vk::CreateBufferView(this->_sizeOffsetsBuffer, VK_FORMAT_R32G32B32A32_SFLOAT); // Not supported on Metal 1
 	Vk::UploadToMemory(_sizeOffsetsMemory, _sizeOffsets.data(), GetSizeOffsetBufferSize());
 	Vk::UploadToMemory(_atlasSizeMemory, &_atlasSize, GetAtlasSizeBufferSize());
 	std::cout << _atlasSize << std::endl;

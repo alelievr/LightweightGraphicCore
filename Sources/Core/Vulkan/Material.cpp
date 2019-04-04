@@ -62,7 +62,7 @@ Material::~Material(void)
 
 	vkDeviceWaitIdle(_instance->GetDevice());
 
-	CleanupPipeline();
+	CleanupPipelineAndLayout();
 
 	vkDestroyBuffer(_device, _uniformPerMaterial.buffer, nullptr);
 	vkFreeMemory(_device, _uniformPerMaterial.memory, nullptr);
@@ -175,12 +175,6 @@ void					Material::BindMaterialProperties(void) noexcept
 	}
 }
 
-void					Material::CleanupPipeline(void) noexcept
-{
-	vkDestroyPipeline(_device, _pipeline, nullptr);
-	vkDestroyPipelineLayout(_device, _pipelineLayout, nullptr);
-}
-
 void					Material::CompileShaders(void)
 {
 	try {
@@ -201,6 +195,12 @@ void					Material::CompileShaders(void)
 	// Retreive set layout of the shader program:
 	_bindingTable = _program->GetShaderBindingTable();
 	_setLayouts = _bindingTable->GetDescriptorSetLayouts();
+}
+
+void					Material::CleanupPipelineAndLayout(void) noexcept
+{
+	vkDestroyPipeline(_device, _pipeline, nullptr);
+	vkDestroyPipelineLayout(_device, _pipelineLayout, nullptr);
 }
 
 void					Material::CreatePipelineLayout(void)
@@ -277,6 +277,7 @@ void					Material::CreateGraphicPipeline(void)
 	pipelineInfo.subpass = 0;
 	pipelineInfo.basePipelineHandle = VK_NULL_HANDLE;
 	pipelineInfo.pDepthStencilState = &_depthStencilState;
+	printf("Pipeline layout: %p - %s\n", _pipelineLayout, _program->GetName().c_str());
 
 	if (vkCreateGraphicsPipelines(_device, VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &_pipeline) != VK_SUCCESS)
 		throw std::runtime_error("failed to create graphics pipeline!");

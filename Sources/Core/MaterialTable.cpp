@@ -61,7 +61,8 @@ void	MaterialTable::RecreateAll(void)
 {
 	for (auto material : _objects)
 	{
-		material->CleanupPipeline();
+		material->CleanupPipelineAndLayout();
+		material->CreatePipelineLayout();
 		material->CreatePipeline();
 	}
 }

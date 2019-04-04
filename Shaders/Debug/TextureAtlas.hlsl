@@ -18,7 +18,7 @@ struct Atlas
 };
 
 [vk::binding(0, 4)]
-StructuredBuffer< SizeOffset >	sizeOffsets;
+StructuredBuffer< SizeOffset >	sizeOffsets; // Metal 1 does not support Buffer<>
 [vk::binding(1, 4)]
 ConstantBuffer< Atlas >	atlas;
 

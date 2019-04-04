@@ -169,37 +169,33 @@ void		ShaderSource::GenerateBindingTable(ShaderBindingTable & bindingTable)
 	for (auto & resource : resources.uniform_buffers)
 		addBinding(resource, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER);
 
-	// SRVs
-	for (auto & resource : resources.separate_images)
-		addBinding(resource, VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE);
-
-	// UAVs
-	for (auto & resource : resources.storage_images)
-		addBinding(resource, VK_DESCRIPTOR_TYPE_STORAGE_IMAGE);
-
 	// Samplers
 	for (auto & resource : resources.separate_samplers)
 		addBinding(resource, VK_DESCRIPTOR_TYPE_SAMPLER);
 
-	// Buffers read-only
-	for (auto & resource : resources.storage_buffers)
+	for (auto & resource : resources.separate_images)
 	{
 		const spirv_cross::SPIRType & type = reflection->get_type(resource.type_id);
-		if (type.image.dim == spv::Dim::DimBuffer)
+		if (type.image.dim == spv::Dim::DimBuffer) // Buffer<>
 			addBinding(resource, VK_DESCRIPTOR_TYPE_UNIFORM_TEXEL_BUFFER);
+		else // SRVs
+			addBinding(resource, VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE);
 	}
 
-	// Buffers RW
-	for (auto & resource : resources.storage_buffers)
+	for (auto & resource : resources.storage_images)
 	{
 		const spirv_cross::SPIRType & type = reflection->get_type(resource.type_id);
-		if (type.image.dim == spv::Dim::DimBuffer)
+		if (type.image.dim == spv::Dim::DimBuffer) // RWBuffer<>
 			addBinding(resource, VK_DESCRIPTOR_TYPE_STORAGE_TEXEL_BUFFER);
+		else // RWTexture<> UVAs
+			addBinding(resource, VK_DESCRIPTOR_TYPE_STORAGE_IMAGE);
 	}
 
 	// StructedBuffers RW and read-only
 	for (auto & resource : resources.storage_buffers)
+	{
 		addBinding(resource, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER);
+	}
 
 	delete reflection;
 }

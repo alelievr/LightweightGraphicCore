@@ -35,7 +35,7 @@ int			main(void)
 	app.Init();
 
 	// We must Open the window before doing anything related to vulkan
-	app.Open("Test Window", 2560, 1440, WindowFlag::Resizable | WindowFlag::Decorated | WindowFlag::Focused);
+	app.Open("Test Window", 1920, 1200, WindowFlag::Resizable | WindowFlag::Decorated | WindowFlag::Focused);
 
 	auto textureMaterial = CreateTransparentMaterial(); //Material::Create("Shaders/Debug/TextureAtlas.hlsl");
 
@@ -68,8 +68,9 @@ int			main(void)
 	// hierarchy->AddGameObject(model);
 
 	textureMaterial->SetTexture(TextureBinding::Albedo, atlas, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE);
-	textureMaterial->SetBuffer("sizeOffsets", atlas->GetSizeOffsetBuffer(), atlas->GetSizeOffsetBufferSize(), VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER);
-	// textureMaterial->SetBuffer("atlasSize", atlas->GetAtlasSizeBuffer(), atlas->GetAtlasSizeBufferSize(), VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER);
+	textureMaterial->SetBuffer("sizeOffsets", atlas->GetSizeOffsetBuffer(), atlas->GetSizeOffsetBufferSize(), VK_DESCRIPTOR_TYPE_STORAGE_BUFFER); // StructuredBuffer are always storage buffers even when not RW
+	// Not supported on Metal 1 (lol)
+	// textureMaterial->SetTexelBuffer("atlasSize", atlas->GetAtlasSizeBuffer(), atlas->GetAtlasSizeBufferSize(), VK_DESCRIPTOR_TYPE_UNIFORM_TEXEL_BUFFER);
 
 	ProcessEvent(es, app);
 	atlas->Clear();

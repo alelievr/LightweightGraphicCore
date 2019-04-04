@@ -27,7 +27,9 @@ ShaderProgram::~ShaderProgram(void)
 void		ShaderProgram::CompileAndLink(void)
 {
 	// Temporary workaround to be able to bind frame in compute shaders
-	_bindingTable.SetStage(IsCompute() ? VK_SHADER_STAGE_ALL : VK_SHADER_STAGE_ALL_GRAPHICS);
+	// TODO: We don't know how the layout will be bound: compute or graphic stages ?
+	// See this when we will refactor the pipeline layout
+	_bindingTable.SetStage(IsCompute() ? VK_SHADER_STAGE_ALL : VK_SHADER_STAGE_ALL);
 	if (!_isUpdateBound)
 	{
 		_updateIndex = Application::update.AddListener(std::bind(&ShaderProgram::Update, this));

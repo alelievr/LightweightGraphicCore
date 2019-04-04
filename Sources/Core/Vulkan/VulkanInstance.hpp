@@ -75,7 +75,7 @@ namespace LWGC
 			void		CreateInstance(void);
 			void		CreateLogicalDevice(void);
 			void		CreateCommandBufferPools(void) noexcept;
-			void		CreateDescriptorPool(void) noexcept;
+			void		CreateDescriptorPool(void);
 			std::vector<const char *>	GetRequiredExtensions(void) noexcept;
 			DeviceCapability	GetDeviceCapability(VkPhysicalDevice physicalDevice) noexcept;
 

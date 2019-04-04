@@ -101,13 +101,13 @@ void			VulkanInstance::InitializeSurface(VkSurfaceKHR surface)
 	printf("Max bindings: %i\n", props.limits.maxVertexInputBindings);
 }
 
-void			VulkanInstance::CreateDescriptorPool(void) noexcept
+void			VulkanInstance::CreateDescriptorPool(void)
 {
 	if (_descriptorPool != VK_NULL_HANDLE)
 		return ;
 
 	// TODO: refactor this
-	std::array<VkDescriptorPoolSize, 7> poolSizes = {};
+	std::array<VkDescriptorPoolSize, 8> poolSizes = {};
 	poolSizes[0].type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
 	poolSizes[0].descriptorCount = 1000u;
 	poolSizes[1].type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC;
@@ -122,12 +122,14 @@ void			VulkanInstance::CreateDescriptorPool(void) noexcept
 	poolSizes[5].descriptorCount = 10u;
 	poolSizes[6].type = VK_DESCRIPTOR_TYPE_STORAGE_TEXEL_BUFFER;
 	poolSizes[6].descriptorCount = 10u;
+	poolSizes[7].type = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
+	poolSizes[7].descriptorCount = 10u;
 
 	VkDescriptorPoolCreateInfo poolInfo = {};
 	poolInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
 	poolInfo.poolSizeCount = static_cast<uint32_t>(poolSizes.size());
 	poolInfo.pPoolSizes = poolSizes.data();
-	poolInfo.maxSets = 1032u;
+	poolInfo.maxSets = 2000u;
 
 	if (vkCreateDescriptorPool(_device, &poolInfo, nullptr, &_descriptorPool) != VK_SUCCESS)
 	    throw std::runtime_error("failed to create descriptor pool!");
@@ -149,7 +151,7 @@ void			VulkanInstance::CreateInstance(void)
 	appInfo.applicationVersion = VK_MAKE_VERSION(1, 0, 0);
 	appInfo.pEngineName = "LWGC";
 	appInfo.engineVersion = VK_MAKE_VERSION(1, 0, 0);
-	appInfo.apiVersion = VK_API_VERSION_1_0;
+	appInfo.apiVersion = VK_API_VERSION_1_1;
 
 	VkInstanceCreateInfo createInfo = {};
 	createInfo.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
@@ -223,6 +225,12 @@ DeviceCapability			VulkanInstance::GetDeviceCapability(VkPhysicalDevice physical
 
 	VkPhysicalDeviceProperties	properties;
 	vkGetPhysicalDeviceProperties(physicalDevice, &properties);
+
+	std::cout << "Using Vulkan API " << VK_VERSION_MAJOR(properties.apiVersion)
+		<< "." << VK_VERSION_MINOR(properties.apiVersion) << "." << VK_VERSION_PATCH(properties.apiVersion)
+		<< ", driver: " << VK_VERSION_MAJOR(properties.driverVersion) << "."
+		<< VK_VERSION_MINOR(properties.driverVersion) << "." << VK_VERSION_PATCH(properties.driverVersion)
+		<< "." << std::endl;
 
 	capability.deviceName = properties.deviceName;
 
@@ -474,11 +482,13 @@ std::vector< std::string >	VulkanInstance::AreExtensionsSupportedForPhysicalDevi
 	std::vector< std::string > enabledExtensions;
 
 	for (const auto & extension : availableExtensions)
+	{
 		if (requestedExtensions.find(extension.extensionName) != requestedExtensions.end())
 		{
 			enabledExtensions.push_back(extension.extensionName);
 			requestedExtensions.erase(extension.extensionName);
 		}
+	}
 
 	if (requestedExtensions.size() != 0)
 	{

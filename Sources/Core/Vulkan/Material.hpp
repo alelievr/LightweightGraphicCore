@@ -115,7 +115,6 @@ namespace LWGC
 
 			void		CreateTextureSampler(void);
 			void		CreateUniformBuffer(void);
-			void		CreatePipelineLayout(void);
 			void		CompileShaders(void);
 			void		CreateGraphicPipeline(void);
 			void		CreateComputePipeline(void);
@@ -137,10 +136,11 @@ namespace LWGC
 			static Material	*Create(const std::string & fragmentShader, const std::string & vertexShader = BuiltinShaders::DefaultVertex);
 
 			void	Initialize(SwapChain * swapchain, RenderPass * renderPass);
-			void	CleanupPipeline(void) noexcept;
+			void	CleanupPipelineAndLayout(void) noexcept;
 			void	CreatePipeline(void);
 			void	UpdateUniformBuffer(void);
 			void	MarkAsReady(void) noexcept;
+			void	CreatePipelineLayout(void);
 
 			VkPipeline			GetPipeline(void) const;
 			ShaderProgram *		GetShaderProgram(void) const;

@@ -43,6 +43,7 @@ Deps/vulkansdk-macos-1.1.101.0/
 
 # Others
 *.ini
+*.vscode/
 
 # Build folders
 [Bb]uild/

@@ -96,12 +96,12 @@ void	ForwardRenderPipeline::Render(const std::vector< Camera * > & cameras, Rend
 	asyncComputePool.EndSingle(asyncCmd); // fence
 
 	// Process the compute shader before everything:
-	computePass.Begin(cmd, VK_NULL_HANDLE, "All Computes");
-	{
-		computePass.BindDescriptorSet(LWGCBinding::Frame, perFrameSet.GetDescriptorSet());
-		RenderPipeline::RecordAllComputeDispatches(computePass, context);
-	}
-	computePass.End();
+	// computePass.Begin(cmd, VK_NULL_HANDLE, "All Computes");
+	// {
+	// 	computePass.BindDescriptorSet(LWGCBinding::Frame, perFrameSet.GetDescriptorSet());
+	// 	RenderPipeline::RecordAllComputeDispatches(computePass, context);
+	// }
+	// computePass.End();
 
 	forwardPass.Begin(cmd, GetCurrentFrameBuffer(), "All Cameras");
 	{
