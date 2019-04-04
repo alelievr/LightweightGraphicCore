@@ -277,7 +277,6 @@ void					Material::CreateGraphicPipeline(void)
 	pipelineInfo.subpass = 0;
 	pipelineInfo.basePipelineHandle = VK_NULL_HANDLE;
 	pipelineInfo.pDepthStencilState = &_depthStencilState;
-	printf("Pipeline layout: %p - %s\n", _pipelineLayout, _program->GetName().c_str());
 
 	if (vkCreateGraphicsPipelines(_device, VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &_pipeline) != VK_SUCCESS)
 		throw std::runtime_error("failed to create graphics pipeline!");

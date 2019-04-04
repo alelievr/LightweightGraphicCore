@@ -353,7 +353,7 @@ void			Vk::SetDebugName(const std::string & name, uint64_t vulkanObject, VkDebug
 	nameInfo.object = vulkanObject;
 	nameInfo.pObjectName = name.c_str();
 
-	Vk::CheckResult(VkExt::DebugMarkerSetObjectNameFunction(device, &nameInfo), "Failed to set debug marker on object " + name);
+	Vk::CheckResult(vkDebugMarkerSetObjectNameEXT(device, &nameInfo), "Failed to set debug marker on object " + name);
 }
 
 // Utils functions to directly set vulkan objects without specifying the debug object type:
@@ -399,7 +399,7 @@ void			Vk::BeginProfilingSample(VkCommandBuffer cmd, const std::string & debugSa
 
 	printf("ptr: %s\n", markerInfo.pMarkerName);
 
-	VkExt::CmdDebugMarkerBeginFunction(cmd, &markerInfo);
+	vkCmdDebugMarkerBeginEXT(cmd, &markerInfo);
 }
 
 void			Vk::InsertProfilingSample(VkCommandBuffer cmd, const std::string & debugSampleName, const Color & color)
@@ -416,7 +416,7 @@ void			Vk::InsertProfilingSample(VkCommandBuffer cmd, const std::string & debugS
 	markerInfo.sType = VK_STRUCTURE_TYPE_DEBUG_MARKER_MARKER_INFO_EXT;
 	memcpy(markerInfo.color, &color.r, sizeof(float) * 4);
 	markerInfo.pMarkerName = debugSampleName.c_str();
-	VkExt::CmdDebugMarkerInsertFunction(cmd, &markerInfo);
+	vkCmdDebugMarkerInsertEXT(cmd, &markerInfo);
 }
 
 void			Vk::EndProfilingSample(VkCommandBuffer cmd)
@@ -429,7 +429,7 @@ void			Vk::EndProfilingSample(VkCommandBuffer cmd)
 	return ;
 #endif
 
-	VkExt::CmdDebugMarkerEndFunction(cmd);
+	vkCmdDebugMarkerEndEXT(cmd);
 }
 
 VkFence			Vk::CreateFence(bool signaled)

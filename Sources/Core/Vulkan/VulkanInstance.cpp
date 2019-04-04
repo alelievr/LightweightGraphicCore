@@ -43,8 +43,11 @@ VulkanInstance::~VulkanInstance(void)
 
 	if (_enableValidationLayers)
 	{
-		DestroyDebugUtilsMessengerEXT(_debugUtilsMessengerCallback, nullptr);
-		VkExt::DestroyDebugReportCallbackFunction(_instance, _debugReportCallback, nullptr);
+		if (VkExt::AreDebugLayerAvailable())
+		{
+			DestroyDebugUtilsMessengerEXT(_debugUtilsMessengerCallback, nullptr);
+			vkDestroyDebugReportCallbackEXT(_instance, _debugReportCallback, nullptr);
+		}
 	}
 
 	vkDestroyDescriptorPool(_device, _descriptorPool, nullptr);
@@ -67,22 +70,20 @@ void			VulkanInstance::InitializeVulkanFunctions(void) noexcept
 	// Debug report (validation layers) extension
 	if (std::find(_deviceExtensions.begin(), _deviceExtensions.end(), VK_EXT_DEBUG_UTILS_EXTENSION_NAME) != _deviceExtensions.end())
 	{
-		VkExt::CreateDebugUtilsMessengerFunction = reinterpret_cast<PFN_vkCreateDebugUtilsMessengerEXT>(glfwGetInstanceProcAddress(_instance, "vkCreateDebugUtilsMessengerEXT"));
-		VkExt::DestroyDebugUtilMessengerFunction = reinterpret_cast<PFN_vkDestroyDebugUtilsMessengerEXT>(glfwGetInstanceProcAddress(_instance, "vkDestroyDebugUtilsMessengerEXT"));
-		VkExt::CreateDebugReportCallbackFunction = reinterpret_cast<PFN_vkCreateDebugReportCallbackEXT>(glfwGetInstanceProcAddress(_instance, "vkCreateDebugReportCallbackEXT"));
-		VkExt::DestroyDebugReportCallbackFunction = reinterpret_cast<PFN_vkDestroyDebugReportCallbackEXT>(glfwGetInstanceProcAddress(_instance, "vkDestroyDebugReportCallbackEXT"));
-		VkExt::DebugReportMessageFunction = reinterpret_cast<PFN_vkDebugReportMessageEXT>(glfwGetInstanceProcAddress(_instance, "vkDebugReportMessageEXT"));
+		VkExt::LoadDebugLayers();
 	}
 
 	if (std::find(_deviceExtensions.begin(), _deviceExtensions.end(), VK_EXT_DEBUG_MARKER_EXTENSION_NAME) != _deviceExtensions.end())
 	{
-		// Debug maker extension:
-		VkExt::DebugMarkerSetObjectTagFunction = reinterpret_cast<PFN_vkDebugMarkerSetObjectTagEXT>(glfwGetInstanceProcAddress(_instance, "vkDebugMarkerSetObjectTagEXT"));
-		VkExt::DebugMarkerSetObjectNameFunction = reinterpret_cast<PFN_vkDebugMarkerSetObjectNameEXT>(glfwGetInstanceProcAddress(_instance, "vkDebugMarkerSetObjectNameEXT"));
-		VkExt::CmdDebugMarkerBeginFunction = reinterpret_cast<PFN_vkCmdDebugMarkerBeginEXT>(glfwGetInstanceProcAddress(_instance, "vkCmdDebugMarkerBeginEXT"));
-		VkExt::CmdDebugMarkerEndFunction = reinterpret_cast<PFN_vkCmdDebugMarkerEndEXT>(glfwGetInstanceProcAddress(_instance, "vkCmdDebugMarkerEndEXT"));
-		VkExt::CmdDebugMarkerInsertFunction = reinterpret_cast<PFN_vkCmdDebugMarkerInsertEXT>(glfwGetInstanceProcAddress(_instance, "vkCmdDebugMarkerInsertEXT"));
+		VkExt::LoadDebugMarkers();
 	}
+
+	if (std::find(_deviceExtensions.begin(), _deviceExtensions.end(), VK_NV_RAY_TRACING_EXTENSION_NAME) != _deviceExtensions.end())
+	{
+		VkExt::LoadRayTracing();
+		// VkExt::LoadDeviceProperties2();
+	}
+
 }
 
 void			VulkanInstance::InitializeSurface(VkSurfaceKHR surface)
@@ -679,7 +680,7 @@ void		VulkanInstance::SetupDebugCallbacks(void) noexcept
 		dbgCreateInfo.flags = VK_DEBUG_REPORT_ERROR_BIT_EXT | VK_DEBUG_REPORT_WARNING_BIT_EXT
 			| VK_DEBUG_REPORT_DEBUG_BIT_EXT | VK_DEBUG_REPORT_PERFORMANCE_WARNING_BIT_EXT;
 
-		Vk::CheckResult(VkExt::CreateDebugReportCallbackFunction(
+		Vk::CheckResult(vkCreateDebugReportCallbackEXT(
 			_instance,
 			&dbgCreateInfo,
 			nullptr,
@@ -689,16 +690,12 @@ void		VulkanInstance::SetupDebugCallbacks(void) noexcept
 
 VkResult	VulkanInstance::CreateDebugUtilsMessengerEXT(const VkDebugUtilsMessengerCreateInfoEXT* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkDebugUtilsMessengerEXT* pCallback) noexcept
 {
-	if (VkExt::CreateDebugUtilsMessengerFunction != nullptr)
-	    return VkExt::CreateDebugUtilsMessengerFunction(_instance, pCreateInfo, pAllocator, pCallback);
-	else
-	    return VK_ERROR_EXTENSION_NOT_PRESENT;
+	return vkCreateDebugUtilsMessengerEXT(_instance, pCreateInfo, pAllocator, pCallback);
 }
 
 void		VulkanInstance::DestroyDebugUtilsMessengerEXT(VkDebugUtilsMessengerEXT callback, const VkAllocationCallbacks* pAllocator)
 {
-	if (VkExt::DestroyDebugUtilMessengerFunction != nullptr)
-		VkExt::DestroyDebugUtilMessengerFunction(_instance, callback, pAllocator);
+	vkDestroyDebugUtilsMessengerEXT(_instance, callback, pAllocator);
 }
 
 int			DeviceCapability::GetGPUScore(void) const
