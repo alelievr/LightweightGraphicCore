@@ -12,6 +12,7 @@
 #define GLM_INCLUDE_STRING_CAST "../Deps/glm/glm/gtx/string_cast.hpp"
 #define GLFW_INCLUDE "../Deps/glfw/include/GLFW/glfw3.h"
 #define IMGUI_INCLUDE "../Deps/imgui/imgui.h"
+#define IMGUI_INTERNAL_INCLUDE "../Deps/imgui/imgui_internal.h"
 #define IMGUI_GLFW_INCLUDE "../Deps/imgui/examples/imgui_impl_glfw.h"
 #define IMGUI_VULKAN_INCLUDE "../Deps/imgui/examples/imgui_impl_vulkan.h"
 #define STB_INCLUDE "../Deps/stb/stb.h"

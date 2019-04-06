@@ -3,15 +3,23 @@
 using namespace LWGC;
 
 ProfilingSamples	Profiler::_samples;
+ProfilingEntryData	Profiler::_lastInsertedEntry;
 
 void					Profiler::AddSample(const std::string & name, double durationInMilliseconds, double frameTimeInMilliseconds) noexcept
 {
-	_samples.emplace(name, ProfilingEntryData{ durationInMilliseconds, frameTimeInMilliseconds });
+	ProfilingEntryData data = ProfilingEntryData{ durationInMilliseconds, frameTimeInMilliseconds };
+	_samples.emplace(name, data);
+	_lastInsertedEntry = data;
 }
 
 const ProfilingSamples &Profiler::GetSamples(void) noexcept
 {
 	return _samples;
+}
+
+const ProfilingEntryData Profiler::GetLastSample(void) noexcept
+{
+	return _lastInsertedEntry;
 }
 
 void					Profiler::Reset(void) noexcept

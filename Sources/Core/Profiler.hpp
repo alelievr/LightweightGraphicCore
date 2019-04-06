@@ -20,7 +20,8 @@ namespace LWGC
 	{
 		friend class ProfilingSample;
 		private:
-			static ProfilingSamples	_samples;
+			static ProfilingSamples		_samples;
+			static ProfilingEntryData	_lastInsertedEntry;
 
 			static void	AddSample(const std::string & name, double durationInMilliseconds, double frameTimeInMilliseconds) noexcept;
 
@@ -31,6 +32,7 @@ namespace LWGC
 
 			Profiler &	operator=(Profiler const & src) = delete;
 
+			static const ProfilingEntryData GetLastSample(void) noexcept;
 			static const ProfilingSamples &	GetSamples(void) noexcept;
 			static void		Reset(void) noexcept;
 	};

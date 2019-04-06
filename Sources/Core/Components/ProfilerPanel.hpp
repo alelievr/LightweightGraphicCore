@@ -8,13 +8,17 @@
 
 #include <iostream>
 #include <string>
+#include <vector>
 
 namespace LWGC
 {
 	class		ProfilerPanel : public ImGUIPanel
 	{
 		private:
-			ProfilingSamples	 _currentSample;
+			ProfilingSamples		_currentSample;
+			std::vector< float >	_frameDurationHistory;
+
+			const size_t		HISTORY_SIZE = 128;
 
 		public:
 			ProfilerPanel(void);

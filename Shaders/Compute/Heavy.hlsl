@@ -4,7 +4,7 @@
 [[vk::binding(0, 0)]]
 ConstantBuffer< LWGC_PerFrame >	frame;
 
-#define ITER 1
+#define ITER 100
 // auto generate bindings ?
 [vk::binding(1, 0)]
 RWTexture2D<half4>	fractal;
@@ -30,7 +30,7 @@ float noise(float2 p)
 }
 
 // Warning: OSX can't have local work group greater than 1024 threads
-[numthreads(16, 16, 1)]
+[numthreads(8, 8, 1)]
 void main(ComputeInput input)
 {
 	uint2 size;
