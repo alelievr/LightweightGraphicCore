@@ -36,7 +36,7 @@ CPPVERSION	=	c++1z
 INCDIRS		=	../../Sources ${VULKAN_SDK}/include/
 
 #	Libraries
-LIBDIRS		=	../../ ../../Deps/glfw/src/ ../../Deps/imgui/ ../../Deps/glslang/build/SPIRV ../../Deps/glslang/build/hlsl ../../Deps/glslang/build/glslang ${VULKAN_SDK}/lib ../../Deps/SPIRV-Cross
+LIBDIRS		=	../../ ../../Deps/glfw/src/ ../../Deps/ImGUI_Volk/ ../../Deps/glslang/build/SPIRV ../../Deps/glslang/build/hlsl ../../Deps/glslang/build/glslang ${VULKAN_SDK}/lib ../../Deps/SPIRV-Cross
 LDLIBS		=	-lLWGC -lglfw3 -lImGUI -lvulkan -lglslang -lSPIRV -lHLSL -lSPVRemapper ../../Deps/SPIRV-Cross/libspirv-cross.a
 
 #	Output

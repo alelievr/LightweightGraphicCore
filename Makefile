@@ -6,7 +6,7 @@
 #    By: amerelo <amerelo@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2014/07/15 15:13:38 by alelievr          #+#    #+#              #
-#    Updated: 2019/03/24 14:50:52 by amerelo          ###   ########.fr        #
+#    Updated: 2019/04/06 18:27:31 by alelievr         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -120,7 +120,7 @@ GLFWLIB     =   Deps/glfw/src/libglfw3.a
 STBLIB      =   Deps/stb/stb.h
 GLMLIB      =   Deps/glm/glm
 GLSLANGLIB	=	Deps/glslang/build/StandAlone/glslangValidator
-IMGUILIB    =   Deps/imgui/libImGUI.a
+IMGUILIB    =   Deps/ImGUI_Volk/libImGUI.a
 SPIRV_CROSSLIB	=	Deps/SPIRV-Cross/libspirv-cross.a
 ASSIMPLIB	=	Deps/assimp/lib/libassimp.a
 
@@ -201,7 +201,7 @@ OBJS		=	$(patsubst %.c,%.o, $(filter %.c, $(SOURCES))) \
 OBJ			=	$(addprefix $(OBJDIR)/,$(notdir $(OBJS)))
 NORME		=	**/*.[ch]
 VPATH		+=	$(dir $(addprefix $(SRCDIR)/,$(SOURCES)))
-INCFILES	=	$(foreach inc, $(INCDIRS), $(wildcard $(inc)/*.h))
+INCFILES	=	$(foreach inc, $(INCDIRS), $(wildcard $(inc)/*.hpp))
 CPPFLAGS	=	$(addprefix -I,$(INCDIRS))
 LDFLAGS		=	$(addprefix -L,$(LIBDIRS))
 LINKER		=	ar
@@ -278,7 +278,7 @@ $(GLSLANGLIB):
 $(IMGUILIB):
 	@git submodule init
 	@git submodule update
-	@$(MAKE) -f ImGUI.Makefile -j4
+	@cd Deps/ImGUI_Volk && $(MAKE) -j4
 
 $(SPIRV_CROSSLIB):
 	@git submodule update --init

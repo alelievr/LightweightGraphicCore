@@ -6,7 +6,7 @@
 #    By: alelievr <marvin@42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2014/07/15 15:13:38 by alelievr          #+#    #+#              #
-#    Updated: 2018/12/16 18:09:54 by alelievr         ###   ########.fr        #
+#    Updated: 2018/02/25 00:35:10 by alelievr         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -15,15 +15,16 @@
 #################
 
 #	Sources
-SRCDIR		=	Deps/imgui
-SRC			=	imgui.cpp						\
-				imgui_draw.cpp					\
-				imgui_widgets.cpp				\
-				examples/imgui_impl_glfw.cpp	\
-				examples/imgui_impl_vulkan.cpp	\
+IMGUI_PATH	=	../imgui/
+SRCDIR		=	.
+SRC			=	Sources/imgui_vulkan.cpp		\
+				$(IMGUI_PATH)/imgui.cpp			\
+				$(IMGUI_PATH)/imgui_draw.cpp	\
+				$(IMGUI_PATH)/imgui_widgets.cpp	\
+				$(IMGUI_PATH)/examples/imgui_impl_glfw.cpp		\
 
 #	Objects
-OBJDIR		=	Deps/imgui/obj
+OBJDIR		=	obj
 
 #	Variables
 LIBFT		=	2	#1 or 0 to include the libft / 2 for autodetct
@@ -31,23 +32,30 @@ DEBUGLEVEL	=	0	#can be 0 for no debug 1 for or 2 for harder debug
 					#Warrning: non null debuglevel will disable optlevel
 OPTLEVEL	=	1	#same than debuglevel
 					#Warrning: non null optlevel will disable debuglevel
-CPPVERSION	=	c++1z
+CPPVERSION	=	c++11
 #For simpler and faster use, use commnd line variables DEBUG and OPTI:
 #Example $> make DEBUG=2 will set debuglevel to 2
 
 #	Includes
-INCDIRS		=	Deps/imgui Deps/glfw/include ${VULKAN_SDK}/include/ Deps/
+DEPS_DIR	=	..
+VOLK_DIR	=	$(DEPS_DIR)/volk
+IMGUI_DIR	=	$(DEPS_DIR)/imgui
+GLFW_DIR	=	$(DEPS_DIR)/glfw
+INCDIRS		=	. $(IMGUI_DIR) $(VOLK_DIR) $(IMGUI_DIR)/examples $(GLFW_DIR)/include $(VULKAN_SDK)/include
 
 #	Libraries
 LIBDIRS		=
 LDLIBS		=
 
+VOLK		=	$(VOLK_DIR)/volk.c
+IMGUI		=	$(IMGUI_DIR)/imgui.h
+
 #	Output
-NAME		=	Deps/imgui/libImGUI.a
+NAME		=	libImGUI.a
 
 #	Compiler
-WERROR		=	-Werror
-CFLAGS		=	-Weverything -pedantic -ffast-math -ffunction-sections -fdata-sections
+WERROR		=
+CFLAGS		=	-Wall -ffast-math -ffunction-sections -fdata-sections
 CPPFLAGS	=	-Wno-c++98-compat
 CPROTECTION	=	-z execstack -fno-stack-protector
 
@@ -93,16 +101,12 @@ endif
 ifeq "$(OS)" "Linux"
 	LDLIBS		+=
 	DEBUGFLAGS	+= -fsanitize=memory -fsanitize-memory-use-after-dtor -fsanitize=thread
-	INCDIRS			+= $(VULKAN_SDK)/include
 endif
 ifeq "$(OS)" "Darwin"
-	LD_LIBRARY_PATH	= $(VULKAN_SDK)/lib
-	VK_ICD_FILENAMES= $(VULKAN_SDK)/etc/vulkan/icd.d/MoltenVK_icd.json
-	INCDIRS			+= $(VULKAN_SDK)/include
-	VULKAN			= $(VULKAN_SDK)/lib/libvulkan.dylib
+	FRAMEWORK	=
 endif
 
-COMPILER	=	$(shell readlink $(shell which cc))
+COMPILER	=	$(shell readlink $(which cc))
 ifneq (,$(findstring clang++,$(COMPILER)))
 	#Clang++ compiler
 	CFLAGS	+= -dead_strip
@@ -190,7 +194,13 @@ endif
 #################
 
 #	First target
-all: $(NAME)
+all: $(NAME) $(VOLK) $(IMGUI)
+
+$(VOLK):
+	git submodule update --init
+
+$(IMGUI):
+	git submodule update --init
 
 #	Linking
 $(NAME): $(OBJ)
@@ -202,13 +212,13 @@ $(NAME): $(OBJ)
 $(OBJDIR)/%.o: %.cpp $(INCFILES)
 	@mkdir -p $(OBJDIR)/$(dir $<)
 	@$(call color_exec,$(COBJ_T),$(COBJ),"Object: $@",\
-		$(CXX) -std=$(CPPVERSION) $(OPTFLAGS) $(DEBUGFLAGS) $(CPPFLAGS) $(INCFLAGS) -o $@ -c $<)
+		$(CXX) -std=$(CPPVERSION) $(WERROR) $(CFLAGS) $(OPTFLAGS) $(DEBUGFLAGS) $(CPPFLAGS) $(INCFLAGS) -o $@ -c $<)
 
 #	Objects compilation
 $(OBJDIR)/%.o: %.c $(INCFILES)
 	@mkdir -p $(OBJDIR)/$(dir $<)
 	@$(call color_exec,$(COBJ_T),$(COBJ),"Object: $@",\
-		$(CXX) $(OPTFLAGS) $(DEBUGFLAGS) $(INCFLAGS) -o $@ -c $<)
+		$(CC) $(WERROR) $(CFLAGS) $(OPTFLAGS) $(DEBUGFLAGS) $(INCFLAGS) -o $@ -c $<)
 
 $(OBJDIR)/%.o: %.s
 	@mkdir -p $(OBJDIR)/$(dir $<)
