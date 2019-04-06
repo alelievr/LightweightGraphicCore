@@ -55,7 +55,8 @@ int			main(void)
 	cam->AddComponent(new FreeCameraControls());
 
 	// ImGUI test
-	cube1->AddComponent(new ImGUIPanel());
+	bool opened = true;
+	cube1->AddComponent(new ProfilerPanel());
 
 	cube1->GetTransform()->Translate(glm::vec3(-1, 0, 0));
 	cube2->GetTransform()->Translate(glm::vec3(1, 0, 0));

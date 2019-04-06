@@ -44,6 +44,7 @@ namespace LWGC
 			static float	GetUnscaledTime();
 			static float	GetTimeScale(void);
 			static int		GetFrameCount(void);
+			static float	GetFrameRelativeTime(void);
 
 			Time &	operator=(Time const & src) = delete;
 	};

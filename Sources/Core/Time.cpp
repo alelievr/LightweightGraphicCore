@@ -17,7 +17,7 @@ void	Time::BeginFrame(void)
 	std::chrono::duration<double> elapsed_seconds = now - _lastdeltaTime;
 	_deltaTime = elapsed_seconds.count();
 	_lastdeltaTime = std::chrono::high_resolution_clock::now();
-	
+
 	_frameCount++;
 }
 
@@ -34,7 +34,7 @@ void	Time::SetScale(float scale)
 	std::chrono::duration<double> elapsed_seconds = now - _diff;
 	_value += elapsed_seconds.count() * _scale;
 	_diff = std::chrono::high_resolution_clock::now();
-	
+
 	_scale = scale;
 }
 
@@ -51,10 +51,18 @@ float	Time::GetUnscaledDeltaTime(void)
 float	Time::GetTime(void)
 {
 	auto now = std::chrono::high_resolution_clock::now();
-	
+
 	std::chrono::duration<float> elapsed_seconds = now - _diff;
 
 	return _value + (elapsed_seconds.count() * _scale);
+}
+
+// return the time elapsed since the begining of the frame
+float	Time::GetFrameRelativeTime(void)
+{
+	auto now = std::chrono::high_resolution_clock::now();
+
+	return (now - _lastdeltaTime).count();
 }
 
 float	Time::GetUnscaledTime(void)

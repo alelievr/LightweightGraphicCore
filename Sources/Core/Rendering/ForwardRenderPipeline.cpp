@@ -2,6 +2,7 @@
 #include "Core/Rendering/ForwardRenderPipeline.hpp"
 #include "Core/Vulkan/Vk.hpp"
 #include "Core/Rendering/RenderPipelineManager.hpp"
+#include "Core/Vulkan/ProfilingSample.hpp"
 
 using namespace LWGC;
 
@@ -130,15 +131,17 @@ void	ForwardRenderPipeline::Render(const std::vector< Camera * > & cameras, Rend
 {
 	VkCommandBuffer cmd = GetCurrentFrameCommandBuffer();
 
-	// auto asyncCmd = asyncComputePool.BeginSingle();
 	{
+		auto computeSample = ProfilingSample("Noise Dispatch");
+
+		auto asyncCmd = asyncComputePool.BeginSingle();
+		heavyComputeShader.Dispatch(cmd, 4096, 4096, 1);
+		asyncComputePool.EndSingle(asyncCmd); // fence
 	}
-	// asyncComputePool.EndSingle(asyncCmd); // fence
 
 	// Process the compute shader before everything:
 	computePass.Begin(cmd, VK_NULL_HANDLE, "All Computes");
 	{
-		heavyComputeShader.Dispatch(cmd, 4096, 4096, 1);
 		computePass.BindDescriptorSet(LWGCBinding::Frame, perFrameSet.GetDescriptorSet());
 		RenderPipeline::RecordAllComputeDispatches(computePass, context);
 	}

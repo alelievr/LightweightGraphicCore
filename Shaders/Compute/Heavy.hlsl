@@ -4,7 +4,7 @@
 [[vk::binding(0, 0)]]
 ConstantBuffer< LWGC_PerFrame >	frame;
 
-#define ITER 10
+#define ITER 1
 // auto generate bindings ?
 [vk::binding(1, 0)]
 RWTexture2D<half4>	fractal;

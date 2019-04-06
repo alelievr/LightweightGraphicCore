@@ -9,6 +9,7 @@
 #include "Core/Handles/HandleManager.hpp"
 #include "Core/MaterialTable.hpp"
 #include "Core/Time.hpp"
+#include "Core/Profiler.hpp"
 
 #include <cmath>
 #include <unordered_set>
@@ -191,6 +192,9 @@ void			RenderPipeline::RenderInternal(const std::vector< Camera * > & cameras, R
 	beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
 	beginInfo.flags = VK_COMMAND_BUFFER_USAGE_SIMULTANEOUS_USE_BIT; // humm...
 	Vk::CheckResult(vkBeginCommandBuffer(GetCurrentFrameCommandBuffer(), &beginInfo), "Failed to begin recording of frame command buffer!");
+
+	// Is it interesting to put this inside the beginFrameRendering ?
+	Profiler::Reset();
 
 	RenderPipelineManager::beginFrameRendering.Invoke();
 	{

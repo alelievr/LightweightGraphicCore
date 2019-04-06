@@ -3,9 +3,11 @@
 #include "IncludeDeps.hpp"
 #include "Core/Object.hpp"
 #include "Core/GameObject.hpp"
+#include "Core/Rendering/RenderPipeline.hpp"
 
 #include <iostream>
 #include <string>
+#include <functional>
 
 namespace LWGC
 {
@@ -15,10 +17,15 @@ namespace LWGC
 			ComponentIndex	_imGUIIndex;
 
 		protected:
-			bool			opened;
+			friend class RenderPipeline;
+			bool							opened;
+			std::function< void(void) >		drawFunction;
+
+			virtual void DrawImGUI(void) noexcept;
 
 		public:
 			ImGUIPanel(void);
+			ImGUIPanel(std::function< void(void) > drawFunction);
 			ImGUIPanel(const ImGUIPanel &) = delete;
 			virtual ~ImGUIPanel(void);
 
@@ -31,7 +38,7 @@ namespace LWGC
 
 			uint32_t	GetType(void) const noexcept override;
 
-			virtual void DrawImGUI(void) noexcept;
+			void		SetDrawFunction(std::function< void(void) > drawFunction) noexcept;
 	};
 
 	std::ostream &	operator<<(std::ostream & o, ImGUIPanel const & r);

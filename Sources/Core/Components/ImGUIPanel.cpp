@@ -7,8 +7,13 @@
 
 using namespace LWGC;
 
-ImGUIPanel::ImGUIPanel(void) : opened(true)
+ImGUIPanel::ImGUIPanel(void) : opened(true), drawFunction(nullptr)
 {
+}
+
+ImGUIPanel::ImGUIPanel(std::function< void(void) > drawFunction) : ImGUIPanel()
+{
+	SetDrawFunction(drawFunction);
 }
 
 ImGUIPanel::~ImGUIPanel(void)
@@ -22,23 +27,18 @@ void			ImGUIPanel::Initialize(void) noexcept
 
 void			ImGUIPanel::DrawImGUI(void) noexcept
 {
-	ImGui::Begin("Hello world !", &opened, ImGuiWindowFlags_MenuBar);
-	if (ImGui::BeginMenuBar())
+	if (drawFunction != nullptr)
+		drawFunction();
+	else
 	{
-		if (ImGui::BeginMenu("File"))
-		{
-			if (ImGui::MenuItem("Close Panel", "Ctrl+W"))
-			{
-				opened = false;
-			}
-			ImGui::EndMenu();
-		}
-		ImGui::EndMenuBar();
+		ImGui::Begin("Panel", &opened, ImGuiWindowFlags_MenuBar);
+
+		ImGui::Text("Hello World");
+		ImGui::Text("Use ImGUIPanel::SetDrawFunction() to override this draw function");
+		ImGui::Text("Or override ImGUIPanel::DrawImGUI to create a new component");
+
+		ImGui::End();
 	}
-
-	ImGui::Text("Some text");
-
-	ImGui::End();
 }
 
 void			ImGUIPanel::OnEnable() noexcept
@@ -51,6 +51,11 @@ void			ImGUIPanel::OnDisable() noexcept
 {
 	Component::OnDisable();
 	hierarchy->UnregisterComponentInRenderContext(GetType(), _imGUIIndex);
+}
+
+void			ImGUIPanel::SetDrawFunction(std::function< void(void) > drawFunction) noexcept
+{
+	this->drawFunction = drawFunction;
 }
 
 uint32_t		ImGUIPanel::GetType(void) const noexcept

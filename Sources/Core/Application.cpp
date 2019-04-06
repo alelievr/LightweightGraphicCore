@@ -7,6 +7,7 @@
 #include "Core/Components/MeshRenderer.hpp"
 #include "Core/Time.hpp"
 #include "IncludeDeps.hpp"
+#include "Core/Vulkan/ProfilingSample.hpp"
 
 // Volk function definitions + init
 #include VOLK_SOURCE
@@ -196,6 +197,8 @@ void				Application::Update(void) noexcept
 
 	if (currentPipe != nullptr)
 	{
+		auto sample = ProfilingSample("Frame");
+
 		currentPipe->RenderInternal(cameras, hierarchy->GetRenderContext());
 
 		_imGUI.BeginFrame();

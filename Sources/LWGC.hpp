@@ -54,6 +54,7 @@
 #include "Core/Components/Rotator.hpp"
 #include "Core/Components/Movator.hpp"
 #include "Core/Components/Activator.hpp"
+#include "Core/Components/ProfilerPanel.hpp"
 
 // Gimos & handles
 #include "Core/Gizmos/Line.hpp"
@@ -70,5 +71,8 @@
 #include "Utils/Rect.hpp"
 #include "Utils/Math.hpp"
 #include "Utils/Random.hpp"
+
+// ImGUI
+#include IMGUI_INCLUDE
 
 #undef LWGC_GLOBAL_INCLUDE
