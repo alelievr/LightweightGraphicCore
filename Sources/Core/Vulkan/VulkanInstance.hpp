@@ -83,7 +83,6 @@ namespace LWGC
 			void		DestroyDebugUtilsMessengerEXT(VkDebugUtilsMessengerEXT callback, const VkAllocationCallbacks* pAllocator);
 			void		InitializeSurface(VkSurfaceKHR surface);
 			void		InitSurfaceForPhysicalDevice(VkPhysicalDevice physicalDevice) noexcept;
-			void		InitializeVulkanFunctions(void) noexcept;
 
 		public:
 			VulkanInstance(void);
@@ -126,6 +125,12 @@ namespace LWGC
 
 			// Instance singleton
 			static VulkanInstance *		Get(void);
+			
+			static bool IsExtensionEnabled(const std::string & extensionName);
+			static bool	AreDebugMarkersEnabled(void);
+			static bool	IsDebugLayerEnabled(void);
+			static bool	IsRayTracingEnabled(void);
+			static bool	AreCooperativeMatricesEnabled(void);
 	};
 
 	std::ostream &	operator<<(std::ostream & o, VulkanInstance const & r);

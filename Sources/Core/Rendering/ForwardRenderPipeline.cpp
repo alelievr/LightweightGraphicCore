@@ -1,4 +1,5 @@
-#include "ForwardRenderPipeline.hpp"
+#include "Core/Vulkan/VulkanInstance.hpp"
+#include "Core/Rendering/ForwardRenderPipeline.hpp"
 #include "Core/Vulkan/Vk.hpp"
 #include "Core/Rendering/RenderPipelineManager.hpp"
 
@@ -43,6 +44,46 @@ void	ForwardRenderPipeline::Initialize(SwapChain * swapChain)
 
 	// By default the descriptor set is created with stage all flags
 	asyncComputeSet.AddBinding(0, fractalTexture, VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE);
+
+	// Test
+	if (VulkanInstance::IsRayTracingEnabled())
+	{
+		VkBuffer aabbBuffer;
+		VkDeviceMemory mem;
+		Vk::CreateBuffer(10, VK_BUFFER_USAGE_STORAGE_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, aabbBuffer, mem);
+
+		VkGeometryAABBNV aabb = {};
+		aabb.sType = VK_STRUCTURE_TYPE_GEOMETRY_AABB_NV;
+		aabb.aabbData = aabbBuffer;
+		aabb.numAABBs = 1;
+		aabb.stride = 8;
+		aabb.offset = 0;
+
+		VkGeometryDataNV data = {};
+		data.aabbs = aabb;
+
+		VkGeometryNV	geom = {};
+		geom.sType = VK_STRUCTURE_TYPE_GEOMETRY_NV;
+		geom.geometryType = VK_GEOMETRY_TYPE_AABBS_NV;
+		geom.geometry = data;
+		geom.flags = VK_GEOMETRY_OPAQUE_BIT_NV;
+
+		VkAccelerationStructureInfoNV accelInfo = {};
+		accelInfo.sType = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_INFO_NV;
+		accelInfo.type = VK_ACCELERATION_STRUCTURE_TYPE_TOP_LEVEL_NV;
+		accelInfo.flags = VK_BUILD_ACCELERATION_STRUCTURE_ALLOW_UPDATE_BIT_NV | VK_BUILD_ACCELERATION_STRUCTURE_ALLOW_COMPACTION_BIT_NV;
+		accelInfo.instanceCount = 1;
+		accelInfo.geometryCount = 1;
+		accelInfo.pGeometries = &geom;
+
+		VkAccelerationStructureCreateInfoNV info = {};
+		info.sType = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_CREATE_INFO_NV;
+		info.compactedSize = 10;
+		info.info = accelInfo;
+
+		VkAccelerationStructureNV	structure;
+		vkCreateAccelerationStructureNV(device, &info, nullptr, &structure);
+	}
 
 	// Setup the render passes we uses:
 	SetupRenderPasses();
@@ -89,19 +130,19 @@ void	ForwardRenderPipeline::Render(const std::vector< Camera * > & cameras, Rend
 {
 	VkCommandBuffer cmd = GetCurrentFrameCommandBuffer();
 
-	auto asyncCmd = asyncComputePool.BeginSingle();
+	// auto asyncCmd = asyncComputePool.BeginSingle();
 	{
-		heavyComputeShader.Dispatch(asyncCmd, 256, 256, 1);
 	}
-	asyncComputePool.EndSingle(asyncCmd); // fence
+	// asyncComputePool.EndSingle(asyncCmd); // fence
 
 	// Process the compute shader before everything:
-	// computePass.Begin(cmd, VK_NULL_HANDLE, "All Computes");
-	// {
-	// 	computePass.BindDescriptorSet(LWGCBinding::Frame, perFrameSet.GetDescriptorSet());
-	// 	RenderPipeline::RecordAllComputeDispatches(computePass, context);
-	// }
-	// computePass.End();
+	computePass.Begin(cmd, VK_NULL_HANDLE, "All Computes");
+	{
+		heavyComputeShader.Dispatch(cmd, 4096, 4096, 1);
+		computePass.BindDescriptorSet(LWGCBinding::Frame, perFrameSet.GetDescriptorSet());
+		RenderPipeline::RecordAllComputeDispatches(computePass, context);
+	}
+	computePass.End();
 
 	forwardPass.Begin(cmd, GetCurrentFrameBuffer(), "All Cameras");
 	{

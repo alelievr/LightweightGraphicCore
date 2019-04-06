@@ -95,11 +95,14 @@ void			ComputeDispatcher::OnDisable() noexcept
 	hierarchy->UnregisterComponentInRenderContext(GetType(), _renderContextIndex);
 }
 
+// Material must be valid at this point
 void			ComputeDispatcher::SetDispatchSize(const glm::ivec3 & size, bool checkSize)
 {
 	_width = size.x;
 	_height = size.y;
 	_depth = size.z;
+
+	_material->GetComputeWorkSize(_workGroupWidth, _workGroupHeight, _workGroupDepth);
 
 	if (checkSize && !CheckWorkSize())
 	{

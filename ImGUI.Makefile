@@ -36,7 +36,7 @@ CPPVERSION	=	c++1z
 #Example $> make DEBUG=2 will set debuglevel to 2
 
 #	Includes
-INCDIRS		=	Deps/imgui Deps/glfw/include ${VULKAN_SDK}/include/
+INCDIRS		=	Deps/imgui Deps/glfw/include ${VULKAN_SDK}/include/ Deps/
 
 #	Libraries
 LIBDIRS		=

@@ -20,6 +20,10 @@
 #define ASSIMP_IMPORTER_INCLUDE "../Deps/assimp/include/assimp/Importer.hpp"
 #define ASSIMP_SCENE_INCLUDE "../Deps/assimp/include/assimp/scene.h"
 #define ASSIMP_POSTPROCESS_INCLUDE "../Deps/assimp/include/assimp/postprocess.h"
+#define VOLK_SOURCE "../Deps/volk/volk.c"
+#define VOLK_INCLUDE "../Deps/volk/volk.h"
+
+# define VULKAN_INCLUDE VOLK_INCLUDE
 
 
 // Unusable API
@@ -27,9 +31,3 @@
 // #define GLSLANG_RESOURCES_INCLUDE "../Deps/glslang/StandAlone/ResourceLimits.h"
 // #define GLSLANG_DIRSTACK_INCLUDE "../Deps/glslang/StandAlone/DirStackFileIncluder.h"
 // #define GLSLANG_SPV_INCLDUE "../Deps/glslang/SPIRV/GlslangToSpv.h"
-
-#ifdef __APPLE__
-# define VULKAN_INCLUDE "../Deps/vulkansdk-macos-1.1.101.0/macOS/include/vulkan/vulkan.h"
-#else
-# define VULKAN_INCLUDE <vulkan/vulkan.h>
-#endif

@@ -19,3 +19,6 @@
 [submodule "Deps/assimp"]
 	path = Deps/assimp
 	url = https://github.com/assimp/assimp
+[submodule "Deps/volk"]
+	path = Deps/volk
+	url = https://github.com/zeux/volk

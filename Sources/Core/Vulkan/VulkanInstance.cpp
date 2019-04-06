@@ -9,7 +9,7 @@
 
 #include GLFW_INCLUDE
 #include "Vk.hpp"
-#include "VkExt.hpp"
+#include VOLK_INCLUDE
 
 using namespace LWGC;
 
@@ -39,11 +39,11 @@ VulkanInstance::VulkanInstance(const std::string & applicationName, const std::v
 
 VulkanInstance::~VulkanInstance(void)
 {
-	std::cout << "desctroyed instance !\n";
+	std::cout << "destroyed instance !\n";
 
 	if (_enableValidationLayers)
 	{
-		if (VkExt::AreDebugLayerAvailable())
+		if (IsDebugLayerEnabled())
 		{
 			DestroyDebugUtilsMessengerEXT(_debugUtilsMessengerCallback, nullptr);
 			vkDestroyDebugReportCallbackEXT(_instance, _debugReportCallback, nullptr);
@@ -64,35 +64,12 @@ void			VulkanInstance::Initialize(void)
 	CreateInstance();
 }
 
-
-void			VulkanInstance::InitializeVulkanFunctions(void) noexcept
-{
-	// Debug report (validation layers) extension
-	if (std::find(_deviceExtensions.begin(), _deviceExtensions.end(), VK_EXT_DEBUG_UTILS_EXTENSION_NAME) != _deviceExtensions.end())
-	{
-		VkExt::LoadDebugLayers();
-	}
-
-	if (std::find(_deviceExtensions.begin(), _deviceExtensions.end(), VK_EXT_DEBUG_MARKER_EXTENSION_NAME) != _deviceExtensions.end())
-	{
-		VkExt::LoadDebugMarkers();
-	}
-
-	if (std::find(_deviceExtensions.begin(), _deviceExtensions.end(), VK_NV_RAY_TRACING_EXTENSION_NAME) != _deviceExtensions.end())
-	{
-		VkExt::LoadRayTracing();
-		// VkExt::LoadDeviceProperties2();
-	}
-
-}
-
 void			VulkanInstance::InitializeSurface(VkSurfaceKHR surface)
 {
 	_surface = surface;
 
 	ChoosePhysicalDevice();
 	CreateLogicalDevice();
-	InitializeVulkanFunctions();
 	SetupDebugCallbacks();
 	CreateCommandBufferPools();
 	CreateDescriptorPool();
@@ -107,7 +84,7 @@ void			VulkanInstance::CreateDescriptorPool(void)
 	if (_descriptorPool != VK_NULL_HANDLE)
 		return ;
 
-	// TODO: refactor this
+	// TODO: refactor this (with VMA)
 	std::array<VkDescriptorPoolSize, 8> poolSizes = {};
 	poolSizes[0].type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
 	poolSizes[0].descriptorCount = 1000u;
@@ -172,6 +149,19 @@ void			VulkanInstance::CreateInstance(void)
 
 	if (vkCreateInstance(&createInfo, nullptr, &_instance) != VK_SUCCESS)
 		throw std::runtime_error("Failed to create Vulkan instance !");
+
+	uint propertyCount;
+	vkEnumerateInstanceExtensionProperties(nullptr, &propertyCount, nullptr);
+	std::vector< VkExtensionProperties > properties; 
+	properties.resize(propertyCount);
+	vkEnumerateInstanceExtensionProperties(nullptr, &propertyCount, properties.data());
+
+	// Print available extensions:
+	// for (const auto prop : properties)
+	// 	std::cout << prop.extensionName << std::endl;
+
+	// Load all entry points so we can use device vulkan functions
+	volkLoadInstance(_instance);
 }
 
 bool			VulkanInstance::AreValidationLayerSupported(void) noexcept
@@ -427,6 +417,9 @@ void			VulkanInstance::CreateLogicalDevice(void)
 	_mainQueue.queues.resize(1);
 	AllocateDeviceQueue(_mainQueue.queues[0], _mainQueue.index);
 
+	// Load all entry points for this specific device (may be faster that using instance loaded entry points)
+	volkLoadDevice(_device);
+	
 	printf("Create logical device !\n");
 }
 
@@ -664,7 +657,7 @@ VKAPI_ATTR VkBool32 VKAPI_CALL messageCallback(
 void		VulkanInstance::SetupDebugCallbacks(void) noexcept
 {
 	// TODO: setup the DebugReportMessageFunction as well (VK_EXT_debug_report)
-	if (VkExt::AreDebugLayerAvailable())
+	if (IsDebugLayerEnabled())
 	{
 		VkDebugUtilsMessengerCreateInfoEXT createInfo = {};
 		createInfo.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT;
@@ -714,6 +707,33 @@ int			DeviceCapability::GetGPUScore(void) const
 	}
 
 	return score;
+}
+
+bool VulkanInstance::IsExtensionEnabled(const std::string & extensionName)
+{
+	auto self = Get();
+
+	return (std::find(self->_deviceExtensions.begin(), self->_deviceExtensions.end(), extensionName) != self->_deviceExtensions.end());
+}
+
+bool	VulkanInstance::AreDebugMarkersEnabled(void)
+{
+	return IsExtensionEnabled(VK_EXT_DEBUG_MARKER_EXTENSION_NAME);
+}
+
+bool	VulkanInstance::IsDebugLayerEnabled(void)
+{
+	return IsExtensionEnabled(VK_EXT_DEBUG_UTILS_EXTENSION_NAME);
+}
+
+bool	VulkanInstance::IsRayTracingEnabled(void)
+{
+	return IsExtensionEnabled(VK_NV_RAY_TRACING_EXTENSION_NAME);
+}
+
+bool	VulkanInstance::AreCooperativeMatricesEnabled(void)
+{
+	return IsExtensionEnabled(VK_NV_COOPERATIVE_MATRIX_EXTENSION_NAME);
 }
 
 std::ostream &	operator<<(std::ostream & o, VulkanInstance const & r)

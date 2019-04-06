@@ -24,7 +24,7 @@ void		ComputeShader::Dispatch(VkCommandBuffer cmd, int width, int height, int de
 		_material->BindPipeline(cmd);
 		_material->BindProperties(cmd);
 		_renderPass.UpdateDescriptorBindings();
-		_dispatcher.SetDispatchSize(glm::ivec3(width, height, depth));
+		_dispatcher.SetDispatchSize(glm::ivec3(width, height, depth)); // TODO: do not re-set the dispatch size at every frame !
 		_dispatcher.RecordCommands(cmd);
 	}
 	_renderPass.End();

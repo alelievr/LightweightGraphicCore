@@ -1,7 +1,6 @@
 #include "Vk.hpp"
 
 #include "Core/Vulkan/Material.hpp"
-#include "Core/Vulkan/VkExt.hpp"
 
 using namespace LWGC;
 
@@ -331,7 +330,7 @@ void			Vk::UploadToMemory(VkDeviceMemory memory, void * data, size_t size)
 
 void			Vk::SetDebugName(const std::string & name, uint64_t vulkanObject, VkDebugReportObjectTypeEXT objectType)
 {
-	if (!VkExt::AreDebugMarkersAvailable())
+	if (!VulkanInstance::AreDebugMarkersEnabled())
 		return ;
 
 	if (vulkanObject == VK_NULL_HANDLE)
@@ -384,7 +383,7 @@ VULKAN_DEBUG_NAME_FUNCTION_TEMPLATE(SetEventDebugName, VkEvent, VK_DEBUG_REPORT_
 
 void			Vk::BeginProfilingSample(VkCommandBuffer cmd, const std::string & debugSampleName, const Color & color)
 {
-	if (!VkExt::AreDebugMarkersAvailable())
+	if (!VulkanInstance::AreDebugMarkersEnabled())
 		return;
 
 // We don't enable this for mac because the marker extension is not well supported
@@ -404,7 +403,7 @@ void			Vk::BeginProfilingSample(VkCommandBuffer cmd, const std::string & debugSa
 
 void			Vk::InsertProfilingSample(VkCommandBuffer cmd, const std::string & debugSampleName, const Color & color)
 {
-	if (!VkExt::AreDebugMarkersAvailable())
+	if (!VulkanInstance::AreDebugMarkersEnabled())
 		return;
 
 // We don't enable this for mac because the marker extension is not well supported
@@ -421,7 +420,7 @@ void			Vk::InsertProfilingSample(VkCommandBuffer cmd, const std::string & debugS
 
 void			Vk::EndProfilingSample(VkCommandBuffer cmd)
 {
-	if (!VkExt::AreDebugMarkersAvailable())
+	if (!VulkanInstance::AreDebugMarkersEnabled())
 		return ;
 
 // We don't enable this for mac because the marker extension is not well supported

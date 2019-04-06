@@ -1,7 +1,7 @@
 #include "RenderPass.hpp"
 
 #include "Core/Vulkan/Material.hpp"
-#include "Core/Vulkan/VkExt.hpp"
+#include "Core/Vulkan/VulkanInstance.hpp"
 
 using namespace LWGC;
 
@@ -118,7 +118,7 @@ void	RenderPass::Begin(VkCommandBuffer commandBuffer, VkFramebuffer framebuffer,
 	_commandBuffer = commandBuffer;
 	_framebuffer = framebuffer;
 
-	if (VkExt::AreDebugMarkersAvailable())
+	if (VulkanInstance::AreDebugMarkersEnabled())
 	{
 		Vk::BeginProfilingSample(_commandBuffer, passName, Color::Cyan);
 	}
@@ -141,7 +141,7 @@ void	RenderPass::Begin(VkCommandBuffer commandBuffer, VkFramebuffer framebuffer,
 
 void	RenderPass::End(void)
 {
-	if (VkExt::AreDebugMarkersAvailable())
+	if (VulkanInstance::AreDebugMarkersEnabled())
 	{
 		Vk::EndProfilingSample(_commandBuffer);
 	}

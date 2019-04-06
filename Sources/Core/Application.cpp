@@ -6,6 +6,10 @@
 #include "Core/Vulkan/VulkanInstance.hpp"
 #include "Core/Components/MeshRenderer.hpp"
 #include "Core/Time.hpp"
+#include "IncludeDeps.hpp"
+
+// Volk function definitions + init
+#include VOLK_SOURCE
 
 using namespace LWGC;
 
@@ -46,6 +50,8 @@ void			Application::Init(void) noexcept
 {
 	glfwSetErrorCallback(ErrorCallback);
 	glfwInit();
+
+	Vk::CheckResult(volkInitialize(), "Can't initialize volk");
 
 #ifdef __unix__
 	_instance.SetValidationLayers({

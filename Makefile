@@ -60,7 +60,6 @@ SOURCES		=	Core/Application.cpp \
 				Core/Vulkan/RenderPass.cpp \
 				Core/Vulkan/SwapChain.cpp \
 				Core/Vulkan/Vk.cpp \
-				Core/Vulkan/VkExt.cpp \
 				Core/Vulkan/VulkanInstance.cpp \
 				Core/Vulkan/VulkanSurface.cpp \
 				Core/Vulkan/ProfilingSample.cpp \

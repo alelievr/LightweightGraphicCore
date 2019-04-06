@@ -3,7 +3,7 @@
 
 #include "Core/Application.hpp"
 #include "Utils/Utils.hpp"
-#include "Core/Vulkan/VkExt.hpp"
+#include "Core/Vulkan/VulkanInstance.hpp"
 
 using namespace LWGC;
 
@@ -108,7 +108,7 @@ Texture2D::~Texture2D(void) {}
 
 void		Texture2D::SetName(const std::string & name)
 {
-	if (VkExt::AreDebugMarkersAvailable())
+	if (VulkanInstance::AreDebugMarkersEnabled())
 		Vk::SetImageDebugName(name, image);
 }
 
