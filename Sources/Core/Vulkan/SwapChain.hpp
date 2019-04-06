@@ -8,9 +8,13 @@
 #include "VulkanInstance.hpp"
 #include "RenderPass.hpp"
 #include "VulkanSurface.hpp"
+#include "Core/Delegate.tpp"
 
 namespace LWGC
 {
+	using SwapChainRecreatedDelegate = Delegate< void(void) >;
+	using SwapChainResizedDelegateIndex = DelegateIndex< void(void) >;
+
 	class		SwapChain
 	{
 		friend class RenderPipeline;
@@ -62,6 +66,8 @@ namespace LWGC
 			const std::vector< VkImageView >	GetImageViews(void) const noexcept;
 			const std::vector< VkFramebuffer >	GetFramebuffers(void) const noexcept;
 			uint32_t							GetImageCount(void) const noexcept;
+
+			SwapChainRecreatedDelegate			onRecreated;
 	};
 	
 	std::ostream &	operator<<(std::ostream & o, SwapChain const & r);

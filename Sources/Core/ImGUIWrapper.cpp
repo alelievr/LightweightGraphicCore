@@ -97,6 +97,8 @@ void		ImGUIWrapper::InitImGUIFrameDatas(void)
 	_wd.Width = _swapChain->GetExtent().width;
 	_wd.Height = _swapChain->GetExtent().height;
 
+	_swapChain->onRecreated.AddListener([&](){ UpdateSwapChainDatas(); });
+
 	for (uint32_t i = 0; i < _wd.BackBufferCount; i++)
 		_wd.BackBuffer[i] = _swapChain->GetImages()[i];
 
@@ -152,12 +154,18 @@ void		ImGUIWrapper::InitImGUIFrameDatas(void)
 	}
 }
 
-void		ImGUIWrapper::UpdatePipelineDependentDatas(void)
+void		ImGUIWrapper::UpdateSwapChainDatas(void)
 {
 	for (uint32_t i = 0; i < _swapChain->GetImageCount(); i++)
 	{
 		_wd.Framebuffer[i] = _swapChain->GetFramebuffers()[i];
+		std::cout << "Update frameBuffer: "<< _wd.Framebuffer[i] << std::endl;
 	}
+}
+
+void		ImGUIWrapper::UpdatePipelineDependentDatas(void)
+{
+	UpdateSwapChainDatas();
 }
 
 void		ImGUIWrapper::UploadFonts(void)

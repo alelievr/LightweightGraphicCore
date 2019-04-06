@@ -90,6 +90,7 @@ void				RenderPipeline::CreateRenderPass(void)
 
 	renderPass.Create();
 	swapChain->CreateFrameBuffers(renderPass);
+	swapChain->onRecreated.Invoke();
 }
 
 void			RenderPipeline::RenderGUI(RenderContext * context) noexcept
@@ -157,7 +158,7 @@ void			RenderPipeline::UpdatePerframeUnformBuffer(void) noexcept
 	Vk::UploadToMemory(_uniformPerFrame.memory, &_perFrame, sizeof(LWGC_PerFrame));
 }
 
-void			RenderPipeline::RenderInternal(const std::vector< Camera * > & cameras, RenderContext * context)
+bool			RenderPipeline::RenderInternal(const std::vector< Camera * > & cameras, RenderContext * context)
 {
 	UpdatePerframeUnformBuffer();
 
@@ -168,8 +169,9 @@ void			RenderPipeline::RenderInternal(const std::vector< Camera * > & cameras, R
 
 	if (result == VK_ERROR_OUT_OF_DATE_KHR)
 	{
+		std::cout << "Recreating swapchain !\n";
 		RecreateSwapChain();
-		return;
+		return false;
 	}
 	else if (result != VK_SUCCESS && result != VK_SUBOPTIMAL_KHR)
 	{
@@ -203,6 +205,8 @@ void			RenderPipeline::RenderInternal(const std::vector< Camera * > & cameras, R
 	RenderPipelineManager::endFrameRendering.Invoke();
 
 	Vk::CheckResult(vkEndCommandBuffer(GetCurrentFrameCommandBuffer()), "Failed to record command buffer!");
+	
+	return true;
 }
 
 void	RenderPipeline::PresentFrame(void)

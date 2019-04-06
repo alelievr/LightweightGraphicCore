@@ -41,8 +41,6 @@ void		SwapChain::Cleanup(void) noexcept
 	for (size_t i = 0; i < _framebuffers.size(); i++)
 		vkDestroyFramebuffer(_device, _framebuffers[i], nullptr);
 
-
-	printf("destroying image views !\n");
 	for (size_t i = 0; i < _imageViews.size(); i++)
 		vkDestroyImageView(_device, _imageViews[i], nullptr);
 

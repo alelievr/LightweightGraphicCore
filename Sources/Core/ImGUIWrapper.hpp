@@ -30,6 +30,7 @@ namespace LWGC
 			void		InitImGUI(void);
 			void		UploadFonts(void);
 			void		InitImGUIFrameDatas(void);
+			void		UpdateSwapChainDatas(void);
 
 		public:
 			ImGUIWrapper(void);

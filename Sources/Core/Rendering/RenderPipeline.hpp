@@ -68,7 +68,7 @@ namespace LWGC
 			uint32_t						_imageIndex;
 			bool							_initialized;
 
-			void				RenderInternal(const std::vector< Camera * > & cameras, RenderContext * context);
+			bool				RenderInternal(const std::vector< Camera * > & cameras, RenderContext * context);
 
 			void				UpdatePerframeUnformBuffer(void) noexcept;
 

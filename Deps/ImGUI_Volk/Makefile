@@ -15,7 +15,7 @@
 #################
 
 #	Sources
-IMGUI_PATH	=	../imgui/
+IMGUI_PATH	=	../imgui
 SRCDIR		=	.
 SRC			=	Sources/imgui_vulkan.cpp		\
 				$(IMGUI_PATH)/imgui.cpp			\
@@ -104,21 +104,6 @@ ifeq "$(OS)" "Linux"
 endif
 ifeq "$(OS)" "Darwin"
 	FRAMEWORK	=
-endif
-
-COMPILER	=	$(shell readlink $(which cc))
-ifneq (,$(findstring clang++,$(COMPILER)))
-	#Clang++ compiler
-	CFLAGS	+= -dead_strip
-else ifneq (,$(findstring clang,$(COMPILER)))
-	#Clang compiler
-	CFLAGS	+= -dead_strip
-else ifneq (,$(findstring gcc,$(COMPILER)))
-	#GCC compiler
-	CFLAGS	+=	--gc-sections
-else ifneq (,$(findstring gcc++,$(COMPILER)))
-	#G++ compiler
-	CFLAGS	+=	--gc-sections
 endif
 
 #################

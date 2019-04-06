@@ -199,11 +199,13 @@ void				Application::Update(void) noexcept
 	{
 		auto sample = ProfilingSample("Frame");
 
-		currentPipe->RenderInternal(cameras, hierarchy->GetRenderContext());
-
-		_imGUI.BeginFrame();
-		currentPipe->RenderGUI(hierarchy->GetRenderContext());
-		_imGUI.EndFrame();
+		// If rendering was successful, we can draw the GUI
+		if (currentPipe->RenderInternal(cameras, hierarchy->GetRenderContext()))
+		{
+			_imGUI.BeginFrame();
+			currentPipe->RenderGUI(hierarchy->GetRenderContext());
+			_imGUI.EndFrame();
+		}
 
 		currentPipe->PresentFrame();
 	}
