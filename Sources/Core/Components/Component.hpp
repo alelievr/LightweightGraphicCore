@@ -27,6 +27,7 @@ namespace LWGC
 		Movator,
 		Activator,
 		ImGUIPanel,
+		IndirectRenderer,
 
  		// Note: this MUST be the last element of the enum
 		Count,

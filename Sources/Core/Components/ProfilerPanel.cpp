@@ -23,7 +23,7 @@ ProfilerPanel::ProfilerPanel() : ImGUIPanel()
 
 void		ProfilerPanel::DrawImGUI(void) noexcept
 {
-	ImGui::Begin("Profiler");
+	ImGui::Begin("CPU Profiler");
 
 	ImGui::PlotLines(
 		"Frame time history",

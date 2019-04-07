@@ -199,15 +199,15 @@ void				Application::Update(void) noexcept
 	{
 		auto sample = ProfilingSample("Frame");
 
-		// If rendering was successful, we can draw the GUI
+		// If rendering was successful, we can draw the GUI and present the frame
 		if (currentPipe->RenderInternal(cameras, hierarchy->GetRenderContext()))
 		{
 			_imGUI.BeginFrame();
 			currentPipe->RenderGUI(hierarchy->GetRenderContext());
 			_imGUI.EndFrame();
-		}
 
-		currentPipe->PresentFrame();
+			currentPipe->PresentFrame();
+		}
 	}
 	else // When there is no pipeline graphic, we limit the application framerate to 60
 		usleep((1.0f / 60.0f) * 1000000.0f);

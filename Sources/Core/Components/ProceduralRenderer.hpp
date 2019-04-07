@@ -28,9 +28,6 @@ namespace LWGC
 
 			ProceduralRenderer &	operator=(ProceduralRenderer const & src) = delete;
 
-			void	SetModel(const Mesh & mesh, const Material & material);
-			void	SetModel(std::shared_ptr< Mesh > mesh, Material * material);
-
 			int		GetVerticeCount(void) const noexcept;
 			void	SetVerticeCount(int verticeCount) noexcept;
 

@@ -55,6 +55,7 @@
 #include "Core/Components/Movator.hpp"
 #include "Core/Components/Activator.hpp"
 #include "Core/Components/ProfilerPanel.hpp"
+#include "Core/Components/IndirectRenderer.hpp"
 
 // Gimos & handles
 #include "Core/Gizmos/Line.hpp"

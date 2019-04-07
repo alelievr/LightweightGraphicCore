@@ -198,6 +198,8 @@ void				SwapChain::CreateFrameBuffers(const RenderPass & renderPass)
 		if (vkCreateFramebuffer(_device, &framebufferInfo, nullptr, &_framebuffers[i]) != VK_SUCCESS)
 		    throw std::runtime_error("failed to create framebuffer!");
 	}
+
+	onRecreated.Invoke();
 }
 
 VkSurfaceFormatKHR	SwapChain::ChooseSurfaceFormat(void) noexcept

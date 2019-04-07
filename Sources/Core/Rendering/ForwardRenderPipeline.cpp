@@ -135,7 +135,7 @@ void	ForwardRenderPipeline::Render(const std::vector< Camera * > & cameras, Rend
 		auto computeSample = ProfilingSample("Noise Dispatch");
 
 		auto asyncCmd = asyncComputePool.BeginSingle();
-		heavyComputeShader.Dispatch(cmd, 4096, 4096, 1);
+		heavyComputeShader.Dispatch(cmd, 512, 512, 1);
 		asyncComputePool.EndSingle(asyncCmd); // fence
 	}
 

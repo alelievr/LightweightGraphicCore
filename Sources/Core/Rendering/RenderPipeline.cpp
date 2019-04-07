@@ -90,7 +90,6 @@ void				RenderPipeline::CreateRenderPass(void)
 
 	renderPass.Create();
 	swapChain->CreateFrameBuffers(renderPass);
-	swapChain->onRecreated.Invoke();
 }
 
 void			RenderPipeline::RenderGUI(RenderContext * context) noexcept
@@ -205,7 +204,7 @@ bool			RenderPipeline::RenderInternal(const std::vector< Camera * > & cameras, R
 	RenderPipelineManager::endFrameRendering.Invoke();
 
 	Vk::CheckResult(vkEndCommandBuffer(GetCurrentFrameCommandBuffer()), "Failed to record command buffer!");
-	
+
 	return true;
 }
 

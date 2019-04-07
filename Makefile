@@ -41,6 +41,7 @@ SOURCES		=	Core/Application.cpp \
 				Core/Components/Movator.cpp \
 				Core/Components/Activator.cpp \
 				Core/Components/ProfilerPanel.cpp \
+				Core/Components/IndirectRenderer.cpp \
 				Core/ComputeDispatcher.cpp \
 				Core/ShaderCache.cpp \
 				Core/Object.cpp \

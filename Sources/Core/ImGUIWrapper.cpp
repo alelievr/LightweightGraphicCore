@@ -159,7 +159,6 @@ void		ImGUIWrapper::UpdateSwapChainDatas(void)
 	for (uint32_t i = 0; i < _swapChain->GetImageCount(); i++)
 	{
 		_wd.Framebuffer[i] = _swapChain->GetFramebuffers()[i];
-		std::cout << "Update frameBuffer: "<< _wd.Framebuffer[i] << std::endl;
 	}
 }
 

@@ -17,6 +17,7 @@ const ProfilingSamples &Profiler::GetSamples(void) noexcept
 	return _samples;
 }
 
+// Useful to retreive the sample that contains all other samples (the frame)
 const ProfilingEntryData Profiler::GetLastSample(void) noexcept
 {
 	return _lastInsertedEntry;
