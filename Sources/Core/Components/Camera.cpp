@@ -78,6 +78,23 @@ void		Camera::Initialize(void) noexcept
 	_perCameraSet.AddBinding(0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, _uniformCameraBuffer.buffer, sizeof(LWGC_PerCamera));
 }
 
+glm::mat4 Camera::ReverseZPerspective(float fovy, float aspect, float zNear, float zFar)
+{
+	assert(abs(aspect - std::numeric_limits<float>::epsilon()) > 0.0f);
+
+	float const tanHalfFovy = tan(fovy / 2.0f);
+	
+	glm::mat4 Result(0.0f);
+	Result[0][0] = 1.0f / (aspect * tanHalfFovy);
+	Result[1][1] = 1.0f / (tanHalfFovy);
+	Result[2][3] = 1.0f;
+
+	Result[2][2] = -(zFar / (zNear - zFar)) - 1.0f;
+	Result[3][2] = -(zNear * zFar) / (zNear - zFar);
+
+	return Result;
+}
+
 void					Camera::UpdateUniformData(void) noexcept
 {
 	_perCamera.positionWS = glm::vec4(transform->GetPosition(), 1.0f);
@@ -90,7 +107,7 @@ void					Camera::UpdateUniformData(void) noexcept
 	_viewportSize.y = swapChainExtent.height;
 
 	float ratio = _viewportSize.x / _viewportSize.y;
-	_perCamera.projection = glm::perspective(glm::radians(_fov), ratio, _nearPlane, _farPlane);
+	_perCamera.projection = ReverseZPerspective(glm::radians(_fov), ratio, _nearPlane, _farPlane);
 
 	// Invert y because Opengl
 	_perCamera.projection[1][1] *= -1;

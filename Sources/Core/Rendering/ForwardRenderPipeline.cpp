@@ -119,7 +119,7 @@ void	ForwardRenderPipeline::SetupRenderPasses()
 
 	forwardPass.AddDependency(dependency);
 
-	forwardPass.SetClearColor(Color::Black, 1.0f, 0.0f);
+	forwardPass.SetClearColor(Color::Black, 0.0f, 0.0f);
 
 	forwardPass.Create();
 
