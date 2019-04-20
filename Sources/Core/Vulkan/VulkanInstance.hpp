@@ -118,6 +118,7 @@ namespace LWGC
 
 			// Utils
 			uint32_t	FindMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties);
+			uint32_t	FindMemoryType(const VkMemoryRequirements & memoryRequirements, VkMemoryPropertyFlags memoryProperties);
 			VkFormat	FindSupportedFormat(const std::vector< VkFormat > & candidates, VkImageTiling tiling, VkFormatFeatureFlags features);
 			VkFormat	FindDepthFormat(void);
 			uint32_t	GetAvailableDevceQueueCount(void);

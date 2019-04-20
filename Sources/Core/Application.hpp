@@ -27,6 +27,13 @@
 
 namespace LWGC
 {
+	enum class AppCapability
+	{
+		Default				= 0x000,
+		RayTracing			= 0x001,
+		CooperativeMatrices	= 0x002,
+	};
+
 	class		Application
 	{
 		friend class Texture;
@@ -55,7 +62,7 @@ namespace LWGC
 
 			Application &	operator=(Application const & src) = delete;
 
-			void	Init(void) noexcept;
+			void	Init(const AppCapability capabilities = AppCapability::Default) noexcept;
 			bool	ShouldNotQuit(void) const noexcept;
 			void	Quit(void) noexcept;
 			void	Open(const std::string & name, const int width, const int height, const WindowFlag flags) noexcept;

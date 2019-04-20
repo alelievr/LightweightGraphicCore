@@ -78,5 +78,7 @@ namespace LWGC
 			static void			EndProfilingSample(VkCommandBuffer cmd);
 
 			static VkFence		CreateFence(bool signaled = false);
+
+			static uint64_t		CreateAccelerationStructure(const VkAccelerationStructureTypeNV type, const uint32_t geometryCount, const VkGeometryNV * geometries, const uint32_t instanceCount);
 	};
 }

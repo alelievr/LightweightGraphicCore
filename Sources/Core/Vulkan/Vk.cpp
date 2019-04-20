@@ -442,3 +442,66 @@ VkFence			Vk::CreateFence(bool signaled)
 	vkCreateFence(device, &fenceInfo, nullptr, &fence);
 	return fence;
 }
+
+uint64_t		Vk::CreateAccelerationStructure(const VkAccelerationStructureTypeNV type, const uint32_t geometryCount, const VkGeometryNV * geometries, const uint32_t instanceCount)
+{
+	VulkanInstance *			instance = VulkanInstance::Get();
+	VkDevice					device = instance->GetDevice();
+	VkAccelerationStructureNV	accelerationStructure;
+	VkDeviceMemory				accelerationStructureMemory;
+
+	VkAccelerationStructureInfoNV	accelerationStructureInfo = {};
+    accelerationStructureInfo.type = type;
+    accelerationStructureInfo.flags = 0;
+    accelerationStructureInfo.instanceCount = instanceCount;
+    accelerationStructureInfo.geometryCount = geometryCount;
+    accelerationStructureInfo.pGeometries = geometries;
+
+	VkAccelerationStructureCreateInfoNV accelerationStructureCreateInfo = {};
+    accelerationStructureCreateInfo.sType = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_CREATE_INFO_NV;
+    accelerationStructureCreateInfo.info = accelerationStructureInfo;
+    accelerationStructureCreateInfo.compactedSize = 0;
+
+    Vk::CheckResult(vkCreateAccelerationStructureNV(device,
+		&accelerationStructureCreateInfo, nullptr, &accelerationStructure),
+		"Failed to create acceleration structure"
+	);
+
+    VkAccelerationStructureMemoryRequirementsInfoNV memoryRequirementsInfo;
+    memoryRequirementsInfo.sType = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_MEMORY_REQUIREMENTS_INFO_NV;
+    memoryRequirementsInfo.pNext = nullptr;
+    memoryRequirementsInfo.accelerationStructure = accelerationStructure;
+
+    VkMemoryRequirements2 memoryRequirements;
+    vkGetAccelerationStructureMemoryRequirementsNV(device, &memoryRequirementsInfo, &memoryRequirements);
+
+    VkMemoryAllocateInfo memoryAllocateInfo;
+    memoryAllocateInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
+    memoryAllocateInfo.pNext = nullptr;
+    memoryAllocateInfo.allocationSize = memoryRequirements.memoryRequirements.size;
+    memoryAllocateInfo.memoryTypeIndex = instance->FindMemoryType(memoryRequirements.memoryRequirements, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
+
+    Vk::CheckResult(vkAllocateMemory(device, &memoryAllocateInfo, nullptr, &accelerationStructureMemory),
+        "Failed to allocate memory for acceleration structure"
+	);
+
+    VkBindAccelerationStructureMemoryInfoNV bindInfo;
+    bindInfo.sType = VK_STRUCTURE_TYPE_BIND_ACCELERATION_STRUCTURE_MEMORY_INFO_NV;
+    bindInfo.pNext = nullptr;
+    bindInfo.accelerationStructure = accelerationStructure;
+    bindInfo.memory = accelerationStructureMemory;
+    bindInfo.memoryOffset = 0;
+    bindInfo.deviceIndexCount = 0;
+    bindInfo.pDeviceIndices = nullptr;
+
+    Vk::CheckResult(vkBindAccelerationStructureMemoryNV(device, 1, &bindInfo),
+        "Failed to bind the acceleration structure memory"
+	);
+
+	uint64_t handle = -1;
+    Vk::CheckResult(vkGetAccelerationStructureHandleNV(device, accelerationStructure, sizeof(uint64_t), &handle),
+		"Failed to get the acceleration structure handle"
+	);
+
+	return handle;
+}

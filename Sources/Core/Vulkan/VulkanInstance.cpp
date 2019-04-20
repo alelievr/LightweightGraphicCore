@@ -509,6 +509,23 @@ uint32_t		VulkanInstance::FindMemoryType(uint32_t typeFilter, VkMemoryPropertyFl
 	throw std::runtime_error("failed to find suitable memory type!");
 }
 
+uint32_t		VulkanInstance::FindMemoryType(const VkMemoryRequirements & memoryRequirements, VkMemoryPropertyFlags memoryProperties)
+{
+	VkPhysicalDeviceMemoryProperties memProperties;
+	vkGetPhysicalDeviceMemoryProperties(_physicalDevice, &memProperties);
+
+    for (uint32_t memoryTypeIndex = 0; memoryTypeIndex < VK_MAX_MEMORY_TYPES; ++memoryTypeIndex)
+	{
+        if (memoryRequirements.memoryTypeBits & (1 << memoryTypeIndex))
+		{
+            if ((memProperties.memoryTypes[memoryTypeIndex].propertyFlags & memoryProperties) == memoryProperties)
+                return memoryTypeIndex;
+        }
+    }
+
+	throw std::runtime_error("failed to find suitable memory type!");
+}
+
 VkFormat		VulkanInstance::FindSupportedFormat(const std::vector< VkFormat > & candidates, VkImageTiling tiling, VkFormatFeatureFlags features)
 {
 	for (VkFormat format : candidates) {

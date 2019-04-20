@@ -47,28 +47,35 @@ void			ErrorCallback(int err, const char * description)
 	std::cout << "GLFW error[" << err << "]: " << description << std::endl;
 }
 
-void			Application::Init(void) noexcept
+void			Application::Init(const AppCapability capabilities) noexcept
 {
 	glfwSetErrorCallback(ErrorCallback);
 	glfwInit();
 
 	Vk::CheckResult(volkInitialize(), "Can't initialize volk");
 
-#ifdef __unix__
-	_instance.SetValidationLayers({
-		"VK_LAYER_LUNARG_standard_validation",
-	});
-#endif
-	_instance.SetDeviceExtensions({
+	std::vector< std::string > deviceExtensions = {
 #ifdef DEBUG
 		VK_EXT_DEBUG_MARKER_EXTENSION_NAME, // TODO: enable the extension in the vulkan layer
 #endif
 		VK_KHR_SWAPCHAIN_EXTENSION_NAME,
 		VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2_EXTENSION_NAME,
-		VK_KHR_GET_MEMORY_REQUIREMENTS_2_EXTENSION_NAME,
-		VK_NV_RAY_TRACING_EXTENSION_NAME,
-		VK_NV_COOPERATIVE_MATRIX_EXTENSION_NAME,
+		VK_KHR_GET_MEMORY_REQUIREMENTS_2_EXTENSION_NAME
+	};
+
+#ifdef __unix__
+	_instance.SetValidationLayers({
+		"VK_LAYER_LUNARG_standard_validation",
 	});
+#endif
+
+	// TODO: std::map capabilities to extensions
+	if ((int)capabilities & (int)AppCapability::RayTracing)
+		deviceExtensions.push_back(VK_NV_RAY_TRACING_EXTENSION_NAME);
+	if ((int)capabilities & (int)AppCapability::CooperativeMatrices)
+		deviceExtensions.push_back(VK_NV_COOPERATIVE_MATRIX_EXTENSION_NAME);
+
+	_instance.SetDeviceExtensions(deviceExtensions);
 	_instance.SetApplicationName("LWGC"); // This should be the application name but for the moment we'll keep it like this
 
 	_instance.Initialize();
