@@ -41,7 +41,7 @@ void			Vk::CreateImage(uint32_t width, uint32_t height, uint32_t depth, int arra
 
 	VkImageCreateInfo imageInfo = {};
 	imageInfo.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
-	imageInfo.imageType = VK_IMAGE_TYPE_2D;
+	imageInfo.imageType = (depth == 1) ? VK_IMAGE_TYPE_2D : VK_IMAGE_TYPE_3D;
 	imageInfo.extent.width = width;
 	imageInfo.extent.height = height;
 	imageInfo.extent.depth = depth;
