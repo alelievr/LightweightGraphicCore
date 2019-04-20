@@ -70,6 +70,7 @@ namespace LWGC
 			float		GetFarPlane(void) const;
 			void		SetFarPlane(float tmp);
 
+			glm::mat4 	ReverseZPerspective(float fovy, float aspect, float zNear, float zFar);
 			glm::mat4	GetViewMatrix(void) const;
 			glm::mat4	GetProjectionMatrix(void) const;
 

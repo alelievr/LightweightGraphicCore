@@ -10,7 +10,7 @@ namespace LWGC
 	class MaterialState
 	{
 		public:
-			inline constexpr static VkPipelineDepthStencilStateCreateInfo CreateDepthState(bool depthTest, bool depthWrite, VkCompareOp compareOp = VK_COMPARE_OP_LESS)
+			inline constexpr static VkPipelineDepthStencilStateCreateInfo CreateDepthState(bool depthTest, bool depthWrite, VkCompareOp compareOp = VK_COMPARE_OP_GREATER)
 			{
 				VkPipelineDepthStencilStateCreateInfo depthStencilState = {};
 				depthStencilState.sType = VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO;
@@ -27,7 +27,7 @@ namespace LWGC
 				return depthStencilState;
 			}
 
-			inline constexpr static VkPipelineDepthStencilStateCreateInfo CreateDepthState(bool depthTest, bool depthWrite, VkStencilOpState front, VkStencilOpState back, VkCompareOp compareOp = VK_COMPARE_OP_LESS)
+			inline constexpr static VkPipelineDepthStencilStateCreateInfo CreateDepthState(bool depthTest, bool depthWrite, VkStencilOpState front, VkStencilOpState back, VkCompareOp compareOp = VK_COMPARE_OP_GREATER)
 			{
 				VkPipelineDepthStencilStateCreateInfo depthStencilState = {};
 				depthStencilState.sType = VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO;
@@ -130,8 +130,8 @@ namespace LWGC
 			);
 
 			// depth stencil states
-			inline static const VkPipelineDepthStencilStateCreateInfo	depthCompareWrite = CreateDepthState(VK_TRUE, VK_TRUE, VK_COMPARE_OP_LESS);
-			inline static const VkPipelineDepthStencilStateCreateInfo	depthCompareNoWrite = CreateDepthState(VK_TRUE, VK_FALSE, VK_COMPARE_OP_LESS);
+			inline static const VkPipelineDepthStencilStateCreateInfo	depthCompareWrite = CreateDepthState(VK_TRUE, VK_TRUE, VK_COMPARE_OP_GREATER);
+			inline static const VkPipelineDepthStencilStateCreateInfo	depthCompareNoWrite = CreateDepthState(VK_TRUE, VK_FALSE, VK_COMPARE_OP_GREATER);
 
 			// color blend states
 			inline static const VkPipelineColorBlendStateCreateInfo		noColorBlendState = CreateColorBlendState(1, &noBlendAttachment); // we need at least one attachment for OSX
