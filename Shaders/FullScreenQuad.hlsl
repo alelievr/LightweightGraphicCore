@@ -14,7 +14,7 @@ FragmentInput main(int id : SV_VertexID)
 	FragmentInput	o;
 
     o.uv = (screenPositions[id] + 1) * 0.5;
-	o.positionWS = float4(screenPositions[id].xy, 1, 1);
+	o.positionWS = float4(screenPositions[id].xy, 0.0001, 1);
 
 	return o;
 }

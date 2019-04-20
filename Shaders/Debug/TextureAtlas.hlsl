@@ -22,7 +22,7 @@ StructuredBuffer< SizeOffset >	sizeOffsets; // Metal 1 does not support Buffer<>
 [vk::binding(1, 4)]
 ConstantBuffer< Atlas >	atlas;
 
-FragmentOutput main(FragmentInput i)
+FragmentOutput main(FragmentInput i, float depth : SV_DEPTH)
 {
 	FragmentOutput	o;
 

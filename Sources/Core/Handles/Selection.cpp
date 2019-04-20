@@ -48,25 +48,27 @@ void	Selection::Update(void) noexcept
 
 void	Selection::UpdateSelectedObject(Camera * cam) noexcept
 {
-	std::unordered_set< Renderer * >	renderers;
-	glm::vec3							origin = cam->GetTransform()->GetPosition();
+	(void)cam;
+	// std::unordered_set< Renderer * >	renderers;
+	// glm::vec3							origin = cam->GetTransform()->GetPosition();
 
-	_renderContext->GetRenderers(renderers);
-	_hoveredGameObject = nullptr;
+	// TODO: Update this with renderQueues when doing gizmos with ImGUI
+	// _renderContext->GetRenderers(renderers);
+	// _hoveredGameObject = nullptr;
 
-	// TODO: multi-object ?
-	for (const auto & renderer : renderers)
-	{
-		// Ignore gizmos in raycast, TODO: gizmos must be in a separate list !
-		if (dynamic_cast< Gizmo::GizmoBase * >(renderer->GetGameObject()))
-			continue ;
+	// // TODO: multi-object ?
+	// for (const auto & renderer : renderers)
+	// {
+	// 	// Ignore gizmos in raycast, TODO: gizmos must be in a separate list !
+	// 	if (dynamic_cast< Gizmo::GizmoBase * >(renderer->GetGameObject()))
+	// 		continue ;
 
-		if (renderer->GetBounds().Intersects(origin, _worldRay))
-		{
-			_hoveredGameObject = renderer->GetGameObject();
-			break ;
-		}
-	}
+	// 	if (renderer->GetBounds().Intersects(origin, _worldRay))
+	// 	{
+	// 		_hoveredGameObject = renderer->GetGameObject();
+	// 		break ;
+	// 	}
+	// }
 }
 
 void	Selection::UpdateHandles(void) noexcept

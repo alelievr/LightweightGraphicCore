@@ -72,7 +72,6 @@ namespace LWGC
             }
 
             void GetLights(std::unordered_set< Light * > &lights) { return GetComponentSet< Light * >(static_cast< uint32_t >(ComponentType::Light), lights); }
-            void GetRenderers(std::unordered_set< Renderer * > &renderers) { return GetComponentSet< Renderer * >(renderers); }
             void GetComputeDispatchers(std::unordered_set< ComputeDispatcher * > &computeDispatchers) { return GetComponentSet< ComputeDispatcher * >(static_cast< uint32_t >(ComponentType::ComputeDispatcher), computeDispatchers); }
 
             ComponentIndex   InsertComponent(uint32_t componentType, Component * component)
