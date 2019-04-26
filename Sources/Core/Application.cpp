@@ -8,6 +8,7 @@
 #include "Core/Time.hpp"
 #include "IncludeDeps.hpp"
 #include "Core/Vulkan/ProfilingSample.hpp"
+#include "Core/Profiler.hpp"
 
 // Volk function definitions + init
 #include VOLK_SOURCE
@@ -201,6 +202,8 @@ void				Application::Update(void) noexcept
 	const auto cameras = hierarchy->GetCameras();
 
 	auto currentPipe = RenderPipelineManager::currentRenderPipeline;
+
+	Profiler::Reset();
 
 	if (currentPipe != nullptr)
 	{

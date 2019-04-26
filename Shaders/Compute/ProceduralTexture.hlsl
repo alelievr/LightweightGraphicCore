@@ -1,10 +1,10 @@
 #include "Shaders/Common/InputCompute.hlsl"
 #include "Shaders/Common/UniformStructs.hlsl"
 
-[vk::binding(0, 0)]
+[[vk::binding(0, 0)]]
 ConstantBuffer< LWGC_PerFrame > frame;
 
-[vk::binding(0, 1)]
+[[vk::binding(0, 1)]]
 uniform RWTexture2D< half4 > proceduralTexture;
 
 float2 hash(float2 x)
@@ -30,7 +30,7 @@ float noise(float2 p)
 [numthreads(8, 8, 1)]
 void        main(ComputeInput i)
 {
-	float2 uv = i.dispatchThreadId.xy / float2(512);
+	float2 uv = i.dispatchThreadId.xy / 512;
 	// proceduralTexture[i.dispatchThreadId.xy] = half4(uv, 1, 1);
 	proceduralTexture[i.dispatchThreadId.xy] = half4(noise(uv * 10 + frame.time.x), 0, 0, 1);
 }
