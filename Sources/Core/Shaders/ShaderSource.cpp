@@ -119,6 +119,7 @@ void		ShaderSource::Compile(void)
 		cmd += " -I" + p;
 	std::string tmpPidPath = tmpFilePath + std::to_string(getpid());
 	cmd += " " + _sourceFile.path + " -o " + tmpPidPath;
+	std::cout << cmd << std::endl;
 	if (system(cmd.c_str()) != 0)
 		throw std::runtime_error("Shader compilation error");
 

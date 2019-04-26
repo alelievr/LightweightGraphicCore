@@ -9,13 +9,7 @@ using namespace LWGC;
 IndirectRenderer::IndirectRenderer(Material * material)
 	: Renderer(material), _drawCount(1), _stride(0), _drawBuffer(VK_NULL_HANDLE)
 {
-	// For procedural materials we don't need vertex input datas
-	VkPipelineVertexInputStateCreateInfo	vertexInputInfo = {};
-	vertexInputInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
-	vertexInputInfo.vertexBindingDescriptionCount = 0;
-	vertexInputInfo.vertexAttributeDescriptionCount = 0;
-
-	material->SetVertexInputState(vertexInputInfo);
+	// Make sure to bind the same vertex layout than the format of the draw buffer for the material
 }
 
 IndirectRenderer::~IndirectRenderer(void)
