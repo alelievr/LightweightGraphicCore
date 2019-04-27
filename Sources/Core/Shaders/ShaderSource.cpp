@@ -4,6 +4,7 @@
 #include <fstream>
 #include <unistd.h>
 #include "IncludeDeps.hpp"
+#include "Utils/Utils.hpp"
 
 #include SPIRV_CROSS_INCLUDE
 
@@ -113,13 +114,17 @@ void		ShaderSource::Compile(void)
 	if (access(compilerPath.c_str(), F_OK) != -1)
 		compilerPath = "./" + compilerPath;
 
+	std::string isHlslSource = "";
+
+	if (GetExtension(_sourceFile.path) == "hlsl")
+		isHlslSource = "-D ";
+
 	// I gave up using the c++ api of glslang, it's totally unusable
-	std::string cmd = compilerPath + " -e main -V -D -S " + StageToText(_stage) + " -I" + path;
+	std::string cmd = compilerPath + " -e main -V " + isHlslSource + " -S " + StageToText(_stage) + " -I" + path;
 	for (const auto & p : shaderIncludePaths)
 		cmd += " -I" + p;
 	std::string tmpPidPath = tmpFilePath + std::to_string(getpid());
 	cmd += " " + _sourceFile.path + " -o " + tmpPidPath;
-	std::cout << cmd << std::endl;
 	if (system(cmd.c_str()) != 0)
 		throw std::runtime_error("Shader compilation error");
 
