@@ -291,6 +291,10 @@ $(ASSIMPLIB):
 	@git submodule update --init
 	@cd Deps/assimp && cmake . -DBUILD_SHARED_LIBS=OFF && make -j4
 
+$(DIRECTX_SHADER_COMPILER):
+	@git submodule update --init --recursive
+	
+
 $(VULKAN):
 	@$(DOWNLOAD_VULKAN)
 

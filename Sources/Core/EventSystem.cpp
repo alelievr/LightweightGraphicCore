@@ -127,8 +127,10 @@ void				EventSystem::UpdateMousePosition(void)
 
 void				EventSystem::LockCursor(void)
 {
+#ifndef linux // does not work on linux
 	glfwSetInputMode(_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 	UpdateMousePosition();
+#endif
 }
 
 void				EventSystem::ReleaseCursor(void)
