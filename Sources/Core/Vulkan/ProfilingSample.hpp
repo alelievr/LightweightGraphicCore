@@ -18,7 +18,7 @@ namespace LWGC
 			VkCommandBuffer	_cmd;
 			double			_startTime;
 			std::string		_sampleName;
-			float			_timeRelativeFrame;
+			float			_timeFrameRelative;
 
 			static std::string		_hierarchy;
 

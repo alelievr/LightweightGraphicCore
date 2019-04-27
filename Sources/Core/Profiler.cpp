@@ -7,7 +7,6 @@ ProfilingEntryData	Profiler::_lastInsertedEntry;
 
 void					Profiler::AddSample(const std::string & name, double durationInMilliseconds, double frameTimeInMilliseconds) noexcept
 {
-	std::cout << "Enqueue: " << name + ": "  << durationInMilliseconds << std::endl;
 	ProfilingEntryData data = ProfilingEntryData{ durationInMilliseconds, frameTimeInMilliseconds };
 	_samples.emplace(name, data);
 	_lastInsertedEntry = data;

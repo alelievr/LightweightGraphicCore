@@ -91,8 +91,6 @@ void				SwapChain::CreateImageViews(void) noexcept
 {
 	_imageViews.resize(_images.size());
 
-	std::cout << "image count: " << _images.size() << std::endl;
-
 	for (uint32_t i = 0; i < _images.size(); i++)
 	    _imageViews[i] = Vk::CreateImageView(_images[i], _imageFormat, 1, VK_IMAGE_VIEW_TYPE_2D, VK_IMAGE_ASPECT_COLOR_BIT);
 }
@@ -177,8 +175,6 @@ void				SwapChain::CreateFrameBuffers(const RenderPass & renderPass)
 
 	CreateDepthResources();
 
-	std::cout << "Swapchain size: " << _imageViews.size() << std::endl;
-
 	for (size_t i = 0; i < _imageViews.size(); i++)
 	{
 		std::array<VkImageView, 2> attachments = {{
@@ -248,8 +244,6 @@ VkExtent2D			SwapChain::ChooseExtent(void) noexcept
 	    static_cast<uint32_t>(width),
 	    static_cast<uint32_t>(height)
 	};
-
-	std::cout << "FrameBuffer size: " << width << " / " << height << std::endl;
 
 	actualExtent.width = std::max(capabilities.minImageExtent.width, std::min(capabilities.maxImageExtent.width, actualExtent.width));
 	actualExtent.height = std::max(capabilities.minImageExtent.height, std::min(capabilities.maxImageExtent.height, actualExtent.height));
