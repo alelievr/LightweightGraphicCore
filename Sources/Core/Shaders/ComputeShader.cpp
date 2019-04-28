@@ -18,6 +18,15 @@ void		ComputeShader::LoadShader(const std::string & shaderPath)
 
 void		ComputeShader::Dispatch(VkCommandBuffer cmd, int width, int height, int depth) noexcept
 {
+	// Check if every compute shader properties are bound
+	const auto & shaderBindingNames = _material->GetShaderProgram()->GetShaderBindingTable()->GetBindingNames();
+
+	for (const auto & bindingName : shaderBindingNames)
+	{
+		if (!_material->IsPropertyBound(bindingName))
+			std::cerr << "Compute shader property " << bindingName << " is not bound for compute " << _material->GetName() << std::endl;
+	}
+
 	_renderPass.Begin(cmd, VK_NULL_HANDLE, "TODO: Dispatch compute name");
 	{
 		_renderPass.BindMaterial(_material);

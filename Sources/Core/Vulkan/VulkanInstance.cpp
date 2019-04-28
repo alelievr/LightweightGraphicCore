@@ -206,6 +206,9 @@ std::vector<const char *>	VulkanInstance::GetRequiredExtensions(void) noexcept
 	if (_enableValidationLayers)
 	    extensions.push_back(VK_EXT_DEBUG_UTILS_EXTENSION_NAME);
 
+	for (const auto & extension : _instanceExtensions)
+		extensions.push_back(extension.c_str());
+
 	return extensions;
 }
 
@@ -559,6 +562,11 @@ void		VulkanInstance::SetValidationLayers(const std::vector< const char * > vali
 void		VulkanInstance::SetDeviceExtensions(const std::vector< std::string > deviceExtensions) noexcept
 {
 	_deviceExtensions = deviceExtensions;
+}
+
+void		VulkanInstance::SetInstanceExtensions(const std::vector< std::string > instanceExtensions) noexcept
+{
+	_instanceExtensions = instanceExtensions;
 }
 
 void		VulkanInstance::SetApplicationName(const std::string & applicationName) noexcept

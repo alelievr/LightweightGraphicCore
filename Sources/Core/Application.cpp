@@ -56,12 +56,15 @@ void			Application::Init(const AppCapability capabilities) noexcept
 	Vk::CheckResult(volkInitialize(), "Can't initialize volk");
 
 	std::vector< std::string > deviceExtensions = {
-#ifdef DEBUG
 		VK_EXT_DEBUG_MARKER_EXTENSION_NAME, // TODO: enable the extension in the vulkan layer
-#endif
 		VK_KHR_SWAPCHAIN_EXTENSION_NAME,
-		VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2_EXTENSION_NAME,
 		VK_KHR_GET_MEMORY_REQUIREMENTS_2_EXTENSION_NAME
+	};
+	
+	std::vector< std::string > instanceExtensions = {
+		VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2_EXTENSION_NAME,
+		// VK_EXT_DEBUG_REPORT_EXTENSION_NAME, // TODO
+		// VK_EXT_DEBUG_UTILS_EXTENSION_NAME,
 	};
 
 #ifdef __unix__
@@ -77,6 +80,7 @@ void			Application::Init(const AppCapability capabilities) noexcept
 		deviceExtensions.push_back(VK_NV_COOPERATIVE_MATRIX_EXTENSION_NAME);
 
 	_instance.SetDeviceExtensions(deviceExtensions);
+	_instance.SetInstanceExtensions(instanceExtensions);
 	_instance.SetApplicationName("LWGC"); // This should be the application name but for the moment we'll keep it like this
 
 	_instance.Initialize();

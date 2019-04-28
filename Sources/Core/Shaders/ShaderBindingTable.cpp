@@ -126,7 +126,7 @@ uint32_t				ShaderBindingTable::GetDescriptorIndex(const std::string & bindingNa
 	return set->second.bindingIndex;
 }
 
-std::vector< std::string >	ShaderBindingTable::GetBindingNames()
+std::vector< std::string >	ShaderBindingTable::GetBindingNames(void) const
 {
 	std::vector< std::string > bindings;
 

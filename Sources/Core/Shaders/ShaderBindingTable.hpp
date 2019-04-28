@@ -39,7 +39,7 @@ namespace LWGC
 
 			const std::vector< VkDescriptorSetLayout > &	GetDescriptorSetLayouts(void) const;
 			VkDescriptorSetLayout							GetDescriptorSetLayout(const std::string & setElementName) const;
-			std::vector< std::string >						GetBindingNames();
+			std::vector< std::string >						GetBindingNames() const;
 			uint32_t										GetDescriptorSetBinding(const std::string & bindingName) const;
 			uint32_t										GetDescriptorIndex(const std::string & bindingName) const;
 

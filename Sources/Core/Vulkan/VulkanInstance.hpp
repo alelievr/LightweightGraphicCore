@@ -61,6 +61,7 @@ namespace LWGC
 
 			std::vector< const char * >	_validationLayers;
 			std::vector< std::string >	_deviceExtensions;
+			std::vector< std::string >	_instanceExtensions;
 
 			CommandBufferPool			_commandBufferPool;
 
@@ -95,6 +96,7 @@ namespace LWGC
 
 			void		SetValidationLayers(const std::vector< const char * > validationLayers) noexcept;
 			void		SetDeviceExtensions(const std::vector< std::string > deviceExtensions) noexcept;
+			void		SetInstanceExtensions(const std::vector< std::string > deviceExtensions) noexcept;
 			void		SetApplicationName(const std::string & applicationName) noexcept;
 
 			void		Initialize(void);

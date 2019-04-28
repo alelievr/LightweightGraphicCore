@@ -142,6 +142,7 @@ namespace LWGC
 			void	MarkAsReady(void) noexcept;
 			void	CreatePipelineLayout(void);
 
+			std::string			GetName(void) const;
 			VkPipeline			GetPipeline(void) const;
 			ShaderProgram *		GetShaderProgram(void) const;
 			VkPipelineLayout	GetPipelineLayout(void) const;
@@ -153,6 +154,7 @@ namespace LWGC
 			bool				IsTransparent(void) const noexcept;
 			void				BindProperties(VkCommandBuffer cmd);
 			void				BindPipeline(VkCommandBuffer cmd);
+			bool				IsPropertyBound(const std::string & propertyName);
 
 			void				ReloadShaders(void) noexcept;
 

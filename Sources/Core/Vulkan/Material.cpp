@@ -221,6 +221,8 @@ void					Material::CreatePipeline(void)
 		CreateComputePipeline();
 	else
 		CreateGraphicPipeline();
+	
+	Vk::SetPipelineDebugName(_program->GetName(), _pipeline);
 }
 
 void					Material::CreateComputePipeline(void)
@@ -558,6 +560,16 @@ bool				Material::IsReady(void) const noexcept { return _isReady; }
 bool				Material::IsInitialized(void) const
 {
 	return (_instance != nullptr);
+}
+
+bool				Material::IsPropertyBound(const std::string & propertyName)
+{
+	return _materialProperties.find(propertyName) != _materialProperties.end();
+}
+
+std::string			Material::GetName(void) const
+{
+	return _program->GetName();
 }
 
 bool				Material::IsCompiled(void) const noexcept { return _program != nullptr && _program->IsCompiled(); }
