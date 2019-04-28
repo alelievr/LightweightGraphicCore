@@ -1,17 +1,9 @@
-[submodule "Deps/glfw"]
-	path = Deps/glfw
-	url = https://github.com/glfw/glfw
-	branch = master
 [submodule "Deps/glm"]
 	path = Deps/glm
 	url = https://github.com/g-truc/glm
 [submodule "Deps/glslang"]
 	path = Deps/glslang
 	url = https://github.com/KhronosGroup/glslang
-	branch = master
-[submodule "Deps/imgui"]
-	path = Deps/imgui
-	url = https://github.com/ocornut/imgui
 	branch = master
 [submodule "Deps/stb"]
 	path = Deps/stb
@@ -26,3 +18,11 @@
 [submodule "Deps/volk"]
 	path = Deps/volk
 	url = https://github.com/zeux/volk
+[submodule "Deps/glfw"]
+	path = Deps/glfw
+	url = https://github.com/glfw/glfw
+	branch = master
+[submodule "Deps/imgui"]
+	path = Deps/imgui
+	url = https://github.com/ocornut/imgui
+	branch = docking

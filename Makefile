@@ -6,7 +6,7 @@
 #    By: amerelo <amerelo@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2014/07/15 15:13:38 by alelievr          #+#    #+#              #
-#    Updated: 2019/04/06 18:27:31 by alelievr         ###   ########.fr        #
+#    Updated: 2019/04/28 14:14:46 by alelievr         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -297,6 +297,7 @@ $(DIRECTX_SHADER_COMPILER):
 
 $(VULKAN):
 	@$(DOWNLOAD_VULKAN)
+	@. ./InitVulkanEnv_OSX
 
 #	Linking
 $(NAME): $(OBJ)
