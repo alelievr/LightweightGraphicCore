@@ -24,7 +24,7 @@ namespace LWGC
 			VulkanSurface *		_surface;
 			VkQueue				_queue;
 			RenderPass			_renderPass;
-			ImGui_ImplVulkanH_WindowData	_wd;
+			ImGui_ImplVulkanH_Window	_wd;
 
 			void		CreateDescriptorPool(void);
 			void		InitImGUI(void);

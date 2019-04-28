@@ -39,6 +39,7 @@ namespace LWGC
 			void			UploadImage(stbi_uc * pixels, VkDeviceSize deviceSize, glm::ivec3 imageSize, glm::ivec3 offset = {0, 0, 0});
 			void			UploadImageWithMips(VkImage image, VkFormat format, void * pixels, VkDeviceSize deviceSize, glm::ivec3 imageSize, glm::ivec3 offset = {0, 0, 0});
 			void			TransitionImageLayout(VkImage image, VkImageLayout oldLayout, VkImageLayout newLayout);
+			void			TransitionImageLayout(VkCommandBuffer cmd, VkImage image, VkImageLayout oldLayout, VkImageLayout newLayout);
 			stbi_uc *		LoadFromFile(const std::string & fileName, int & width, int & height);
 			void			GenerateMipMaps(VkImage image, VkFormat format, int32_t width, int32_t height);
 
@@ -56,6 +57,8 @@ namespace LWGC
 			VkImageView		GetView(void) const noexcept;
 			VkImage			GetImage(void) const noexcept;
 			bool			GetAutoGenerateMips(void) const noexcept;
+			void			ChangeLayout(VkCommandBuffer cmd, VkImageLayout targetLayout);
+			void			ChangeLayout(VkImageLayout targetLayout);
 			VkImageLayout	GetLayout(void) const noexcept;
 			void			Destroy(void) noexcept;
 	};

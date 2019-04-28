@@ -60,7 +60,7 @@ void			Application::Init(const AppCapability capabilities) noexcept
 		VK_KHR_SWAPCHAIN_EXTENSION_NAME,
 		VK_KHR_GET_MEMORY_REQUIREMENTS_2_EXTENSION_NAME
 	};
-	
+
 	std::vector< std::string > instanceExtensions = {
 		VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2_EXTENSION_NAME,
 		// VK_EXT_DEBUG_REPORT_EXTENSION_NAME, // TODO

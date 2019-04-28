@@ -12,7 +12,7 @@ Texture3D::Texture3D(std::size_t width, std::size_t height, std::size_t depth, V
 	this->depth = depth;
 	this->format = format;
 	this->usage = usage;
-	
+
 	maxMipLevel = static_cast<uint32_t>(std::floor(std::log2(std::max(std::max(width, height), depth)))) + 1;
 
 	AllocateImage(VK_IMAGE_VIEW_TYPE_3D);
@@ -36,7 +36,7 @@ Texture3D * Texture3D::Create(Texture3D const & src)
 Texture3D &	Texture3D::operator=(Texture3D const & src)
 {
 	Texture::operator=(src);
-	
+
 	if (this != &src) {
 	}
 	return (*this);

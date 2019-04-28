@@ -92,10 +92,15 @@ void			Texture::UploadImage(stbi_uc * pixels, VkDeviceSize devizeSize, glm::ivec
 	vkFreeMemory(device, stagingBufferMemory, nullptr);
 }
 
-void		Texture::TransitionImageLayout(VkImage image, VkImageLayout oldLayout, VkImageLayout newLayout)
+void			Texture::TransitionImageLayout(VkImage image, VkImageLayout oldLayout, VkImageLayout newLayout)
 {
 	VkCommandBuffer commandBuffer = graphicCommandBufferPool->BeginSingle();
+	TransitionImageLayout(commandBuffer, image, oldLayout, newLayout);
+	graphicCommandBufferPool->EndSingle(commandBuffer);
+}
 
+void			Texture::TransitionImageLayout(VkCommandBuffer cmd, VkImage image, VkImageLayout oldLayout, VkImageLayout newLayout)
+{
     VkImageMemoryBarrier barrier = {};
     barrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
     barrier.oldLayout = oldLayout;
@@ -136,7 +141,7 @@ void		Texture::TransitionImageLayout(VkImage image, VkImageLayout oldLayout, VkI
     }
 
     vkCmdPipelineBarrier(
-            commandBuffer,
+            cmd,
             sourceStage, destinationStage,
             0,
             0, nullptr,
@@ -145,8 +150,16 @@ void		Texture::TransitionImageLayout(VkImage image, VkImageLayout oldLayout, VkI
         	);
 
 	layout = newLayout;
+}
 
-	graphicCommandBufferPool->EndSingle(commandBuffer);
+void			Texture::ChangeLayout(VkCommandBuffer cmd, VkImageLayout targetLayout)
+{
+	TransitionImageLayout(cmd, this->image, this->layout, targetLayout);
+}
+
+void			Texture::ChangeLayout(VkImageLayout targetLayout)
+{
+	TransitionImageLayout(this->image, this->layout, targetLayout);
 }
 
 void			Texture::UploadImageWithMips(VkImage image, VkFormat format, void * pixels, VkDeviceSize devizeSize, glm::ivec3 imageSize, glm::ivec3 offset)

@@ -25,6 +25,8 @@ void		ProfilerPanel::DrawImGUI(void) noexcept
 {
 	ImGui::Begin("CPU Profiler");
 
+	ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+
 	ImGui::PlotLines(
 		"Frame time history",
 		reinterpret_cast< float *>(_frameDurationHistory.data()),

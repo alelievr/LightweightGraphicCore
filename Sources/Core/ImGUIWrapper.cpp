@@ -49,11 +49,20 @@ void		ImGUIWrapper::InitImGUI(void)
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
 
-	// Is this important ?
     ImGuiIO& io = ImGui::GetIO(); (void)io;
 	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;  // Enable Keyboard Controls
+	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;           // Enable Docking
+    // io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;         // Enable Multi-Viewport / Platform Windows
 
 	_queue = _instance->GetQueue();
+
+	// When viewports are enabled we tweak WindowRounding/WindowBg so platform windows can look identical to regular ones.
+    ImGuiStyle& style = ImGui::GetStyle();
+    if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
+    {
+        style.WindowRounding = 0.0f;
+        style.Colors[ImGuiCol_WindowBg].w = 1.0f;
+    }
 
 	ImGui_ImplVulkan_InitInfo initInfo = {};
 	initInfo.Instance = _instance->GetInstance();
@@ -64,6 +73,8 @@ void		ImGUIWrapper::InitImGUI(void)
 	initInfo.PipelineCache = VK_NULL_HANDLE;
 	initInfo.DescriptorPool = _descriptorPool;
 	initInfo.Allocator = VK_NULL_HANDLE;
+	initInfo.MinImageCount = _swapChain->GetImageCount();
+	initInfo.ImageCount = _swapChain->GetImageCount();
 	initInfo.CheckVkResultFn = [](VkResult ret) {
 		if (ret == VK_SUCCESS)
 			return ;
@@ -92,15 +103,16 @@ void		ImGUIWrapper::InitImGUI(void)
 void		ImGUIWrapper::InitImGUIFrameDatas(void)
 {
 	_wd.Swapchain = _swapChain->GetSwapChain();
-	_wd.BackBufferCount = _swapChain->GetImageCount();
+	_wd.ImageCount = _swapChain->GetImageCount();
 
 	_wd.Width = _swapChain->GetExtent().width;
 	_wd.Height = _swapChain->GetExtent().height;
 
 	_swapChain->onRecreated.AddListener([&](){ UpdateSwapChainDatas(); });
 
-	for (uint32_t i = 0; i < _wd.BackBufferCount; i++)
-		_wd.BackBuffer[i] = _swapChain->GetImages()[i];
+	_wd.Frames = (ImGui_ImplVulkanH_Frame*)IM_ALLOC(sizeof(ImGui_ImplVulkanH_Frame) * _wd.ImageCount);
+	for (uint32_t i = 0; i < _wd.ImageCount; i++)
+		_wd.Frames[i].Backbuffer = _swapChain->GetImages()[i];
 
 	VkAttachmentDescription colorAttachment = {};
 	colorAttachment.format = _swapChain->GetImageFormat();
@@ -150,15 +162,20 @@ void		ImGUIWrapper::InitImGUIFrameDatas(void)
 		commandBufferInfo.commandBufferCount = 1;
 		Vk::CheckResult(vkAllocateCommandBuffers(_device, &commandBufferInfo, &frame->CommandBuffer), "Can't create ImGUI command buffer");
 
-		_wd.BackBufferView[i] = _swapChain->GetImageViews()[i];
+		_wd.Frames[i].BackbufferView = _swapChain->GetImageViews()[i];
 	}
 }
 
 void		ImGUIWrapper::UpdateSwapChainDatas(void)
 {
+	// TODO
+	// ImGui_ImplVulkan_SetMinImageCount(g_MinImageCount);
+	// ImGui_ImplVulkanH_CreateWindow(g_Instance, g_PhysicalDevice, g_Device, &g_MainWindowData, g_QueueFamily, g_Allocator, g_SwapChainResizeWidth, g_SwapChainResizeHeight, 2);
+	// _wd.FrameIndex = 0;
+
 	for (uint32_t i = 0; i < _swapChain->GetImageCount(); i++)
 	{
-		_wd.Framebuffer[i] = _swapChain->GetFramebuffers()[i];
+		_wd.Frames[i].Framebuffer = _swapChain->GetFramebuffers()[i];
 	}
 }
 
@@ -193,7 +210,8 @@ void		ImGUIWrapper::UploadFonts(void)
 
 	err = vkDeviceWaitIdle(_device);
 	Vk::CheckResult(err, "ImGUI Upload fonts failed");
-	ImGui_ImplVulkan_InvalidateFontUploadObjects();
+
+	ImGui_ImplVulkan_DestroyFontUploadObjects();
 }
 
 void		ImGUIWrapper::CreateDescriptorPool(void)
@@ -238,14 +256,22 @@ void		ImGUIWrapper::EndFrame(void)
     ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 	memcpy(&_wd.ClearValue.color.float32[0], &clear_color, 4 * sizeof(float));
 
-	ImGui_ImplVulkanH_FrameData* fd = &_wd.Frames[_wd.FrameIndex];
+	// Update and Render additional Platform Windows
+    ImGuiIO& io = ImGui::GetIO();
+	if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
+	{
+		ImGui::UpdatePlatformWindows();
+		ImGui::RenderPlatformWindowsDefault();
+	}
+
+	ImGui_ImplVulkanH_Frame* fd = &_wd.Frames[_wd.FrameIndex];
 	{
 		err = vkResetCommandBuffer(fd->CommandBuffer, 0);
 		err = vkResetCommandPool(_device, fd->CommandPool, 0);
 		Vk::CheckResult(err, "Error while rendering GUI");
 		VkCommandBufferBeginInfo info = {};
 		info.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
-		info.flags = VK_COMMAND_BUFFER_USAGE_SIMULTANEOUS_USE_BIT | VK_COMMAND_BUFFER_USAGE_RENDER_PASS_CONTINUE_BIT;
+		info.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
 		err = vkBeginCommandBuffer(fd->CommandBuffer, &info);
 		Vk::CheckResult(err, "Error while rendering GUI");
 	}
@@ -253,7 +279,7 @@ void		ImGUIWrapper::EndFrame(void)
 		VkRenderPassBeginInfo info = {};
 		info.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
 		info.renderPass = _wd.RenderPass;
-		info.framebuffer = _wd.Framebuffer[_wd.FrameIndex];
+		info.framebuffer = _wd.Frames[_wd.FrameIndex].Framebuffer;
 		info.renderArea.extent.width = _wd.Width;
 		info.renderArea.extent.height = _wd.Height;
 		info.clearValueCount = 2;
