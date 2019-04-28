@@ -1,21 +1,25 @@
 [submodule "Deps/glfw"]
 	path = Deps/glfw
 	url = https://github.com/glfw/glfw
+	branch = master
 [submodule "Deps/glm"]
 	path = Deps/glm
 	url = https://github.com/g-truc/glm
 [submodule "Deps/glslang"]
 	path = Deps/glslang
 	url = https://github.com/KhronosGroup/glslang
+	branch = master
 [submodule "Deps/imgui"]
 	path = Deps/imgui
 	url = https://github.com/ocornut/imgui
+	branch = master
 [submodule "Deps/stb"]
 	path = Deps/stb
 	url = https://github.com/nothings/stb
 [submodule "Deps/SPIRV-Cross"]
 	path = Deps/SPIRV-Cross
 	url = https://github.com/KhronosGroup/SPIRV-Cross
+	branch = master
 [submodule "Deps/assimp"]
 	path = Deps/assimp
 	url = https://github.com/assimp/assimp
