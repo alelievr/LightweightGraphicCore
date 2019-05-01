@@ -285,6 +285,10 @@ void			RenderPipeline::RecordAllMeshRenderers(RenderPass & pass, RenderContext *
 
 		for (auto renderer : renderers)
 		{
+			// We only care about mesh renderers
+			if (dynamic_cast< MeshRenderer * >(renderer) == nullptr)
+				continue ;
+
 			auto material = renderer->GetMaterial();
 			pass.BindMaterial(material);
 

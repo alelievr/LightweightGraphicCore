@@ -386,17 +386,13 @@ void			Vk::BeginProfilingSample(VkCommandBuffer cmd, const std::string & debugSa
 	if (!VulkanInstance::AreDebugMarkersEnabled())
 		return;
 
-// We don't enable this for mac because the marker extension is not well supported
-#ifndef __unix__
+	// We don't enable this because the marker extension doesn't work with renderdoc
 	return ;
-#endif
 
 	VkDebugMarkerMarkerInfoEXT markerInfo = {};
 	markerInfo.sType = VK_STRUCTURE_TYPE_DEBUG_MARKER_MARKER_INFO_EXT;
 	memcpy(markerInfo.color, &color.r, sizeof(float) * 4);
 	markerInfo.pMarkerName = debugSampleName.c_str();
-
-	printf("ptr: %s\n", markerInfo.pMarkerName);
 
 	vkCmdDebugMarkerBeginEXT(cmd, &markerInfo);
 }
@@ -406,10 +402,8 @@ void			Vk::InsertProfilingSample(VkCommandBuffer cmd, const std::string & debugS
 	if (!VulkanInstance::AreDebugMarkersEnabled())
 		return;
 
-// We don't enable this for mac because the marker extension is not well supported
-#ifndef __unix__
+	// We don't enable this because the marker extension doesn't work with renderdoc
 	return ;
-#endif
 
 	VkDebugMarkerMarkerInfoEXT markerInfo = {};
 	markerInfo.sType = VK_STRUCTURE_TYPE_DEBUG_MARKER_MARKER_INFO_EXT;
@@ -423,10 +417,8 @@ void			Vk::EndProfilingSample(VkCommandBuffer cmd)
 	if (!VulkanInstance::AreDebugMarkersEnabled())
 		return ;
 
-// We don't enable this for mac because the marker extension is not well supported
-#ifndef __unix__
+	// We don't enable this because the marker extension doesn't work with renderdoc
 	return ;
-#endif
 
 	vkCmdDebugMarkerEndEXT(cmd);
 }

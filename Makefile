@@ -185,7 +185,7 @@ ifeq "$(OS)" "Darwin"
 	CFLAGS			+= "-ferror-limit=999"
 	MoltenTar		= moltenVK.tar.gz
 	MoltentUrl		= https://sdk.lunarg.com/sdk/download/1.1.101.0/mac/vulkansdk-macos-1.1.101.0.tar.gz?Human=true
-	DOWNLOAD_VULKAN = curl -o $(MoltenTar) $(MoltentUrl) && tar -xf $(MoltenTar) -C Deps/
+	DOWNLOAD_VULKAN = curl -o $(MoltenTar) $(MoltentUrl) && tar -xf $(MoltenTar) -C Deps/ && . ./InitVulkanEnv_OSX
 	VULKAN_SDK		= $(shell pwd)/Deps/vulkansdk-macos-1.1.101.0/macOS
 	LD_LIBRARY_PATH	= $(VULKAN_SDK)/lib
 	VK_ICD_FILENAMES= $(VULKAN_SDK)/etc/vulkan/icd.d/MoltenVK_icd.json
@@ -297,7 +297,6 @@ $(DIRECTX_SHADER_COMPILER):
 
 $(VULKAN):
 	@$(DOWNLOAD_VULKAN)
-	@. ./InitVulkanEnv_OSX
 
 #	Linking
 $(NAME): $(OBJ)
