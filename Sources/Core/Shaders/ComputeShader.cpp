@@ -39,9 +39,9 @@ void		ComputeShader::Dispatch(VkCommandBuffer cmd, int width, int height, int de
 	_renderPass.End();
 }
 
-void		ComputeShader::SetBuffer(const std::string & bindingName, VkBuffer buffer, size_t size, VkDescriptorType descriptorType, bool silent)
+void		ComputeShader::SetBuffer(const std::string & bindingName, VkBuffer buffer, size_t size, VkDescriptorType descriptorType, size_t offset, bool silent)
 {
-	_material->SetBuffer(bindingName, buffer, size, descriptorType, silent);
+	_material->SetBuffer(bindingName, buffer, size, descriptorType, offset, silent);
 }
 
 void		ComputeShader::SetTexture(const std::string & bindingName, const Texture * texture, VkImageLayout imageLayout, VkDescriptorType descriptorType, bool silent)
@@ -67,6 +67,16 @@ void		ComputeShader::AddBufferBarrier(VkBufferMemoryBarrier barrier, VkPipelineS
 void		ComputeShader::AddImageBarrier(VkImageMemoryBarrier barrier, VkPipelineStageFlags destinationStageMask)
 {
 	_dispatcher.AddImageBarrier(barrier, destinationStageMask);
+}
+
+void		ComputeShader::SetPushConstant(VkCommandBuffer cmd, const std::string name, const void * value)
+{
+	_material->SetPushConstant(cmd, name, value);
+}
+
+Material *	ComputeShader::GetMaterial(void) noexcept
+{
+	return _material;
 }
 
 std::ostream &	LWGC::operator<<(std::ostream & o, ComputeShader const & r)

@@ -318,12 +318,12 @@ void			Vk::CreateDescriptorSetLayout(std::vector< VkDescriptorSetLayoutBinding >
 	    throw std::runtime_error("failed to create descriptor set layout!");
 }
 
-void			Vk::UploadToMemory(VkDeviceMemory memory, void * data, size_t size)
+void			Vk::UploadToMemory(VkDeviceMemory memory, void * data, size_t size, size_t offset)
 {
 	void *		tmpData;
 	VkDevice	device = VulkanInstance::Get()->GetDevice();
 
-	vkMapMemory(device, memory, 0, size, 0, &tmpData);
+	vkMapMemory(device, memory, offset, size, 0, &tmpData);
 	memcpy(tmpData, data, size);
 	vkUnmapMemory(device, memory);
 }

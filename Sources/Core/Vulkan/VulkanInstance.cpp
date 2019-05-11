@@ -76,7 +76,7 @@ void			VulkanInstance::InitializeSurface(VkSurfaceKHR surface)
 
 	VkPhysicalDeviceProperties props;
     vkGetPhysicalDeviceProperties(_physicalDevice, &props);
-	printf("Max bindings: %i\n", props.limits.maxVertexInputBindings);
+	_limits = props.limits;
 }
 
 void			VulkanInstance::CreateDescriptorPool(void)
@@ -733,6 +733,8 @@ int			DeviceCapability::GetGPUScore(void) const
 
 	return score;
 }
+
+const VkPhysicalDeviceLimits	VulkanInstance::GetLimits(void) const noexcept { return _limits; }
 
 bool VulkanInstance::IsExtensionEnabled(const std::string & extensionName)
 {

@@ -140,7 +140,7 @@ void					Material::Initialize(SwapChain * swapChain, RenderPass * renderPass)
 	// For graphic shaders, we bind default resources
 	if (!IsCompute())
 	{
-		SetBuffer(LWGCBinding::Material, _uniformPerMaterial.buffer, sizeof(LWGC_PerMaterial), VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, true);
+		SetBuffer(LWGCBinding::Material, _uniformPerMaterial.buffer, sizeof(LWGC_PerMaterial), VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 0, true);
 		SetSampler(SamplerBinding::TrilinearClamp, Vk::Samplers::trilinearClamp, true);
 		SetSampler(SamplerBinding::TrilinearRepeat, Vk::Samplers::trilinearRepeat, true);
 		SetSampler(SamplerBinding::NearestClamp, Vk::Samplers::nearestClamp, true);
@@ -192,7 +192,7 @@ void					Material::CompileShaders(void)
 			_program->CompileAndLink();
 	}
 
-	// Retreive set layout of the shader program:
+	// Retrieve set layout of the shader program:
 	_bindingTable = _program->GetShaderBindingTable();
 	_setLayouts = _bindingTable->GetDescriptorSetLayouts();
 }
@@ -210,6 +210,10 @@ void					Material::CreatePipelineLayout(void)
 
 	pipelineLayoutInfo.setLayoutCount = _setLayouts.size();
 	pipelineLayoutInfo.pSetLayouts = _setLayouts.data();
+
+	const auto & pushConstants = _bindingTable->GetPushConstants(IsCompute() ? VK_SHADER_STAGE_COMPUTE_BIT : VK_SHADER_STAGE_ALL_GRAPHICS);
+	pipelineLayoutInfo.pushConstantRangeCount = pushConstants.size();
+	pipelineLayoutInfo.pPushConstantRanges = pushConstants.data();
 
 	if (vkCreatePipelineLayout(_device, &pipelineLayoutInfo, nullptr, &_pipelineLayout) != VK_SUCCESS)
 		throw std::runtime_error("failed to create pipeline layout !");
@@ -400,7 +404,7 @@ bool					Material::DescriptorSetExists(const std::string & bindingName, bool sil
 	return true;
 }
 
-void				Material::SetBuffer(const std::string & bindingName, VkBuffer buffer, size_t size, VkDescriptorType descriptorType, bool silent)
+void				Material::SetBuffer(const std::string & bindingName, VkBuffer buffer, size_t size, VkDescriptorType descriptorType, size_t offset, bool silent)
 {
 	// Store the material properties so when we re-create it we cant set these values
 	_materialProperties[bindingName] = MaterialProperty{
@@ -416,7 +420,10 @@ void				Material::SetBuffer(const std::string & bindingName, VkBuffer buffer, si
 	if (!IsCompiled())
 		return ;
 	if (!DescriptorSetExists(bindingName, silent))
-		return ;
+	{
+		if (!silent)
+			std::cerr << "Can't find descriptor set for binding name: '" + bindingName + "'" << std::endl;
+	}
 
 	std::array<VkWriteDescriptorSet, 1> descriptorWrites = {};
 	VkDescriptorBufferInfo bufferInfo = {};
@@ -450,7 +457,10 @@ void				Material::SetTexture(const std::string & bindingName, const Texture * te
 	if (!IsCompiled())
 		return ;
 	if (!DescriptorSetExists(bindingName, silent))
-		return ;
+	{
+		if (!silent)
+			std::cerr << "Can't find descriptor set for binding name: '" + bindingName + "'" << std::endl;
+	}
 
 	std::array<VkWriteDescriptorSet, 1> descriptorWrites = {};
 	VkDescriptorImageInfo imageInfo = {};
@@ -485,7 +495,10 @@ void				Material::SetSampler(const std::string & bindingName, VkSampler sampler,
 	if (!IsCompiled())
 		return ;
 	if (!DescriptorSetExists(bindingName, silent))
-		return ;
+	{
+		if (!silent)
+			std::cerr << "Can't find descriptor set for binding name: '" + bindingName + "'" << std::endl;
+	}
 
 	std::array<VkWriteDescriptorSet, 1> descriptorWrites = {};
     VkDescriptorImageInfo samplerInfo = {};
@@ -519,6 +532,26 @@ void				Material::SetTexelBuffer(const std::string & bindingName, VkBufferView b
 	descriptorWrite.pTexelBufferView = &bufferView;
 
 	vkUpdateDescriptorSets(_device, 1, &descriptorWrite, 0, nullptr);
+}
+
+void				Material::SetPushConstant(VkCommandBuffer cmd, const std::string name, const void * value)
+{
+	if (!_bindingTable->HasPushConstant(name))
+	{
+		std::cerr << "Can't find push constant '" << name << "' in shader " << GetName() << std::endl;
+		return ;
+	}
+	
+	const auto & pushConstant = _bindingTable->GetPushConstant(name);
+
+	vkCmdPushConstants(
+		cmd,
+		_pipelineLayout,
+		IsCompute() ? VK_SHADER_STAGE_COMPUTE_BIT : VK_SHADER_STAGE_ALL_GRAPHICS,
+		pushConstant.offset,
+		pushConstant.size,
+		value
+	);
 }
 
 void				Material::BindPipeline(VkCommandBuffer cmd)

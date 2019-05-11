@@ -23,9 +23,11 @@ namespace LWGC
 	{
 		friend class Application;
 		protected:
+			// TODO: move to shared shader-cpp include file
 			struct LWGC_PerFrame
 			{
-				glm::vec4	time;
+				glm::vec3	time;
+				uint32_t	frameIndex;
 			};
 
 			std::vector< VkSemaphore >		imageAvailableSemaphores;

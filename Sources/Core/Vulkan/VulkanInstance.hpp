@@ -48,6 +48,7 @@ namespace LWGC
 			VkDebugUtilsMessengerEXT	_debugUtilsMessengerCallback;
 			VkDebugReportCallbackEXT	_debugReportCallback;
 			VkDescriptorPool			_descriptorPool;
+			VkPhysicalDeviceLimits		_limits;
 
 			VkQueue						_queue;
 
@@ -112,6 +113,7 @@ namespace LWGC
 			const std::vector< VkSurfaceFormatKHR >	GetSupportedSurfaceFormats(void) const noexcept;
 			const std::vector< VkPresentModeKHR >	GetSupportedPresentModes(void) const noexcept;
 			const VkSurfaceCapabilitiesKHR			GetSurfaceCapabilities(void) const noexcept;
+			const VkPhysicalDeviceLimits			GetLimits(void) const noexcept;
 
 			VkDescriptorPool	GetDescriptorPool(void) const noexcept;
 

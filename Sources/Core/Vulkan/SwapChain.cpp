@@ -216,6 +216,7 @@ VkSurfaceFormatKHR	SwapChain::ChooseSurfaceFormat(void) noexcept
 
 VkPresentModeKHR	SwapChain::ChoosePresentMode(void) noexcept
 {
+	return VK_PRESENT_MODE_FIFO_KHR;
 	const auto & availablePresentModes = _instance->GetSupportedPresentModes();
 	VkPresentModeKHR bestMode = VK_PRESENT_MODE_FIFO_KHR;
 

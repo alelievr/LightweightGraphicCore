@@ -149,8 +149,8 @@ void			RenderPipeline::UpdatePerframeUnformBuffer(void) noexcept
 {
 	_perFrame.time.x = static_cast< float >(glfwGetTime());
 	_perFrame.time.y = sin(_perFrame.time.x);
-	_perFrame.time.z = cos(_perFrame.time.x);
-	_perFrame.time.w = Time::GetDeltaTime();
+	_perFrame.time.z = Time::GetDeltaTime();
+	_perFrame.frameIndex = currentFrame;
 
 	// Upload datas to GPU
 	Vk::UploadToMemory(_uniformPerFrame.memory, &_perFrame, sizeof(LWGC_PerFrame));

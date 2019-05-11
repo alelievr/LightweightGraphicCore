@@ -3,7 +3,8 @@
 
 struct LWGC_PerFrame
 {
-	float4		time; // x: time, y: sin(time), z: cos(time), z: deltaTime
+	float3		time; // x: time, y: sin(time), z: deltaTime
+	uint		frameIndex;
 };
 
 struct LWGC_PerCamera

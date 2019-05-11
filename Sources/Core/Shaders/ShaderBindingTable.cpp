@@ -42,6 +42,14 @@ ShaderBinding &			ShaderBindingTable::AddBinding(const std::string & name, int d
 	}}).first)->second;
 }
 
+PushConstantBinding &	ShaderBindingTable::AddPushConstant(const std::string & name, uint32_t offset, uint32_t size)
+{
+	return (_pushConstants.insert({name, PushConstantBinding{
+		offset,
+		size
+	}}).first)->second;
+}
+
 void					ShaderBindingTable::GenerateSetLayouts()
 {
 	std::unordered_map< int, std::vector< VkDescriptorSetLayoutBinding > >	layoutBindings;
@@ -93,12 +101,7 @@ void					ShaderBindingTable::GenerateSetLayouts()
 
 VkDescriptorSetLayout	ShaderBindingTable::GetDescriptorSetLayout(const std::string & setElementName) const
 {
-	auto layout = _elementLayouts.find(setElementName);
-
-	if (layout == _elementLayouts.end())
-		throw std::runtime_error("Can't find descriptor set layout with a field named '" + setElementName + "'");
-
-	return layout->second;
+	return _elementLayouts.find(setElementName)->second;
 }
 
 bool					ShaderBindingTable::HasBinding(const std::string & bindingName) const
@@ -108,22 +111,12 @@ bool					ShaderBindingTable::HasBinding(const std::string & bindingName) const
 
 uint32_t				ShaderBindingTable::GetDescriptorSetBinding(const std::string & bindingName) const
 {
-	auto set = _bindings.find(bindingName);
-
-	if (set == _bindings.end())
-		throw std::runtime_error("Can't find descriptor set for binding name: '" + bindingName + "'");
-
-	return set->second.descriptorSet;
+	return _bindings.find(bindingName)->second.descriptorSet;
 }
 
 uint32_t				ShaderBindingTable::GetDescriptorIndex(const std::string & bindingName) const
 {
-	auto set = _bindings.find(bindingName);
-
-	if (set == _bindings.end())
-		throw std::runtime_error("Can't find descriptor index for binding name: '" + bindingName + "'");
-
-	return set->second.bindingIndex;
+	return _bindings.find(bindingName)->second.bindingIndex;
 }
 
 std::vector< std::string >	ShaderBindingTable::GetBindingNames(void) const
@@ -137,6 +130,39 @@ std::vector< std::string >	ShaderBindingTable::GetBindingNames(void) const
 }
 
 const std::vector< VkDescriptorSetLayout > &	ShaderBindingTable::GetDescriptorSetLayouts(void) const { return _descriptorSetLayout; }
+
+const std::vector< VkPushConstantRange >		ShaderBindingTable::GetPushConstants(VkShaderStageFlags stages) const
+{
+	std::vector< VkPushConstantRange > pushConstantRanges;
+
+	uint32_t size = 0;
+	for (const auto & pushConstantKP : _pushConstants)
+		size += pushConstantKP.second.size;
+
+	// Currently we support only one block if push constant access because the VkPushConstantRange
+	// describe the memory zones that will be accessible by stage flags, we combine all our push constants
+	// into one big range.
+	if (size > 0)
+	{
+		pushConstantRanges.push_back(VkPushConstantRange{
+			stages,
+			0,
+			size,
+		});
+	}
+
+	return pushConstantRanges;
+}
+
+const PushConstantBinding	ShaderBindingTable::GetPushConstant(const std::string & name) const
+{
+	return _pushConstants.find(name)->second;
+}
+
+bool						ShaderBindingTable::HasPushConstant(const std::string & name) const
+{
+	return _pushConstants.find(name) != _pushConstants.end();
+}
 
 std::ostream &	operator<<(std::ostream & o, ShaderBindingTable const & r)
 {

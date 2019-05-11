@@ -171,6 +171,22 @@ void		ShaderSource::GenerateBindingTable(ShaderBindingTable & bindingTable)
 		}
 	};
 
+	const auto & addPushConstant = [&](const spirv_cross::Resource & resource) {
+		const spirv_cross::SPIRType & type = reflection->get_type(resource.type_id);
+
+		// If the push constant block is a struct, we retrieve all it's members
+		if (type.basetype == spirv_cross::SPIRType::Struct)
+		{
+			std::vector< spirv_cross::BufferRange > ranges = reflection->get_active_buffer_ranges(resource.id);
+			for (auto & range : ranges)
+				bindingTable.AddPushConstant(reflection->get_member_name(resource.base_type_id, range.index), range.offset, range.range);
+		}
+		else
+		{
+			// TODO
+		}
+	};
+
 	// Uniform buffers
 	for (auto & resource : resources.uniform_buffers)
 		addBinding(resource, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER);
@@ -201,6 +217,12 @@ void		ShaderSource::GenerateBindingTable(ShaderBindingTable & bindingTable)
 	for (auto & resource : resources.storage_buffers)
 	{
 		addBinding(resource, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER);
+	}
+
+	// Push Constants:
+	for (auto & pushConstant : resources.push_constant_buffers)
+	{
+		addPushConstant(pushConstant);
 	}
 
 	delete reflection;
