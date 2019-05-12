@@ -91,8 +91,7 @@ void		IndirectRenderer::SetDrawBufferValues(size_t frameIndex, size_t bufferInde
 	drawCommand.firstVertex = firstVertex;
 	drawCommand.firstInstance = firstInstance;
 
-	// Reset the draw buffer at each frame
-	Vk::UploadToMemory(_drawMemories[frameIndex], &drawCommand, sizeof(VkDrawIndirectCommand), sizeof(VkDrawIndirectCommand) * bufferIndex);
+	Vk::UploadToMemory(_drawMemories[frameIndex], &drawCommand, sizeof(VkDrawIndirectCommand), sizeof(VkDrawIndirectCommand) * bufferIndex, true);
 }
 
 std::ostream &	operator<<(std::ostream & o, IndirectRenderer const & r)

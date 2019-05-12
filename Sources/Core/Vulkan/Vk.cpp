@@ -318,7 +318,7 @@ void			Vk::CreateDescriptorSetLayout(std::vector< VkDescriptorSetLayoutBinding >
 	    throw std::runtime_error("failed to create descriptor set layout!");
 }
 
-void			Vk::UploadToMemory(VkDeviceMemory memory, void * data, size_t size, size_t offset)
+void			Vk::UploadToMemory(VkDeviceMemory memory, void * data, size_t size, size_t offset, bool forceFlush)
 {
 	void *		tmpData;
 	VkDevice	device = VulkanInstance::Get()->GetDevice();
@@ -326,6 +326,18 @@ void			Vk::UploadToMemory(VkDeviceMemory memory, void * data, size_t size, size_
 	vkMapMemory(device, memory, offset, size, 0, &tmpData);
 	memcpy(tmpData, data, size);
 	vkUnmapMemory(device, memory);
+
+	if (forceFlush)
+	{
+		const auto & limits = VulkanInstance::Get()->GetLimits();
+		VkMappedMemoryRange flush = {};
+		flush.sType = VK_STRUCTURE_TYPE_MAPPED_MEMORY_RANGE;
+		flush.memory = memory;
+		flush.offset = offset;
+		flush.size = ((size % limits.nonCoherentAtomSize) == 0) ? size : VK_WHOLE_SIZE;
+
+		vkFlushMappedMemoryRanges(device, 1, &flush);
+	}
 }
 
 void			Vk::SetDebugName(const std::string & name, uint64_t vulkanObject, VkDebugReportObjectTypeEXT objectType)
