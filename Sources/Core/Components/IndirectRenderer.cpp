@@ -24,6 +24,7 @@ void		IndirectRenderer::RecordDrawCommand(VkCommandBuffer cmd, uint32_t frameInd
 
 void		IndirectRenderer::RecordDrawCommand(VkCommandBuffer cmd) noexcept
 {
+	(void)cmd;
 	std::cerr << "For indirectRenderer, please use the override of RecordDrawCommand with the frameIndex in parameter" << std::endl;
 }
 

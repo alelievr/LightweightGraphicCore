@@ -13,7 +13,6 @@
 		71C0295B223FC4960086693D /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B11D4A04222C6899007D5D40 /* IOKit.framework */; };
 		71C0295C223FC4960086693D /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B11D4A02222C688E007D5D40 /* AppKit.framework */; };
 		71C0295D223FC4960086693D /* libspirv-cross.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B11D4A0A222C68EB007D5D40 /* libspirv-cross.a */; };
-		71C0295E223FC4960086693D /* libImGUI.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B11D4A00222C6869007D5D40 /* libImGUI.a */; };
 		71C0295F223FC4960086693D /* libglfw3.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B1741FA4222C578700A18DEE /* libglfw3.a */; };
 		71C02960223FC4960086693D /* libLWGC.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B16B4C7C222C239100794EEC /* libLWGC.a */; };
 		71C02962223FC4960086693D /* libvulkan.1.1.101.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = B11ED6F022344C560039257D /* libvulkan.1.1.101.dylib */; };
@@ -24,7 +23,6 @@
 		71C0296D223FC6560086693D /* ComputeShader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 71C0296C223FC6560086693D /* ComputeShader.cpp */; };
 		B11D49FE222C67DB007D5D40 /* libLWGC.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B16B4C7C222C239100794EEC /* libLWGC.a */; };
 		B11D49FF222C67EA007D5D40 /* libglfw3.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B1741FA4222C578700A18DEE /* libglfw3.a */; };
-		B11D4A01222C6869007D5D40 /* libImGUI.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B11D4A00222C6869007D5D40 /* libImGUI.a */; };
 		B11D4A03222C688E007D5D40 /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B11D4A02222C688E007D5D40 /* AppKit.framework */; };
 		B11D4A05222C6899007D5D40 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B11D4A04222C6899007D5D40 /* IOKit.framework */; };
 		B11D4A07222C68A5007D5D40 /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B11D4A06222C68A5007D5D40 /* CoreVideo.framework */; };
@@ -32,6 +30,7 @@
 		B11ED6F122344C570039257D /* libvulkan.1.1.101.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = B11ED6F022344C560039257D /* libvulkan.1.1.101.dylib */; };
 		B11ED6F222344D9D0039257D /* libvulkan.1.1.101.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = B11ED6F022344C560039257D /* libvulkan.1.1.101.dylib */; };
 		B11ED6F522344E0B0039257D /* ProfilingSample.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B11ED6F422344E0B0039257D /* ProfilingSample.cpp */; };
+		B1484AB42288301200742B8B /* IndirectRenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B1484AB32288301200742B8B /* IndirectRenderer.cpp */; };
 		B1741F8F222C289500A18DEE /* ImGUIWrapper.hpp in Headers */ = {isa = PBXBuildFile; fileRef = B174ED9F222C240900A18DEE /* ImGUIWrapper.hpp */; settings = {ATTRIBUTES = (Public, ); }; };
 		B1741FB3222C5B2700A18DEE /* cube.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B174ED34222C240900A18DEE /* cube.cpp */; };
 		B174EE0D222C240900A18DEE /* Application.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B174ED57222C240900A18DEE /* Application.cpp */; };
@@ -143,8 +142,6 @@
 		B174EE7C222C240900A18DEE /* TextureCube.hpp in Headers */ = {isa = PBXBuildFile; fileRef = B174EDD0222C240900A18DEE /* TextureCube.hpp */; settings = {ATTRIBUTES = (Public, ); }; };
 		B174EE7D222C240900A18DEE /* TextureCubeArray.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B174EDD1222C240900A18DEE /* TextureCubeArray.cpp */; };
 		B174EE7E222C240900A18DEE /* TextureCubeArray.hpp in Headers */ = {isa = PBXBuildFile; fileRef = B174EDD2222C240900A18DEE /* TextureCubeArray.hpp */; settings = {ATTRIBUTES = (Public, ); }; };
-		B174EE7F222C240900A18DEE /* TextureTable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B174EDD3222C240900A18DEE /* TextureTable.cpp */; };
-		B174EE80222C240900A18DEE /* TextureTable.hpp in Headers */ = {isa = PBXBuildFile; fileRef = B174EDD4222C240900A18DEE /* TextureTable.hpp */; settings = {ATTRIBUTES = (Public, ); }; };
 		B174EE81222C240900A18DEE /* Time.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B174EDD5222C240900A18DEE /* Time.cpp */; };
 		B174EE82222C240900A18DEE /* Time.hpp in Headers */ = {isa = PBXBuildFile; fileRef = B174EDD6222C240900A18DEE /* Time.hpp */; settings = {ATTRIBUTES = (Public, ); }; };
 		B174EE83222C240900A18DEE /* Transform.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B174EDD7222C240900A18DEE /* Transform.cpp */; };
@@ -181,13 +178,18 @@
 		B174EEA2222C240900A18DEE /* Utils.hpp in Headers */ = {isa = PBXBuildFile; fileRef = B174EDF8222C240900A18DEE /* Utils.hpp */; settings = {ATTRIBUTES = (Public, ); }; };
 		B174EEA3222C240900A18DEE /* Vector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B174EDF9222C240900A18DEE /* Vector.cpp */; };
 		B174EEA4222C240900A18DEE /* Vector.hpp in Headers */ = {isa = PBXBuildFile; fileRef = B174EDFA222C240900A18DEE /* Vector.hpp */; settings = {ATTRIBUTES = (Public, ); }; };
-		B18EDBFC223461B800C92221 /* VkExt.hpp in Headers */ = {isa = PBXBuildFile; fileRef = B18EDBF9223461B800C92221 /* VkExt.hpp */; settings = {ATTRIBUTES = (Public, ); }; };
 		B18EDBFD223461B800C92221 /* ProfilingSample.hpp in Headers */ = {isa = PBXBuildFile; fileRef = B18EDBFA223461B800C92221 /* ProfilingSample.hpp */; settings = {ATTRIBUTES = (Public, ); }; };
-		B18EDBFE223461B800C92221 /* VkExt.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B18EDBFB223461B800C92221 /* VkExt.cpp */; };
 		B193649C22481A4700BA0F58 /* DefaultRenderQueue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B193649B22481A4600BA0F58 /* DefaultRenderQueue.cpp */; };
 		B19A0483222C8395004D513A /* Images in CopyFiles */ = {isa = PBXBuildFile; fileRef = B19A0482222C8395004D513A /* Images */; };
 		B19A0485222C83A2004D513A /* Shaders in CopyFiles */ = {isa = PBXBuildFile; fileRef = B19A0484222C83A2004D513A /* Shaders */; };
+		B1A77499228826FD0019A8F3 /* libImGUI.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B1A77498228826FD0019A8F3 /* libImGUI.a */; };
 		B1B426B922468BC500C2A254 /* DescriptorSet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B1B426B822468BC500C2A254 /* DescriptorSet.cpp */; };
+		B1C99B92228828A700C8AF2C /* ProfilerPanel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B1C99B91228828A700C8AF2C /* ProfilerPanel.cpp */; };
+		B1C99B93228829DB00C8AF2C /* libImGUI.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B1A77498228826FD0019A8F3 /* libImGUI.a */; };
+		B1C99B95228829FF00C8AF2C /* Profiler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B1C99B94228829FF00C8AF2C /* Profiler.cpp */; };
+		B1C99B9722882AF400C8AF2C /* Texture2DAtlas.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B1C99B9622882AF300C8AF2C /* Texture2DAtlas.cpp */; };
+		B1C99B9922882B4300C8AF2C /* TextureTable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B1C99B9822882B4300C8AF2C /* TextureTable.cpp */; };
+		B1C99B9B22882C7F00C8AF2C /* NodeTree.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B1C99B9A22882C7F00C8AF2C /* NodeTree.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -256,6 +258,7 @@
 		B11ED6F022344C560039257D /* libvulkan.1.1.101.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libvulkan.1.1.101.dylib; path = "Deps/vulkansdk-macos-1.1.101.0/macOS/lib/libvulkan.1.1.101.dylib"; sourceTree = "<group>"; };
 		B11ED6F322344DE80039257D /* Vk.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = Vk.cpp; path = Sources/Core/Vulkan/Vk.cpp; sourceTree = "<group>"; };
 		B11ED6F422344E0B0039257D /* ProfilingSample.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = ProfilingSample.cpp; path = Sources/Core/Vulkan/ProfilingSample.cpp; sourceTree = "<group>"; };
+		B1484AB32288301200742B8B /* IndirectRenderer.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = IndirectRenderer.cpp; path = Sources/Core/Components/IndirectRenderer.cpp; sourceTree = "<group>"; };
 		B16B4C7C222C239100794EEC /* libLWGC.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libLWGC.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		B1741FA4222C578700A18DEE /* libglfw3.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libglfw3.a; path = Deps/glfw/src/libglfw3.a; sourceTree = "<group>"; };
 		B1741FAC222C5A4600A18DEE /* cube */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = cube; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -412,8 +415,6 @@
 		B174EDD0222C240900A18DEE /* TextureCube.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = TextureCube.hpp; sourceTree = "<group>"; };
 		B174EDD1222C240900A18DEE /* TextureCubeArray.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TextureCubeArray.cpp; sourceTree = "<group>"; };
 		B174EDD2222C240900A18DEE /* TextureCubeArray.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = TextureCubeArray.hpp; sourceTree = "<group>"; };
-		B174EDD3222C240900A18DEE /* TextureTable.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TextureTable.cpp; sourceTree = "<group>"; };
-		B174EDD4222C240900A18DEE /* TextureTable.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = TextureTable.hpp; sourceTree = "<group>"; };
 		B174EDD5222C240900A18DEE /* Time.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Time.cpp; sourceTree = "<group>"; };
 		B174EDD6222C240900A18DEE /* Time.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Time.hpp; sourceTree = "<group>"; };
 		B174EDD7222C240900A18DEE /* Transform.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Transform.cpp; sourceTree = "<group>"; };
@@ -452,13 +453,17 @@
 		B174EDFA222C240900A18DEE /* Vector.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Vector.hpp; sourceTree = "<group>"; };
 		B174EDFB222C240900A18DEE /* Makefile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.make; path = Makefile; sourceTree = "<group>"; };
 		B174EDFC222C240900A18DEE /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
-		B18EDBF9223461B800C92221 /* VkExt.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = VkExt.hpp; sourceTree = "<group>"; };
 		B18EDBFA223461B800C92221 /* ProfilingSample.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = ProfilingSample.hpp; sourceTree = "<group>"; };
-		B18EDBFB223461B800C92221 /* VkExt.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VkExt.cpp; sourceTree = "<group>"; };
 		B193649B22481A4600BA0F58 /* DefaultRenderQueue.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = DefaultRenderQueue.cpp; path = Sources/Core/Rendering/DefaultRenderQueue.cpp; sourceTree = "<group>"; };
 		B19A0482222C8395004D513A /* Images */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Images; sourceTree = "<group>"; };
 		B19A0484222C83A2004D513A /* Shaders */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Shaders; sourceTree = "<group>"; };
+		B1A77498228826FD0019A8F3 /* libImGUI.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libImGUI.a; path = Deps/ImGUI_Volk/libImGUI.a; sourceTree = "<group>"; };
 		B1B426B822468BC500C2A254 /* DescriptorSet.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = DescriptorSet.cpp; path = Sources/Core/Vulkan/DescriptorSet.cpp; sourceTree = "<group>"; };
+		B1C99B91228828A700C8AF2C /* ProfilerPanel.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = ProfilerPanel.cpp; path = Sources/Core/Components/ProfilerPanel.cpp; sourceTree = "<group>"; };
+		B1C99B94228829FF00C8AF2C /* Profiler.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = Profiler.cpp; path = Sources/Core/Profiler.cpp; sourceTree = "<group>"; };
+		B1C99B9622882AF300C8AF2C /* Texture2DAtlas.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = Texture2DAtlas.cpp; path = Sources/Core/Textures/Texture2DAtlas.cpp; sourceTree = "<group>"; };
+		B1C99B9822882B4300C8AF2C /* TextureTable.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = TextureTable.cpp; path = Sources/Core/Textures/TextureTable.cpp; sourceTree = "<group>"; };
+		B1C99B9A22882C7F00C8AF2C /* NodeTree.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = NodeTree.cpp; path = Sources/Core/NodeTree.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -466,12 +471,12 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B1A77499228826FD0019A8F3 /* libImGUI.a in Frameworks */,
 				71C02959223FC4960086693D /* libvulkan.1.1.101.dylib in Frameworks */,
 				71C0295A223FC4960086693D /* CoreVideo.framework in Frameworks */,
 				71C0295B223FC4960086693D /* IOKit.framework in Frameworks */,
 				71C0295C223FC4960086693D /* AppKit.framework in Frameworks */,
 				71C0295D223FC4960086693D /* libspirv-cross.a in Frameworks */,
-				71C0295E223FC4960086693D /* libImGUI.a in Frameworks */,
 				71C0295F223FC4960086693D /* libglfw3.a in Frameworks */,
 				71C02960223FC4960086693D /* libLWGC.a in Frameworks */,
 			);
@@ -488,12 +493,12 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B1C99B93228829DB00C8AF2C /* libImGUI.a in Frameworks */,
 				B11ED6F222344D9D0039257D /* libvulkan.1.1.101.dylib in Frameworks */,
 				B11D4A07222C68A5007D5D40 /* CoreVideo.framework in Frameworks */,
 				B11D4A05222C6899007D5D40 /* IOKit.framework in Frameworks */,
 				B11D4A03222C688E007D5D40 /* AppKit.framework in Frameworks */,
 				B11D4A0B222C68EB007D5D40 /* libspirv-cross.a in Frameworks */,
-				B11D4A01222C6869007D5D40 /* libImGUI.a in Frameworks */,
 				B11D49FF222C67EA007D5D40 /* libglfw3.a in Frameworks */,
 				B11D49FE222C67DB007D5D40 /* libLWGC.a in Frameworks */,
 			);
@@ -505,6 +510,12 @@
 		B16B4C73222C239100794EEC = {
 			isa = PBXGroup;
 			children = (
+				B1484AB32288301200742B8B /* IndirectRenderer.cpp */,
+				B1C99B9A22882C7F00C8AF2C /* NodeTree.cpp */,
+				B1C99B9822882B4300C8AF2C /* TextureTable.cpp */,
+				B1C99B9622882AF300C8AF2C /* Texture2DAtlas.cpp */,
+				B1C99B94228829FF00C8AF2C /* Profiler.cpp */,
+				B1C99B91228828A700C8AF2C /* ProfilerPanel.cpp */,
 				B1B426B822468BC500C2A254 /* DescriptorSet.cpp */,
 				71C0296C223FC6560086693D /* ComputeShader.cpp */,
 				B11ED6F422344E0B0039257D /* ProfilingSample.cpp */,
@@ -537,6 +548,7 @@
 		B1741FA2222C576D00A18DEE /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B1A77498228826FD0019A8F3 /* libImGUI.a */,
 				B193649B22481A4600BA0F58 /* DefaultRenderQueue.cpp */,
 				B11D4A1B222C7B5F007D5D40 /* libvulkan.1.1.85.dylib */,
 				B11D4A19222C7746007D5D40 /* libMoltenVK.dylib */,
@@ -733,8 +745,6 @@
 				B174EDBC222C240900A18DEE /* ShaderCache.hpp */,
 				B174EDBD222C240900A18DEE /* Shaders */,
 				B174EDC6222C240900A18DEE /* Textures */,
-				B174EDD3222C240900A18DEE /* TextureTable.cpp */,
-				B174EDD4222C240900A18DEE /* TextureTable.hpp */,
 				B174EDD5222C240900A18DEE /* Time.cpp */,
 				B174EDD6222C240900A18DEE /* Time.hpp */,
 				B174EDD7222C240900A18DEE /* Transform.cpp */,
@@ -881,8 +891,6 @@
 			isa = PBXGroup;
 			children = (
 				B18EDBFA223461B800C92221 /* ProfilingSample.hpp */,
-				B18EDBFB223461B800C92221 /* VkExt.cpp */,
-				B18EDBF9223461B800C92221 /* VkExt.hpp */,
 				B174EDDA222C240900A18DEE /* CommandBufferPool.cpp */,
 				B174EDDB222C240900A18DEE /* CommandBufferPool.hpp */,
 				B174EDDC222C240900A18DEE /* Material.cpp */,
@@ -949,7 +957,6 @@
 				B174EE40222C240900A18DEE /* HandleControl.hpp in Headers */,
 				B174EE30222C240900A18DEE /* Arrow.hpp in Headers */,
 				B174EE88222C240900A18DEE /* Material.hpp in Headers */,
-				B174EE80222C240900A18DEE /* TextureTable.hpp in Headers */,
 				B174EE9A222C240900A18DEE /* Color.hpp in Headers */,
 				B174EE32222C240900A18DEE /* Circle.hpp in Headers */,
 				B174EE5F222C240900A18DEE /* FramebufferAttachment.hpp in Headers */,
@@ -1007,7 +1014,6 @@
 				B174EE84222C240900A18DEE /* Transform.hpp in Headers */,
 				B174EE62222C240900A18DEE /* RenderMode.hpp in Headers */,
 				B1741F8F222C289500A18DEE /* ImGUIWrapper.hpp in Headers */,
-				B18EDBFC223461B800C92221 /* VkExt.hpp in Headers */,
 				B18EDBFD223461B800C92221 /* ProfilingSample.hpp in Headers */,
 				B174EE86222C240900A18DEE /* CommandBufferPool.hpp in Headers */,
 				B174EE7A222C240900A18DEE /* Texture3D.hpp in Headers */,
@@ -1157,6 +1163,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B1484AB42288301200742B8B /* IndirectRenderer.cpp in Sources */,
+				B1C99B9B22882C7F00C8AF2C /* NodeTree.cpp in Sources */,
+				B1C99B9922882B4300C8AF2C /* TextureTable.cpp in Sources */,
+				B1C99B9722882AF400C8AF2C /* Texture2DAtlas.cpp in Sources */,
+				B1C99B95228829FF00C8AF2C /* Profiler.cpp in Sources */,
+				B1C99B92228828A700C8AF2C /* ProfilerPanel.cpp in Sources */,
 				B193649C22481A4700BA0F58 /* DefaultRenderQueue.cpp in Sources */,
 				B1B426B922468BC500C2A254 /* DescriptorSet.cpp in Sources */,
 				71C0296D223FC6560086693D /* ComputeShader.cpp in Sources */,
@@ -1180,7 +1192,6 @@
 				B174EE24222C240900A18DEE /* ProceduralRenderer.cpp in Sources */,
 				B174EE81222C240900A18DEE /* Time.cpp in Sources */,
 				B174EE65222C240900A18DEE /* RenderPipelineManager.cpp in Sources */,
-				B18EDBFE223461B800C92221 /* VkExt.cpp in Sources */,
 				B174EE52222C240900A18DEE /* MaterialTable.cpp in Sources */,
 				B174EE14222C240900A18DEE /* Component.cpp in Sources */,
 				B174EE2D222C240900A18DEE /* GameObject.cpp in Sources */,
@@ -1209,7 +1220,6 @@
 				B174EE43222C240900A18DEE /* HandleUtils.cpp in Sources */,
 				B174EE99222C240900A18DEE /* Color.cpp in Sources */,
 				B174EE2A222C240900A18DEE /* EventSystem.cpp in Sources */,
-				B174EE7F222C240900A18DEE /* TextureTable.cpp in Sources */,
 				B174EE71222C240900A18DEE /* ShaderSource.cpp in Sources */,
 				B174EE5A222C240900A18DEE /* PrimitiveMeshFactory.cpp in Sources */,
 				B174EE35222C240900A18DEE /* Frustum.cpp in Sources */,
@@ -1317,6 +1327,7 @@
 					"$(PROJECT_DIR)/Deps/SPIRV-Cross",
 					"$(PROJECT_DIR)/Deps/vulkansdk-macos-1.1.101.0/MoltenVK/macOS",
 					"$(PROJECT_DIR)/Deps/vulkansdk-macos-1.1.101.0/macOS/lib",
+					"$(PROJECT_DIR)/Deps/ImGUI_Volk",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.12;
 				MTL_ENABLE_DEBUG_INFO = YES;
@@ -1382,6 +1393,7 @@
 					"$(PROJECT_DIR)/Deps/SPIRV-Cross",
 					"$(PROJECT_DIR)/Deps/vulkansdk-macos-1.1.101.0/MoltenVK/macOS",
 					"$(PROJECT_DIR)/Deps/vulkansdk-macos-1.1.101.0/macOS/lib",
+					"$(PROJECT_DIR)/Deps/ImGUI_Volk",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.12;
 				MTL_ENABLE_DEBUG_INFO = NO;
@@ -1490,6 +1502,7 @@
 					"$(PROJECT_DIR)/Deps/SPIRV-Cross",
 					"$(PROJECT_DIR)/Deps/vulkansdk-macos-1.1.101.0/MoltenVK/macOS",
 					"$(PROJECT_DIR)/Deps/vulkansdk-macos-1.1.101.0/macOS/lib",
+					"$(PROJECT_DIR)/Deps/ImGUI_Volk",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.12;
 				MTL_ENABLE_DEBUG_INFO = YES;
@@ -1555,6 +1568,7 @@
 					"$(PROJECT_DIR)/Deps/SPIRV-Cross",
 					"$(PROJECT_DIR)/Deps/vulkansdk-macos-1.1.101.0/MoltenVK/macOS",
 					"$(PROJECT_DIR)/Deps/vulkansdk-macos-1.1.101.0/macOS/lib",
+					"$(PROJECT_DIR)/Deps/ImGUI_Volk",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.12;
 				MTL_ENABLE_DEBUG_INFO = NO;

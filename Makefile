@@ -28,7 +28,6 @@ SOURCES		=	Core/Application.cpp \
 				Core/Time.cpp \
 				Core/PrimitiveMeshFactory.cpp \
 				Core/ComputeDispatcher.cpp \
-				Core/TextureTable.cpp \
 				Core/Components/Component.cpp \
 				Core/Components/Camera.cpp \
 				Core/Components/Renderer.cpp \
@@ -45,7 +44,6 @@ SOURCES		=	Core/Application.cpp \
 				Core/ComputeDispatcher.cpp \
 				Core/ShaderCache.cpp \
 				Core/Object.cpp \
-				Core/Texture2DAtlas.cpp \
 				Core/NodeTree.cpp \
 				Core/PrimitiveMeshFactory.cpp \
 				Core/Rendering/ForwardRenderPipeline.cpp \
@@ -67,6 +65,8 @@ SOURCES		=	Core/Application.cpp \
 				Core/Vulkan/ProfilingSample.cpp \
 				Core/Vulkan/ComputeShader.cpp \
 				Core/Vulkan/DescriptorSet.cpp \
+				Core/Textures/Texture2DAtlas.cpp \
+				Core/Textures/TextureTable.cpp \
 				Core/Textures/Texture.cpp \
 				Core/Textures/Texture2D.cpp \
 				Core/Textures/Texture2DArray.cpp \
@@ -293,7 +293,7 @@ $(ASSIMPLIB):
 
 $(DIRECTX_SHADER_COMPILER):
 	@git submodule update --init --recursive
-	
+
 
 $(VULKAN):
 	@$(DOWNLOAD_VULKAN)

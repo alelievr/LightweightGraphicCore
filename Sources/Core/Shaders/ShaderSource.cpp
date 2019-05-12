@@ -177,7 +177,7 @@ void		ShaderSource::GenerateBindingTable(ShaderBindingTable & bindingTable)
 		// If the push constant block is a struct, we retrieve all it's members
 		if (type.basetype == spirv_cross::SPIRType::Struct)
 		{
-			std::vector< spirv_cross::BufferRange > ranges = reflection->get_active_buffer_ranges(resource.id);
+			const auto & ranges = reflection->get_active_buffer_ranges(resource.id);
 			for (auto & range : ranges)
 				bindingTable.AddPushConstant(reflection->get_member_name(resource.base_type_id, range.index), range.offset, range.range);
 		}

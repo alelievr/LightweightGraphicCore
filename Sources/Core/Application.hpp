@@ -17,7 +17,7 @@
 #include "Core/Delegate.tpp"
 #include "Core/ImGUIWrapper.hpp"
 #include "Core/MaterialTable.hpp"
-#include "Core/TextureTable.hpp"
+#include "Core/Textures/TextureTable.hpp"
 #include "Core/Textures/Texture2D.hpp"
 #include "Core/Textures/Texture2DArray.hpp"
 #include "Core/Rendering/RenderPipelineManager.hpp"

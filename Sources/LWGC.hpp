@@ -35,7 +35,7 @@
 #include "Core/Transform.hpp"
 #include "Core/GameObject.hpp"
 #include "Core/Time.hpp"
-#include "Core/Texture2DAtlas.hpp"
+#include "Core/Textures/Texture2DAtlas.hpp"
 #include "Core/NodeTree.hpp"
 #include "Core/ModelLoader.hpp"
 
