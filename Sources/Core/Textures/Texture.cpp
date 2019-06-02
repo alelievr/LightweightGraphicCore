@@ -1,5 +1,7 @@
 #include "Texture.hpp"
 
+#include <unistd.h>
+
 #include "Core/Application.hpp"
 
 // STB has some unused parameters, os we ignore them
@@ -68,11 +70,17 @@ void			Texture::AllocateImage(VkImageViewType viewType)
 // TODO: HDR and EXR support (stbi_us)
 stbi_uc *		Texture::LoadFromFile(const std::string & fileName, int & width, int & height)
 {
+	// Check for file validity:
+	if (access(fileName.c_str(), F_OK | R_OK) == -1)
+	{
+		throw std::runtime_error("Failed to load texture image, not a valid file: " + fileName);
+	}
+
 	int texChannels;
 	stbi_uc *pixels = stbi_load(fileName.c_str(), &width, &height, &texChannels, STBI_rgb_alpha);
 
 	if (!pixels)
-		throw std::runtime_error("failed to load texture image!");
+		throw std::runtime_error("Failed to load texture image from file: " + fileName);
 
 	return pixels;
 }

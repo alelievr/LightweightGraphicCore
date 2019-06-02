@@ -36,13 +36,25 @@ std::string LWGC::GetExtension(const std::string & path)
 
 std::string LWGC::GetFileName(const std::string & path)
 {
-    size_t l = path.find('/');
-    return path.substr(l, path.size() - l);
+    size_t l = path.find_last_of('/');
+    if (l == std::string::npos)
+        return path;
+    else
+        return path.substr(l + 1, path.size() - l);
 }
 
 std::string LWGC::GetFileNameWithoutExtension(const std::string & path)
 {
     std::string fileName = GetFileName(path);
     size_t l = fileName.find('.');
-    return path.substr(l, fileName.size() - l);
+    if (l == std::string::npos)
+        return fileName;
+    else
+        return fileName.substr(0, l);
+}
+
+bool        LWGC::EndsWith(std::string const & value, std::string const & ending)
+{
+    if (ending.size() > value.size()) return false;
+    return std::equal(ending.rbegin(), ending.rend(), value.rbegin());
 }

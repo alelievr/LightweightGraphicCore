@@ -15,7 +15,7 @@ Texture2DAtlas::Texture2DAtlas(uint32_t w, uint32_t h, VkFormat format, int usag
 	this->format = format;
 	this->width = w;
 	this->height = h;
-	
+
 	this->arraySize = 1;
 	this->usage = usage;
 	// Force transfer flag (as the image comes from the RAM)
@@ -44,7 +44,7 @@ Texture2DAtlas *Texture2DAtlas::Create(uint32_t w, uint32_t h, VkFormat format, 
 	return new Texture2DAtlas(w, h, format, usage, allocateMips);
 }
 
-Rect Texture2DAtlas::Fit(std::string fileName)
+Rect Texture2DAtlas::Fit(const std::string & fileName)
 {
 	int width, height;
 
@@ -53,7 +53,7 @@ Rect Texture2DAtlas::Fit(std::string fileName)
 	glm::ivec3 imgSize = glm::ivec3(width ,height, 1);
 	glm::ivec3 offset = glm::ivec3(rect.GetMinX(), rect.GetMinY(), 0);
 	glm::vec4 sizeoffset = glm::vec4(
-		glm::vec2(imgSize.x, imgSize.y) / glm::vec2(this->width, this->height), 
+		glm::vec2(imgSize.x, imgSize.y) / glm::vec2(this->width, this->height),
 		glm::vec2(offset.x, offset.y) / glm::vec2(this->width, this->height)
 	);
 	this->_sizeOffsets.push_back(sizeoffset);
@@ -76,7 +76,6 @@ void	Texture2DAtlas::UploadAtlasDatas(void)
 	// this->_sizeOffsetBufferView = Vk::CreateBufferView(this->_sizeOffsetsBuffer, VK_FORMAT_R32G32B32A32_SFLOAT); // Not supported on Metal 1
 	Vk::UploadToMemory(_sizeOffsetsMemory, _sizeOffsets.data(), GetSizeOffsetBufferSize());
 	Vk::UploadToMemory(_atlasSizeMemory, &_atlasSize, GetAtlasSizeBufferSize());
-	std::cout << _atlasSize << std::endl;
 }
 
 void	Texture2DAtlas::Clear(void)

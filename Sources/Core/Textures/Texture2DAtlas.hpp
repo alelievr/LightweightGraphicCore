@@ -39,7 +39,7 @@ namespace LWGC
 
 			// vector of blocks -- texture, width, height
 			static Texture2DAtlas	*Create(uint32_t w, uint32_t h, VkFormat format, int usage, bool allocateMips);
-			Rect					Fit(std::string fileName);
+			Rect					Fit(const std::string & fileName);
 			void					UploadAtlasDatas(void);
 
 			VkBuffer				GetAtlasSizeBuffer(void);

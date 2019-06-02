@@ -47,6 +47,7 @@ std::vector< Renderer * >		DefaultRenderQueue::GetRenderersForQueue(uint32_t que
 			return _transparentObjects;
 		default:
 			std::cerr << "Can't access the renderQueue index " + std::to_string(queueIndex) << std::endl;
+			return {};
 	}
 }
 

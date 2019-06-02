@@ -1,5 +1,7 @@
 #include "NodeTree.hpp"
 
+#include "LWGC.hpp"
+
 using namespace LWGC;
 
 NodeTree::NodeTree(int width, int height) : _width(width), _height(height), _node(nullptr)
@@ -15,7 +17,9 @@ NodeTree::~NodeTree(void)
 Rect	NodeTree::Allocate(int w, int h)
 {
 	if (w > _width || h > _height)
-		throw std::runtime_error("Texture is bigger than the texture2DAtlas");
+		throw std::runtime_error("Texture is bigger than the texture2DAtlas: "
+			+ std::to_string(w) + "/" + std::to_string(h) + " requested but "
+			+ std::to_string(_width) + "/" + std::to_string(_height) + " available");
 
 	Rect ret;
 	Node *tmp = _node;
@@ -77,7 +81,6 @@ void	NodeTree::CreateNodes(Node *node)
 	if (node->area.GetMaxY() < _height)
 		node->NodeDown = new Node{ Rect(0, 0, static_cast<int>(node->area.GetMinX()), static_cast<int>(node->area.GetMaxY())), false, nullptr, nullptr };
 }
-
 
 void	NodeTree::ClearTree(Node *node)
 {

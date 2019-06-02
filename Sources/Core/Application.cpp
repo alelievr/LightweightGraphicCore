@@ -176,7 +176,6 @@ void			Application::Open(const std::string & name, const int width, const int he
 		Time::Initialize();
 
 		_imGUI.Initialize(&_swapChain, &_surface);
-		UpdateRenderPipeline();
 
 		hierarchy->Initialize();
 	} catch (const std::runtime_error & e) {
