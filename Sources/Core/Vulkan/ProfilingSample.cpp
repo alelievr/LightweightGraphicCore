@@ -12,7 +12,7 @@ ProfilingSample::ProfilingSample(VkCommandBuffer cmd, const std::string & debugS
 	Vk::BeginProfilingSample(cmd, debugSampleName, color);
 }
 
-ProfilingSample::ProfilingSample(const std::string & sampleName) : _cmd(VK_NULL_HANDLE), _sampleName(sampleName)
+ProfilingSample::ProfilingSample(const std::string & sampleName) : _cmd(VK_NULL_HANDLE), _sampleName(sampleName), _ended(false)
 {
 	struct timeval  tv;
 
@@ -29,8 +29,11 @@ void	ProfilingSample::Insert(const std::string & debugSampleName, const Color & 
 	Vk::InsertProfilingSample(_cmd, debugSampleName, color);
 }
 
-ProfilingSample::~ProfilingSample(void)
+void	ProfilingSample::End(void)
 {
+	if (_ended)
+		return;
+
 	struct timeval  tv;
 
 	Vk::EndProfilingSample(_cmd);
@@ -41,4 +44,11 @@ ProfilingSample::~ProfilingSample(void)
 	Profiler::AddSample(_hierarchy, endTime - _startTime, _timeFrameRelative);
 
 	_hierarchy = _hierarchy.substr(0, _hierarchy.size() - _sampleName.size() - 1);
+
+	_ended = true;
+}
+
+ProfilingSample::~ProfilingSample(void)
+{
+	End();
 }

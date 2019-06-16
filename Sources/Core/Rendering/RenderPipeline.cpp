@@ -24,6 +24,7 @@ RenderPipeline::RenderPipeline(void) : framebufferResized(false), _initialized(f
 
 RenderPipeline::~RenderPipeline(void)
 {
+	printf("Destruction of RP: %p\n", device);
 	vkDeviceWaitIdle(device);
 
 	for (size_t i = 0; i < swapChain->GetImageCount(); i++)

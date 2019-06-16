@@ -320,24 +320,35 @@ void			Vk::CreateDescriptorSetLayout(std::vector< VkDescriptorSetLayoutBinding >
 
 void			Vk::UploadToMemory(VkDeviceMemory memory, void * data, size_t size, size_t offset, bool forceFlush)
 {
-	void *		tmpData;
-	VkDevice	device = VulkanInstance::Get()->GetDevice();
+	void *			tmpData;
+	VkDevice		device = VulkanInstance::Get()->GetDevice();
+	const auto &	limits = VulkanInstance::Get()->GetLimits();
+	size_t			alignedOffset = offset;
+	size_t			alignedSize = size;
 
-	vkMapMemory(device, memory, offset, size, 0, &tmpData);
-	memcpy(tmpData, data, size);
-	vkUnmapMemory(device, memory);
+	// Patch the offset and size if it's not memory aligned
+	if ((offset % limits.nonCoherentAtomSize) != 0 || (size % limits.nonCoherentAtomSize) != 0)
+	{
+		alignedOffset -= offset % limits.nonCoherentAtomSize;
+		alignedSize = limits.nonCoherentAtomSize;
+	}
+
+	// Map aligned size and offset
+	vkMapMemory(device, memory, alignedOffset, alignedSize, 0, &tmpData);
+	memcpy(reinterpret_cast< char * >(tmpData) + (offset - alignedOffset), data, size);
 
 	if (forceFlush)
 	{
-		const auto & limits = VulkanInstance::Get()->GetLimits();
 		VkMappedMemoryRange flush = {};
 		flush.sType = VK_STRUCTURE_TYPE_MAPPED_MEMORY_RANGE;
 		flush.memory = memory;
-		flush.offset = offset;
-		flush.size = ((size % limits.nonCoherentAtomSize) == 0) ? size : VK_WHOLE_SIZE;
+		flush.offset = alignedOffset;
+		flush.size = alignedSize;
 
 		vkFlushMappedMemoryRanges(device, 1, &flush);
 	}
+
+	vkUnmapMemory(device, memory);
 }
 
 void			Vk::SetDebugName(const std::string & name, uint64_t vulkanObject, VkDebugReportObjectTypeEXT objectType)

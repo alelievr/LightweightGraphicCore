@@ -41,6 +41,8 @@ Application::~Application(void)
 		glfwDestroyWindow(_window);
 		glfwTerminate();
 	}
+
+	printf("Released app resources\n");
 }
 
 void			ErrorCallback(int err, const char * description)

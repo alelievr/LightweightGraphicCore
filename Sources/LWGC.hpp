@@ -28,6 +28,7 @@
 #include "Core/Vulkan/Material.hpp"
 #include "Core/Shaders/BuiltinShaders.hpp"
 #include "Core/Vulkan/MaterialStates.hpp"
+#include "Core/Shaders/ComputeShader.hpp"
 
 // App & core
 #include "Core/Application.hpp"
@@ -72,6 +73,7 @@
 #include "Utils/Rect.hpp"
 #include "Utils/Math.hpp"
 #include "Utils/Random.hpp"
+#include "Utils/Vector.hpp"
 
 // ImGUI
 #include IMGUI_INCLUDE

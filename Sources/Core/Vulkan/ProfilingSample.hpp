@@ -19,6 +19,7 @@ namespace LWGC
 			double			_startTime;
 			std::string		_sampleName;
 			float			_timeFrameRelative;
+			bool			_ended;
 
 			static std::string		_hierarchy;
 
@@ -30,6 +31,7 @@ namespace LWGC
 			virtual ~ProfilingSample(void);
 
 			void Insert(const std::string & debugSampleName, const Color & color = Color::Red);
+			void End(void);
 
 			ProfilingSample &	operator=(ProfilingSample const & src) = delete;
 	};

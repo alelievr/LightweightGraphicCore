@@ -27,4 +27,7 @@ namespace LWGC
 	std::ostream &	operator<<(std::ostream & o, const glm::mat4 & r);
 	std::ostream &	operator<<(std::ostream & o, const glm::mat3 & r);
 	std::ostream &	operator<<(std::ostream & o, const glm::quat & r);
+	std::ostream &	operator<<(std::ostream & o, const glm::ivec2 & r);
+	std::ostream &	operator<<(std::ostream & o, const glm::ivec3 & r);
+	std::ostream &	operator<<(std::ostream & o, const glm::ivec4 & r);
 }

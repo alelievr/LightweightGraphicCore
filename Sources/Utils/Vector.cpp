@@ -44,3 +44,21 @@ std::ostream &	LWGC::operator<<(std::ostream & o, const glm::quat & r)
 	o << glm::to_string(r);
 	return (o);
 }
+
+std::ostream &	LWGC::operator<<(std::ostream & o, const glm::ivec2 & r)
+{
+	o << glm::to_string(r);
+	return (o);
+}
+
+std::ostream &	LWGC::operator<<(std::ostream & o, const glm::ivec3 & r)
+{
+	o << glm::to_string(r);
+	return (o);
+}
+
+std::ostream &	LWGC::operator<<(std::ostream & o, const glm::ivec4 & r)
+{
+	o << glm::to_string(r);
+	return (o);
+}
