@@ -428,7 +428,7 @@ void				Material::SetBuffer(const std::string & bindingName, VkBuffer buffer, si
 	std::array<VkWriteDescriptorSet, 1> descriptorWrites = {};
 	VkDescriptorBufferInfo bufferInfo = {};
 	bufferInfo.buffer = buffer;
-	bufferInfo.offset = 0;
+	bufferInfo.offset = offset;
 	bufferInfo.range = size;
 
 	descriptorWrites[0].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
@@ -578,6 +578,35 @@ void				Material::BindProperties(VkCommandBuffer cmd)
 			1, &k.second.set,
 			0, nullptr
 		);
+	}
+}
+
+void				Material::BindFrameProperties(VkCommandBuffer cmd)
+{
+	const auto & rp = RenderPipelineManager::currentRenderPipeline;
+	
+	for (const auto & k : _bindingTable->GetBindingNames())
+	{
+		// Check if the frame uniformbuffer exists in the shader
+		if (k == LWGCBinding::Frame)
+		{
+			AllocateDescriptorSet(k);
+
+			const auto set = _setTable.at(_bindingTable->GetDescriptorSetBinding(k)).set;
+			const auto ub = rp->GetFrameUniformBuffer();
+
+			// Set the pointer to the buffer
+			SetBuffer(k, ub.buffer, sizeof(LWGC_PerFrame), VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER);
+			
+			vkCmdBindDescriptorSets(
+				cmd,
+				IsCompute() ? VK_PIPELINE_BIND_POINT_COMPUTE : VK_PIPELINE_BIND_POINT_GRAPHICS,
+				GetPipelineLayout(),
+				_bindingTable->GetDescriptorSetBinding(k),
+				1, &set,
+				0, nullptr
+			);
+		}
 	}
 }
 

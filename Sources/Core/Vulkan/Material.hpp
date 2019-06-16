@@ -153,6 +153,7 @@ namespace LWGC
 			bool				IsCompiled(void) const noexcept;
 			bool				IsTransparent(void) const noexcept;
 			void				BindProperties(VkCommandBuffer cmd);
+			void				BindFrameProperties(VkCommandBuffer cmd);
 			void				BindPipeline(VkCommandBuffer cmd);
 			bool				IsPropertyBound(const std::string & propertyName);
 

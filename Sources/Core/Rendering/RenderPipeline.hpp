@@ -19,16 +19,17 @@
 
 namespace LWGC
 {
+	// TODO: move to shared shader-cpp include file
+	struct LWGC_PerFrame
+	{
+		glm::vec3	time;
+		uint32_t	frameIndex;
+	};
+	
 	class RenderPipeline
 	{
 		friend class Application;
 		protected:
-			// TODO: move to shared shader-cpp include file
-			struct LWGC_PerFrame
-			{
-				glm::vec3	time;
-				uint32_t	frameIndex;
-			};
 
 			std::vector< VkSemaphore >		imageAvailableSemaphores;
 			std::vector< VkSemaphore >		renderFinishedSemaphores;
@@ -84,6 +85,7 @@ namespace LWGC
 			RenderPass *	GetRenderPass(void);
 			Camera *		GetCurrentCamera(void);
 			bool			IsInitialized(void);
+			UniformBuffer	GetFrameUniformBuffer(void) const;
 
 			void			EnqueueFrameCommandBuffer(VkCommandBuffer cmd);
 
