@@ -31,9 +31,9 @@ namespace LWGC
 			NodeTree &	operator=(NodeTree const & src) = delete;
 
 			Rect	FindNode(Node *node, int w, int h);
-			Rect	SearchNode(Node *node, int w, int h, int X, int Y);
+			Rect	SearchNode(Node* node, int w, int h);
 			Rect	Allocate(int w, int h);
-			void	CreateNodes(Node *node);
+			void	CreateNodes(Node *node, int w, int h);
 			void	ClearTree(Node *node);
 			void	Clear(void);
 	};
