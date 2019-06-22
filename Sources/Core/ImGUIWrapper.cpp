@@ -20,9 +20,13 @@ ImGUIWrapper::ImGUIWrapper(void)
 
 ImGUIWrapper::~ImGUIWrapper(void)
 {
-	ImGui_ImplVulkan_Shutdown();
-	ImGui_ImplGlfw_Shutdown();
-	ImGui::DestroyContext();
+	// Cleanup
+    const auto & err = vkDeviceWaitIdle(_device);
+    Vk::CheckResult(err, "ImGUI Wait Idle failed");
+
+    ImGui_ImplVulkan_Shutdown();
+    ImGui_ImplGlfw_Shutdown();
+    ImGui::DestroyContext();
 }
 
 void		ImGUIWrapper::Initialize(SwapChain * swapChain, VulkanSurface * surface)

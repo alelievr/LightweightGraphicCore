@@ -39,6 +39,11 @@ void		ComputeShader::Dispatch(VkCommandBuffer cmd, int width, int height, int de
 	_renderPass.End();
 }
 
+void		ComputeShader::BindFrameProperties(VkCommandBuffer cmd)
+{
+	_material->BindFrameProperties(cmd);
+}
+
 void		ComputeShader::SetBuffer(const std::string & bindingName, VkBuffer buffer, size_t size, VkDescriptorType descriptorType, size_t offset, bool silent)
 {
 	_material->SetBuffer(bindingName, buffer, size, descriptorType, offset, silent);
