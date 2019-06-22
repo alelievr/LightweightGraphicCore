@@ -6,7 +6,7 @@ using namespace LWGC;
 
 NodeTree::NodeTree(int width, int height) : _width(width), _height(height), _node(nullptr)
 {
-	Rect area = Rect(0, 0, 0, 0);
+	Rect area = Rect(width, height, 0, 0);
 	_node = new Node{ area, false, nullptr, nullptr};
 }
 
@@ -23,24 +23,20 @@ Rect	NodeTree::Allocate(int w, int h)
 
 	Rect ret;
 	Node *tmp = _node;
-
-	ret = SearchNode(NULL, tmp, w, h, tmp->area.GetMaxX(), tmp->area.GetMinY());
-
+	ret = SearchNode(tmp, w, h);
 	if (ret == Rect::Invalid)
 		throw std::runtime_error("No space left in texture2DAtlas");
-
 	return (ret);
 }
 
-Rect	NodeTree::SearchNode(Node* parent, Node* node, int w, int h, int X, int Y)
+Rect	NodeTree::SearchNode(Node* node, int w, int h)
 {
 	if (!node->haveTexture)
 	{
-		if (node->area.CanFit(Rect(w, h, X, Y), _width, _height))
+		if (w <= node->area.GetSize().x && h <= node->area.GetSize().y)
 		{
-			node->area = Rect(w, h, X, Y);
 			node->haveTexture = true;
-			CreateNodes(parent, node);
+			CreateNodes(node, w, h);
 			return(node->area);
 		}
 	}
@@ -57,13 +53,13 @@ Rect	NodeTree::FindNode(Node *node, int w, int h)
 {
 	if (node->NodeRight != nullptr)
 	{
-		Rect rect = SearchNode(node, node->NodeRight, w, h, node->area.GetMaxX(), node->area.GetMinY());
+		Rect rect = SearchNode(node->NodeRight, w, h);
 		if (rect != Rect::Invalid)
 			return (rect);
 	}
 	if (node->NodeDown != nullptr)
 	{
-		Rect rect = SearchNode(NULL, node->NodeDown, w, h, node->NodeDown->area.GetMinX(), node->NodeDown->area.GetMaxY());
+		Rect rect = SearchNode(node->NodeDown, w, h);
 		if (rect != Rect::Invalid)
 			return (rect);
 	}
@@ -71,19 +67,10 @@ Rect	NodeTree::FindNode(Node *node, int w, int h)
 	return (Rect::Invalid);
 }
 
-void	NodeTree::CreateNodes(Node* parent, Node *node)
+void	NodeTree::CreateNodes(Node *node, int w, int h)
 {
-	if (node->area.GetMaxX() < _width) {
-		node->NodeRight = new Node{ Rect(0, 0, static_cast<int>(node->area.GetMaxX()), static_cast<int>(node->area.GetMinY())), false, nullptr, nullptr };
-	}
-	if (node->area.GetMaxY() < _height){
-		if (parent != NULL && parent->area.GetOffset().x != node->area.GetOffset().x) {
-			node->NodeDown = parent->NodeDown;
-		}
-		else {
-			node->NodeDown = new Node{ Rect(0, 0, static_cast<int>(node->area.GetMinX()), static_cast<int>(node->area.GetMaxY())), false, nullptr, nullptr };
-		}
-	}
+	node->NodeDown = new Node{ Rect(node->area.GetSize().x, node->area.GetSize().y - h, node->area.GetOffset().x, node->area.GetOffset().y + h), false, nullptr, nullptr};
+	node->NodeRight = new Node{ Rect(node->area.GetSize().x - w, static_cast<float>(h), node->area.GetOffset().x + w, node->area.GetOffset().y), false, nullptr, nullptr};
 }
 
 void	NodeTree::ClearTree(Node *node)

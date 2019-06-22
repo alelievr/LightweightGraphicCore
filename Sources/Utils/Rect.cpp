@@ -13,6 +13,10 @@ Rect::Rect(int w, int h, int x, int y) : _size(glm::vec2(w, h)), _offset(glm::ve
 {
 }
 
+Rect::Rect(float w, float h, float x, float y) : _size(glm::vec2(w, h)), _offset(glm::vec2(x, y))
+{
+}
+
 LWGC::Rect::Rect(LWGC::Rect const& src)
 {
 	*this = src;
